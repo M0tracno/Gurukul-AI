@@ -54,10 +54,10 @@ import SystemSettingsNew from '../components/admin/SystemSettingsNew';
 const drawerWidth = 280;
 
 const appBarStyles = {
-  background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)',
+  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
   backdropFilter: 'blur(20px)',
   borderBottom: 'none',
-  boxShadow: '0 4px 20px rgba(30, 60, 114, 0.15)',
+  boxShadow: '0 4px 30px rgba(102, 126, 234, 0.15)',
 };
 
 const drawerStyles = {
@@ -65,51 +65,55 @@ const drawerStyles = {
   flexShrink: 0,
   '& .MuiDrawer-paper': {
     width: drawerWidth,
-    background: 'linear-gradient(180deg, #1a202c 0%, #2d3748 100%)',
+    background: 'linear-gradient(180deg, #2d3748 0%, #1a202c 100%)',
     color: 'white',
     border: 'none',
-    boxShadow: '4px 0 20px rgba(0, 0, 0, 0.1)',
+    boxShadow: '8px 0 30px rgba(0, 0, 0, 0.12)',
   },
 };
 
 const contentStyles = {
   flexGrow: 1,
-  backgroundColor: '#f7fafc',
+  backgroundColor: '#f8fafc',
   minHeight: '100vh',
   overflow: 'hidden',
   width: '100%',
   margin: 0,
   padding: 0,
-  position: 'relative', // Ensure proper positioning
+  position: 'absolute',
+  top: 0,
+  right: 0,
+  bottom: 0,
+  left: 0,
 };
 
 const userSectionStyles = {
   padding: 24,
   textAlign: 'center',
-  background: 'linear-gradient(135deg, rgba(30, 60, 114, 0.15) 0%, rgba(42, 82, 152, 0.15) 100%)',
+  background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%)',
   margin: 16,
-  borderRadius: 16,
+  borderRadius: 20,
   border: '1px solid rgba(255, 255, 255, 0.1)',
   backdropFilter: 'blur(10px)',
 };
 
 const navItemStyles = {
-  margin: '6px 16px',
-  borderRadius: 12,
+  margin: '8px 16px',
+  borderRadius: 16,
   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
   position: 'relative',
   overflow: 'hidden',
   cursor: 'pointer',
   '&:hover': {
-    background: 'linear-gradient(135deg, rgba(30, 60, 114, 0.2) 0%, rgba(42, 82, 152, 0.2) 100%)',
+    background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%)',
     transform: 'translateX(8px)',
   },
 };
 
 const activeNavItemStyles = {
   ...navItemStyles,
-  background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)',
-  boxShadow: '0 4px 15px rgba(30, 60, 114, 0.4)',
+  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  boxShadow: '0 4px 20px rgba(102, 126, 234, 0.4)',
 };
 
 const menuIconStyles = {
@@ -216,12 +220,12 @@ function NewAdminDashboard() {
     <div>
       <div style={userSectionStyles}>
         <Avatar sx={{ 
-          width: 72, 
-          height: 72, 
-          margin: '0 auto 16px', 
-          background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)',
+          width: 80, 
+          height: 80, 
+          margin: '0 auto 20px', 
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
           border: '3px solid rgba(255, 255, 255, 0.2)',
-          boxShadow: '0 8px 25px rgba(30, 60, 114, 0.3)',
+          boxShadow: '0 8px 32px rgba(102, 126, 234, 0.3)',
         }}>
           <AccountCircleIcon sx={{ fontSize: 48, color: 'white' }} />
         </Avatar>
@@ -310,10 +314,11 @@ function NewAdminDashboard() {
             <MenuIcon />
           </IconButton>          <Typography variant="h6" noWrap component="div" sx={{ 
             flexGrow: 1, 
-            fontWeight: 600,
-            fontSize: '1.25rem',
+            fontWeight: 700,
+            fontSize: '1.375rem',
             color: 'white',
             textShadow: '0 2px 4px rgba(0,0,0,0.3)',
+            letterSpacing: '-0.01em',
           }}>
             Educational Management System - Admin Dashboard
           </Typography>
@@ -405,47 +410,74 @@ function NewAdminDashboard() {
           ...contentStyles,
           width: { md: `calc(100% - ${drawerWidth}px)` },
           ml: { md: `${drawerWidth}px` },
-          pt: '64px', // AppBar height
+          pt: '64px',
           pl: 0,
           pr: 0,
           pb: 0,
           overflow: 'hidden',
-          minHeight: '100vh',
-          backgroundColor: '#f7fafc',
           position: 'relative',
+          height: '100vh',
         }}
       >
         <Box sx={{ 
-          p: 0, // No padding at all
+          p: 0,
           height: 'calc(100vh - 64px)', 
           overflow: 'auto',
-          backgroundColor: '#f7fafc',
-          background: 'linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%)',
+          backgroundColor: '#f8fafc',
+          background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #f1f5f9 100%)',
           width: '100%',
           margin: 0,
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          position: 'relative',
           '&::-webkit-scrollbar': {
-            width: '8px',
+            width: '6px',
           },
           '&::-webkit-scrollbar-track': {
-            background: 'rgba(0,0,0,0.1)',
+            background: 'rgba(0,0,0,0.05)',
             borderRadius: '10px',
           },
           '&::-webkit-scrollbar-thumb': {
-            background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)',
+            background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
             borderRadius: '10px',
+            border: '1px solid rgba(255,255,255,0.2)',
           },
           '&::-webkit-scrollbar-thumb:hover': {
-            background: 'linear-gradient(135deg, #2a5298 0%, #1e3c72 100%)',
+            background: 'linear-gradient(135deg, #5b21b6 0%, #7c3aed 100%)',
           },
         }}>
           {loading && (
-            <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
-              <CircularProgress size={60} sx={{ color: '#667eea' }} />
+            <Box 
+              display="flex" 
+              justifyContent="center" 
+              alignItems="center" 
+              minHeight="400px"
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                zIndex: 1000,
+                background: 'rgba(255, 255, 255, 0.9)',
+                borderRadius: 4,
+                p: 4,
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+              }}
+            >
+              <Box textAlign="center">
+                <CircularProgress 
+                  size={80} 
+                  thickness={3}
+                  sx={{ 
+                    color: '#6366f1',
+                    mb: 2,
+                  }} 
+                />
+                <Typography variant="h6" sx={{ color: '#4b5563', fontWeight: 500 }}>
+                  Loading Dashboard...
+                </Typography>
+              </Box>
             </Box>
           )}
           

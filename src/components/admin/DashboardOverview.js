@@ -181,114 +181,111 @@ const DashboardOverview = ({ dashboardData, loading }) => {
   const StatCard = ({ title, value, subValue, icon, color, trend }) => (
     <Card 
       sx={{ 
-        height: '100%', 
-        background: `linear-gradient(135deg, ${color}08 0%, ${color}15 100%)`,
-        border: `1px solid ${color}20`,
-        borderRadius: 3,
-        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        height: 160,
+        background: 'white',
+        border: '1px solid #e2e8f0',
+        borderRadius: 2,
+        transition: 'all 0.3s ease',
         position: 'relative',
         overflow: 'hidden',
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
         '&:hover': {
-          transform: 'translateY(-8px)',
-          boxShadow: `0 12px 40px ${color}25`,
-          '& .stat-icon': {
-            transform: 'scale(1.1) rotate(5deg)',
-          },
-        },
-        '&::before': {
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: '4px',
-          background: `linear-gradient(90deg, ${color} 0%, ${color}80 100%)`,
+          transform: 'translateY(-1px)',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+          borderColor: color,
         },
       }}
     >
-      <CardContent sx={{ p: 3 }}>
-        <Box display="flex" alignItems="center" justifyContent="space-between">
+      <CardContent sx={{ p: 2.5, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        <Box display="flex" alignItems="flex-start" justifyContent="space-between">
           <Box flex={1}>
-            <Typography variant="h3" sx={{ 
-              fontWeight: 700, 
-              color: color, 
-              mb: 1,
-              fontSize: '2.5rem',
-              lineHeight: 1,
-            }}>
-              {value}
-            </Typography>
-            <Typography variant="h6" sx={{ 
+            <Typography variant="body2" sx={{ 
               fontWeight: 600, 
-              mb: 0.5,
-              color: '#2d3748',
-              fontSize: '1.1rem',
+              color: '#64748b',
+              fontSize: '0.75rem',
+              mb: 1,
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
             }}>
               {title}
             </Typography>
+            <Typography variant="h2" sx={{ 
+              fontWeight: 800, 
+              color: color, 
+              mb: 0.5,
+              fontSize: '2rem',
+              lineHeight: 1,
+              letterSpacing: '-0.02em',
+            }}>
+              {value}
+            </Typography>
             {subValue && (
               <Typography variant="body2" sx={{ 
-                color: '#718096',
-                fontSize: '0.875rem',
-                lineHeight: 1.4,
+                color: '#94a3b8',
+                fontSize: '0.75rem',
+                lineHeight: 1.2,
               }}>
                 {subValue}
               </Typography>
             )}
-            {trend && (
-              <Box display="flex" alignItems="center" mt={1.5}>
-                <Box sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  backgroundColor: '#f0fff4',
-                  border: '1px solid #68d391',
-                  borderRadius: 2,
-                  px: 1,
-                  py: 0.5,
-                }}>
-                  <TrendingUpIcon sx={{ fontSize: 16, color: '#38a169', mr: 0.5 }} />
-                  <Typography variant="caption" sx={{ 
-                    color: '#38a169', 
-                    fontWeight: 600,
-                    fontSize: '0.75rem',
-                  }}>
-                    +{trend}% this week
-                  </Typography>
-                </Box>
-              </Box>
-            )}
           </Box>
           <Box 
-            className="stat-icon"
             sx={{ 
-              backgroundColor: color, 
-              borderRadius: 3, 
-              p: 2,
+              backgroundColor: `${color}10`, 
+              borderRadius: 2, 
+              p: 1.25,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              transition: 'all 0.3s ease',
-              boxShadow: `0 8px 25px ${color}30`,
             }}
           >
-            {React.createElement(icon, { sx: { fontSize: 36, color: 'white' } })}
+            {React.createElement(icon, { sx: { fontSize: 24, color: color } })}
           </Box>
         </Box>
+        
+        {trend && (
+          <Box display="flex" alignItems="center" justifyContent="space-between" mt={1.5}>
+            <Box sx={{
+              display: 'flex',
+              alignItems: 'center',
+              backgroundColor: '#f0fdf4',
+              borderRadius: 2,
+              px: 2,
+              py: 0.5,
+            }}>
+              <TrendingUpIcon sx={{ fontSize: 14, color: '#16a34a', mr: 0.5 }} />
+              <Typography variant="caption" sx={{ 
+                color: '#16a34a', 
+                fontWeight: 600,
+                fontSize: '0.75rem',
+              }}>
+                +{trend}%
+              </Typography>
+            </Box>
+            <Typography variant="caption" sx={{ 
+              color: '#64748b',
+              fontSize: '0.75rem',
+            }}>
+              this week
+            </Typography>
+          </Box>
+        )}
       </CardContent>
     </Card>
   );
   const SystemHealthCard = ({ healthData }) => (
     <Card sx={{ 
-      borderRadius: 3, 
+      borderRadius: 4, 
       height: '100%',
       background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
       border: '1px solid #e2e8f0',
       boxShadow: '0 4px 25px rgba(0, 0, 0, 0.08)',
+      overflow: 'hidden',
     }}>
       <CardContent sx={{ p: 3 }}>
         <Box display="flex" alignItems="center" justifyContent="space-between" mb={3}>
           <Typography variant="h6" sx={{ 
-            fontWeight: 600,
+            fontWeight: 700,
             color: '#1a202c',
             fontSize: '1.25rem',
           }}>
@@ -298,6 +295,11 @@ const DashboardOverview = ({ dashboardData, loading }) => {
             display: 'flex',
             alignItems: 'center',
             gap: 1,
+            backgroundColor: '#f0fdf4',
+            px: 2,
+            py: 1,
+            borderRadius: 3,
+            border: '1px solid #bbf7d0',
           }}>
             <Box sx={{
               width: 8,
@@ -306,8 +308,8 @@ const DashboardOverview = ({ dashboardData, loading }) => {
               backgroundColor: '#10b981',
               animation: 'pulse 2s infinite',
             }} />
-            <Typography variant="caption" sx={{ color: '#10b981', fontWeight: 500 }}>
-              Loading system health...
+            <Typography variant="caption" sx={{ color: '#065f46', fontWeight: 600 }}>
+              All Systems Operational
             </Typography>
           </Box>
         </Box>
@@ -319,7 +321,7 @@ const DashboardOverview = ({ dashboardData, loading }) => {
                 <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
                   <Typography variant="body2" sx={{ 
                     textTransform: 'capitalize',
-                    fontWeight: 500,
+                    fontWeight: 600,
                     color: '#374151',
                   }}>
                     {service.replace(/([A-Z])/g, ' $1')}
@@ -330,8 +332,11 @@ const DashboardOverview = ({ dashboardData, loading }) => {
                     size="small"
                     sx={{
                       fontSize: '0.75rem',
-                      fontWeight: 500,
-                      height: 24,
+                      fontWeight: 600,
+                      height: 28,
+                      '& .MuiChip-label': {
+                        px: 1.5,
+                      },
                     }}
                   />
                 </Box>
@@ -339,12 +344,12 @@ const DashboardOverview = ({ dashboardData, loading }) => {
                   variant="determinate" 
                   value={data.status === 'Online' ? 100 : 60}
                   sx={{ 
-                    height: 8, 
-                    borderRadius: 4,
+                    height: 10, 
+                    borderRadius: 5,
                     backgroundColor: '#f1f5f9',
                     '& .MuiLinearProgress-bar': {
                       backgroundColor: data.status === 'Online' ? '#10b981' : '#f59e0b',
-                      borderRadius: 4,
+                      borderRadius: 5,
                     },
                   }}
                 />
@@ -353,6 +358,7 @@ const DashboardOverview = ({ dashboardData, loading }) => {
                   fontSize: '0.75rem',
                   mt: 0.5,
                   display: 'block',
+                  fontWeight: 500,
                 }}>
                   Response: {data.responseTime || 'N/A'}
                 </Typography>
@@ -362,7 +368,7 @@ const DashboardOverview = ({ dashboardData, loading }) => {
         ) : (
           <Box sx={{ textAlign: 'center', py: 4 }}>
             <CircularProgress size={40} sx={{ color: '#6366f1', mb: 2 }} />
-            <Typography variant="body2" sx={{ color: '#6b7280' }}>
+            <Typography variant="body2" sx={{ color: '#6b7280', fontWeight: 500 }}>
               Loading system health...
             </Typography>
           </Box>
@@ -382,245 +388,207 @@ const DashboardOverview = ({ dashboardData, loading }) => {
     systemLoad: 0,
   };
 
-  const stats = dashboardData?.summary || defaultStats;  return (
+  const stats = dashboardData?.summary || defaultStats;
+  
+  return (
     <Box sx={{ 
-      p: 2, // Reduced padding
-      pt: 1, // Minimal top padding
-      height: '100%',
-      minHeight: '100%',
+      height: '100vh',
       width: '100%',
       display: 'flex',
       flexDirection: 'column',
-      gap: 0, // Remove any gaps between sections
-      backgroundColor: 'transparent', // Ensure background is transparent
-    }}>      <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-        <Box>
-          <Typography variant="h4" sx={{ 
-            fontWeight: 700, 
-            color: '#1a202c', 
-            mb: 1,
-            fontSize: '2rem',
-          }}>
-            Dashboard Overview
-          </Typography>
-          <Typography variant="body1" sx={{ 
-            color: '#718096',
-            fontSize: '1rem',
-            fontWeight: 400,
-          }}>
-            Welcome back! Here's what's happening in your system today.
-          </Typography>
-        </Box>
-        <Box sx={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 2,
-        }}>
-          <IconButton 
-            onClick={handleRefresh}
-            disabled={refreshing}
-            sx={{
-              backgroundColor: '#f7fafc',
-              border: '1px solid #e2e8f0',
-              '&:hover': {
-                backgroundColor: '#edf2f7',
-                transform: 'scale(1.05)',
-              },
-            }}
-          >
-            <RefreshIcon sx={{ 
-              color: '#4a5568',
-              animation: refreshing ? 'spin 1s linear infinite' : 'none',
-            }} />
-          </IconButton>
-          <Chip 
-            label={`Last updated: ${new Date().toLocaleTimeString()}`}
-            variant="outlined"
-            sx={{ 
+      backgroundColor: '#f8fafc',
+      overflow: 'hidden',
+      m: 0,
+      p: 0,
+    }}>
+      {/* Header Section */}
+      <Box sx={{ 
+        backgroundColor: 'white',
+        borderBottom: '1px solid #e2e8f0',
+        px: 2.5,
+        py: 1.5,
+        flexShrink: 0,
+      }}>
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Box>
+            <Typography variant="h4" sx={{ 
+              fontWeight: 700, 
+              color: '#0f172a', 
+              mb: 0.5,
+              fontSize: '1.5rem',
+              lineHeight: 1.2,
+            }}>
+              Dashboard Overview
+            </Typography>
+            <Typography variant="body2" sx={{ 
+              color: '#64748b',
               fontSize: '0.875rem',
-              fontWeight: 500,
-              backgroundColor: 'white',
-              border: '1px solid #e2e8f0',
-              color: '#4a5568',
-            }}
-          />
+            }}>
+              Monitor your system performance and key metrics
+            </Typography>
+          </Box>
+          <Box sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 2,
+          }}>
+            <IconButton 
+              onClick={handleRefresh}
+              disabled={refreshing}
+              size="small"
+              sx={{
+                backgroundColor: '#f8fafc',
+                border: '1px solid #e2e8f0',
+                width: 36,
+                height: 36,
+                '&:hover': {
+                  backgroundColor: '#f1f5f9',
+                },
+              }}
+            >
+              <RefreshIcon sx={{ 
+                color: '#64748b',
+                fontSize: 16,
+                animation: refreshing ? 'spin 1s linear infinite' : 'none',
+              }} />
+            </IconButton>
+            <Typography variant="caption" sx={{ 
+              color: '#64748b',
+              fontSize: '0.75rem',
+            }}>
+              Updated: {new Date().toLocaleTimeString()}
+            </Typography>
+          </Box>
         </Box>
-      </Box>      {/* Main Statistics */}
-      <Grid container spacing={3} sx={{ mb: 2 }}>
-        <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            title="Students"
-            value={stats.totalStudents || 0}
-            subValue={`${stats.totalFaculty || 0} Faculty`}
-            icon={PeopleIcon}
-            color="#4f46e5"
-            trend="12"
-          />
-        </Grid>        
-        <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            title="Quizzes"
-            value={stats.totalQuizzes || 0}
-            subValue="created"
-            icon={QuizIcon}
-            color="#7c3aed"
-            trend="8"
-          />
-        </Grid>        
-        <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            title="Active"
-            value={stats.activeUsers || 0}
-            subValue="currently active"
-            icon={PersonAddIcon}
-            color="#ec4899"
-            trend="15"
-          />
-        </Grid>        
-        <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            title="Parent accounts"
-            value={stats.totalParents || 0}
-            subValue="active"
-            icon={FamilyIcon}
-            color="#3b82f6"
-            trend="5"
-          />
+      </Box>
+
+      {/* Main Content */}
+      <Box sx={{ 
+        flex: 1,
+        p: 2,
+        overflow: 'auto',
+        '&::-webkit-scrollbar': {
+          width: '4px',
+        },
+        '&::-webkit-scrollbar-track': {
+          background: 'transparent',
+        },
+        '&::-webkit-scrollbar-thumb': {
+          background: '#cbd5e1',
+          borderRadius: '2px',
+        },
+      }}>
+        {/* Statistics Grid */}
+        <Grid container spacing={1.5} sx={{ mb: 2 }}>
+          <Grid item xs={12} sm={6} lg={3}>
+            <StatCard
+              title="Students"
+              value={stats.totalStudents || 0}
+              subValue={`${stats.totalFaculty || 0} Faculty`}
+              icon={PeopleIcon}
+              color="#3b82f6"
+              trend="12"
+            />
+          </Grid>
+          
+          <Grid item xs={12} sm={6} lg={3}>
+            <StatCard
+              title="Quizzes"
+              value={stats.totalQuizzes || 0}
+              subValue="created"
+              icon={QuizIcon}
+              color="#8b5cf6"
+              trend="8"
+            />
+          </Grid>
+          
+          <Grid item xs={12} sm={6} lg={3}>
+            <StatCard
+              title="Active Users"
+              value={stats.activeUsers || 0}
+              subValue="currently online"
+              icon={PersonAddIcon}
+              color="#ec4899"
+              trend="15"
+            />
+          </Grid>
+          
+          <Grid item xs={12} sm={6} lg={3}>
+            <StatCard
+              title="Parent Accounts"
+              value={stats.totalParents || 0}
+              subValue="registered"
+              icon={FamilyIcon}
+              color="#06b6d4"
+              trend="5"
+            />
+          </Grid>
         </Grid>
-      </Grid>      {/* Secondary Statistics */}
-      <Grid container spacing={3} sx={{ mb: 2 }}>
-        <Grid item xs={12} md={8}>
-          <Card sx={{ 
-            borderRadius: 3, 
-            height: '100%',
-            background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
-            border: '1px solid #e2e8f0',
-            boxShadow: '0 4px 25px rgba(0, 0, 0, 0.08)',
-          }}>
-            <CardContent sx={{ p: 3 }}>
-              <Typography variant="h6" sx={{ 
-                fontWeight: 600, 
-                mb: 3,
-                color: '#1a202c',
-                fontSize: '1.25rem',
-              }}>
-                Recent Activity
-              </Typography>
-              
-              <List sx={{ p: 0 }}>
-                {recentActivity.map((activity, index) => (
-                  <ListItem key={activity.id} divider={index < recentActivity.length - 1} sx={{ 
-                    px: 0, 
-                    py: 2,
-                    borderColor: '#f1f5f9',
-                  }}>
-                    <ListItemIcon>
-                      <Box sx={{
-                        backgroundColor: '#f0f9ff',
-                        borderRadius: 2,
-                        p: 1.5,
-                        border: '1px solid #e0f2fe',
+
+        {/* Secondary Content */}
+        <Grid container spacing={1.5}>
+          <Grid item xs={12} md={8}>
+            <Card sx={{ 
+              height: 360,
+              background: 'white',
+              border: '1px solid #e2e8f0',
+              borderRadius: 2,
+              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+            }}>
+              <CardContent sx={{ p: 2.5, height: '100%', overflow: 'hidden' }}>
+                <Typography variant="h6" sx={{ 
+                  fontWeight: 600, 
+                  mb: 1.5,
+                  color: '#0f172a',
+                  fontSize: '1.125rem',
+                }}>
+                  Recent Activity
+                </Typography>
+                
+                <Box sx={{ height: 'calc(100% - 36px)', overflow: 'auto' }}>
+                  <List sx={{ p: 0 }}>
+                    {recentActivity.map((activity, index) => (
+                      <ListItem key={activity.id} sx={{ 
+                        px: 0, 
+                        py: 1,
+                        borderBottom: index < recentActivity.length - 1 ? '1px solid #f1f5f9' : 'none',
                       }}>
-                        <AssignmentIcon sx={{ color: '#0284c7', fontSize: 20 }} />
-                      </Box>
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={activity.action}
-                      secondary={`${activity.user} • ${activity.time}`}
-                      primaryTypographyProps={{ 
-                        fontWeight: 500,
-                        color: '#1a202c',
-                        fontSize: '0.95rem',
-                      }}
-                      secondaryTypographyProps={{
-                        color: '#64748b',
-                        fontSize: '0.875rem',
-                      }}
-                    />
-                  </ListItem>
-                ))}
-              </List>
-            </CardContent>
-          </Card>
-        </Grid>        
-        <Grid item xs={12} md={4}>
-          <SystemHealthCard healthData={dashboardData?.health} />
+                        <ListItemIcon sx={{ minWidth: 36 }}>
+                          <Box sx={{
+                            backgroundColor: '#eff6ff',
+                            borderRadius: 1.5,
+                            p: 0.75,
+                            border: '1px solid #dbeafe',
+                          }}>
+                            <AssignmentIcon sx={{ color: '#3b82f6', fontSize: 14 }} />
+                          </Box>
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={activity.action}
+                          secondary={`${activity.user} • ${activity.time}`}
+                          primaryTypographyProps={{ 
+                            fontWeight: 500,
+                            color: '#0f172a',
+                            fontSize: '0.875rem',
+                          }}
+                          secondaryTypographyProps={{
+                            color: '#64748b',
+                            fontSize: '0.75rem',
+                          }}
+                        />
+                      </ListItem>
+                    ))}
+                  </List>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+          
+          <Grid item xs={12} md={4}>
+            <SystemHealthCard healthData={dashboardData?.health} />
+          </Grid>
         </Grid>
-      </Grid>      {/* System Alerts */}
-      <Grid container spacing={3} sx={{ mb: 0 }}>
-        <Grid item xs={12}>
-          <Card sx={{ 
-            borderRadius: 3,
-            background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
-            border: '1px solid #e2e8f0',
-            boxShadow: '0 4px 25px rgba(0, 0, 0, 0.08)',
-          }}>
-            <CardContent sx={{ p: 3 }}>
-              <Typography variant="h6" sx={{ 
-                fontWeight: 600, 
-                mb: 3,
-                color: '#1a202c',
-                fontSize: '1.25rem',
-              }}>
-                System Alerts
-              </Typography>
-              
-              <List sx={{ p: 0 }}>
-                {systemAlerts.map((alert, index) => (
-                  <ListItem key={alert.id} divider={index < systemAlerts.length - 1} sx={{ 
-                    px: 0, 
-                    py: 2,
-                    borderColor: '#f1f5f9',
-                  }}>
-                    <ListItemIcon>
-                      <Box sx={{
-                        backgroundColor: alert.type === 'error' ? '#fef2f2' : 
-                                       alert.type === 'warning' ? '#fffbeb' :
-                                       alert.type === 'success' ? '#f0fdf4' : '#f0f9ff',
-                        borderRadius: 2,
-                        p: 1.5,
-                        border: `1px solid ${
-                          alert.type === 'error' ? '#fecaca' : 
-                          alert.type === 'warning' ? '#fed7aa' :
-                          alert.type === 'success' ? '#bbf7d0' : '#bae6fd'
-                        }`,
-                      }}>
-                        {getAlertIcon(alert.type)}
-                      </Box>
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={alert.message}
-                      secondary={alert.time}
-                      primaryTypographyProps={{ 
-                        fontWeight: 500,
-                        color: '#1a202c',
-                        fontSize: '0.95rem',
-                      }}
-                      secondaryTypographyProps={{
-                        color: '#64748b',
-                        fontSize: '0.875rem',
-                      }}
-                    />
-                    <Box sx={{ ml: 2 }}>
-                      <Chip
-                        label={alert.severity}
-                        size="small"
-                        color={alert.severity === 'high' ? 'error' : 
-                               alert.severity === 'medium' ? 'warning' : 'default'}
-                        sx={{
-                          fontSize: '0.75rem',
-                          fontWeight: 500,
-                          textTransform: 'capitalize',
-                        }}
-                      />
-                    </Box>
-                  </ListItem>
-                ))}
-              </List>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+      </Box>
     </Box>
   );
 };

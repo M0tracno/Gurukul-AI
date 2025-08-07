@@ -100,7 +100,7 @@ import { useTheme } from '@mui/material/styles';
 // Import performance and optimization utilities
 
 // Import accessibility and security helpers
-const drawerWidth = 280;
+const drawerWidth = 260;
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -112,14 +112,14 @@ const useStyles = makeStyles((theme) => ({
     zIndex: theme.zIndex.drawer + 1, // Ensure appBar is always on top
     background: 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)',
     backdropFilter: 'blur(10px)',
-    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
     borderBottom: 'none',
-  },  menuButton: {
+  },
+  menuButton: {
     marginRight: theme.spacing(2),
-    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    transition: 'all 0.2s ease',
     '&:hover': {
-      transform: 'scale(1.05)', // Reduced from 1.1 to prevent excess movement
-      backgroundColor: 'rgba(255, 255, 255, 0.1)'
+      backgroundColor: 'rgba(255, 255, 255, 0.1)',
     },
     [theme.breakpoints.up('md')]: {
       display: 'none',
@@ -133,31 +133,32 @@ const useStyles = makeStyles((theme) => ({
   drawer: {
     width: drawerWidth,
     flexShrink: 0,
-  },  drawerPaper: {
+  },
+  drawerPaper: {
     width: drawerWidth,
     background: 'linear-gradient(180deg, #2c3e50 0%, #34495e 100%)',
     color: 'white',
-    backdropFilter: 'blur(10px)',
-    borderRight: '1px solid rgba(255, 255, 255, 0.1)',
-    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+    border: 'none',
+    boxShadow: '0 0 20px rgba(0, 0, 0, 0.15)',
     '& .MuiListItemText-primary': {
-      color: 'white !important',
+      color: 'white',
       fontWeight: 500,
     },
     '& .MuiListItemIcon-root': {
-      color: 'white !important',
+      color: 'white',
     },
     '& .MuiTypography-root': {
-      color: 'white !important',
+      color: 'white',
     },
-  },  drawerContainer: {
+  },
+  drawerContainer: {
     overflow: 'auto',
     paddingTop: theme.spacing(1),
     height: '100%',
   },
   content: {
     flexGrow: 1,
-    padding: theme.spacing(2), // Reduced from theme.spacing(3)
+    padding: theme.spacing(3),
     backgroundColor: '#f8f9fa',
     minHeight: '100vh',
     transition: 'margin-left 0.3s ease',
@@ -170,49 +171,50 @@ const useStyles = makeStyles((theme) => ({
       marginLeft: 0,
       width: '100%',
     },
-  },  // Enhanced Paper component styles
+  },
+  // Paper component styles
   paper: {
-    padding: theme.spacing(2), // Reduced from theme.spacing(3)
-    marginBottom: theme.spacing(2), // Reduced from theme.spacing(3)
+    padding: theme.spacing(3),
+    marginBottom: theme.spacing(3),
     backgroundColor: '#ffffff',
-    borderRadius: theme.spacing(2),
-    border: '1px solid rgba(0, 0, 0, 0.06)',
+    borderRadius: theme.spacing(1),
     boxShadow: '0 2px 12px rgba(0, 0, 0, 0.04)',
     transition: 'all 0.3s ease',
     '&:hover': {
-      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.06)',
     },
-  },userSection: {
+  },  userSection: {
     padding: theme.spacing(3),
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'column',
-    background: 'linear-gradient(135deg, rgba(231, 76, 60, 0.15) 0%, rgba(192, 57, 43, 0.15) 100%)',
-    borderRadius: theme.spacing(2),
+    background: 'rgba(255, 255, 255, 0.05)',
+    borderRadius: theme.spacing(1),
     margin: theme.spacing(2),
-    border: '1px solid rgba(255, 255, 255, 0.2)',
-    '& .MuiTypography-root': {
-      color: 'white !important',
-    },
+    marginBottom: theme.spacing(3),
+    border: '1px solid rgba(255, 255, 255, 0.1)',
   },
   avatar: {
-    width: theme.spacing(8),
-    height: theme.spacing(8),
-    marginBottom: theme.spacing(1),
-    border: '3px solid rgba(255, 255, 255, 0.2)',
-    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
+    width: theme.spacing(7),
+    height: theme.spacing(7),
+    marginBottom: theme.spacing(2),
+    border: '2px solid rgba(255, 255, 255, 0.2)',
+    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)',
     backgroundColor: theme.palette.error.main,
-  },  userName: {
+  },
+  userName: {
     fontWeight: 600,
-    color: 'white !important',
+    color: 'white',
     textAlign: 'center',
     fontSize: '1.1rem',
-  },  userRole: {
-    color: 'rgba(255, 255, 255, 0.8) !important',
+  },
+  userRole: {
+    color: 'rgba(255, 255, 255, 0.7)',
     textAlign: 'center',
-    fontSize: '0.9rem',
+    fontSize: '0.85rem',
     fontWeight: 400,
+    marginTop: theme.spacing(0.5),
   },
   cardPaper: {
     padding: theme.spacing(4),
@@ -240,22 +242,18 @@ const useStyles = makeStyles((theme) => ({
   },  statsContainer: {
     marginTop: theme.spacing(2), // Reduced from theme.spacing(4)
     marginBottom: theme.spacing(2), // Reduced from theme.spacing(4)
-  },// Navigation List Styles
+  },  // Navigation List Styles
   navList: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(1),
   },
   navListItem: {
-    margin: theme.spacing(1, 1),
-    borderRadius: theme.spacing(1.5),
-    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-    padding: theme.spacing(1.5, 2),
-    minHeight: theme.spacing(6),
-    display: 'flex',
-    alignItems: 'center',
+    margin: theme.spacing(0.5, 1),
+    borderRadius: theme.spacing(1),
+    transition: 'all 0.2s ease',
+    padding: theme.spacing(1, 2),
     '&:hover': {
       backgroundColor: 'rgba(255, 255, 255, 0.1)',
-      transform: 'translateX(4px)',
-      boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
+      transform: 'translateX(5px)',
     },
     '&.Mui-selected': {
       backgroundColor: 'rgba(255, 255, 255, 0.15)',
@@ -267,14 +265,11 @@ const useStyles = makeStyles((theme) => ({
   navListItemIcon: {
     minWidth: 40,
     color: 'white',
-  },  navListItemText: {
+  },
+  navListItemText: {
     '& .MuiTypography-root': {
       fontSize: '0.95rem',
       fontWeight: 500,
-      color: 'white !important',
-    },
-    '& .MuiListItemText-primary': {
-      color: 'white !important',
     },
   },
   // Enhanced card animations and effects
@@ -311,19 +306,25 @@ const useStyles = makeStyles((theme) => ({
       transform: 'translateY(-4px) scale(1.02)',
     },
   },
-  toolbar: theme.mixins.toolbar,
-  // New styles for admin-specific elements
+  toolbar: {
+    ...theme.mixins.toolbar,
+    minHeight: '64px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: theme.spacing(0, 2),
+  },
+  // Admin-specific elements
   adminCard: {
     background: 'linear-gradient(135deg, rgba(231, 76, 60, 0.05) 0%, rgba(192, 57, 43, 0.05) 100%)',
-    borderRadius: theme.spacing(2.5),
+    borderRadius: theme.spacing(1),
     border: '1px solid rgba(231, 76, 60, 0.1)',
     padding: theme.spacing(3),
     marginBottom: theme.spacing(2),
-    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    transition: 'all 0.2s ease',
     '&:hover': {
       transform: 'translateY(-4px)',
-      boxShadow: '0 12px 32px rgba(231, 76, 60, 0.2)',
-      borderColor: 'rgba(231, 76, 60, 0.3)',
+      boxShadow: '0 8px 24px rgba(231, 76, 60, 0.15)',
     },
   },
   notificationButton: {
@@ -357,21 +358,21 @@ const useStyles = makeStyles((theme) => ({
     },
   },  // Stats card styles
   statCard: {
-    background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
-    borderRadius: theme.spacing(2),
-    border: '1px solid rgba(0, 0, 0, 0.08)',
-    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+    background: '#ffffff',
+    borderRadius: theme.spacing(1),
+    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.06)',
     padding: theme.spacing(3),
-    height: '140px',
+    height: '100%',
+    minHeight: '130px',
     display: 'flex',
     alignItems: 'center',
-    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    gap: theme.spacing(2),
     position: 'relative',
+    transition: 'all 0.2s ease',
     overflow: 'hidden',
     '&:hover': {
       transform: 'translateY(-4px)',
-      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
-      borderColor: 'rgba(231, 76, 60, 0.3)',
+      boxShadow: '0 8px 25px rgba(0, 0, 0, 0.1)',
     },
     '&::before': {
       content: '""',
@@ -384,20 +385,20 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   statIcon: {
-    fontSize: '3rem',
-    marginRight: theme.spacing(2),
+    fontSize: '2.5rem',
     color: '#e74c3c',
-    opacity: 0.8,
+    opacity: 0.85,
+    flexShrink: 0,
   },
   statValue: {
-    fontSize: '2.5rem',
+    fontSize: '2rem',
     fontWeight: 700,
     color: '#2c3e50',
     lineHeight: 1,
     marginBottom: theme.spacing(0.5),
   },
   statLabel: {
-    fontSize: '0.95rem',
+    fontSize: '0.9rem',
     color: '#7f8c8d',
     fontWeight: 500,
     textTransform: 'uppercase',
@@ -916,10 +917,125 @@ function AdminDashboard() {
   return (
     <div className={classes.root}>
       <CssBaseline />
-
       {/* Loading Overlay */}
       {loading && <LoadingOverlay />}
-        <AppBar position="fixed" className={classes.appBar}>
+      
+      <Container maxWidth="xl">
+        {/* Dashboard Header */}
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+          <Typography variant="h4" fontWeight="bold">
+            Dashboard Overview
+          </Typography>
+          <Box display="flex" alignItems="center" gap={2}>
+            <Typography variant="caption" color="textSecondary">
+              Last updated: {realTimeData.lastUpdated}
+            </Typography>
+            <Button 
+              size="small" 
+              variant="outlined"
+              startIcon={<Refresh />}
+            >
+              Refresh
+            </Button>
+          </Box>
+        </Box>
+      
+      {/* Key Metrics Cards */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        {/* Active Users */}
+        <Grid item xs={12} sm={6} md={3}>
+          <Card className={classes.statCard}>
+            <PeopleIcon className={classes.statIcon} />
+            <Box>
+              <Typography className={classes.statValue}>
+                {realTimeData.activeUsers}
+              </Typography>
+              <Typography className={classes.statLabel}>
+                Active Users
+              </Typography>
+              <Typography variant="caption" sx={{ color: 'green', display: 'flex', alignItems: 'center', mt: 0.5 }}>
+                <Box 
+                  component="span" 
+                  sx={{ 
+                    width: 8, 
+                    height: 8, 
+                    borderRadius: '50%', 
+                    bgcolor: 'success.main', 
+                    display: 'inline-block',
+                    mr: 0.5 
+                  }} 
+                />
+                Live
+              </Typography>
+            </Box>
+          </Card>
+        </Grid>
+        
+        {/* Courses */}
+        <Grid item xs={12} sm={6} md={3}>
+          <Card className={classes.statCard}>
+            <SchoolIcon className={classes.statIcon} />
+            <Box>
+              <Typography className={classes.statValue}>
+                {systemStats.courses || 0}
+              </Typography>
+              <Typography className={classes.statLabel}>
+                Active Courses
+              </Typography>
+              <Typography variant="caption" sx={{ color: 'primary.main', display: 'block', mt: 0.5 }}>
+                {systemStats.students || 0} enrolled
+              </Typography>
+            </Box>
+          </Card>
+        </Grid>
+        
+        {/* Quizzes */}
+        <Grid item xs={12} sm={6} md={3}>
+          <Card className={classes.statCard}>
+            <Assignment className={classes.statIcon} />
+            <Box>
+              <Typography className={classes.statValue}>
+                {systemStats.quizzes || 0}
+              </Typography>
+              <Typography className={classes.statLabel}>
+                Quizzes Created
+              </Typography>
+              <Typography variant="caption" sx={{ color: 'secondary.main', display: 'block', mt: 0.5 }}>
+                12 active today
+              </Typography>
+            </Box>
+          </Card>
+        </Grid>
+        
+        {/* System Load */}
+        <Grid item xs={12} sm={6} md={3}>
+          <Card className={classes.statCard}>
+            <TrendingUpIcon className={classes.statIcon} />
+            <Box>
+              <Typography className={classes.statValue}>
+                {realTimeData.systemLoad}%
+              </Typography>
+              <Typography className={classes.statLabel}>
+                System Load
+              </Typography>
+              <Typography 
+                variant="caption" 
+                sx={{ 
+                  color: realTimeData.systemLoad > 80 ? 'error.main' : 
+                         realTimeData.systemLoad > 60 ? 'warning.main' : 'success.main',
+                  display: 'block',
+                  mt: 0.5
+                }}
+              >
+                {realTimeData.systemLoad > 80 ? 'High' : 
+                 realTimeData.systemLoad > 60 ? 'Moderate' : 'Low'}
+              </Typography>
+            </Box>
+          </Card>
+        </Grid>
+      </Grid>
+      
+      <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
           <IconButton
             color="inherit"
@@ -1054,15 +1170,16 @@ function AdminDashboard() {
 
       <main className={classes.content}>
         <div className={classes.toolbar} />
-          <Routes>            <Route path="/" element={
-              <AdminDashboardHome
-                systemStats={systemStats}
-                realTimeData={realTimeData}
-                systemHealth={systemHealth}
-                loading={loading}
-                classes={classes}
-              />
-            } />
+        <Routes>
+          <Route path="/" element={
+            <AdminDashboardHome
+              systemStats={systemStats}
+              realTimeData={realTimeData}
+              systemHealth={systemHealth}
+              loading={loading}
+              classes={classes}
+            />
+          } />
           <Route path="/users" element={<UserManagement classes={classes} />} />
           <Route path="/courses" element={<CourseManagement classes={classes} />} />
           <Route path="/course-allocation" element={<CourseAllocationDashboard />} />
@@ -1073,11 +1190,12 @@ function AdminDashboard() {
           <Route path="/advanced-settings" element={<SettingsPanel />} />
         </Routes>
       </main>
+      </Container>
     </div>
   );
 }
 
-// Dashboard home component
+// Dashboard Home Component
 function AdminDashboardHome({ systemStats, realTimeData, systemHealth, loading, classes }) {
   const [notifications, setNotifications] = useState([
     { id: 1, type: 'warning', message: 'Server maintenance scheduled for tonight at 2:00 AM', time: '5 min ago' },
@@ -1085,85 +1203,113 @@ function AdminDashboardHome({ systemStats, realTimeData, systemHealth, loading, 
     { id: 3, type: 'success', message: 'Backup completed successfully', time: '1 hour ago' },
     { id: 4, type: 'error', message: '3 failed login attempts detected', time: '2 hours ago' }
   ]);
+  
+  const theme = useTheme();
+
+  // Helper function to get status color
+  const getStatusColor = (status) => {
+    switch(status) {
+      case 'Online': return '#4caf50';
+      case 'Warning': return '#ff9800';
+      case 'Critical': return '#f44336';
+      default: return '#9e9e9e';
+    }
+  };
 
   return (
-    <Container>
+    <Container maxWidth="xl">
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-        <Typography variant="h4" gutterBottom>
-          System Overview
+        <Typography variant="h4" fontWeight="bold">
+          Dashboard Overview
         </Typography>
         <Box display="flex" alignItems="center" gap={2}>
           <Typography variant="caption" color="textSecondary">
             Last updated: {realTimeData.lastUpdated}
           </Typography>
-          <Button size="small" variant="outlined">
-            Refresh Data
+          <Button 
+            size="small" 
+            variant="outlined"
+            startIcon={<Refresh />}
+          >
+            Refresh
           </Button>
-        </Box>      </Box>      {/* Real-time Metrics */}
+        </Box>
+      </Box>      {/* Real-time Metrics */}
       <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid size={{xs:12,sm:6,md:3}}>
+        <Grid item xs={12} sm={6} md={3}>
           <Card className={classes.statCard}>
             <PeopleIcon className={classes.statIcon} />
-            <div>
-              <Typography variant="h3" className={classes.statValue}>
+            <Box>
+              <Typography className={classes.statValue}>
                 {realTimeData.activeUsers}
               </Typography>
               <Typography className={classes.statLabel}>
-                Active Users Right Now
+                Active Users
               </Typography>
-              <Typography variant="caption" style={{ color: 'green' }}>
-                🟢 Live
-              </Typography>            </div>
+              <Typography variant="caption" sx={{ color: 'success.main', display: 'flex', alignItems: 'center', mt: 0.5 }}>
+                <Box component="span" sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: 'success.main', display: 'inline-block', mr: 0.5 }} />
+                Live
+              </Typography>
+            </Box>
           </Card>
         </Grid>
-          <Grid size={{xs:12,sm:6,md:3}}>
+        <Grid item xs={12} sm={6} md={3}>
           <Card className={classes.statCard}>
             <SchoolIcon className={classes.statIcon} />
-            <div>
-              <Typography variant="h3" className={classes.statValue}>
-                {systemStats.courses}
+            <Box>
+              <Typography className={classes.statValue}>
+                {systemStats.courses || 0}
               </Typography>
               <Typography className={classes.statLabel}>
                 Active Courses
               </Typography>
-              <Typography variant="caption" style={{ color: 'blue' }}>
-                {systemStats.students} enrolled
-              </Typography>            </div>
+              <Typography variant="caption" sx={{ color: 'primary.main', display: 'block', mt: 0.5 }}>
+                {systemStats.students || 0} enrolled
+              </Typography>
+            </Box>
           </Card>
         </Grid>
-          <Grid size={{xs:12,sm:6,md:3}}>
+        <Grid item xs={12} sm={6} md={3}>
           <Card className={classes.statCard}>
-            <AddIcon className={classes.statIcon} />
-            <div>
-              <Typography variant="h3" className={classes.statValue}>
-                {systemStats.quizzes}
+            <Assignment className={classes.statIcon} />
+            <Box>
+              <Typography className={classes.statValue}>
+                {systemStats.quizzes || 0}
               </Typography>
               <Typography className={classes.statLabel}>
                 Quizzes Created
               </Typography>
-              <Typography variant="caption" style={{ color: 'purple' }}>
+              <Typography variant="caption" sx={{ color: 'secondary.main', display: 'block', mt: 0.5 }}>
                 12 active today
               </Typography>
-            </div>
-          </Card>        </Grid>
-
-        <Grid size={{xs:12,sm:6,md:3}}>
+            </Box>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
           <Card className={classes.statCard}>
-            <BarChartIcon className={classes.statIcon} />
-            <div>
-              <Typography variant="h3" className={classes.statValue}>
+            <TrendingUpIcon className={classes.statIcon} />
+            <Box>
+              <Typography className={classes.statValue}>
                 {realTimeData.systemLoad}%
               </Typography>
               <Typography className={classes.statLabel}>
                 System Load
               </Typography>
-              <Typography variant="caption" style={{
-                color: realTimeData.systemLoad > 80 ? 'red' : realTimeData.systemLoad > 60 ? 'orange' : 'green'
-              }}>
-                {realTimeData.systemLoad > 80 ? 'High' : realTimeData.systemLoad > 60 ? 'Moderate' : 'Low'}
+              <Typography 
+                variant="caption" 
+                sx={{ 
+                  color: realTimeData.systemLoad > 80 ? 'error.main' : 
+                         realTimeData.systemLoad > 60 ? 'warning.main' : 'success.main',
+                  display: 'block',
+                  mt: 0.5
+                }}
+              >
+                {realTimeData.systemLoad > 80 ? 'High' : 
+                 realTimeData.systemLoad > 60 ? 'Moderate' : 'Low'}
               </Typography>
-            </div>
-          </Card>        </Grid>
+            </Box>
+          </Card>
+        </Grid>
       </Grid>
 
       {/* Comprehensive System Statistics */}
@@ -1172,7 +1318,7 @@ function AdminDashboardHome({ systemStats, realTimeData, systemHealth, loading, 
           System Statistics Overview
         </Typography>
         <Grid container spacing={3}>
-          <Grid size={{xs:12,sm:6,md:3}}>
+          <Grid item xs={12} sm={6} md={3}>
             <Card sx={{
               textAlign: 'center',
               p: 3,
@@ -1198,7 +1344,7 @@ function AdminDashboardHome({ systemStats, realTimeData, systemHealth, loading, 
             </Card>
           </Grid>
 
-          <Grid size={{xs:12,sm:6,md:3}}>
+          <Grid item xs={12} sm={6} md={3}>
             <Card sx={{
               textAlign: 'center',
               p: 3,
@@ -1224,7 +1370,7 @@ function AdminDashboardHome({ systemStats, realTimeData, systemHealth, loading, 
             </Card>
           </Grid>
 
-          <Grid size={{xs:12,sm:6,md:3}}>
+          <Grid item xs={12} sm={6} md={3}>
             <Card sx={{
               textAlign: 'center',
               p: 3,
@@ -1250,7 +1396,7 @@ function AdminDashboardHome({ systemStats, realTimeData, systemHealth, loading, 
             </Card>
           </Grid>
 
-          <Grid size={{xs:12,sm:6,md:3}}>
+          <Grid item xs={12} sm={6} md={3}>
             <Card sx={{
               textAlign: 'center',
               p: 3,
@@ -1283,7 +1429,7 @@ function AdminDashboardHome({ systemStats, realTimeData, systemHealth, loading, 
           Quick Actions
         </Typography>
         <Grid container spacing={2}>
-          <Grid size={{xs:12,sm:6,md:3}}>
+          <Grid item xs={12} sm={6} md={3}>
             <Card sx={{
               p: 2,
               textAlign: 'center',
@@ -1306,7 +1452,7 @@ function AdminDashboardHome({ systemStats, realTimeData, systemHealth, loading, 
             </Card>
           </Grid>
 
-          <Grid size={{xs:12,sm:6,md:3}}>
+          <Grid item xs={12} sm={6} md={3}>
             <Card sx={{
               p: 2,
               textAlign: 'center',
@@ -1329,7 +1475,7 @@ function AdminDashboardHome({ systemStats, realTimeData, systemHealth, loading, 
             </Card>
           </Grid>
 
-          <Grid size={{xs:12,sm:6,md:3}}>
+          <Grid item xs={12} sm={6} md={3}>
             <Card sx={{
               p: 2,
               textAlign: 'center',
@@ -1352,7 +1498,7 @@ function AdminDashboardHome({ systemStats, realTimeData, systemHealth, loading, 
             </Card>
           </Grid>
 
-          <Grid size={{xs:12,sm:6,md:3}}>
+          <Grid item xs={12} sm={6} md={3}>
             <Card sx={{
               p: 2,
               textAlign: 'center',
@@ -1379,14 +1525,14 @@ function AdminDashboardHome({ systemStats, realTimeData, systemHealth, loading, 
 
       {/* Enhanced System Status and Notifications */}
       <Grid container spacing={3} style={{ marginBottom: 24 }}>
-        <Grid size={{xs:12,md:8}}>
+        <Grid item xs={12} md={8}>
           <Paper className={classes.paper}>
             <Typography variant="h6" gutterBottom>
               System Health Monitor
             </Typography>
             <Divider style={{ marginBottom: 16 }} />            <Grid container spacing={2}>
               {Object.entries(systemHealth).map(([service, health]) => (
-                <Grid size={{xs:12,sm:6}} key={service}>
+                <Grid item xs={12} sm={6} key={service}>
                   <Box
                     display="flex"
                     justifyContent="space-between"
@@ -1463,7 +1609,7 @@ function AdminDashboardHome({ systemStats, realTimeData, systemHealth, loading, 
           </Paper>
         </Grid>
 
-        <Grid size={{xs:12,md:4}}>
+        <Grid item xs={12} md={4}>
           <Paper className={classes.paper}>
             <Typography variant="h6" gutterBottom>
               Live Activity Feed
@@ -1502,7 +1648,7 @@ function AdminDashboardHome({ systemStats, realTimeData, systemHealth, loading, 
 
       {/* Notifications Panel */}
       <Grid container spacing={3} style={{ marginBottom: 24 }}>
-        <Grid size={{xs:12,md:6}}>
+        <Grid item xs={12} md={6}>
           <Paper className={classes.paper}>
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
               <Typography variant="h6">
@@ -1535,38 +1681,38 @@ function AdminDashboardHome({ systemStats, realTimeData, systemHealth, loading, 
           </Paper>
         </Grid>
 
-        <Grid size={{xs:12,md:6}}>
+        <Grid item xs={12} md={6}>
           <Paper className={classes.paper}>
             <Typography variant="h6" gutterBottom>
               Quick Actions
             </Typography>
             <Divider style={{ marginBottom: 16 }} />
-            <Grid container spacing={2}>              <Grid size={{xs:6}}>
+            <Grid container spacing={2}>              <Grid item xs={6}>
                 <Button variant="outlined" fullWidth startIcon={<PersonAddIcon />}>
                   Add User
                 </Button>
               </Grid>
-              <Grid size={{xs:6}}>
+              <Grid item xs={6}>
                 <Button variant="outlined" fullWidth startIcon={<SchoolIcon />}>
                   Add Course
                 </Button>
               </Grid>
-              <Grid size={{xs:6}}>
+              <Grid item xs={6}>
                 <Button variant="outlined" fullWidth startIcon={<StorageIcon />}>
                   Backup Now
                 </Button>
               </Grid>
-              <Grid size={{xs:6}}>
+              <Grid item xs={6}>
                 <Button variant="outlined" fullWidth startIcon={<ReportsIcon />}>
                   Generate Report
                 </Button>
               </Grid>
-              <Grid size={{xs:6}}>
+              <Grid item xs={6}>
                 <Button variant="outlined" fullWidth startIcon={<NotificationsIcon />}>
                   Send Notice
                 </Button>
               </Grid>
-              <Grid size={{xs:6}}>
+              <Grid item xs={6}>
                 <Button variant="outlined" fullWidth startIcon={<SettingsIcon />}>
                   System Config
                 </Button>
@@ -1577,7 +1723,7 @@ function AdminDashboardHome({ systemStats, realTimeData, systemHealth, loading, 
 
       {/* Production Monitor Section */}
       <Grid container spacing={3} style={{ marginBottom: 24 }}>
-        <Grid size={{xs:12}}>
+        <Grid item xs={12}>
           <Paper className={classes.paper}>
             <Typography variant="h6" gutterBottom>
               Production Monitoring & Performance
@@ -2678,7 +2824,7 @@ function CourseManagement({ classes }) {
 
       {/* Statistics Cards */}
       <Grid container spacing={3} style={{ marginBottom: 24 }}>
-        <Grid size={{xs:12,sm:6,md:3}}>
+        <Grid item xs={12} sm={6} md={3}>
           <Card className={classes.statCard}>
             <SchoolIcon className={classes.statIcon} />
             <div>
@@ -2691,7 +2837,7 @@ function CourseManagement({ classes }) {
             </div>
           </Card>
         </Grid>
-        <Grid size={{xs:12,sm:6,md:3}}>
+        <Grid item xs={12} sm={6} md={3}>
           <Card className={classes.statCard}>
             <PeopleIcon className={classes.statIcon} />
             <div>
@@ -2706,7 +2852,7 @@ function CourseManagement({ classes }) {
             </div>
           </Card>
         </Grid>
-        <Grid size={{xs:12,sm:6,md:3}}>
+        <Grid item xs={12} sm={6} md={3}>
           <Card className={classes.statCard}>
             <BarChartIcon className={classes.statIcon} />
             <div>
