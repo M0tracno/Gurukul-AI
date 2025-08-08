@@ -2,19 +2,21 @@
 module.exports = function override(config, env) {
   const isProduction = env === 'production';
   const isDevelopment = env === 'development';
-    // Add crypto polyfill for speakeasy package
+  // Add crypto polyfill for speakeasy package
   config.resolve.fallback = {
     ...config.resolve.fallback,
     crypto: require.resolve('crypto-browserify'),
     stream: require.resolve('stream-browserify'),
     buffer: require.resolve('buffer'),
     url: require.resolve('url/'),
-    process: require.resolve('process/browser.js'),    path: require.resolve('path-browserify'),
+    process: require.resolve('process/browser.js'),
+    path: require.resolve('path-browserify'),
     os: require.resolve('os-browserify/browser'),
     vm: require.resolve('vm-browserify'),
     fs: false,
     net: false,
-    tls: false,  };
+    tls: false,
+  };
   
   // Add process and Buffer polyfills
   const webpack = require('webpack');

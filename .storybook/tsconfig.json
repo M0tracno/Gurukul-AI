@@ -1,0 +1,16 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "skipLibCheck": true,
+    "types": []
+  },
+  "include": [
+    "../src/**/*",
+    "../stories/**/*",
+    "../.storybook/**/*"
+  ],
+  "exclude": [
+    "../node_modules"
+  ]
+}

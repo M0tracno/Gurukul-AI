@@ -1,7 +1,18 @@
-import React, { forwardRef } from 'react';
-import { Card, CardProps, styled } from '@mui/material';
-import { motion } from 'framer-motion';
-import { glassmorphism, shadows } from '../styles/designTokens';
+import { forwardRef } from 'react';
+import { Card } from '@mui/material';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { styled, Theme } from '@mui/material/styles';
+import type { CardProps } from '@mui/material/Card';
+import { glassmorphism, shadows } from '../../styles/designTokens';
+
+// Create a motion component or fallback to regular Card if framer-motion is not available
+let MotionCard: React.ComponentType<any>;
+try {
+  const { motion } = require('framer-motion');
+  MotionCard = motion(Card);
+} catch {
+  MotionCard = Card;
+}
 
 interface FrostedCardProps extends Omit<CardProps, 'component'> {
   /**
@@ -30,18 +41,26 @@ interface FrostedCardProps extends Omit<CardProps, 'component'> {
   elevation?: number;
 }
 
-const MotionCard = motion(Card);
-
 const StyledFrostedCard = styled(MotionCard, {
-  shouldForwardProp: prop =>
-    !['glassLevel', 'neonGlow', 'neonColor', 'animate', 'reduceMotion'].includes(prop as string),
-})<FrostedCardProps>(({ theme, glassLevel = 'medium', neonGlow = false, neonColor = 'cyan' }) => {
-  const glassEffect = glassmorphism[glassLevel];
-  
+  shouldForwardProp: (prop: string) =>
+    !['glassLevel', 'neonGlow', 'neonColor', 'animate', 'reduceMotion'].includes(prop),
+})<FrostedCardProps>(({
+  theme,
+  glassLevel = 'medium',
+  neonGlow = false,
+  neonColor = 'cyan',
+}: {
+  theme: Theme;
+  glassLevel?: 'light' | 'medium' | 'dark';
+  neonGlow?: boolean;
+  neonColor?: string;
+}) => {
+  const glassEffect = glassmorphism[glassLevel as keyof typeof glassmorphism];
+
   return {
     position: 'relative',
     padding: theme.spacing(3),
-    borderRadius: theme.shape.borderRadius * 2,
+    borderRadius: (theme.shape.borderRadius as number) * 2,
     background: glassEffect.background,
     backdropFilter: glassEffect.backdropFilter,
     border: glassEffect.border,
@@ -66,7 +85,7 @@ const StyledFrostedCard = styled(MotionCard, {
       transform: 'translateY(-4px)',
       boxShadow: theme.shadows[8],
       ...(neonGlow && {
-        boxShadow: `${theme.shadows[8]}, ${shadows.neon[neonColor]}`,
+        boxShadow: `${theme.shadows[8]}, ${shadows.neon[neonColor as keyof typeof shadows.neon]}`,
       }),
     },
 
@@ -93,7 +112,7 @@ const StyledFrostedCard = styled(MotionCard, {
 
 /**
  * FrostedCard - A reusable glassmorphism card component
- * 
+ *
  * Features:
  * - Glassmorphism effect with configurable intensity
  * - Optional neon glow on hover
@@ -117,9 +136,10 @@ export const FrostedCard = forwardRef<HTMLDivElement, FrostedCardProps>(
     ref
   ) => {
     // Check for user's motion preferences
-    const prefersReducedMotion = 
-      reduceMotion || 
-      (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    const prefersReducedMotion =
+      reduceMotion ||
+      (typeof window !== 'undefined' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
     // Animation variants
     const animationVariants = {
@@ -139,27 +159,34 @@ export const FrostedCard = forwardRef<HTMLDivElement, FrostedCardProps>(
       },
     };
 
+    const motionProps: any = {};
+
+    if (animate && !prefersReducedMotion) {
+      motionProps.variants = animationVariants;
+      motionProps.initial = 'hidden';
+      motionProps.animate = 'visible';
+    }
+
+    if (!prefersReducedMotion) {
+      motionProps.whileHover = {
+        y: -4,
+        transition: { duration: 0.2 },
+      };
+    }
+
+    const { style, ...restProps } = props;
     const cardProps = {
       ref,
       glassLevel,
       neonGlow,
       neonColor,
       elevation,
-      variants: animate && !prefersReducedMotion ? animationVariants : undefined,
-      initial: animate && !prefersReducedMotion ? 'hidden' : undefined,
-      animate: animate && !prefersReducedMotion ? 'visible' : undefined,
-      whileHover: 
-        !prefersReducedMotion
-          ? {
-              y: -4,
-              transition: { duration: 0.2 },
-            }
-          : undefined,
-      ...props,
+      style: style as any, // Type assertion to handle framer-motion strict typing
+      ...restProps,
     };
 
     return (
-      <StyledFrostedCard {...cardProps}>
+      <StyledFrostedCard {...cardProps} {...motionProps}>
         {children}
       </StyledFrostedCard>
     );

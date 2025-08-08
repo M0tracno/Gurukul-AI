@@ -22,16 +22,29 @@ interface ResponsiveGridProps extends Omit<GridProps, 'gap'> {
 }
 
 const StyledGrid = styled(Grid, {
-  shouldForwardProp: prop => !['spacingLevel', 'maxWidth', 'centered', 'responsive'].includes(prop as string),
-})<ResponsiveGridProps>(({ theme, spacingLevel = 'md', maxWidth, centered = false, responsive = true }) => {
+  shouldForwardProp: prop =>
+    !['spacingLevel', 'maxWidth', 'centered', 'responsive'].includes(prop as string),
+})<ResponsiveGridProps>(({
+  theme,
+  spacingLevel = 'md',
+  maxWidth,
+  centered = false,
+  responsive = true,
+}) => {
   const getSpacing = (level: string) => {
     switch (level) {
-      case 'xs': return spacing.xs;
-      case 'sm': return spacing.sm;
-      case 'md': return spacing.md;
-      case 'lg': return spacing.lg;
-      case 'xl': return spacing.xl;
-      default: return spacing.md;
+      case 'xs':
+        return spacing.xs;
+      case 'sm':
+        return spacing.sm;
+      case 'md':
+        return spacing.md;
+      case 'lg':
+        return spacing.lg;
+      case 'xl':
+        return spacing.xl;
+      default:
+        return spacing.md;
     }
   };
 
@@ -41,23 +54,28 @@ const StyledGrid = styled(Grid, {
       paddingLeft: getSpacing(spacingLevel),
       paddingTop: getSpacing(spacingLevel),
     },
-    
+
     // Maximum width constraints
     ...(maxWidth && {
-      maxWidth: 
-        maxWidth === 'sm' ? '640px' :
-        maxWidth === 'md' ? '768px' :
-        maxWidth === 'lg' ? '1024px' :
-        maxWidth === 'xl' ? '1280px' :
-        maxWidth === '2xl' ? '1536px' :
-        '100%',
+      maxWidth:
+        maxWidth === 'sm'
+          ? '640px'
+          : maxWidth === 'md'
+            ? '768px'
+            : maxWidth === 'lg'
+              ? '1024px'
+              : maxWidth === 'xl'
+                ? '1280px'
+                : maxWidth === '2xl'
+                  ? '1536px'
+                  : '100%',
     }),
-    
+
     // Centering
     ...(centered && {
       margin: '0 auto',
     }),
-    
+
     // Responsive behavior
     ...(responsive && {
       padding: getSpacing('md'),
@@ -77,7 +95,7 @@ const StyledGrid = styled(Grid, {
 
 /**
  * ResponsiveGrid - A responsive grid system using design tokens
- * 
+ *
  * Features:
  * - Consistent spacing using design token system
  * - Responsive breakpoints
@@ -130,23 +148,21 @@ export const ResponsiveGridItem: React.FC<ResponsiveGridItemProps> = ({
   ...props
 }) => {
   return (
-    <Grid
-      item
-      xs={xs}
-      sm={sm}
-      md={md}
-      lg={lg}
-      xl={xl}
-      sx={{
+    <div
+      {...(props as any)}
+      style={{
+        display: 'grid',
+        gridTemplateColumns: `repeat(${xs === 'auto' ? 'auto-fit' : xs || 12}, 1fr)`,
         padding: spacing.sm,
         '@media (max-width: 600px)': {
           padding: spacing.xs,
         },
+        ...((props as any).style || {}),
       }}
-      {...props}
+      className={`responsive-grid-item ${(props as any).className || ''}`}
     >
       {children}
-    </Grid>
+    </div>
   );
 };
 

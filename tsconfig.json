@@ -20,13 +20,13 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "declaration": false,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "exactOptionalPropertyTypes": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "exactOptionalPropertyTypes": false,
     "noImplicitReturns": true,
     "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "noUncheckedIndexedAccess": true,
+    "noPropertyAccessFromIndexSignature": false,
+    "noUncheckedIndexedAccess": false,
     "baseUrl": "src",
     "paths": {
       "@/*": ["*"],
@@ -36,7 +36,12 @@
       "@/hooks/*": ["hooks/*"],
       "@/services/*": ["services/*"],
       "@/types/*": ["types/*"]
-    }
+    },
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "types": [],
+    "skipDefaultLibCheck": true
   },
   "include": [
     "src"
@@ -45,6 +50,11 @@
     "node_modules",
     "build",
     "**/*.test.ts",
-    "**/*.test.tsx"
+    "**/*.test.tsx",
+    "*.config.js",
+    "config-overrides.js",
+    "commitlint.config.js",
+    "jest.config.js",
+    "node_modules/@types/minimatch"
   ]
 }

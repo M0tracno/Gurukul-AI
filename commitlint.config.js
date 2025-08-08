@@ -1,45 +1,45 @@
-{
-  "extends": ["@commitlint/config-conventional"],
-  "rules": {
-    "type-enum": [
+module.exports = {
+  extends: ['@commitlint/config-conventional'],
+  rules: {
+    'type-enum': [
       2,
-      "always",
+      'always',
       [
-        "feat",
-        "fix",
-        "docs",
-        "style",
-        "refactor",
-        "perf",
-        "test",
-        "chore",
-        "revert"
+        'feat',
+        'fix',
+        'docs',
+        'style',
+        'refactor',
+        'perf',
+        'test',
+        'chore',
+        'revert'
       ]
     ],
-    "scope-enum": [
+    'scope-enum': [
       2,
-      "always",
+      'always',
       [
-        "ui",
-        "admin",
-        "auth",
-        "api",
-        "components",
-        "utils",
-        "hooks",
-        "services",
-        "theme",
-        "layout",
-        "responsive",
-        "accessibility",
-        "performance",
-        "security",
-        "testing",
-        "ci",
-        "docs"
+        'ui',
+        'admin',
+        'auth',
+        'api',
+        'components',
+        'utils',
+        'hooks',
+        'services',
+        'theme',
+        'layout',
+        'responsive',
+        'accessibility',
+        'performance',
+        'security',
+        'testing',
+        'ci',
+        'docs'
       ]
     ],
-    "subject-max-length": [2, "always", 72],
-    "header-max-length": [2, "always", 100]
+    'subject-max-length': [2, 'always', 72],
+    'header-max-length': [2, 'always', 100]
   }
-}
+};
