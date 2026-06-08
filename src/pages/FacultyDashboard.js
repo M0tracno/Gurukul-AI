@@ -56,14 +56,14 @@ import {
 // Styled components for modern design
 const StyledCard = styled(Card)(({ theme }) => ({
   borderRadius: 16,
-  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
+  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.6)',
   transition: 'all 0.3s ease-in-out',
-  background: 'rgba(255, 255, 255, 0.95)',
+  background: 'rgba(255, 255, 255, 0.03)',
   backdropFilter: 'blur(10px)',
-  border: '1px solid rgba(255, 255, 255, 0.2)',
+  border: '1px solid rgba(255, 255, 255, 0.06)',
   '&:hover': {
     transform: 'translateY(-4px)',
-    boxShadow: '0 12px 40px rgba(0, 0, 0, 0.12)',
+    boxShadow: '0 12px 40px rgba(0, 0, 0, 0.7)',
   },
 }));
 
@@ -79,11 +79,12 @@ const StatCard = styled(Card)(({ theme, color }) => ({
 }));
 
 const DashboardHeader = styled(Box)(({ theme }) => ({
-  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  background: 'linear-gradient(135deg, rgba(167, 139, 250, 0.15) 0%, rgba(124, 58, 237, 0.15) 100%)',
   borderRadius: 20,
   padding: theme.spacing(3),
   color: 'white',
   marginBottom: theme.spacing(3),
+  border: '1px solid rgba(167, 139, 250, 0.2)',
 }));
 
 // Lazy load faculty components
@@ -187,28 +188,28 @@ const FacultyDashboard = () => {
         title: 'Total Courses',
         value: dashboardStats.totalCourses,
         icon: <CoursesIcon />,
-        color: '#667eea',
+        color: '#a78bfa',
         trend: '+2 this semester'
       },
       {
         title: 'Total Students',
         value: dashboardStats.totalStudents,
         icon: <StudentsIcon />,
-        color: '#4CAF50',
+        color: '#34d399',
         trend: `${dashboardStats.activeStudents} active`
       },
       {
         title: 'Assignments',
         value: dashboardStats.totalAssignments,
         icon: <AssignmentIcon />,
-        color: '#FF9800',
+        color: '#fbbf24',
         trend: `${dashboardStats.pendingGrades} pending`
       },
       {
         title: 'Attendance Rate',
         value: `${dashboardStats.averageAttendance}%`,
         icon: <AttendanceIcon />,
-        color: '#2196F3',
+        color: '#60a5fa',
         trend: '+2.3% this month'
       }
     ];
@@ -384,8 +385,8 @@ const FacultyDashboard = () => {
                             sx={{
                               p: 1,
                               borderRadius: '50%',
-                              bgcolor: activity.type === 'submission' ? '#4CAF50' : 
-                                      activity.type === 'grading' ? '#FF9800' : '#2196F3',
+                              bgcolor: activity.type === 'submission' ? '#34d399' : 
+                                      activity.type === 'grading' ? '#fbbf24' : '#60a5fa',
                               color: 'white'
                             }}
                           >
@@ -500,7 +501,7 @@ const FacultyDashboard = () => {
   return (
     <Box sx={{ 
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)'
+      background: 'linear-gradient(135deg, #0a0a0f 0%, #111118 50%, #0a0a1a 100%)'
     }}>      <UnifiedDashboardLayout
         title="Faculty Dashboard"
         menuItems={menuItems}
@@ -532,4 +533,4 @@ const FacultyDashboard = () => {
 };
 
 export default FacultyDashboard;
-
+

@@ -118,22 +118,23 @@ const ParentDashboard = () => {
       setLoading(false);
     }
   };
+
   const StatCard = ({ title, value, icon, color, subtitle, trend }) => (
     <motion.div
       whileHover={{ scale: 1.02 }}
       transition={{ type: "spring", stiffness: 300 }}
     >      <Card
         sx={{
-          background: `linear-gradient(135deg, ${color}20 0%, ${color}10 100%)`,
-          backgroundColor: '#ffffff !important',
-          border: `3px solid ${color}`,
+          background: `linear-gradient(135deg, ${alpha(color, 0.15)} 0%, ${alpha(color, 0.08)} 100%)`,
+          backdropFilter: 'blur(10px)',
+          border: `1px solid ${alpha(color, 0.3)}`,
           borderRadius: 4,
           height: '100%',
           position: 'relative',
           overflow: 'hidden',
-          boxShadow: `0 8px 25px ${color}30`,
+          boxShadow: `0 8px 25px rgba(0, 0, 0, 0.6)`,
           '&:hover': {
-            boxShadow: `0 12px 35px ${color}40`,
+            boxShadow: `0 12px 35px rgba(0, 0, 0, 0.7)`,
             transform: 'translateY(-2px)',
           },
         }}
@@ -142,13 +143,13 @@ const ParentDashboard = () => {
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
             <Avatar
               sx={{
-                bgcolor: color,
-                color: 'white',
+                bgcolor: alpha(color, 0.2),
+                color: color,
                 width: 64,
                 height: 64,
                 fontSize: '1.5rem',
-                boxShadow: `0 6px 20px ${color}40`,
-                border: `2px solid white`,
+                boxShadow: `0 6px 20px ${alpha(color, 0.3)}`,
+                border: `1px solid ${alpha(color, 0.3)}`,
               }}
             >
               {icon}
@@ -160,8 +161,9 @@ const ParentDashboard = () => {
                 sx={{ 
                   fontWeight: 'bold',
                   fontSize: '0.75rem',
-                  bgcolor: trend.includes('+') ? '#4caf50' : '#f44336',
-                  color: 'white',
+                  bgcolor: trend.includes('+') ? alpha('#34d399', 0.2) : alpha('#f44336', 0.2),
+                  color: trend.includes('+') ? '#34d399' : '#f44336',
+                  border: `1px solid ${trend.includes('+') ? alpha('#34d399', 0.3) : alpha('#f44336', 0.3)}`,
                   '& .MuiChip-label': { px: 1.5 }
                 }}
               />
@@ -171,11 +173,9 @@ const ParentDashboard = () => {
             variant="h2" 
             sx={{ 
               fontWeight: 'bold', 
-              color: '#1a1a1a', 
               mb: 1,
               fontSize: '3rem',
               lineHeight: 1,
-              textShadow: '0 2px 4px rgba(0,0,0,0.1)'
             }}
           >
             {value}
@@ -184,7 +184,6 @@ const ParentDashboard = () => {
             variant="h5" 
             sx={{ 
               fontWeight: 700, 
-              color: '#2c2c2c', 
               mb: 0.5,
               fontSize: '1.3rem'
             }}
@@ -195,7 +194,7 @@ const ParentDashboard = () => {
             <Typography 
               variant="body1" 
               sx={{ 
-                color: '#555555',
+                color: 'text.secondary',
                 fontWeight: 600,
                 fontSize: '0.95rem'
               }}
@@ -218,14 +217,15 @@ const ParentDashboard = () => {
       </Card>
     </motion.div>
   );
+
   const RecentActivityCard = ({ title, items, icon, onViewAll }) => (
     <Card
       sx={{
         borderRadius: 4,
-        boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
-        border: '2px solid',
-        borderColor: theme.palette.primary.main + '30',
-        background: 'linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.6)',
+        border: '1px solid rgba(167, 139, 250, 0.2)',
+        background: 'rgba(255, 255, 255, 0.03)',
+        backdropFilter: 'blur(10px)',
       }}
     >
       <CardContent sx={{ p: 3 }}>
@@ -233,10 +233,12 @@ const ParentDashboard = () => {
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Avatar 
               sx={{ 
-                bgcolor: theme.palette.primary.main, 
+                bgcolor: alpha('#a78bfa', 0.2), 
+                color: '#a78bfa',
                 width: 48, 
                 height: 48,
-                boxShadow: `0 4px 12px ${theme.palette.primary.main}40`,
+                boxShadow: `0 4px 12px rgba(167, 139, 250, 0.3)`,
+                border: '1px solid rgba(167, 139, 250, 0.3)',
               }}
             >
               {icon}
@@ -245,7 +247,6 @@ const ParentDashboard = () => {
               variant="h6" 
               sx={{ 
                 fontWeight: 'bold',
-                color: '#1a1a1a',
                 fontSize: '1.2rem'
               }}
             >
@@ -258,9 +259,9 @@ const ParentDashboard = () => {
             sx={{ 
               textTransform: 'none',
               fontWeight: 600,
-              color: theme.palette.primary.main,
+              color: '#a78bfa',
               '&:hover': {
-                bgcolor: theme.palette.primary.main + '10'
+                bgcolor: 'rgba(167, 139, 250, 0.1)'
               }
             }}
           >
@@ -275,7 +276,7 @@ const ParentDashboard = () => {
                   px: 0, 
                   py: 2,
                   '&:hover': {
-                    bgcolor: theme.palette.primary.main + '05',
+                    bgcolor: 'rgba(167, 139, 250, 0.05)',
                     borderRadius: 2
                   }
                 }}
@@ -283,7 +284,7 @@ const ParentDashboard = () => {
                 <ListItemIcon sx={{ minWidth: 40 }}>
                   <StarIcon 
                     sx={{ 
-                      color: theme.palette.warning.main,
+                      color: '#fbbf24',
                       fontSize: '1.2rem'
                     }} 
                   />
@@ -293,12 +294,11 @@ const ParentDashboard = () => {
                   secondary={item.subtitle || item.date || item.studentName}
                   primaryTypographyProps={{ 
                     fontWeight: 600,
-                    color: '#2c2c2c',
                     fontSize: '1rem'
                   }}
                   secondaryTypographyProps={{ 
                     fontSize: '0.9rem',
-                    color: '#666666',
+                    color: 'text.secondary',
                     fontWeight: 500
                   }}
                 />
@@ -307,8 +307,9 @@ const ParentDashboard = () => {
                     label={item.grade}
                     size="small"
                     sx={{
-                      bgcolor: theme.palette.success.main,
-                      color: 'white',
+                      bgcolor: alpha('#34d399', 0.2),
+                      color: '#34d399',
+                      border: '1px solid rgba(52, 211, 153, 0.3)',
                       fontWeight: 'bold',
                       fontSize: '0.8rem'
                     }}
@@ -319,7 +320,7 @@ const ParentDashboard = () => {
                 <Divider 
                   component="li" 
                   sx={{ 
-                    borderColor: theme.palette.divider,
+                    borderColor: 'rgba(255, 255, 255, 0.06)',
                     opacity: 0.6 
                   }} 
                 />
@@ -334,7 +335,7 @@ const ParentDashboard = () => {
                 sx={{ 
                   textAlign: 'center',
                   '& .MuiTypography-root': {
-                    color: '#888888',
+                    color: 'text.secondary',
                     fontWeight: 500
                   }
                 }}
@@ -360,13 +361,14 @@ const ParentDashboard = () => {
             sx={{
               p: 4,
               mb: 4,
-              background: 'linear-gradient(135deg, #2196f3 0%, #1976d2 50%, #0d47a1 100%)',
+              background: 'linear-gradient(135deg, rgba(167, 139, 250, 0.15) 0%, rgba(124, 58, 237, 0.15) 100%)',
+              backdropFilter: 'blur(10px)',
               color: 'white',
               borderRadius: 4,
               position: 'relative',
               overflow: 'hidden',
-              boxShadow: '0 12px 40px rgba(33, 150, 243, 0.3)',
-              border: '2px solid rgba(255,255,255,0.2)',
+              boxShadow: '0 12px 40px rgba(0, 0, 0, 0.6)',
+              border: '1px solid rgba(167, 139, 250, 0.2)',
             }}
           >
             <Box sx={{ position: 'relative', zIndex: 1 }}>
@@ -375,7 +377,7 @@ const ParentDashboard = () => {
                 sx={{ 
                   fontWeight: 'bold', 
                   mb: 2,
-                  textShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                  textShadow: '0 2px 4px rgba(0,0,0,0.3)',
                   fontSize: { xs: '2rem', md: '2.5rem' }
                 }}
               >
@@ -387,7 +389,7 @@ const ParentDashboard = () => {
                   opacity: 0.95, 
                   mb: 3,
                   fontWeight: 500,
-                  textShadow: '0 1px 2px rgba(0,0,0,0.1)',
+                  textShadow: '0 1px 2px rgba(0,0,0,0.2)',
                   fontSize: { xs: '1.2rem', md: '1.5rem' }
                 }}
               >
@@ -398,18 +400,18 @@ const ParentDashboard = () => {
                   variant="contained"
                   size="large"
                   sx={{
-                    bgcolor: 'rgba(255,255,255,0.25)',
+                    bgcolor: 'rgba(255,255,255,0.1)',
                     color: 'white',
                     fontWeight: 'bold',
                     fontSize: '1rem',
                     px: 3,
                     py: 1.5,
                     '&:hover': { 
-                      bgcolor: 'rgba(255,255,255,0.35)',
+                      bgcolor: 'rgba(255,255,255,0.15)',
                       transform: 'translateY(-1px)'
                     },
                     backdropFilter: 'blur(10px)',
-                    border: '1px solid rgba(255,255,255,0.2)',
+                    border: '1px solid rgba(255,255,255,0.15)',
                     textTransform: 'none'
                   }}
                   startIcon={<RefreshIcon />}
@@ -421,7 +423,7 @@ const ParentDashboard = () => {
                   variant="outlined"
                   size="large"
                   sx={{
-                    borderColor: 'rgba(255,255,255,0.7)',
+                    borderColor: 'rgba(255,255,255,0.4)',
                     color: 'white',
                     fontWeight: 'bold',
                     fontSize: '1rem',
@@ -429,8 +431,8 @@ const ParentDashboard = () => {
                     py: 1.5,
                     textTransform: 'none',
                     '&:hover': { 
-                      borderColor: 'white', 
-                      bgcolor: 'rgba(255,255,255,0.15)',
+                      borderColor: 'rgba(255,255,255,0.6)', 
+                      bgcolor: 'rgba(255,255,255,0.08)',
                       transform: 'translateY(-1px)'
                     },
                   }}
@@ -449,8 +451,7 @@ const ParentDashboard = () => {
                 width: 240,
                 height: 240,
                 borderRadius: '50%',
-                background: 'radial-gradient(circle, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 70%, transparent 100%)',
-                backdropFilter: 'blur(20px)',
+                background: 'radial-gradient(circle, rgba(167, 139, 250, 0.1) 0%, rgba(167, 139, 250, 0.03) 70%, transparent 100%)',
               }}
             />
             <Box
@@ -461,8 +462,7 @@ const ParentDashboard = () => {
                 width: 160,
                 height: 160,
                 borderRadius: '50%',
-                background: 'radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%)',
-                backdropFilter: 'blur(15px)',
+                background: 'radial-gradient(circle, rgba(124, 58, 237, 0.08) 0%, transparent 70%)',
               }}
             />
           </Paper>
@@ -480,7 +480,7 @@ const ParentDashboard = () => {
                 title="Total Children"
                 value={stats.totalChildren || children.length}
                 icon={<ChildrenIcon />}
-                color={theme.palette.primary.main}
+                color="#a78bfa"
                 subtitle="Enrolled students"
               />
             </Grid>
@@ -489,7 +489,7 @@ const ParentDashboard = () => {
                 title="Active Courses"
                 value={stats.totalCourses || 0}
                 icon={<SchoolIcon />}
-                color={theme.palette.success.main}
+                color="#34d399"
                 subtitle="This semester"
               />
             </Grid>
@@ -498,7 +498,7 @@ const ParentDashboard = () => {
                 title="Recent Grades"
                 value={stats.recentGrades || recentGrades.length}
                 icon={<GradesIcon />}
-                color={theme.palette.info.main}
+                color="#60a5fa"
                 subtitle="This week"
                 trend={stats.recentGrades > 0 ? `+${stats.recentGrades}` : ''}
               />
@@ -508,12 +508,14 @@ const ParentDashboard = () => {
                 title="Upcoming Events"
                 value={stats.pendingMeetings || upcomingEvents.length}
                 icon={<EventIcon />}
-                color={theme.palette.warning.main}
+                color="#fbbf24"
                 subtitle="Next 30 days"
               />
             </Grid>
           </Grid>
-        </motion.div>        {/* Performance Overview */}
+        </motion.div>
+
+        {/* Performance Overview */}
         {(stats.avgGrade > 0 || Object.keys(stats).length > 0) && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -524,9 +526,10 @@ const ParentDashboard = () => {
               sx={{ 
                 mb: 4, 
                 borderRadius: 4, 
-                boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
-                border: `2px solid ${theme.palette.info.main}30`,
-                background: 'linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.6)',
+                border: '1px solid rgba(96, 165, 250, 0.2)',
+                background: 'rgba(255, 255, 255, 0.03)',
+                backdropFilter: 'blur(10px)',
               }}
             >
               <CardContent sx={{ p: 4 }}>
@@ -535,13 +538,12 @@ const ParentDashboard = () => {
                   sx={{ 
                     fontWeight: 'bold', 
                     mb: 3,
-                    color: '#1a1a1a',
                     display: 'flex',
                     alignItems: 'center',
                     gap: 2
                   }}
                 >
-                  <TrendingUpIcon sx={{ color: theme.palette.info.main, fontSize: '2rem' }} />
+                  <TrendingUpIcon sx={{ color: '#60a5fa', fontSize: '2rem' }} />
                   Academic Performance Overview
                 </Typography>
                 <Grid container spacing={4}>
@@ -552,7 +554,6 @@ const ParentDashboard = () => {
                         sx={{ 
                           fontWeight: 700, 
                           mb: 2,
-                          color: '#2c2c2c',
                           fontSize: '1.3rem'
                         }}
                       >
@@ -564,11 +565,11 @@ const ParentDashboard = () => {
                         sx={{
                           height: 16,
                           borderRadius: 8,
-                          bgcolor: alpha(theme.palette.success.main, 0.15),
+                          bgcolor: alpha('#34d399', 0.1),
                           '& .MuiLinearProgress-bar': {
                             borderRadius: 8,
-                            background: `linear-gradient(90deg, ${theme.palette.success.main} 0%, ${theme.palette.info.main} 100%)`,
-                            boxShadow: `0 2px 8px ${theme.palette.success.main}40`,
+                            background: `linear-gradient(90deg, #34d399 0%, #60a5fa 100%)`,
+                            boxShadow: `0 2px 8px rgba(52, 211, 153, 0.4)`,
                           },
                         }}
                       />
@@ -576,7 +577,7 @@ const ParentDashboard = () => {
                         variant="body2" 
                         sx={{ 
                           mt: 1, 
-                          color: '#666666',
+                          color: 'text.secondary',
                           fontWeight: 600 
                         }}
                       >
@@ -591,7 +592,6 @@ const ParentDashboard = () => {
                         sx={{ 
                           fontWeight: 700, 
                           mb: 2,
-                          color: '#2c2c2c',
                           fontSize: '1.3rem'
                         }}
                       >
@@ -603,11 +603,11 @@ const ParentDashboard = () => {
                         sx={{
                           height: 16,
                           borderRadius: 8,
-                          bgcolor: alpha(theme.palette.info.main, 0.15),
+                          bgcolor: alpha('#60a5fa', 0.1),
                           '& .MuiLinearProgress-bar': {
                             borderRadius: 8,
-                            background: `linear-gradient(90deg, ${theme.palette.info.main} 0%, ${theme.palette.primary.main} 100%)`,
-                            boxShadow: `0 2px 8px ${theme.palette.info.main}40`,
+                            background: `linear-gradient(90deg, #60a5fa 0%, #a78bfa 100%)`,
+                            boxShadow: `0 2px 8px rgba(96, 165, 250, 0.4)`,
                           },
                         }}
                       />
@@ -615,7 +615,7 @@ const ParentDashboard = () => {
                         variant="body2" 
                         sx={{ 
                           mt: 1, 
-                          color: '#666666',
+                          color: 'text.secondary',
                           fontWeight: 600 
                         }}
                       >
@@ -694,13 +694,14 @@ const ParentDashboard = () => {
     );
   };
 
+
   // Children Overview Section
   const renderChildrenOverview = () => {
     const { children } = dashboardData;
 
     return (
       <Box sx={{ p: 3 }}>
-        <Typography variant="h4" sx={{ mb: 3, fontWeight: 'bold', color: '#1a1a1a' }}>
+        <Typography variant="h4" sx={{ mb: 3, fontWeight: 'bold' }}>
           My Children
         </Typography>
         
@@ -714,12 +715,13 @@ const ParentDashboard = () => {
                 whileHover={{ y: -5 }}
               >                <Card sx={{ 
                   borderRadius: 3, 
-                  boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
-                  border: '2px solid rgba(58, 134, 255, 0.1)',
-                  backgroundColor: '#ffffff !important',
-                  background: '#ffffff !important',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.6)',
+                  border: '1px solid rgba(96, 165, 250, 0.15)',
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  backdropFilter: 'blur(10px)',
                   '&:hover': {
-                    boxShadow: '0 12px 40px rgba(58, 134, 255, 0.2)',
+                    boxShadow: '0 12px 40px rgba(0, 0, 0, 0.7)',
+                    border: '1px solid rgba(96, 165, 250, 0.25)',
                   }
                 }}>
                   <CardContent sx={{ p: 3 }}>
@@ -728,46 +730,48 @@ const ParentDashboard = () => {
                         sx={{
                           width: 60,
                           height: 60,
-                          bgcolor: '#3a86ff',
+                          bgcolor: alpha('#60a5fa', 0.2),
+                          color: '#60a5fa',
                           fontSize: '1.5rem',
-                          mr: 2
+                          mr: 2,
+                          border: '1px solid rgba(96, 165, 250, 0.3)',
                         }}
                       >
                         {child.name.charAt(0)}
                       </Avatar>
                       <Box>
-                        <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1a1a1a' }}>
+                        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                           {child.name}
                         </Typography>
-                        <Typography variant="body2" sx={{ color: '#666' }}>
+                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                           Class {child.class} - Section {child.section}
                         </Typography>
                       </Box>
                     </Box>
                     
-                    <Divider sx={{ my: 2 }} />
+                    <Divider sx={{ my: 2, borderColor: 'rgba(255, 255, 255, 0.06)' }} />
                     
                     <Grid container spacing={2}>
                       <Grid size={{xs:6}}>
-                        <Typography variant="body2" sx={{ color: '#666', mb: 0.5 }}>
+                        <Typography variant="body2" sx={{ color: 'text.secondary', mb: 0.5 }}>
                           Average Grade
                         </Typography>
-                        <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#22c55e' }}>
+                        <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#34d399' }}>
                           {child.avgGrade}%
                         </Typography>
                       </Grid>
                       <Grid size={{xs:6}}>
-                        <Typography variant="body2" sx={{ color: '#666', mb: 0.5 }}>
+                        <Typography variant="body2" sx={{ color: 'text.secondary', mb: 0.5 }}>
                           Attendance
                         </Typography>
-                        <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#3b82f6' }}>
+                        <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#60a5fa' }}>
                           {child.attendance}%
                         </Typography>
                       </Grid>
                     </Grid>
                     
                     <Box sx={{ mt: 2 }}>
-                      <Typography variant="body2" sx={{ color: '#666', mb: 1 }}>
+                      <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1 }}>
                         Subjects ({child.subjects.length})
                       </Typography>
                       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
@@ -777,8 +781,9 @@ const ParentDashboard = () => {
                             label={subject}
                             size="small"
                             sx={{ 
-                              bgcolor: '#f0f9ff', 
-                              color: '#0369a1',
+                              bgcolor: 'rgba(96, 165, 250, 0.1)', 
+                              color: '#60a5fa',
+                              border: '1px solid rgba(96, 165, 250, 0.2)',
                               fontWeight: 500
                             }}
                           />
@@ -787,14 +792,18 @@ const ParentDashboard = () => {
                           <Chip
                             label={`+${child.subjects.length - 3} more`}
                             size="small"
-                            sx={{ bgcolor: '#f3f4f6', color: '#6b7280' }}
+                            sx={{ 
+                              bgcolor: 'rgba(255, 255, 255, 0.05)', 
+                              color: 'text.secondary',
+                              border: '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
                           />
                         )}
                       </Box>
                     </Box>
                     
                     <Box sx={{ mt: 2 }}>
-                      <Typography variant="body2" sx={{ color: '#666', mb: 1 }}>
+                      <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1 }}>
                         Achievements
                       </Typography>
                       {child.achievements.map((achievement, index) => (
@@ -806,8 +815,10 @@ const ParentDashboard = () => {
                           sx={{ 
                             mr: 1, 
                             mb: 1,
-                            bgcolor: '#fef3c7',
-                            color: '#92400e'
+                            bgcolor: 'rgba(251, 191, 36, 0.1)',
+                            color: '#fbbf24',
+                            border: '1px solid rgba(251, 191, 36, 0.2)',
+                            '& .MuiChip-icon': { color: '#fbbf24' }
                           }}
                         />
                       ))}
@@ -822,13 +833,14 @@ const ParentDashboard = () => {
     );
   };
 
+
   // Grades View Section
   const renderGradesView = () => {
     const { recentGrades } = dashboardData;
 
     return (
       <Box sx={{ p: 3 }}>
-        <Typography variant="h4" sx={{ mb: 3, fontWeight: 'bold', color: '#1a1a1a' }}>
+        <Typography variant="h4" sx={{ mb: 3, fontWeight: 'bold' }}>
           Grades & Progress
         </Typography>
         
@@ -841,12 +853,12 @@ const ParentDashboard = () => {
                 transition={{ duration: 0.5 }}
               >                <Card sx={{ 
                   borderRadius: 3, 
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-                  border: '1px solid rgba(0,0,0,0.06)',
-                  backgroundColor: '#ffffff !important',
-                  background: '#ffffff !important',
+                  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.6)',
+                  border: '1px solid rgba(255, 255, 255, 0.06)',
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  backdropFilter: 'blur(10px)',
                   '&:hover': {
-                    boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
+                    boxShadow: '0 8px 30px rgba(0, 0, 0, 0.7)',
                     transform: 'translateY(-2px)'
                   },
                   transition: 'all 0.3s ease'
@@ -854,36 +866,37 @@ const ParentDashboard = () => {
                   <CardContent sx={{ p: 3 }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
                       <Box>
-                        <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1a1a1a' }}>
+                        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                           {grade.subject}
                         </Typography>
-                        <Typography variant="body2" sx={{ color: '#666' }}>
+                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                           {grade.studentName}
                         </Typography>
                       </Box>
                       <Chip
                         label={grade.grade}
                         sx={{
-                          bgcolor: grade.grade.startsWith('A') ? '#dcfce7' : grade.grade.startsWith('B') ? '#dbeafe' : '#fef3c7',
-                          color: grade.grade.startsWith('A') ? '#166534' : grade.grade.startsWith('B') ? '#1e40af' : '#92400e',
+                          bgcolor: grade.grade.startsWith('A') ? 'rgba(52, 211, 153, 0.15)' : grade.grade.startsWith('B') ? 'rgba(96, 165, 250, 0.15)' : 'rgba(251, 191, 36, 0.15)',
+                          color: grade.grade.startsWith('A') ? '#34d399' : grade.grade.startsWith('B') ? '#60a5fa' : '#fbbf24',
+                          border: `1px solid ${grade.grade.startsWith('A') ? 'rgba(52, 211, 153, 0.3)' : grade.grade.startsWith('B') ? 'rgba(96, 165, 250, 0.3)' : 'rgba(251, 191, 36, 0.3)'}`,
                           fontWeight: 'bold'
                         }}
                       />
                     </Box>
                     
-                    <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1, color: '#1a1a1a' }}>
+                    <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
                       {grade.assignment}
                     </Typography>
                     
-                    <Typography variant="body2" sx={{ color: '#666', mb: 2 }}>
+                    <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
                       {grade.feedback}
                     </Typography>
                     
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Typography variant="body2" sx={{ color: '#666' }}>
+                      <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                         {grade.teacher}
                       </Typography>
-                      <Typography variant="body2" sx={{ color: '#666' }}>
+                      <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                         {new Date(grade.date).toLocaleDateString()}
                       </Typography>
                     </Box>
@@ -897,31 +910,32 @@ const ParentDashboard = () => {
     );
   };
 
+
   // Assignments View Section
   const renderAssignmentsView = () => {
     const { assignments } = dashboardData;
 
     const getStatusColor = (status) => {
       switch (status) {
-        case 'pending': return '#ef4444';
-        case 'in_progress': return '#f59e0b';
-        case 'completed': return '#22c55e';
-        default: return '#6b7280';
+        case 'pending': return '#f87171';
+        case 'in_progress': return '#fbbf24';
+        case 'completed': return '#34d399';
+        default: return '#9ca3af';
       }
     };
 
     const getPriorityColor = (priority) => {
       switch (priority) {
-        case 'high': return '#ef4444';
-        case 'medium': return '#f59e0b';
-        case 'low': return '#22c55e';
-        default: return '#6b7280';
+        case 'high': return '#f87171';
+        case 'medium': return '#fbbf24';
+        case 'low': return '#34d399';
+        default: return '#9ca3af';
       }
     };
 
     return (
       <Box sx={{ p: 3 }}>
-        <Typography variant="h4" sx={{ mb: 3, fontWeight: 'bold', color: '#1a1a1a' }}>
+        <Typography variant="h4" sx={{ mb: 3, fontWeight: 'bold' }}>
           Assignments
         </Typography>
         
@@ -934,21 +948,21 @@ const ParentDashboard = () => {
                 transition={{ duration: 0.5 }}
               >                <Card sx={{ 
                   borderRadius: 3, 
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-                  border: `2px solid ${getPriorityColor(assignment.priority)}20`,
-                  backgroundColor: '#ffffff !important',
-                  background: '#ffffff !important',
+                  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.6)',
+                  border: `1px solid ${alpha(getPriorityColor(assignment.priority), 0.2)}`,
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  backdropFilter: 'blur(10px)',
                   '&:hover': {
-                    boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
+                    boxShadow: '0 8px 30px rgba(0, 0, 0, 0.7)',
                   }
                 }}>
                   <CardContent sx={{ p: 3 }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
                       <Box sx={{ flexGrow: 1 }}>
-                        <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1a1a1a', mb: 0.5 }}>
+                        <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 0.5 }}>
                           {assignment.title}
                         </Typography>
-                        <Typography variant="body2" sx={{ color: '#666' }}>
+                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                           {assignment.studentName} • {assignment.subject}
                         </Typography>
                       </Box>
@@ -957,8 +971,9 @@ const ParentDashboard = () => {
                           label={assignment.priority}
                           size="small"
                           sx={{
-                            bgcolor: `${getPriorityColor(assignment.priority)}20`,
+                            bgcolor: alpha(getPriorityColor(assignment.priority), 0.15),
                             color: getPriorityColor(assignment.priority),
+                            border: `1px solid ${alpha(getPriorityColor(assignment.priority), 0.3)}`,
                             fontWeight: 'bold',
                             textTransform: 'capitalize'
                           }}
@@ -967,8 +982,9 @@ const ParentDashboard = () => {
                           label={assignment.status}
                           size="small"
                           sx={{
-                            bgcolor: `${getStatusColor(assignment.status)}20`,
+                            bgcolor: alpha(getStatusColor(assignment.status), 0.15),
                             color: getStatusColor(assignment.status),
+                            border: `1px solid ${alpha(getStatusColor(assignment.status), 0.3)}`,
                             fontWeight: 'bold',
                             textTransform: 'capitalize'
                           }}
@@ -976,17 +992,17 @@ const ParentDashboard = () => {
                       </Stack>
                     </Box>
                     
-                    <Typography variant="body2" sx={{ color: '#666', mb: 2 }}>
+                    <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
                       {assignment.description}
                     </Typography>
                     
                     {assignment.progress && (
                       <Box sx={{ mb: 2 }}>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                          <Typography variant="body2" sx={{ color: '#666' }}>
+                          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                             Progress
                           </Typography>
-                          <Typography variant="body2" sx={{ color: '#666' }}>
+                          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                             {assignment.progress}%
                           </Typography>
                         </Box>
@@ -996,7 +1012,7 @@ const ParentDashboard = () => {
                           sx={{
                             height: 8,
                             borderRadius: 4,
-                            bgcolor: '#f3f4f6',
+                            bgcolor: 'rgba(255, 255, 255, 0.05)',
                             '& .MuiLinearProgress-bar': {
                               borderRadius: 4,
                               bgcolor: getStatusColor(assignment.status)
@@ -1007,17 +1023,17 @@ const ParentDashboard = () => {
                     )}
                     
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
-                      <Typography variant="body2" sx={{ color: '#666' }}>
+                      <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                         Due: {new Date(assignment.dueDate).toLocaleDateString()}
                       </Typography>
-                      <Typography variant="body2" sx={{ color: '#666' }}>
+                      <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                         {assignment.estimatedTime}
                       </Typography>
                     </Box>
                     
                     {assignment.grade && (
-                      <Box sx={{ mt: 2, p: 2, bgcolor: '#f0fdf4', borderRadius: 2 }}>
-                        <Typography variant="body2" sx={{ color: '#166534', fontWeight: 'bold' }}>
+                      <Box sx={{ mt: 2, p: 2, bgcolor: 'rgba(52, 211, 153, 0.1)', borderRadius: 2, border: '1px solid rgba(52, 211, 153, 0.2)' }}>
+                        <Typography variant="body2" sx={{ color: '#34d399', fontWeight: 'bold' }}>
                           Grade: {assignment.grade}
                         </Typography>
                       </Box>
@@ -1032,13 +1048,14 @@ const ParentDashboard = () => {
     );
   };
 
+
   // Attendance View Section
   const renderAttendanceView = () => {
     const { children } = dashboardData;
 
     return (
       <Box sx={{ p: 3 }}>
-        <Typography variant="h4" sx={{ mb: 3, fontWeight: 'bold', color: '#1a1a1a' }}>
+        <Typography variant="h4" sx={{ mb: 3, fontWeight: 'bold' }}>
           Attendance Records
         </Typography>
         
@@ -1051,10 +1068,10 @@ const ParentDashboard = () => {
                 transition={{ duration: 0.5 }}
               >                <Card sx={{ 
                   borderRadius: 3, 
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-                  border: '2px solid rgba(34, 197, 94, 0.2)',
-                  backgroundColor: '#ffffff !important',
-                  background: '#ffffff !important',
+                  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.6)',
+                  border: '1px solid rgba(52, 211, 153, 0.2)',
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  backdropFilter: 'blur(10px)',
                 }}>
                   <CardContent sx={{ p: 3 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -1062,17 +1079,19 @@ const ParentDashboard = () => {
                         sx={{
                           width: 50,
                           height: 50,
-                          bgcolor: '#22c55e',
-                          mr: 2
+                          bgcolor: alpha('#34d399', 0.2),
+                          color: '#34d399',
+                          mr: 2,
+                          border: '1px solid rgba(52, 211, 153, 0.3)',
                         }}
                       >
                         {child.name.charAt(0)}
                       </Avatar>
                       <Box>
-                        <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1a1a1a' }}>
+                        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                           {child.name}
                         </Typography>
-                        <Typography variant="body2" sx={{ color: '#666' }}>
+                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                           Class {child.class} - Section {child.section}
                         </Typography>
                       </Box>
@@ -1083,7 +1102,7 @@ const ParentDashboard = () => {
                         <Typography variant="body1" sx={{ fontWeight: 600 }}>
                           Overall Attendance
                         </Typography>
-                        <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#22c55e' }}>
+                        <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#34d399' }}>
                           {child.attendance}%
                         </Typography>
                       </Box>
@@ -1093,16 +1112,16 @@ const ParentDashboard = () => {
                         sx={{
                           height: 12,
                           borderRadius: 6,
-                          bgcolor: '#f3f4f6',
+                          bgcolor: 'rgba(255, 255, 255, 0.05)',
                           '& .MuiLinearProgress-bar': {
                             borderRadius: 6,
-                            bgcolor: child.attendance > 90 ? '#22c55e' : child.attendance > 75 ? '#f59e0b' : '#ef4444'
+                            bgcolor: child.attendance > 90 ? '#34d399' : child.attendance > 75 ? '#fbbf24' : '#f87171'
                           }
                         }}
                       />
                     </Box>
                     
-                    <Typography variant="body1" sx={{ fontWeight: 600, mb: 2, color: '#1a1a1a' }}>
+                    <Typography variant="body1" sx={{ fontWeight: 600, mb: 2 }}>
                       Subject-wise Attendance
                     </Typography>
                     
@@ -1111,7 +1130,7 @@ const ParentDashboard = () => {
                       return (
                         <Box key={index} sx={{ mb: 2 }}>
                           <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                            <Typography variant="body2" sx={{ color: '#666' }}>
+                            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                               {subject}
                             </Typography>
                             <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
@@ -1124,10 +1143,10 @@ const ParentDashboard = () => {
                             sx={{
                               height: 6,
                               borderRadius: 3,
-                              bgcolor: '#f3f4f6',
+                              bgcolor: 'rgba(255, 255, 255, 0.05)',
                               '& .MuiLinearProgress-bar': {
                                 borderRadius: 3,
-                                bgcolor: attendance > 90 ? '#22c55e' : attendance > 75 ? '#f59e0b' : '#ef4444'
+                                bgcolor: attendance > 90 ? '#34d399' : attendance > 75 ? '#fbbf24' : '#f87171'
                               }
                             }}
                           />
@@ -1137,14 +1156,14 @@ const ParentDashboard = () => {
                     
                     <Box sx={{ mt: 3, display: 'flex', gap: 2 }}>
                       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <CheckIcon sx={{ color: '#22c55e', fontSize: 16, mr: 0.5 }} />
-                        <Typography variant="body2" sx={{ color: '#22c55e', fontWeight: 500 }}>
+                        <CheckIcon sx={{ color: '#34d399', fontSize: 16, mr: 0.5 }} />
+                        <Typography variant="body2" sx={{ color: '#34d399', fontWeight: 500 }}>
                           Present: 18 days
                         </Typography>
                       </Box>
                       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <WarningIcon sx={{ color: '#ef4444', fontSize: 16, mr: 0.5 }} />
-                        <Typography variant="body2" sx={{ color: '#ef4444', fontWeight: 500 }}>
+                        <WarningIcon sx={{ color: '#f87171', fontSize: 16, mr: 0.5 }} />
+                        <Typography variant="body2" sx={{ color: '#f87171', fontWeight: 500 }}>
                           Absent: 2 days
                         </Typography>
                       </Box>
@@ -1159,13 +1178,14 @@ const ParentDashboard = () => {
     );
   };
 
+
   // Communication View Section
   const renderCommunicationView = () => {
     const { recentFeedback } = dashboardData;
 
     return (
       <Box sx={{ p: 3 }}>
-        <Typography variant="h4" sx={{ mb: 3, fontWeight: 'bold', color: '#1a1a1a' }}>
+        <Typography variant="h4" sx={{ mb: 3, fontWeight: 'bold' }}>
           Teacher Communication
         </Typography>
         
@@ -1178,18 +1198,18 @@ const ParentDashboard = () => {
                 transition={{ duration: 0.5 }}
               >                <Card sx={{ 
                   borderRadius: 3, 
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-                  border: `2px solid ${feedback.type === 'positive' ? '#22c55e' : '#f59e0b'}20`,
-                  backgroundColor: '#ffffff !important',
-                  background: '#ffffff !important',
+                  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.6)',
+                  border: `1px solid ${feedback.type === 'positive' ? 'rgba(52, 211, 153, 0.2)' : 'rgba(251, 191, 36, 0.2)'}`,
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  backdropFilter: 'blur(10px)',
                 }}>
                   <CardContent sx={{ p: 3 }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
                       <Box>
-                        <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1a1a1a' }}>
+                        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                           {feedback.subject}
                         </Typography>
-                        <Typography variant="body2" sx={{ color: '#666' }}>
+                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                           {feedback.teacherName} • {feedback.studentName}
                         </Typography>
                       </Box>
@@ -1197,15 +1217,16 @@ const ParentDashboard = () => {
                         label={feedback.type}
                         size="small"
                         sx={{
-                          bgcolor: feedback.type === 'positive' ? '#dcfce7' : '#fef3c7',
-                          color: feedback.type === 'positive' ? '#166534' : '#92400e',
+                          bgcolor: feedback.type === 'positive' ? 'rgba(52, 211, 153, 0.15)' : 'rgba(251, 191, 36, 0.15)',
+                          color: feedback.type === 'positive' ? '#34d399' : '#fbbf24',
+                          border: `1px solid ${feedback.type === 'positive' ? 'rgba(52, 211, 153, 0.3)' : 'rgba(251, 191, 36, 0.3)'}`,
                           fontWeight: 'bold',
                           textTransform: 'capitalize'
                         }}
                       />
                     </Box>
                     
-                    <Typography variant="body1" sx={{ color: '#1a1a1a', mb: 2, lineHeight: 1.6 }}>
+                    <Typography variant="body1" sx={{ mb: 2, lineHeight: 1.6 }}>
                       {feedback.feedback}
                     </Typography>
                     
@@ -1216,12 +1237,12 @@ const ParentDashboard = () => {
                             key={index}
                             sx={{
                               fontSize: 16,
-                              color: index < feedback.rating ? '#fbbf24' : '#d1d5db'
+                              color: index < feedback.rating ? '#fbbf24' : 'rgba(255, 255, 255, 0.15)'
                             }}
                           />
                         ))}
                       </Box>
-                      <Typography variant="body2" sx={{ color: '#666' }}>
+                      <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                         {new Date(feedback.date).toLocaleDateString()}
                       </Typography>
                     </Box>
@@ -1232,8 +1253,15 @@ const ParentDashboard = () => {
           ))}
         </Grid>
         
-        <Paper sx={{ mt: 4, p: 3, borderRadius: 3, bgcolor: '#f8fafc' }}>
-          <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2, color: '#1a1a1a' }}>
+        <Paper sx={{ 
+          mt: 4, 
+          p: 3, 
+          borderRadius: 3, 
+          bgcolor: 'rgba(255, 255, 255, 0.03)',
+          backdropFilter: 'blur(10px)',
+          border: '1px solid rgba(255, 255, 255, 0.06)',
+        }}>
+          <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
             Quick Actions
           </Typography>
           <Stack direction="row" spacing={2} flexWrap="wrap">
@@ -1241,8 +1269,10 @@ const ParentDashboard = () => {
               variant="contained"
               startIcon={<MessageIcon />}
               sx={{ 
-                bgcolor: '#3b82f6',
-                '&:hover': { bgcolor: '#2563eb' }
+                bgcolor: alpha('#60a5fa', 0.2),
+                color: '#60a5fa',
+                border: '1px solid rgba(96, 165, 250, 0.3)',
+                '&:hover': { bgcolor: alpha('#60a5fa', 0.3) }
               }}
             >
               Send Message
@@ -1251,9 +1281,9 @@ const ParentDashboard = () => {
               variant="outlined"
               startIcon={<ScheduleIcon />}
               sx={{ 
-                borderColor: '#3b82f6',
-                color: '#3b82f6',
-                '&:hover': { borderColor: '#2563eb', bgcolor: '#eff6ff' }
+                borderColor: 'rgba(96, 165, 250, 0.3)',
+                color: '#60a5fa',
+                '&:hover': { borderColor: 'rgba(96, 165, 250, 0.5)', bgcolor: 'rgba(96, 165, 250, 0.05)' }
               }}
             >
               Schedule Meeting
@@ -1264,22 +1294,23 @@ const ParentDashboard = () => {
     );
   };
 
+
   // Events View Section
   const renderEventsView = () => {
     const { upcomingEvents } = dashboardData;
 
     const getEventTypeColor = (type) => {
       switch (type) {
-        case 'meeting': return '#3b82f6';
-        case 'school_event': return '#22c55e';
-        case 'competition': return '#f59e0b';
-        default: return '#6b7280';
+        case 'meeting': return '#60a5fa';
+        case 'school_event': return '#34d399';
+        case 'competition': return '#fbbf24';
+        default: return '#9ca3af';
       }
     };
 
     return (
       <Box sx={{ p: 3 }}>
-        <Typography variant="h4" sx={{ mb: 3, fontWeight: 'bold', color: '#1a1a1a' }}>
+        <Typography variant="h4" sx={{ mb: 3, fontWeight: 'bold' }}>
           Events & Meetings
         </Typography>
         
@@ -1291,28 +1322,29 @@ const ParentDashboard = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >                <Card sx={{ 
-                  backgroundColor: '#ffffff !important',
-                  background: '#ffffff !important',
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  backdropFilter: 'blur(10px)',
                   borderRadius: 3, 
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-                  border: `2px solid ${getEventTypeColor(event.type)}20`,
+                  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.6)',
+                  border: `1px solid ${alpha(getEventTypeColor(event.type), 0.2)}`,
                   '&:hover': {
-                    boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
+                    boxShadow: '0 8px 30px rgba(0, 0, 0, 0.7)',
                     transform: 'translateY(-2px)'
                   },
                   transition: 'all 0.3s ease'
                 }}>
                   <CardContent sx={{ p: 3 }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                      <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1a1a1a', flexGrow: 1 }}>
+                      <Typography variant="h6" sx={{ fontWeight: 'bold', flexGrow: 1 }}>
                         {event.title}
                       </Typography>
                       <Chip
                         label={event.type.replace('_', ' ')}
                         size="small"
                         sx={{
-                          bgcolor: `${getEventTypeColor(event.type)}20`,
+                          bgcolor: alpha(getEventTypeColor(event.type), 0.15),
                           color: getEventTypeColor(event.type),
+                          border: `1px solid ${alpha(getEventTypeColor(event.type), 0.3)}`,
                           fontWeight: 'bold',
                           textTransform: 'capitalize',
                           ml: 1
@@ -1320,32 +1352,32 @@ const ParentDashboard = () => {
                       />
                     </Box>
                     
-                    <Typography variant="body2" sx={{ color: '#666', mb: 2, lineHeight: 1.6 }}>
+                    <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2, lineHeight: 1.6 }}>
                       {event.description}
                     </Typography>
                     
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                      <CalendarIcon sx={{ fontSize: 16, color: '#666', mr: 1 }} />
-                      <Typography variant="body2" sx={{ color: '#666' }}>
+                      <CalendarIcon sx={{ fontSize: 16, color: 'text.secondary', mr: 1 }} />
+                      <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                         {new Date(event.date).toLocaleDateString()}
                       </Typography>
                     </Box>
                     
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                      <ScheduleIcon sx={{ fontSize: 16, color: '#666', mr: 1 }} />
-                      <Typography variant="body2" sx={{ color: '#666' }}>
+                      <ScheduleIcon sx={{ fontSize: 16, color: 'text.secondary', mr: 1 }} />
+                      <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                         {event.time}
                       </Typography>
                     </Box>
                     
                     {event.location && (
-                      <Typography variant="body2" sx={{ color: '#666', mb: 2 }}>
+                      <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
                         📍 {event.location}
                       </Typography>
                     )}
                     
                     {event.studentName && (
-                      <Typography variant="body2" sx={{ color: '#666', mb: 2 }}>
+                      <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
                         👨‍🎓 {event.studentName}
                       </Typography>
                     )}
@@ -1355,8 +1387,9 @@ const ParentDashboard = () => {
                         label={event.status || 'upcoming'}
                         size="small"
                         sx={{
-                          bgcolor: event.status === 'confirmed' ? '#dcfce7' : '#fef3c7',
-                          color: event.status === 'confirmed' ? '#166534' : '#92400e',
+                          bgcolor: event.status === 'confirmed' ? 'rgba(52, 211, 153, 0.15)' : 'rgba(251, 191, 36, 0.15)',
+                          color: event.status === 'confirmed' ? '#34d399' : '#fbbf24',
+                          border: `1px solid ${event.status === 'confirmed' ? 'rgba(52, 211, 153, 0.3)' : 'rgba(251, 191, 36, 0.3)'}`,
                           fontWeight: 'bold',
                           textTransform: 'capitalize'
                         }}
@@ -1366,8 +1399,9 @@ const ParentDashboard = () => {
                           label={event.priority}
                           size="small"
                           sx={{
-                            bgcolor: event.priority === 'high' ? '#fee2e2' : event.priority === 'medium' ? '#fef3c7' : '#dcfce7',
-                            color: event.priority === 'high' ? '#dc2626' : event.priority === 'medium' ? '#92400e' : '#166534',
+                            bgcolor: event.priority === 'high' ? 'rgba(248, 113, 113, 0.15)' : event.priority === 'medium' ? 'rgba(251, 191, 36, 0.15)' : 'rgba(52, 211, 153, 0.15)',
+                            color: event.priority === 'high' ? '#f87171' : event.priority === 'medium' ? '#fbbf24' : '#34d399',
+                            border: `1px solid ${event.priority === 'high' ? 'rgba(248, 113, 113, 0.3)' : event.priority === 'medium' ? 'rgba(251, 191, 36, 0.3)' : 'rgba(52, 211, 153, 0.3)'}`,
                             fontWeight: 'bold',
                             textTransform: 'capitalize'
                           }}
@@ -1436,4 +1470,3 @@ const ParentDashboard = () => {
 };
 
 export default ParentDashboard;
-

@@ -87,7 +87,7 @@ const StudentDashboard = () => {
       assignments: 5,
       grade: 'A',
       progress: 85,
-      color: '#4285F4',
+      color: '#60a5fa',
       credits: 3,
       room: 'Lab 204'
     },
@@ -100,7 +100,7 @@ const StudentDashboard = () => {
       assignments: 8,
       grade: 'B+',
       progress: 78,
-      color: '#34A853',
+      color: '#34d399',
       credits: 4,
       room: 'Room 301'
     },
@@ -113,7 +113,7 @@ const StudentDashboard = () => {
       assignments: 4,
       grade: 'A',
       progress: 92,
-      color: '#FBBC04',
+      color: '#fbbf24',
       credits: 3,
       room: 'Room 205'
     },
@@ -126,7 +126,7 @@ const StudentDashboard = () => {
       assignments: 6,
       grade: 'B',
       progress: 72,
-      color: '#EA4335',
+      color: '#f87171',
       credits: 4,
       room: 'Lab 101'
     }
@@ -278,7 +278,8 @@ const StudentDashboard = () => {
     recentGrades: mockGrades.slice(0, 3),
     upcomingAssignments: mockAssignments.filter(a => a.status === 'pending'),
     allAssignments: mockAssignments,
-    allGrades: mockGrades,    recentFeedback: [
+    allGrades: mockGrades,
+    recentFeedback: [
       {
         id: 1,
         from: 'Dr. Smith',
@@ -349,6 +350,7 @@ const StudentDashboard = () => {
     { key: 'attendance', label: 'Attendance', icon: <AttendanceIcon /> },
     { key: 'feedback', label: 'Feedback', icon: <FeedbackIcon /> },
   ];
+
   const StatCard = ({ title, value, icon, color, subtitle, trend }) => (
     <motion.div
       whileHover={{ scale: 1.02 }}
@@ -362,10 +364,11 @@ const StudentDashboard = () => {
           height: '100%',
           position: 'relative',
           overflow: 'hidden',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+          backdropFilter: 'blur(10px)',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.6)',
           transition: 'all 0.3s ease',
           '&:hover': {
-            boxShadow: '0 8px 30px rgba(0,0,0,0.15)',
+            boxShadow: '0 8px 30px rgba(0,0,0,0.7)',
             transform: 'translateY(-2px)',
           }
         }}
@@ -397,11 +400,11 @@ const StudentDashboard = () => {
           <Typography variant="h4" sx={{ fontWeight: 'bold', color: color, mb: 0.5 }}>
             {value}
           </Typography>
-          <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5, color: '#1a1a1a' }}>
+          <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
             {title}
           </Typography>
           {subtitle && (
-            <Typography variant="body2" sx={{ color: '#555555', fontWeight: 500 }}>
+            <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>
               {subtitle}
             </Typography>
           )}
@@ -409,6 +412,7 @@ const StudentDashboard = () => {
       </Card>
     </motion.div>
   );
+
   const CourseCard = ({ course }) => (
     <motion.div
       whileHover={{ scale: 1.02 }}
@@ -418,12 +422,13 @@ const StudentDashboard = () => {
         sx={{
           borderRadius: 3,
           height: '100%',
-          background: 'white',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-          border: `2px solid ${alpha(course.color, 0.3)}`,
+          background: 'rgba(255, 255, 255, 0.03)',
+          backdropFilter: 'blur(10px)',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.6)',
+          border: `1px solid ${alpha(course.color, 0.3)}`,
           transition: 'all 0.3s ease',
           '&:hover': {
-            boxShadow: '0 8px 30px rgba(0,0,0,0.15)',
+            boxShadow: '0 8px 30px rgba(0,0,0,0.7)',
             transform: 'translateY(-2px)',
           }
         }}
@@ -443,10 +448,10 @@ const StudentDashboard = () => {
               {course.code.substring(0, 2)}
             </Avatar>
             <Box sx={{ flex: 1 }}>
-              <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 0.5, color: '#1a1a1a' }}>
+              <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 0.5 }}>
                 {course.name}
               </Typography>
-              <Typography variant="body2" sx={{ color: '#666666', fontWeight: 500 }}>
+              <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>
                 {course.code} • {course.credits} Credits
               </Typography>
             </Box>
@@ -462,7 +467,7 @@ const StudentDashboard = () => {
           </Box>
           
           <Box sx={{ mb: 2 }}>
-            <Typography variant="body2" sx={{ mb: 1, color: '#333333', fontWeight: 500 }}>
+            <Typography variant="body2" sx={{ mb: 1, color: 'text.secondary', fontWeight: 500 }}>
               Progress: {course.progress}%
             </Typography>
             <LinearProgress
@@ -485,19 +490,19 @@ const StudentDashboard = () => {
           <Stack spacing={1}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <ProfileIcon sx={{ fontSize: 16, color: course.color }} />
-              <Typography variant="body2" sx={{ color: '#444444', fontWeight: 500 }}>
+              <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>
                 {course.instructor}
               </Typography>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <ScheduleIcon sx={{ fontSize: 16, color: course.color }} />
-              <Typography variant="body2" sx={{ color: '#444444', fontWeight: 500 }}>
+              <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>
                 {course.schedule}
               </Typography>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <AssignmentIcon sx={{ fontSize: 16, color: course.color }} />
-              <Typography variant="body2" sx={{ color: '#444444', fontWeight: 500 }}>
+              <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>
                 {course.assignments} assignments
               </Typography>
             </Box>
@@ -506,18 +511,19 @@ const StudentDashboard = () => {
       </Card>
     </motion.div>
   );
+
   const AssignmentCard = ({ assignment }) => {
     const getPriorityColor = (priority) => {
       switch (priority) {
-        case 'high': return '#f44336';
-        case 'medium': return '#ff9800';
-        case 'low': return '#4caf50';
-        default: return '#2196f3';
+        case 'high': return '#f87171';
+        case 'medium': return '#fbbf24';
+        case 'low': return '#34d399';
+        default: return '#60a5fa';
       }
     };
 
     const getStatusColor = (status) => {
-      return status === 'completed' ? '#4caf50' : '#ff9800';
+      return status === 'completed' ? '#34d399' : '#fbbf24';
     };
 
     return (
@@ -525,12 +531,13 @@ const StudentDashboard = () => {
         sx={{
           mb: 2,
           borderRadius: 3,
-          border: `2px solid ${alpha(getPriorityColor(assignment.priority), 0.3)}`,
-          background: assignment.status === 'completed' ? alpha('#4caf50', 0.08) : 'white',
+          border: `1px solid ${alpha(getPriorityColor(assignment.priority), 0.3)}`,
+          background: assignment.status === 'completed' ? alpha('#34d399', 0.05) : 'rgba(255, 255, 255, 0.03)',
+          backdropFilter: 'blur(10px)',
           transition: 'all 0.3s ease',
-          boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+          boxShadow: '0 2px 12px rgba(0,0,0,0.6)',
           '&:hover': {
-            boxShadow: '0 6px 20px rgba(0,0,0,0.15)',
+            boxShadow: '0 6px 20px rgba(0,0,0,0.7)',
             transform: 'translateY(-2px)',
           }
         }}
@@ -538,12 +545,13 @@ const StudentDashboard = () => {
         <CardContent sx={{ p: 3 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
             <Box sx={{ flex: 1 }}>
-              <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1, color: '#1a1a1a' }}>
+              <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
                 {assignment.title}
               </Typography>
-              <Typography variant="body2" sx={{ color: "#444444", fontWeight: 600, mb: 1 }}>
+              <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 600, mb: 1 }}>
                 {assignment.subject} • {assignment.course}
-              </Typography>              <Typography variant="body2" sx={{ color: '#222222', lineHeight: 1.5, fontWeight: 400 }}>
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.5, fontWeight: 400 }}>
                 {assignment.description}
               </Typography>
             </Box>
@@ -575,13 +583,13 @@ const StudentDashboard = () => {
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                 <CalendarIcon sx={{ fontSize: 16, color: getPriorityColor(assignment.priority) }} />
-                <Typography variant="body2" sx={{ color: '#333333', fontWeight: 500 }}>
+                <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>
                   Due: {new Date(assignment.dueDate).toLocaleDateString()}
                 </Typography>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                <StarIcon sx={{ fontSize: 16, color: '#ff9800' }} />
-                <Typography variant="body2" sx={{ color: '#333333', fontWeight: 500 }}>
+                <StarIcon sx={{ fontSize: 16, color: '#fbbf24' }} />
+                <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>
                   {assignment.points} pts
                 </Typography>
               </Box>
@@ -590,8 +598,8 @@ const StudentDashboard = () => {
                   label={`Grade: ${assignment.grade}`}
                   size="small"
                   sx={{
-                    bgcolor: alpha('#4caf50', 0.15),
-                    color: '#4caf50',
+                    bgcolor: alpha('#34d399', 0.15),
+                    color: '#34d399',
                     fontWeight: 'bold'
                   }}
                 />
@@ -639,9 +647,9 @@ const StudentDashboard = () => {
                     sx={{
                       width: 64,
                       height: 64,
-                      bgcolor: 'primary.main',
+                      bgcolor: '#a78bfa',
                       fontSize: '1.5rem',
-                      boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
+                      boxShadow: '0 4px 15px rgba(167, 139, 250, 0.3)'
                     }}
                   >
                     {profile.firstName?.[0]}{profile.lastName?.[0]}
@@ -650,7 +658,7 @@ const StudentDashboard = () => {
                     <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 0.5 }}>
                       Welcome back, {profile.firstName}!
                     </Typography>
-                    <Typography variant="h6" sx={{ color: "#555555", fontWeight: 500 }}>
+                    <Typography variant="h6" sx={{ color: 'text.secondary', fontWeight: 500 }}>
                       {profile.class} - Section {profile.section}
                     </Typography>
                     <Chip
@@ -689,7 +697,7 @@ const StudentDashboard = () => {
                 title="Enrolled Courses"
                 value={stats.totalCourses}
                 icon={<SchoolIcon />}
-                color="#2196F3"
+                color="#60a5fa"
                 subtitle="Active this semester"
                 trend="Current"
               />
@@ -699,7 +707,7 @@ const StudentDashboard = () => {
                 title="Completed Tasks"
                 value={stats.completedAssignments}
                 icon={<CheckIcon />}
-                color="#4CAF50"
+                color="#34d399"
                 subtitle={`${stats.pendingAssignments} pending`}
                 trend="On Track"
               />
@@ -709,7 +717,7 @@ const StudentDashboard = () => {
                 title="Average Grade"
                 value={stats.averageGrade}
                 icon={<StarIcon />}
-                color="#FF9800"
+                color="#fbbf24"
                 subtitle="Overall performance"
                 trend="Excellent"
               />
@@ -719,7 +727,7 @@ const StudentDashboard = () => {
                 title="Attendance"
                 value={`${stats.attendanceRate}%`}
                 icon={<AttendanceIcon />}
-                color="#9C27B0"
+                color="#c084fc"
                 subtitle="This semester"
                 trend="Great"
               />
@@ -729,11 +737,18 @@ const StudentDashboard = () => {
           {/* Recent Activity */}
           <Grid container spacing={3}>
             <Grid size={{xs:12,md:6}}>
-              <Card sx={{ height: '100%', borderRadius: 3, boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
+              <Card sx={{
+                height: '100%',
+                borderRadius: 3,
+                background: 'rgba(255, 255, 255, 0.03)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.06)',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.6)'
+              }}>
                 <CardContent>
                   <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <GradesIcon color="primary" />
+                      <GradesIcon sx={{ color: '#a78bfa' }} />
                       <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                         Recent Grades
                       </Typography>
@@ -746,7 +761,7 @@ const StudentDashboard = () => {
                     {dashboardData.recentGrades.map((grade, index) => (
                       <ListItem key={index} sx={{ px: 0 }}>
                         <ListItemIcon sx={{ minWidth: 32 }}>
-                          <StarIcon sx={{ color: '#ff9800', fontSize: 20 }} />
+                          <StarIcon sx={{ color: '#fbbf24', fontSize: 20 }} />
                         </ListItemIcon>
                         <ListItemText
                           primary={`${grade.assignment} - ${grade.grade}`}
@@ -766,11 +781,18 @@ const StudentDashboard = () => {
               </Card>
             </Grid>
             <Grid size={{xs:12,md:6}}>
-              <Card sx={{ height: '100%', borderRadius: 3, boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
+              <Card sx={{
+                height: '100%',
+                borderRadius: 3,
+                background: 'rgba(255, 255, 255, 0.03)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.06)',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.6)'
+              }}>
                 <CardContent>
                   <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <AssignmentIcon color="warning" />
+                      <AssignmentIcon sx={{ color: '#fbbf24' }} />
                       <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                         Upcoming Assignments
                       </Typography>
@@ -783,7 +805,7 @@ const StudentDashboard = () => {
                     {dashboardData.upcomingAssignments.slice(0, 3).map((assignment, index) => (
                       <ListItem key={index} sx={{ px: 0 }}>
                         <ListItemIcon sx={{ minWidth: 32 }}>
-                          <TimeIcon sx={{ color: '#ff9800', fontSize: 20 }} />
+                          <TimeIcon sx={{ color: '#fbbf24', fontSize: 20 }} />
                         </ListItemIcon>
                         <ListItemText
                           primary={assignment.title}
@@ -822,32 +844,34 @@ const StudentDashboard = () => {
       </Grid>
     </Box>
   );
+
   const renderAssignmentsContent = () => (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h4" sx={{ mb: 3, fontWeight: 'bold', color: '#1a1a1a' }}>
+      <Typography variant="h4" sx={{ mb: 3, fontWeight: 'bold' }}>
         Assignments
       </Typography>
       
       <Tabs 
-        value={0}        sx={{ 
+        value={0}
+        sx={{ 
           mb: 3,
           '& .MuiTab-root': {
-            color: '#444444',
+            color: 'text.secondary',
             fontWeight: 600,
             textTransform: 'none',
             fontSize: '1rem',
             minHeight: 48,
             '&.Mui-selected': {
-              color: '#1976d2',
+              color: '#a78bfa',
               fontWeight: 'bold'
             },
             '&:hover': {
-              color: '#1976d2',
-              backgroundColor: 'rgba(25, 118, 210, 0.04)'
+              color: '#a78bfa',
+              backgroundColor: 'rgba(167, 139, 250, 0.04)'
             }
           },
           '& .MuiTabs-indicator': {
-            backgroundColor: '#1976d2',
+            backgroundColor: '#a78bfa',
             height: 3,
             borderRadius: '3px 3px 0 0'
           }
@@ -865,9 +889,10 @@ const StudentDashboard = () => {
       </Box>
     </Box>
   );
+
   const renderGradesContent = () => (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h4" sx={{ mb: 3, fontWeight: 'bold', color: '#1a1a1a' }}>
+      <Typography variant="h4" sx={{ mb: 3, fontWeight: 'bold' }}>
         Grades & Progress
       </Typography>
       
@@ -876,20 +901,22 @@ const StudentDashboard = () => {
           <Card sx={{ 
             p: 3, 
             textAlign: 'center', 
-            borderRadius: 3, 
-            background: 'linear-gradient(135deg, #2196F3 0%, #1976D2 100%)',
+            borderRadius: 3,
+            background: 'linear-gradient(135deg, rgba(96, 165, 250, 0.15) 0%, rgba(96, 165, 250, 0.05) 100%)',
+            border: '1px solid rgba(96, 165, 250, 0.3)',
+            backdropFilter: 'blur(10px)',
             color: 'white',
-            boxShadow: '0 4px 20px rgba(33, 150, 243, 0.3)',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.6)',
             '&:hover': {
               transform: 'translateY(-4px)',
-              boxShadow: '0 8px 30px rgba(33, 150, 243, 0.4)',
+              boxShadow: '0 8px 30px rgba(0,0,0,0.7)',
             },
             transition: 'all 0.3s ease'
           }}>
-            <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 1 }}>
+            <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 1, color: '#60a5fa' }}>
               {dashboardData.stats.gpa}
             </Typography>
-            <Typography variant="h6" sx={{ fontWeight: 500, opacity: 0.9 }}>
+            <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.secondary' }}>
               Overall GPA
             </Typography>
           </Card>
@@ -899,19 +926,21 @@ const StudentDashboard = () => {
             p: 3, 
             textAlign: 'center', 
             borderRadius: 3,
-            background: 'linear-gradient(135deg, #4CAF50 0%, #388E3C 100%)',
+            background: 'linear-gradient(135deg, rgba(52, 211, 153, 0.15) 0%, rgba(52, 211, 153, 0.05) 100%)',
+            border: '1px solid rgba(52, 211, 153, 0.3)',
+            backdropFilter: 'blur(10px)',
             color: 'white',
-            boxShadow: '0 4px 20px rgba(76, 175, 80, 0.3)',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.6)',
             '&:hover': {
               transform: 'translateY(-4px)',
-              boxShadow: '0 8px 30px rgba(76, 175, 80, 0.4)',
+              boxShadow: '0 8px 30px rgba(0,0,0,0.7)',
             },
             transition: 'all 0.3s ease'
           }}>
-            <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 1 }}>
+            <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 1, color: '#34d399' }}>
               {dashboardData.stats.averageGrade}
             </Typography>
-            <Typography variant="h6" sx={{ fontWeight: 500, opacity: 0.9 }}>
+            <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.secondary' }}>
               Average Grade
             </Typography>
           </Card>
@@ -921,19 +950,21 @@ const StudentDashboard = () => {
             p: 3, 
             textAlign: 'center', 
             borderRadius: 3,
-            background: 'linear-gradient(135deg, #FF9800 0%, #F57C00 100%)',
+            background: 'linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(251, 191, 36, 0.05) 100%)',
+            border: '1px solid rgba(251, 191, 36, 0.3)',
+            backdropFilter: 'blur(10px)',
             color: 'white',
-            boxShadow: '0 4px 20px rgba(255, 152, 0, 0.3)',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.6)',
             '&:hover': {
               transform: 'translateY(-4px)',
-              boxShadow: '0 8px 30px rgba(255, 152, 0, 0.4)',
+              boxShadow: '0 8px 30px rgba(0,0,0,0.7)',
             },
             transition: 'all 0.3s ease'
           }}>
-            <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 1 }}>
+            <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 1, color: '#fbbf24' }}>
               {dashboardData.stats.completedAssignments}
             </Typography>
-            <Typography variant="h6" sx={{ fontWeight: 500, opacity: 0.9 }}>
+            <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.secondary' }}>
               Completed
             </Typography>
           </Card>
@@ -943,19 +974,21 @@ const StudentDashboard = () => {
             p: 3, 
             textAlign: 'center', 
             borderRadius: 3,
-            background: 'linear-gradient(135deg, #F44336 0%, #D32F2F 100%)',
+            background: 'linear-gradient(135deg, rgba(248, 113, 113, 0.15) 0%, rgba(248, 113, 113, 0.05) 100%)',
+            border: '1px solid rgba(248, 113, 113, 0.3)',
+            backdropFilter: 'blur(10px)',
             color: 'white',
-            boxShadow: '0 4px 20px rgba(244, 67, 54, 0.3)',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.6)',
             '&:hover': {
               transform: 'translateY(-4px)',
-              boxShadow: '0 8px 30px rgba(244, 67, 54, 0.4)',
+              boxShadow: '0 8px 30px rgba(0,0,0,0.7)',
             },
             transition: 'all 0.3s ease'
           }}>
-            <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 1 }}>
+            <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 1, color: '#f87171' }}>
               {dashboardData.stats.pendingAssignments}
             </Typography>
-            <Typography variant="h6" sx={{ fontWeight: 500, opacity: 0.9 }}>
+            <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.secondary' }}>
               Pending
             </Typography>
           </Card>
@@ -964,21 +997,23 @@ const StudentDashboard = () => {
 
       <Card sx={{ 
         borderRadius: 3, 
-        boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-        background: 'white'
+        boxShadow: '0 4px 20px rgba(0,0,0,0.6)',
+        background: 'rgba(255, 255, 255, 0.03)',
+        backdropFilter: 'blur(10px)',
+        border: '1px solid rgba(255, 255, 255, 0.06)'
       }}>
         <CardContent sx={{ p: 3 }}>
-          <Typography variant="h6" sx={{ mb: 3, fontWeight: 'bold', color: '#1a1a1a' }}>
+          <Typography variant="h6" sx={{ mb: 3, fontWeight: 'bold' }}>
             Grade History
           </Typography>
           <TableContainer>
             <Table>
               <TableHead>
                 <TableRow sx={{ 
-                  background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
+                  background: 'rgba(255, 255, 255, 0.03)',
                   '& .MuiTableCell-head': {
                     fontWeight: 'bold',
-                    color: '#495057',
+                    color: 'text.secondary',
                     fontSize: '0.95rem'
                   }
                 }}>
@@ -987,39 +1022,40 @@ const StudentDashboard = () => {
                   <TableCell>Grade</TableCell>
                   <TableCell>Points</TableCell>
                   <TableCell>Date</TableCell>
-                  <TableCell>Feedback</TableCell></TableRow>
+                  <TableCell>Feedback</TableCell>
+                </TableRow>
               </TableHead>
               <TableBody>
                 {dashboardData.allGrades.map((grade, index) => (
                   <TableRow key={grade.id} sx={{
                     '&:nth-of-type(even)': {
-                      backgroundColor: '#f8f9fa'
+                      backgroundColor: 'rgba(255, 255, 255, 0.02)'
                     },
                     '&:hover': {
-                      backgroundColor: alpha('#2196F3', 0.05),
+                      backgroundColor: alpha('#a78bfa', 0.05),
                       cursor: 'pointer'
                     },
                     transition: 'all 0.2s ease'
                   }}>
-                    <TableCell sx={{ fontWeight: 500, color: '#333' }}>{grade.assignment}</TableCell>
-                    <TableCell sx={{ color: '#555', fontWeight: 500 }}>{grade.course}</TableCell>
+                    <TableCell sx={{ fontWeight: 500 }}>{grade.assignment}</TableCell>
+                    <TableCell sx={{ color: 'text.secondary', fontWeight: 500 }}>{grade.course}</TableCell>
                     <TableCell>
                       <Chip 
                         label={grade.grade} 
                         sx={{
-                          background: grade.grade.includes('A') ? 'linear-gradient(135deg, #4CAF50, #388E3C)' :
-                                     grade.grade.includes('B') ? 'linear-gradient(135deg, #FF9800, #F57C00)' :
-                                     'linear-gradient(135deg, #F44336, #D32F2F)',
+                          background: grade.grade.includes('A') ? 'linear-gradient(135deg, #34d399, #059669)' :
+                                     grade.grade.includes('B') ? 'linear-gradient(135deg, #fbbf24, #d97706)' :
+                                     'linear-gradient(135deg, #f87171, #dc2626)',
                           color: 'white',
                           fontWeight: 'bold'
                         }}
                       />
                     </TableCell>
-                    <TableCell sx={{ fontWeight: 600, color: '#333' }}>{grade.points}</TableCell>
-                    <TableCell sx={{ color: '#666' }}>{new Date(grade.date).toLocaleDateString()}</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>{grade.points}</TableCell>
+                    <TableCell sx={{ color: 'text.secondary' }}>{new Date(grade.date).toLocaleDateString()}</TableCell>
                     <TableCell sx={{ maxWidth: 250 }}>
                       <Typography variant="body2" sx={{ 
-                        color: '#555',
+                        color: 'text.secondary',
                         lineHeight: 1.4,
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
@@ -1028,7 +1064,9 @@ const StudentDashboard = () => {
                         WebkitBoxOrient: 'vertical'
                       }} title={grade.feedback}>
                         {grade.feedback}
-                      </Typography>                    </TableCell></TableRow>
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
                 ))}
               </TableBody>
             </Table>
@@ -1037,9 +1075,10 @@ const StudentDashboard = () => {
       </Card>
     </Box>
   );
+
   const renderAttendanceContent = () => (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h4" sx={{ mb: 3, fontWeight: 'bold', color: '#1a1a1a' }}>
+      <Typography variant="h4" sx={{ mb: 3, fontWeight: 'bold' }}>
         Attendance Record
       </Typography>
       
@@ -1049,23 +1088,25 @@ const StudentDashboard = () => {
             p: 4, 
             textAlign: 'center', 
             borderRadius: 3,
-            background: 'linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%)',
+            background: 'linear-gradient(135deg, rgba(192, 132, 252, 0.15) 0%, rgba(192, 132, 252, 0.05) 100%)',
+            border: '1px solid rgba(192, 132, 252, 0.3)',
+            backdropFilter: 'blur(10px)',
             color: 'white',
-            boxShadow: '0 6px 25px rgba(156, 39, 176, 0.3)',
+            boxShadow: '0 6px 25px rgba(0,0,0,0.6)',
             '&:hover': {
               transform: 'translateY(-6px)',
-              boxShadow: '0 12px 35px rgba(156, 39, 176, 0.4)',
+              boxShadow: '0 12px 35px rgba(0,0,0,0.7)',
             },
             transition: 'all 0.4s ease'
           }}>
-            <AttendanceIcon sx={{ fontSize: 40, mb: 2, opacity: 0.9 }} />
-            <Typography variant="h2" sx={{ fontWeight: 'bold', mb: 1 }}>
+            <AttendanceIcon sx={{ fontSize: 40, mb: 2, opacity: 0.9, color: '#c084fc' }} />
+            <Typography variant="h2" sx={{ fontWeight: 'bold', mb: 1, color: '#c084fc' }}>
               {dashboardData.attendance.percentage}%
             </Typography>
-            <Typography variant="h6" sx={{ fontWeight: 500, opacity: 0.9 }}>
+            <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.secondary' }}>
               Attendance Rate
             </Typography>
-            <Typography variant="body2" sx={{ mt: 1, opacity: 0.7 }}>
+            <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary', opacity: 0.7 }}>
               Excellent Performance
             </Typography>
           </Card>
@@ -1075,23 +1116,25 @@ const StudentDashboard = () => {
             p: 4, 
             textAlign: 'center', 
             borderRadius: 3,
-            background: 'linear-gradient(135deg, #4CAF50 0%, #388E3C 100%)',
+            background: 'linear-gradient(135deg, rgba(52, 211, 153, 0.15) 0%, rgba(52, 211, 153, 0.05) 100%)',
+            border: '1px solid rgba(52, 211, 153, 0.3)',
+            backdropFilter: 'blur(10px)',
             color: 'white',
-            boxShadow: '0 6px 25px rgba(76, 175, 80, 0.3)',
+            boxShadow: '0 6px 25px rgba(0,0,0,0.6)',
             '&:hover': {
               transform: 'translateY(-6px)',
-              boxShadow: '0 12px 35px rgba(76, 175, 80, 0.4)',
+              boxShadow: '0 12px 35px rgba(0,0,0,0.7)',
             },
             transition: 'all 0.4s ease'
           }}>
-            <CheckIcon sx={{ fontSize: 40, mb: 2, opacity: 0.9 }} />
-            <Typography variant="h2" sx={{ fontWeight: 'bold', mb: 1 }}>
+            <CheckIcon sx={{ fontSize: 40, mb: 2, opacity: 0.9, color: '#34d399' }} />
+            <Typography variant="h2" sx={{ fontWeight: 'bold', mb: 1, color: '#34d399' }}>
               {dashboardData.attendance.attendedClasses}
             </Typography>
-            <Typography variant="h6" sx={{ fontWeight: 500, opacity: 0.9 }}>
+            <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.secondary' }}>
               Classes Attended
             </Typography>
-            <Typography variant="body2" sx={{ mt: 1, opacity: 0.7 }}>
+            <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary', opacity: 0.7 }}>
               Out of {dashboardData.attendance.totalClasses}
             </Typography>
           </Card>
@@ -1101,23 +1144,25 @@ const StudentDashboard = () => {
             p: 4, 
             textAlign: 'center', 
             borderRadius: 3,
-            background: 'linear-gradient(135deg, #FF5722 0%, #D84315 100%)',
+            background: 'linear-gradient(135deg, rgba(248, 113, 113, 0.15) 0%, rgba(248, 113, 113, 0.05) 100%)',
+            border: '1px solid rgba(248, 113, 113, 0.3)',
+            backdropFilter: 'blur(10px)',
             color: 'white',
-            boxShadow: '0 6px 25px rgba(255, 87, 34, 0.3)',
+            boxShadow: '0 6px 25px rgba(0,0,0,0.6)',
             '&:hover': {
               transform: 'translateY(-6px)',
-              boxShadow: '0 12px 35px rgba(255, 87, 34, 0.4)',
+              boxShadow: '0 12px 35px rgba(0,0,0,0.7)',
             },
             transition: 'all 0.4s ease'
           }}>
-            <WarningIcon sx={{ fontSize: 40, mb: 2, opacity: 0.9 }} />
-            <Typography variant="h2" sx={{ fontWeight: 'bold', mb: 1 }}>
+            <WarningIcon sx={{ fontSize: 40, mb: 2, opacity: 0.9, color: '#f87171' }} />
+            <Typography variant="h2" sx={{ fontWeight: 'bold', mb: 1, color: '#f87171' }}>
               {dashboardData.attendance.totalClasses - dashboardData.attendance.attendedClasses}
             </Typography>
-            <Typography variant="h6" sx={{ fontWeight: 500, opacity: 0.9 }}>
+            <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.secondary' }}>
               Classes Missed
             </Typography>
-            <Typography variant="body2" sx={{ mt: 1, opacity: 0.7 }}>
+            <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary', opacity: 0.7 }}>
               Keep improving!
             </Typography>
           </Card>
@@ -1126,11 +1171,13 @@ const StudentDashboard = () => {
 
       <Card sx={{ 
         borderRadius: 3, 
-        boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-        background: 'white'
+        boxShadow: '0 4px 20px rgba(0,0,0,0.6)',
+        background: 'rgba(255, 255, 255, 0.03)',
+        backdropFilter: 'blur(10px)',
+        border: '1px solid rgba(255, 255, 255, 0.06)'
       }}>
         <CardContent sx={{ p: 3 }}>
-          <Typography variant="h6" sx={{ mb: 3, fontWeight: 'bold', color: '#1a1a1a' }}>
+          <Typography variant="h6" sx={{ mb: 3, fontWeight: 'bold' }}>
             Recent Attendance History
           </Typography>
           <List sx={{ p: 0 }}>
@@ -1141,14 +1188,14 @@ const StudentDashboard = () => {
                   mb: 1,
                   borderRadius: 2,
                   background: record.status === 'present' ? 
-                    'linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(76, 175, 80, 0.05))' :
-                    'linear-gradient(135deg, rgba(244, 67, 54, 0.1), rgba(244, 67, 54, 0.05))',
-                  border: `2px solid ${record.status === 'present' ? 
-                    alpha('#4CAF50', 0.3) : alpha('#F44336', 0.3)}`,
+                    'linear-gradient(135deg, rgba(52, 211, 153, 0.08), rgba(52, 211, 153, 0.03))' :
+                    'linear-gradient(135deg, rgba(248, 113, 113, 0.08), rgba(248, 113, 113, 0.03))',
+                  border: `1px solid ${record.status === 'present' ? 
+                    'rgba(52, 211, 153, 0.3)' : 'rgba(248, 113, 113, 0.3)'}`,
                   '&:hover': {
                     transform: 'translateX(4px)',
                     boxShadow: `0 4px 15px ${record.status === 'present' ? 
-                      'rgba(76, 175, 80, 0.2)' : 'rgba(244, 67, 54, 0.2)'}`,
+                      'rgba(52, 211, 153, 0.2)' : 'rgba(248, 113, 113, 0.2)'}`,
                   },
                   transition: 'all 0.3s ease'
                 }}
@@ -1156,30 +1203,30 @@ const StudentDashboard = () => {
                 <ListItemIcon sx={{ minWidth: 40 }}>
                   {record.status === 'present' ? (
                     <CheckIcon sx={{ 
-                      color: '#4CAF50', 
+                      color: '#34d399', 
                       fontSize: 24,
                       p: 0.5,
                       borderRadius: '50%',
-                      background: alpha('#4CAF50', 0.1)
+                      background: alpha('#34d399', 0.1)
                     }} />
                   ) : (
                     <WarningIcon sx={{ 
-                      color: '#F44336',
+                      color: '#f87171',
                       fontSize: 24,
                       p: 0.5,
                       borderRadius: '50%',
-                      background: alpha('#F44336', 0.1)
+                      background: alpha('#f87171', 0.1)
                     }} />
                   )}
                 </ListItemIcon>
                 <ListItemText
                   primary={
-                    <Typography variant="h6" sx={{ fontWeight: 600, color: '#333' }}>
+                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
                       {record.subject}
                     </Typography>
                   }
                   secondary={
-                    <Typography variant="body2" sx={{ color: '#666', fontWeight: 500 }}>
+                    <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>
                       {new Date(record.date).toLocaleDateString('en-US', { 
                         weekday: 'long', 
                         year: 'numeric', 
@@ -1193,8 +1240,8 @@ const StudentDashboard = () => {
                   label={record.status === 'present' ? 'Present' : 'Absent'}
                   sx={{
                     background: record.status === 'present' ? 
-                      'linear-gradient(135deg, #4CAF50, #388E3C)' :
-                      'linear-gradient(135deg, #F44336, #D32F2F)',
+                      'linear-gradient(135deg, #34d399, #059669)' :
+                      'linear-gradient(135deg, #f87171, #dc2626)',
                     color: 'white',
                     fontWeight: 'bold',
                     textTransform: 'capitalize',
@@ -1208,9 +1255,10 @@ const StudentDashboard = () => {
       </Card>
     </Box>
   );
+
   const renderFeedbackContent = () => (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h4" sx={{ mb: 3, fontWeight: 'bold', color: '#1a1a1a' }}>
+      <Typography variant="h4" sx={{ mb: 3, fontWeight: 'bold' }}>
         Teacher Feedback & Reviews
       </Typography>
       
@@ -1221,23 +1269,25 @@ const StudentDashboard = () => {
             p: 3, 
             textAlign: 'center', 
             borderRadius: 3,
-            background: 'linear-gradient(135deg, #4CAF50 0%, #388E3C 100%)',
+            background: 'linear-gradient(135deg, rgba(52, 211, 153, 0.15) 0%, rgba(52, 211, 153, 0.05) 100%)',
+            border: '1px solid rgba(52, 211, 153, 0.3)',
+            backdropFilter: 'blur(10px)',
             color: 'white',
-            boxShadow: '0 6px 25px rgba(76, 175, 80, 0.3)',
+            boxShadow: '0 6px 25px rgba(0,0,0,0.6)',
             '&:hover': {
               transform: 'translateY(-4px)',
-              boxShadow: '0 10px 30px rgba(76, 175, 80, 0.4)',
+              boxShadow: '0 10px 30px rgba(0,0,0,0.7)',
             },
             transition: 'all 0.3s ease'
           }}>
-            <StarIcon sx={{ fontSize: 36, mb: 1, opacity: 0.9 }} />
-            <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 1 }}>
+            <StarIcon sx={{ fontSize: 36, mb: 1, opacity: 0.9, color: '#34d399' }} />
+            <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 1, color: '#34d399' }}>
               4.6
             </Typography>
-            <Typography variant="h6" sx={{ fontWeight: 500, opacity: 0.9 }}>
+            <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.secondary' }}>
               Average Rating
             </Typography>
-            <Typography variant="body2" sx={{ mt: 1, opacity: 0.8 }}>
+            <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary', opacity: 0.8 }}>
               Based on teacher feedback
             </Typography>
           </Card>
@@ -1247,23 +1297,25 @@ const StudentDashboard = () => {
             p: 3, 
             textAlign: 'center', 
             borderRadius: 3,
-            background: 'linear-gradient(135deg, #2196F3 0%, #1976D2 100%)',
+            background: 'linear-gradient(135deg, rgba(96, 165, 250, 0.15) 0%, rgba(96, 165, 250, 0.05) 100%)',
+            border: '1px solid rgba(96, 165, 250, 0.3)',
+            backdropFilter: 'blur(10px)',
             color: 'white',
-            boxShadow: '0 6px 25px rgba(33, 150, 243, 0.3)',
+            boxShadow: '0 6px 25px rgba(0,0,0,0.6)',
             '&:hover': {
               transform: 'translateY(-4px)',
-              boxShadow: '0 10px 30px rgba(33, 150, 243, 0.4)',
+              boxShadow: '0 10px 30px rgba(0,0,0,0.7)',
             },
             transition: 'all 0.3s ease'
           }}>
-            <FeedbackIcon sx={{ fontSize: 36, mb: 1, opacity: 0.9 }} />
-            <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 1 }}>
+            <FeedbackIcon sx={{ fontSize: 36, mb: 1, opacity: 0.9, color: '#60a5fa' }} />
+            <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 1, color: '#60a5fa' }}>
               {dashboardData.recentFeedback.length}
             </Typography>
-            <Typography variant="h6" sx={{ fontWeight: 500, opacity: 0.9 }}>
+            <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.secondary' }}>
               Total Feedback
             </Typography>
-            <Typography variant="body2" sx={{ mt: 1, opacity: 0.8 }}>
+            <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary', opacity: 0.8 }}>
               This semester
             </Typography>
           </Card>
@@ -1273,23 +1325,25 @@ const StudentDashboard = () => {
             p: 3, 
             textAlign: 'center', 
             borderRadius: 3,
-            background: 'linear-gradient(135deg, #FF9800 0%, #F57C00 100%)',
+            background: 'linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(251, 191, 36, 0.05) 100%)',
+            border: '1px solid rgba(251, 191, 36, 0.3)',
+            backdropFilter: 'blur(10px)',
             color: 'white',
-            boxShadow: '0 6px 25px rgba(255, 152, 0, 0.3)',
+            boxShadow: '0 6px 25px rgba(0,0,0,0.6)',
             '&:hover': {
               transform: 'translateY(-4px)',
-              boxShadow: '0 10px 30px rgba(255, 152, 0, 0.4)',
+              boxShadow: '0 10px 30px rgba(0,0,0,0.7)',
             },
             transition: 'all 0.3s ease'
           }}>
-            <TrendingUpIcon sx={{ fontSize: 36, mb: 1, opacity: 0.9 }} />
-            <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 1 }}>
+            <TrendingUpIcon sx={{ fontSize: 36, mb: 1, opacity: 0.9, color: '#fbbf24' }} />
+            <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 1, color: '#fbbf24' }}>
               92%
             </Typography>
-            <Typography variant="h6" sx={{ fontWeight: 500, opacity: 0.9 }}>
+            <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.secondary' }}>
               Positive Reviews
             </Typography>
-            <Typography variant="body2" sx={{ mt: 1, opacity: 0.8 }}>
+            <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary', opacity: 0.8 }}>
               Excellent progress
             </Typography>
           </Card>
@@ -1297,7 +1351,7 @@ const StudentDashboard = () => {
       </Grid>
 
       {/* Feedback Cards */}
-      <Typography variant="h5" sx={{ mb: 3, fontWeight: 'bold', color: '#333' }}>
+      <Typography variant="h5" sx={{ mb: 3, fontWeight: 'bold' }}>
         Recent Feedback
       </Typography>
       {dashboardData.recentFeedback.map((feedback, index) => (
@@ -1310,14 +1364,15 @@ const StudentDashboard = () => {
           <Card sx={{ 
             mb: 3, 
             borderRadius: 3,
-            background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-            border: '1px solid rgba(0,0,0,0.05)',
+            background: 'rgba(255, 255, 255, 0.03)',
+            backdropFilter: 'blur(10px)',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.6)',
+            border: '1px solid rgba(255, 255, 255, 0.06)',
             overflow: 'hidden',
             position: 'relative',
             '&:hover': {
               transform: 'translateY(-2px)',
-              boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
+              boxShadow: '0 8px 30px rgba(0,0,0,0.7)',
             },
             transition: 'all 0.3s ease',
             '&::before': {
@@ -1328,10 +1383,10 @@ const StudentDashboard = () => {
               right: 0,
               height: 4,
               background: feedback.type === 'positive' 
-                ? 'linear-gradient(90deg, #4CAF50, #66BB6A)' 
+                ? 'linear-gradient(90deg, #34d399, #6ee7b7)' 
                 : feedback.type === 'constructive'
-                ? 'linear-gradient(90deg, #FF9800, #FFB74D)'
-                : 'linear-gradient(90deg, #2196F3, #64B5F6)',
+                ? 'linear-gradient(90deg, #fbbf24, #fcd34d)'
+                : 'linear-gradient(90deg, #60a5fa, #93c5fd)',
             }
           }}>
             <CardContent sx={{ p: 3 }}>
@@ -1339,7 +1394,7 @@ const StudentDashboard = () => {
                 <Box sx={{ flex: 1 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
                     <Avatar sx={{ 
-                      bgcolor: feedback.type === 'positive' ? '#4CAF50' : feedback.type === 'constructive' ? '#FF9800' : '#2196F3',
+                      bgcolor: feedback.type === 'positive' ? '#34d399' : feedback.type === 'constructive' ? '#fbbf24' : '#60a5fa',
                       width: 40,
                       height: 40,
                       fontSize: '1rem'
@@ -1347,10 +1402,10 @@ const StudentDashboard = () => {
                       {feedback.from.split(' ').map(n => n[0]).join('')}
                     </Avatar>
                     <Box>
-                      <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1a1a1a' }}>
+                      <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                         {feedback.from}
                       </Typography>
-                      <Typography variant="body2" sx={{ color: '#666', fontWeight: 500 }}>
+                      <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>
                         {feedback.subject}
                       </Typography>
                     </Box>
@@ -1361,17 +1416,17 @@ const StudentDashboard = () => {
                     label={feedback.type}
                     sx={{
                       background: feedback.type === 'positive' 
-                        ? 'linear-gradient(135deg, #4CAF50, #66BB6A)' 
+                        ? 'linear-gradient(135deg, #34d399, #6ee7b7)' 
                         : feedback.type === 'constructive'
-                        ? 'linear-gradient(135deg, #FF9800, #FFB74D)'
-                        : 'linear-gradient(135deg, #2196F3, #64B5F6)',
+                        ? 'linear-gradient(135deg, #fbbf24, #fcd34d)'
+                        : 'linear-gradient(135deg, #60a5fa, #93c5fd)',
                       color: 'white',
                       fontWeight: 'bold',
                       fontSize: '0.75rem'
                     }}
                     size="small"
                   />
-                  <Typography variant="caption" sx={{ color: '#888', fontWeight: 500 }}>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 500 }}>
                     {new Date(feedback.date).toLocaleDateString('en-US', { 
                       month: 'short', 
                       day: 'numeric', 
@@ -1382,13 +1437,13 @@ const StudentDashboard = () => {
               </Box>
               
               <Box sx={{ 
-                background: 'rgba(0,0,0,0.02)', 
+                background: 'rgba(255, 255, 255, 0.02)', 
                 borderRadius: 2, 
                 p: 2, 
-                border: '1px solid rgba(0,0,0,0.05)' 
+                border: '1px solid rgba(255, 255, 255, 0.06)' 
               }}>
                 <Typography variant="body1" sx={{ 
-                  color: '#333',
+                  color: 'text.secondary',
                   lineHeight: 1.6,
                   fontSize: '1rem'
                 }}>
@@ -1398,7 +1453,7 @@ const StudentDashboard = () => {
               
               {feedback.rating && (
                 <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Typography variant="body2" sx={{ color: '#666', fontWeight: 500 }}>
+                  <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>
                     Rating:
                   </Typography>
                   <Box sx={{ display: 'flex', gap: 0.5 }}>
@@ -1407,12 +1462,12 @@ const StudentDashboard = () => {
                         key={i} 
                         sx={{ 
                           fontSize: 18,
-                          color: i < feedback.rating ? '#FFD700' : '#E0E0E0' 
+                          color: i < feedback.rating ? '#fbbf24' : 'rgba(255, 255, 255, 0.1)' 
                         }} 
                       />
                     ))}
                   </Box>
-                  <Typography variant="body2" sx={{ color: '#666', fontWeight: 'bold' }}>
+                  <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 'bold' }}>
                     ({feedback.rating}/5)
                   </Typography>
                 </Box>
@@ -1423,6 +1478,7 @@ const StudentDashboard = () => {
       ))}
     </Box>
   );
+
 
   if (loading) {
     return (
@@ -1465,9 +1521,10 @@ const StudentDashboard = () => {
         {currentView === 'assignments' && renderAssignmentsContent()}
         {currentView === 'grades' && renderGradesContent()}
         {currentView === 'attendance' && renderAttendanceContent()}
-        {currentView === 'feedback' && renderFeedbackContent()}        {currentView === 'quizzes' && (
+        {currentView === 'feedback' && renderFeedbackContent()}
+        {currentView === 'quizzes' && (
           <Box sx={{ p: 3 }}>
-            <Typography variant="h4" sx={{ mb: 3, fontWeight: 'bold', color: '#1a1a1a' }}>
+            <Typography variant="h4" sx={{ mb: 3, fontWeight: 'bold' }}>
               Quizzes & Tests
             </Typography>
             
@@ -1478,23 +1535,25 @@ const StudentDashboard = () => {
                   p: 3, 
                   textAlign: 'center', 
                   borderRadius: 3,
-                  background: 'linear-gradient(135deg, #673AB7 0%, #512DA8 100%)',
+                  background: 'linear-gradient(135deg, rgba(192, 132, 252, 0.15) 0%, rgba(192, 132, 252, 0.05) 100%)',
+                  border: '1px solid rgba(192, 132, 252, 0.3)',
+                  backdropFilter: 'blur(10px)',
                   color: 'white',
-                  boxShadow: '0 6px 25px rgba(103, 58, 183, 0.3)',
+                  boxShadow: '0 6px 25px rgba(0,0,0,0.6)',
                   '&:hover': {
                     transform: 'translateY(-4px)',
-                    boxShadow: '0 10px 30px rgba(103, 58, 183, 0.4)',
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.7)',
                   },
                   transition: 'all 0.3s ease'
                 }}>
-                  <QuizIcon sx={{ fontSize: 36, mb: 1, opacity: 0.9 }} />
-                  <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 1 }}>
+                  <QuizIcon sx={{ fontSize: 36, mb: 1, opacity: 0.9, color: '#c084fc' }} />
+                  <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 1, color: '#c084fc' }}>
                     12
                   </Typography>
-                  <Typography variant="h6" sx={{ fontWeight: 500, opacity: 0.9 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.secondary' }}>
                     Total Quizzes
                   </Typography>
-                  <Typography variant="body2" sx={{ mt: 1, opacity: 0.8 }}>
+                  <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary', opacity: 0.8 }}>
                     This semester
                   </Typography>
                 </Card>
@@ -1504,23 +1563,25 @@ const StudentDashboard = () => {
                   p: 3, 
                   textAlign: 'center', 
                   borderRadius: 3,
-                  background: 'linear-gradient(135deg, #4CAF50 0%, #388E3C 100%)',
+                  background: 'linear-gradient(135deg, rgba(52, 211, 153, 0.15) 0%, rgba(52, 211, 153, 0.05) 100%)',
+                  border: '1px solid rgba(52, 211, 153, 0.3)',
+                  backdropFilter: 'blur(10px)',
                   color: 'white',
-                  boxShadow: '0 6px 25px rgba(76, 175, 80, 0.3)',
+                  boxShadow: '0 6px 25px rgba(0,0,0,0.6)',
                   '&:hover': {
                     transform: 'translateY(-4px)',
-                    boxShadow: '0 10px 30px rgba(76, 175, 80, 0.4)',
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.7)',
                   },
                   transition: 'all 0.3s ease'
                 }}>
-                  <CheckIcon sx={{ fontSize: 36, mb: 1, opacity: 0.9 }} />
-                  <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 1 }}>
+                  <CheckIcon sx={{ fontSize: 36, mb: 1, opacity: 0.9, color: '#34d399' }} />
+                  <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 1, color: '#34d399' }}>
                     9
                   </Typography>
-                  <Typography variant="h6" sx={{ fontWeight: 500, opacity: 0.9 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.secondary' }}>
                     Completed
                   </Typography>
-                  <Typography variant="body2" sx={{ mt: 1, opacity: 0.8 }}>
+                  <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary', opacity: 0.8 }}>
                     75% completion rate
                   </Typography>
                 </Card>
@@ -1530,23 +1591,25 @@ const StudentDashboard = () => {
                   p: 3, 
                   textAlign: 'center', 
                   borderRadius: 3,
-                  background: 'linear-gradient(135deg, #FF9800 0%, #F57C00 100%)',
+                  background: 'linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(251, 191, 36, 0.05) 100%)',
+                  border: '1px solid rgba(251, 191, 36, 0.3)',
+                  backdropFilter: 'blur(10px)',
                   color: 'white',
-                  boxShadow: '0 6px 25px rgba(255, 152, 0, 0.3)',
+                  boxShadow: '0 6px 25px rgba(0,0,0,0.6)',
                   '&:hover': {
                     transform: 'translateY(-4px)',
-                    boxShadow: '0 10px 30px rgba(255, 152, 0, 0.4)',
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.7)',
                   },
                   transition: 'all 0.3s ease'
                 }}>
-                  <StarIcon sx={{ fontSize: 36, mb: 1, opacity: 0.9 }} />
-                  <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 1 }}>
+                  <StarIcon sx={{ fontSize: 36, mb: 1, opacity: 0.9, color: '#fbbf24' }} />
+                  <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 1, color: '#fbbf24' }}>
                     87%
                   </Typography>
-                  <Typography variant="h6" sx={{ fontWeight: 500, opacity: 0.9 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.secondary' }}>
                     Average Score
                   </Typography>
-                  <Typography variant="body2" sx={{ mt: 1, opacity: 0.8 }}>
+                  <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary', opacity: 0.8 }}>
                     Excellent performance
                   </Typography>
                 </Card>
@@ -1556,23 +1619,25 @@ const StudentDashboard = () => {
                   p: 3, 
                   textAlign: 'center', 
                   borderRadius: 3,
-                  background: 'linear-gradient(135deg, #F44336 0%, #D32F2F 100%)',
+                  background: 'linear-gradient(135deg, rgba(248, 113, 113, 0.15) 0%, rgba(248, 113, 113, 0.05) 100%)',
+                  border: '1px solid rgba(248, 113, 113, 0.3)',
+                  backdropFilter: 'blur(10px)',
                   color: 'white',
-                  boxShadow: '0 6px 25px rgba(244, 67, 54, 0.3)',
+                  boxShadow: '0 6px 25px rgba(0,0,0,0.6)',
                   '&:hover': {
                     transform: 'translateY(-4px)',
-                    boxShadow: '0 8px 30px rgba(244, 67, 54, 0.4)',
+                    boxShadow: '0 8px 30px rgba(0,0,0,0.7)',
                   },
                   transition: 'all 0.3s ease'
                 }}>
-                  <TimeIcon sx={{ fontSize: 36, mb: 1, opacity: 0.9 }} />
-                  <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 1 }}>
+                  <TimeIcon sx={{ fontSize: 36, mb: 1, opacity: 0.9, color: '#f87171' }} />
+                  <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 1, color: '#f87171' }}>
                     3
                   </Typography>
-                  <Typography variant="h6" sx={{ fontWeight: 500, opacity: 0.9 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.secondary' }}>
                     Upcoming
                   </Typography>
-                  <Typography variant="body2" sx={{ mt: 1, opacity: 0.8 }}>
+                  <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary', opacity: 0.8 }}>
                     Due this week
                   </Typography>
                 </Card>
@@ -1580,7 +1645,7 @@ const StudentDashboard = () => {
             </Grid>
 
             {/* Available Quizzes */}
-            <Typography variant="h5" sx={{ mb: 3, fontWeight: 'bold', color: '#333' }}>
+            <Typography variant="h5" sx={{ mb: 3, fontWeight: 'bold' }}>
               Available Quizzes
             </Typography>
             
@@ -1650,15 +1715,16 @@ const StudentDashboard = () => {
                       borderRadius: 3,
                       height: '100%',
                       background: quiz.status === 'completed' 
-                        ? 'linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(76, 175, 80, 0.05) 100%)'
-                        : 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
+                        ? 'linear-gradient(135deg, rgba(52, 211, 153, 0.08) 0%, rgba(52, 211, 153, 0.03) 100%)'
+                        : 'rgba(255, 255, 255, 0.03)',
                       border: quiz.status === 'completed'
-                        ? '2px solid rgba(76, 175, 80, 0.3)'
-                        : '1px solid rgba(0,0,0,0.1)',
-                      boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+                        ? '1px solid rgba(52, 211, 153, 0.3)'
+                        : '1px solid rgba(255, 255, 255, 0.06)',
+                      backdropFilter: 'blur(10px)',
+                      boxShadow: '0 4px 20px rgba(0,0,0,0.6)',
                       '&:hover': {
                         transform: 'translateY(-4px)',
-                        boxShadow: '0 8px 30px rgba(0,0,0,0.15)',
+                        boxShadow: '0 8px 30px rgba(0,0,0,0.7)',
                       },
                       transition: 'all 0.3s ease',
                       position: 'relative',
@@ -1671,22 +1737,22 @@ const StudentDashboard = () => {
                         right: 0,
                         height: 4,
                         background: quiz.difficulty === 'easy' 
-                          ? 'linear-gradient(90deg, #4CAF50, #66BB6A)'
+                          ? 'linear-gradient(90deg, #34d399, #6ee7b7)'
                           : quiz.difficulty === 'medium'
-                          ? 'linear-gradient(90deg, #FF9800, #FFB74D)'
-                          : 'linear-gradient(90deg, #F44336, #FF5722)',
+                          ? 'linear-gradient(90deg, #fbbf24, #fcd34d)'
+                          : 'linear-gradient(90deg, #f87171, #fca5a5)',
                       }
                     }}>
                       <CardContent sx={{ p: 3 }}>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
                           <Box sx={{ flex: 1 }}>
-                            <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1, color: '#1a1a1a' }}>
+                            <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
                               {quiz.title}
                             </Typography>
-                            <Typography variant="body2" sx={{ color: '#666', fontWeight: 500, mb: 1 }}>
+                            <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500, mb: 1 }}>
                               {quiz.subject} • {quiz.course}
                             </Typography>
-                            <Typography variant="body2" sx={{ color: '#555', lineHeight: 1.5 }}>
+                            <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.5 }}>
                               {quiz.description}
                             </Typography>
                           </Box>
@@ -1695,12 +1761,12 @@ const StudentDashboard = () => {
                               label={quiz.difficulty}
                               size="small"
                               sx={{
-                                bgcolor: quiz.difficulty === 'easy' ? 'rgba(76, 175, 80, 0.15)' :
-                                        quiz.difficulty === 'medium' ? 'rgba(255, 152, 0, 0.15)' :
-                                        'rgba(244, 67, 54, 0.15)',
-                                color: quiz.difficulty === 'easy' ? '#4CAF50' :
-                                       quiz.difficulty === 'medium' ? '#FF9800' :
-                                       '#F44336',
+                                bgcolor: quiz.difficulty === 'easy' ? 'rgba(52, 211, 153, 0.15)' :
+                                        quiz.difficulty === 'medium' ? 'rgba(251, 191, 36, 0.15)' :
+                                        'rgba(248, 113, 113, 0.15)',
+                                color: quiz.difficulty === 'easy' ? '#34d399' :
+                                       quiz.difficulty === 'medium' ? '#fbbf24' :
+                                       '#f87171',
                                 fontWeight: 'bold',
                                 textTransform: 'capitalize'
                               }}
@@ -1710,8 +1776,8 @@ const StudentDashboard = () => {
                                 label={`Score: ${quiz.score}%`}
                                 size="small"
                                 sx={{
-                                  bgcolor: 'rgba(76, 175, 80, 0.15)',
-                                  color: '#4CAF50',
+                                  bgcolor: 'rgba(52, 211, 153, 0.15)',
+                                  color: '#34d399',
                                   fontWeight: 'bold'
                                 }}
                               />
@@ -1721,27 +1787,27 @@ const StudentDashboard = () => {
 
                         <Box sx={{ display: 'flex', gap: 2, mb: 2, flexWrap: 'wrap' }}>
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                            <QuizIcon sx={{ fontSize: 16, color: '#666' }} />
-                            <Typography variant="body2" sx={{ color: '#666', fontWeight: 500 }}>
+                            <QuizIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+                            <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>
                               {quiz.questions} questions
                             </Typography>
                           </Box>
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                            <TimeIcon sx={{ fontSize: 16, color: '#666' }} />
-                            <Typography variant="body2" sx={{ color: '#666', fontWeight: 500 }}>
+                            <TimeIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+                            <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>
                               {quiz.timeLimit} minutes
                             </Typography>
                           </Box>
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                            <StarIcon sx={{ fontSize: 16, color: '#ff9800' }} />
-                            <Typography variant="body2" sx={{ color: '#666', fontWeight: 500 }}>
+                            <StarIcon sx={{ fontSize: 16, color: '#fbbf24' }} />
+                            <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>
                               {quiz.points} points
                             </Typography>
                           </Box>
                         </Box>
 
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <Typography variant="body2" sx={{ color: '#666', fontWeight: 500 }}>
+                          <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>
                             Due: {new Date(quiz.dueDate).toLocaleDateString('en-US', { 
                               month: 'short', 
                               day: 'numeric',
@@ -1755,9 +1821,9 @@ const StudentDashboard = () => {
                               startIcon={<PlayIcon />}
                               sx={{
                                 textTransform: 'none',
-                                bgcolor: '#673AB7',
+                                bgcolor: '#c084fc',
                                 '&:hover': {
-                                  bgcolor: '#512DA8'
+                                  bgcolor: '#a855f7'
                                 }
                               }}
                             >
@@ -1771,8 +1837,8 @@ const StudentDashboard = () => {
                               disabled
                               sx={{
                                 textTransform: 'none',
-                                color: '#4CAF50',
-                                borderColor: '#4CAF50'
+                                color: '#34d399',
+                                borderColor: '#34d399'
                               }}
                             >
                               Completed
@@ -1789,21 +1855,23 @@ const StudentDashboard = () => {
             {/* Quiz Performance Chart */}
             <Card sx={{ 
               borderRadius: 3, 
-              boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-              background: 'white'
+              boxShadow: '0 4px 20px rgba(0,0,0,0.6)',
+              background: 'rgba(255, 255, 255, 0.03)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.06)'
             }}>
               <CardContent sx={{ p: 3 }}>
-                <Typography variant="h6" sx={{ mb: 3, fontWeight: 'bold', color: '#1a1a1a' }}>
+                <Typography variant="h6" sx={{ mb: 3, fontWeight: 'bold' }}>
                   Recent Quiz Results
                 </Typography>
                 <TableContainer>
                   <Table>
                     <TableHead>
                       <TableRow sx={{ 
-                        background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
+                        background: 'rgba(255, 255, 255, 0.03)',
                         '& .MuiTableCell-head': {
                           fontWeight: 'bold',
-                          color: '#495057',
+                          color: 'text.secondary',
                           fontSize: '0.95rem'
                         }
                       }}>
@@ -1812,7 +1880,8 @@ const StudentDashboard = () => {
                         <TableCell>Score</TableCell>
                         <TableCell>Questions</TableCell>
                         <TableCell>Time Taken</TableCell>
-                        <TableCell>Date</TableCell></TableRow>
+                        <TableCell>Date</TableCell>
+                      </TableRow>
                     </TableHead>
                     <TableBody>
                       {[
@@ -1824,31 +1893,32 @@ const StudentDashboard = () => {
                       ].map((result, index) => (
                         <TableRow key={index} sx={{
                           '&:nth-of-type(even)': {
-                            backgroundColor: '#f8f9fa'
+                            backgroundColor: 'rgba(255, 255, 255, 0.02)'
                           },
                           '&:hover': {
-                            backgroundColor: alpha('#673AB7', 0.05),
+                            backgroundColor: alpha('#c084fc', 0.05),
                             cursor: 'pointer'
                           },
                           transition: 'all 0.2s ease'
                         }}>
-                          <TableCell sx={{ fontWeight: 500, color: '#333' }}>{result.title}</TableCell>
-                          <TableCell sx={{ color: '#555', fontWeight: 500 }}>{result.subject}</TableCell>
+                          <TableCell sx={{ fontWeight: 500 }}>{result.title}</TableCell>
+                          <TableCell sx={{ color: 'text.secondary', fontWeight: 500 }}>{result.subject}</TableCell>
                           <TableCell>
                             <Chip 
                               label={`${result.score}%`} 
                               sx={{
-                                background: result.score >= 90 ? 'linear-gradient(135deg, #4CAF50, #388E3C)' :
-                                           result.score >= 80 ? 'linear-gradient(135deg, #FF9800, #F57C00)' :
-                                           'linear-gradient(135deg, #F44336, #D32F2F)',
+                                background: result.score >= 90 ? 'linear-gradient(135deg, #34d399, #059669)' :
+                                           result.score >= 80 ? 'linear-gradient(135deg, #fbbf24, #d97706)' :
+                                           'linear-gradient(135deg, #f87171, #dc2626)',
                                 color: 'white',
                                 fontWeight: 'bold'
                               }}
                             />
                           </TableCell>
-                          <TableCell sx={{ fontWeight: 500, color: '#333' }}>{result.questions}</TableCell>
-                          <TableCell sx={{ color: '#666' }}>{result.time}</TableCell>
-                          <TableCell sx={{ color: '#666' }}>{new Date(result.date).toLocaleDateString()}</TableCell></TableRow>
+                          <TableCell sx={{ fontWeight: 500 }}>{result.questions}</TableCell>
+                          <TableCell sx={{ color: 'text.secondary' }}>{result.time}</TableCell>
+                          <TableCell sx={{ color: 'text.secondary' }}>{new Date(result.date).toLocaleDateString()}</TableCell>
+                        </TableRow>
                       ))}
                     </TableBody>
                   </Table>
@@ -1862,4 +1932,4 @@ const StudentDashboard = () => {
   );
 };
 
-export default StudentDashboard;
+export default StudentDashboard;
