@@ -1,3 +1,4 @@
+import env from '../config/env';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import googleCloudService from '../../services/googleCloudService';
 
@@ -403,7 +404,7 @@ export const useEducationalCloudFeatures = () => {
   const submitAssignment = useCallback(async (file, studentId, assignmentId, courseId) => {
     try {
       // Upload to appropriate bucket
-      const bucketName = process.env.REACT_APP_GOOGLE_CLOUD_STORAGE_BUCKET_MAIN;
+      const bucketName = env.GOOGLE_CLOUD_STORAGE_BUCKET_MAIN;
       const uploadResult = await cloudStorage.uploadFile(file, bucketName, {
         metadata: {
           studentId,
@@ -484,7 +485,7 @@ export const useEducationalCloudFeatures = () => {
       const audioResult = await cloudAI.synthesizeSpeech(text, languageCode);
       
       // Upload audio to storage
-      const bucketName = process.env.REACT_APP_GOOGLE_CLOUD_STORAGE_BUCKET_MEDIA;
+      const bucketName = env.GOOGLE_CLOUD_STORAGE_BUCKET_MEDIA;
       const audioFileName = `audio/${Date.now()}-speech.mp3`;
       
       const uploadResult = await cloudStorage.uploadFile(
@@ -533,4 +534,4 @@ export default {
   useCloudMonitoring,
   useEducationalCloudFeatures
 };
-
+

@@ -325,5 +325,4 @@ function ChildAssignments() {
   );
 }
 
-export default ChildAssignments;
-
+export default ChildAssignments;

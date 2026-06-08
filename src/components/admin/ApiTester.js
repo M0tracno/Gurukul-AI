@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Refresh, Warning as WarningIcon } from '@mui/icons-material';
-
+import React, { useState } from 'react';
+import { Refresh, Warning as WarningIcon, CheckCircle as SuccessIcon, Error as ErrorIcon, ExpandLess as ExpandLessIcon, ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import { Box, Button, Card, CardContent, Chip, Collapse, Grid, IconButton, LinearProgress, List, ListItem, ListItemIcon, ListItemText, Typography } from '@mui/material';
-  Refresh} from '@mui/icons-material';
+import env from '../../config/env';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = `${env.API_URL}/api`;
 
 const ApiTester = () => {
   const [testResults, setTestResults] = useState({});
@@ -44,7 +43,8 @@ const ApiTester = () => {
       { method: 'GET', endpoint: '/parent/children', description: 'Get children data' },
       { method: 'GET', endpoint: '/parent/grades', description: 'Get children grades' },
       { method: 'POST', endpoint: '/parent/communication', description: 'Send message to teacher' },
-    ]};
+    ]
+  };
 
   // Test individual endpoint
   const testEndpoint = async (method, endpoint, description) => {
@@ -54,31 +54,35 @@ const ApiTester = () => {
         method,
         headers: {
           'Content-Type': 'application/json',
-          ...(token && { 'Authorization': `Bearer ${token}` })}};
+          ...(token && { 'Authorization': `Bearer ${token}` }),
+        },
+      };
 
       // Add sample data for POST/PUT requests
       if (['POST', 'PUT'].includes(method)) {
         options.body = JSON.stringify({
-          // Sample test data
           test: true,
-          timestamp: new Date().toISOString()});
+          timestamp: new Date().toISOString(),
+        });
       }
 
       const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
-      
+
       return {
         status: response.status,
         statusText: response.statusText,
         ok: response.ok,
         headers: Object.fromEntries(response.headers.entries()),
-        timestamp: new Date().toISOString()};
+        timestamp: new Date().toISOString(),
+      };
     } catch (error) {
       return {
         status: 'ERROR',
         statusText: error.message,
         ok: false,
         error: error.message,
-        timestamp: new Date().toISOString()};
+        timestamp: new Date().toISOString(),
+      };
     }
   };
 
@@ -91,27 +95,17 @@ const ApiTester = () => {
 
     for (const [category, endpoints] of Object.entries(apiEndpoints)) {
       results[category] = {};
-      
+
       for (const { method, endpoint, description } of endpoints) {
         const testKey = `${method} ${endpoint}`;
-        results[category][testKey] = {
-          description,
-          testing: true};
-        
-        // Update UI with current test
+        results[category][testKey] = { description, testing: true };
+
         setTestResults({ ...results });
-        
-        // Wait a bit to show progress
         await new Promise(resolve => setTimeout(resolve, 100));
-        
-        // Run the test
+
         const result = await testEndpoint(method, endpoint, description);
-        results[category][testKey] = {
-          description,
-          ...result,
-          testing: false};
-        
-        // Update UI with result
+        results[category][testKey] = { description, ...result, testing: false };
+
         setTestResults({ ...results });
       }
     }
@@ -121,9 +115,7 @@ const ApiTester = () => {
 
   // Toggle section expansion
   const toggleSection = (section) => {
-    setExpandedSections(prev => ({
-      ...prev,
-      [section]: !prev[section]}));
+    setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
   };
 
   // Get status color and icon
@@ -173,7 +165,7 @@ const ApiTester = () => {
           <Typography variant="body2" color="textSecondary" paragraph>
             Test all API endpoints to ensure proper connectivity and functionality.
           </Typography>
-          
+
           <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
             <Button
               variant="contained"
@@ -189,32 +181,16 @@ const ApiTester = () => {
           {stats.total > 0 && (
             <Grid container spacing={2}>
               <Grid size={{xs:3}}>
-                <Chip 
-                  label={`Total: ${stats.total}`} 
-                  color="default" 
-                  variant="outlined" 
-                />
+                <Chip label={`Total: ${stats.total}`} color="default" variant="outlined" />
               </Grid>
               <Grid size={{xs:3}}>
-                <Chip 
-                  label={`Success: ${stats.success}`} 
-                  color="success" 
-                  variant="outlined" 
-                />
+                <Chip label={`Success: ${stats.success}`} color="success" variant="outlined" />
               </Grid>
               <Grid size={{xs:3}}>
-                <Chip 
-                  label={`Warning: ${stats.warning}`} 
-                  color="warning" 
-                  variant="outlined" 
-                />
+                <Chip label={`Warning: ${stats.warning}`} color="warning" variant="outlined" />
               </Grid>
               <Grid size={{xs:3}}>
-                <Chip 
-                  label={`Error: ${stats.error}`} 
-                  color="error" 
-                  variant="outlined" 
-                />
+                <Chip label={`Error: ${stats.error}`} color="error" variant="outlined" />
               </Grid>
             </Grid>
           )}
@@ -225,12 +201,8 @@ const ApiTester = () => {
       {Object.entries(testResults).map(([category, endpoints]) => (
         <Card key={category} sx={{ mb: 2 }}>
           <CardContent>
-            <Box 
-              sx={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                cursor: 'pointer' 
-              }}
+            <Box
+              sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
               onClick={() => toggleSection(category)}
             >
               <Typography variant="h6" sx={{ flexGrow: 1 }}>
@@ -245,7 +217,7 @@ const ApiTester = () => {
               <List>
                 {Object.entries(endpoints).map(([testKey, result]) => {
                   const { color, icon } = getStatusInfo(result);
-                  
+
                   return (
                     <ListItem key={testKey}>
                       <ListItemIcon>
@@ -268,11 +240,7 @@ const ApiTester = () => {
                         }
                       />
                       {!result.testing && (
-                        <Chip 
-                          label={result.status} 
-                          color={color} 
-                          size="small" 
-                        />
+                        <Chip label={result.status} color={color} size="small" />
                       )}
                     </ListItem>
                   );
@@ -287,5 +255,3 @@ const ApiTester = () => {
 };
 
 export default ApiTester;
-
-

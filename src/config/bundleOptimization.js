@@ -99,15 +99,6 @@ const createOptimizedConfig = (isProduction) => ({
           enforce: true,
         },
         
-        // Firebase libraries
-        firebase: {
-          test: /[\/]node_modules[\/]firebase[\/]/,
-          name: 'firebase',
-          priority: 15,
-          chunks: 'all',
-          enforce: true,
-        },
-        
         // Common utilities
         utils: {
           test: /[\/]src[\/]utils[\/]/,

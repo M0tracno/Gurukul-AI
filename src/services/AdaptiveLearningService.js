@@ -504,4 +504,4 @@ class AdaptiveLearningService extends EventEmitter {
 }
 
 export default AdaptiveLearningService;
-
+

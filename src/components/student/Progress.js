@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {  useEffect } from 'react';
 import { Assignment as AssignmentIcon, CheckCircle as CheckCircleIcon, Download, Quiz as QuizIcon, Refresh, School as SchoolIcon, Star as StarIcon, TrendingDown as TrendingDownIcon, TrendingUp as TrendingUpIcon } from '@mui/icons-material';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
 
@@ -507,4 +507,4 @@ const Progress = () => {
 };
 
 export default Progress;
-
+

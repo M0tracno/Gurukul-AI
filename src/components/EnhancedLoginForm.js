@@ -24,7 +24,6 @@ import { styled } from '@mui/material/styles';
   School as SchoolIcon,
   People as PeopleIcon,
   AdminPanelSettings as AdminIcon} from '@mui/icons-material';
-
 // Smooth animations
 const fadeInUp = keyframes`
   from {
@@ -549,4 +548,4 @@ const EnhancedLoginForm = ({
 };
 
 export default EnhancedLoginForm;
-
+

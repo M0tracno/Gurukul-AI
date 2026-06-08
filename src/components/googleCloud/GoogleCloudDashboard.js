@@ -1,9 +1,10 @@
+import env from '../../config/env';
 import React, { useState, useEffect, useCallback } from 'react';
 import { CheckCircle, Refresh, VolumeUp, Warning } from '@mui/icons-material';
 import googleCloudService from '../../services/googleCloudService';
 
 
-import { Box, Button, Card, CardContent, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControl, Grid, IconButton, InputLabel, LinearProgress, List, ListItem, ListItemIcon, ListItemText, MenuItem, Paper, Select, Tab, Tabs, TextField, Typography, toLocaleString } from '@mui/material';
+import { Box, Button, Card, CardContent, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControl, Grid, IconButton, InputLabel, LinearProgress, List, ListItem, ListItemIcon, ListItemTextItem, Paper, Select, Tab, Tabs, TextField, Typography, toLocaleString } from '@mui/material';
 const GoogleCloudDashboard = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [serviceStatus, setServiceStatus] = useState({});
@@ -93,7 +94,7 @@ const GoogleCloudDashboard = () => {
       const buffer = Buffer.from(arrayBuffer);
       
       const result = await googleCloudService.uploadFile(
-        process.env.REACT_APP_GOOGLE_CLOUD_STORAGE_BUCKET_MAIN || 'main-bucket',
+        env.GOOGLE_CLOUD_STORAGE_BUCKET_MAIN || 'main-bucket',
         `uploads/${Date.now()}-${file.name}`,
         buffer,
         {
@@ -520,4 +521,4 @@ const GoogleCloudDashboard = () => {
 };
 
 export default GoogleCloudDashboard;
-
+

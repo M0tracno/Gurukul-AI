@@ -158,4 +158,4 @@ export const forceFixAllFormElements = () => {
     console.log('All form elements fixed for interactions');
   }, 100);
 };
-
+

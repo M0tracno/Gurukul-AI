@@ -1,9 +1,9 @@
 // filepath: c:\Users\AYUSHMAN NANDA\OneDrive\Desktop\GDC\src\pages\SetupPassword.js
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import makeStyles from '../utils/makeStylesCompat';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Alert, Box, Button, CircularProgress, Container, Grid, IconButton, InputAdornment, Paper, TextField, Typography } from '@mui/material';
+import {  Button, InputAdornment, TextField } from '@mui/material';
 import { 
   Visibility,
   VisibilityOff,

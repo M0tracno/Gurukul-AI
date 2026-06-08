@@ -4,7 +4,6 @@ import { Card } from '@mui/material';
 import { styled, Theme } from '@mui/material/styles';
 import type { CardProps } from '@mui/material/Card';
 import { glassmorphism, shadows } from '../../styles/designTokens';
-
 // Create a motion component or fallback to regular Card if framer-motion is not available
 let MotionCard: React.ComponentType<any>;
 try {
@@ -13,7 +12,6 @@ try {
 } catch {
   MotionCard = Card;
 }
-
 interface FrostedCardProps extends Omit<CardProps, 'component'> {
   /**
    * Glass effect intensity
@@ -40,7 +38,6 @@ interface FrostedCardProps extends Omit<CardProps, 'component'> {
    */
   elevation?: number;
 }
-
 const StyledFrostedCard = styled(MotionCard, {
   shouldForwardProp: (prop: string) =>
     !['glassLevel', 'neonGlow', 'neonColor', 'animate', 'reduceMotion'].includes(prop),
@@ -56,7 +53,6 @@ const StyledFrostedCard = styled(MotionCard, {
   neonColor?: string;
 }) => {
   const glassEffect = glassmorphism[glassLevel as keyof typeof glassmorphism];
-
   return {
     position: 'relative',
     padding: theme.spacing(3),
@@ -67,7 +63,6 @@ const StyledFrostedCard = styled(MotionCard, {
     boxShadow: glassEffect.boxShadow,
     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
     overflow: 'hidden',
-
     // Pseudo-element for additional glass effect
     '&::before': {
       content: '""',
@@ -79,7 +74,6 @@ const StyledFrostedCard = styled(MotionCard, {
       background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent)',
       pointerEvents: 'none',
     },
-
     // Hover effects
     '&:hover': {
       transform: 'translateY(-4px)',
@@ -88,18 +82,15 @@ const StyledFrostedCard = styled(MotionCard, {
         boxShadow: `${theme.shadows[8]}, ${shadows.neon[neonColor as keyof typeof shadows.neon]}`,
       }),
     },
-
     // Focus-visible for accessibility
     '&:focus-visible': {
       outline: `2px solid ${theme.palette.primary.main}`,
       outlineOffset: '2px',
     },
-
     // Responsive padding
     [theme.breakpoints.down('sm')]: {
       padding: theme.spacing(2),
     },
-
     // Reduce motion support
     '@media (prefers-reduced-motion: reduce)': {
       transition: 'none',
@@ -109,7 +100,6 @@ const StyledFrostedCard = styled(MotionCard, {
     },
   };
 });
-
 /**
  * FrostedCard - A reusable glassmorphism card component
  *
@@ -140,7 +130,6 @@ export const FrostedCard = forwardRef<HTMLDivElement, FrostedCardProps>(
       reduceMotion ||
       (typeof window !== 'undefined' &&
         window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-
     // Animation variants
     const animationVariants = {
       hidden: {
@@ -158,22 +147,18 @@ export const FrostedCard = forwardRef<HTMLDivElement, FrostedCardProps>(
         },
       },
     };
-
     const motionProps: any = {};
-
     if (animate && !prefersReducedMotion) {
       motionProps.variants = animationVariants;
       motionProps.initial = 'hidden';
       motionProps.animate = 'visible';
     }
-
     if (!prefersReducedMotion) {
       motionProps.whileHover = {
         y: -4,
         transition: { duration: 0.2 },
       };
     }
-
     const { style, ...restProps } = props;
     const cardProps = {
       ref,
@@ -184,7 +169,6 @@ export const FrostedCard = forwardRef<HTMLDivElement, FrostedCardProps>(
       style: style as any, // Type assertion to handle framer-motion strict typing
       ...restProps,
     };
-
     return (
       <StyledFrostedCard {...cardProps} {...motionProps}>
         {children}
@@ -192,7 +176,5 @@ export const FrostedCard = forwardRef<HTMLDivElement, FrostedCardProps>(
     );
   }
 );
-
 FrostedCard.displayName = 'FrostedCard';
-
 export default FrostedCard;

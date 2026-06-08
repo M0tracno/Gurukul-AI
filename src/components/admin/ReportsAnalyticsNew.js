@@ -530,4 +530,4 @@ const ReportsAnalyticsNew = () => {
   );
 };
 
-export default ReportsAnalyticsNew;
+export default ReportsAnalyticsNew;

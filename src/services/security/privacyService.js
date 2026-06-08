@@ -732,4 +732,4 @@ class PrivacyService {
 const privacyService = new PrivacyService();
 
 export default privacyService;
-
+

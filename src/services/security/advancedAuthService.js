@@ -1,8 +1,6 @@
-import { auth } from '../../config/firebase';
 import CryptoJS from 'crypto-js';
 import * as OTPAuth from 'otpauth';
 import QRCode from 'qrcode';
-import speakeasy from 'speakeasy';
 import { v4 as uuidv4 } from 'uuid';
 import validator from 'validator';
 
@@ -159,15 +157,18 @@ class AdvancedAuthService {
   }
 
   async setupTOTP(userId) {
-    const secret = speakeasy.generateSecret({
-      name: `EduPlatform:${userId}`,
-      issuer: 'EduPlatform',
-      length: 32
+    const totp = new OTPAuth.TOTP({
+      issuer: 'GurukuIAI',
+      label: userId,
+      algorithm: 'SHA1',
+      digits: 6,
+      period: 30,
+      secret: OTPAuth.Secret.fromHex(crypto.getRandomValues(new Uint8Array(20)).reduce((s, b) => s + b.toString(16).padStart(2, '0'), '')),
     });
 
     return {
-      secret: secret.base32,
-      qrCode: secret.otpauth_url,
+      secret: totp.secret.base32,
+      qrCode: totp.toString(),
       backupCodes: this.generateBackupCodes()
     };
   }
@@ -271,14 +272,16 @@ class AdvancedAuthService {
   }
 
   async generateQRCode(secret, userId) {
-    const otpauthUrl = speakeasy.otpauthURL({
-      secret: secret,
+    const totp = new OTPAuth.TOTP({
+      issuer: 'GurukuIAI',
       label: userId,
-      issuer: 'EduPlatform',
-      encoding: 'base32'
+      algorithm: 'SHA1',
+      digits: 6,
+      period: 30,
+      secret: OTPAuth.Secret.fromBase32(secret),
     });
 
-    return await QRCode.toDataURL(otpauthUrl);
+    return await QRCode.toDataURL(totp.toString());
   }
 
   async verifyMFA(userId, token, method = 'totp') {
@@ -291,14 +294,19 @@ class AdvancedAuthService {
       let isValid = false;
 
       switch (method) {
-        case 'totp':
-          isValid = speakeasy.totp.verify({
-            secret: userMFA.secret.secret,
-            encoding: 'base32',
-            token: token,
-            window: 2
+        case 'totp': {
+          const totp = new OTPAuth.TOTP({
+            issuer: 'GurukuIAI',
+            label: userId,
+            algorithm: 'SHA1',
+            digits: 6,
+            period: 30,
+            secret: OTPAuth.Secret.fromBase32(userMFA.secret.secret),
           });
+          const delta = totp.validate({ token, window: 2 });
+          isValid = delta !== null;
           break;
+        }
         case 'backup':
           isValid = userMFA.backupCodes.includes(token.toUpperCase());
           if (isValid) {

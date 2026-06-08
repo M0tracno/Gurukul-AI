@@ -250,4 +250,4 @@ export const createCSSVariables = (_theme: 'light' | 'dark' = 'light') => ({
   '--duration-slow': animation.duration.slow,
   '--ease-in-out': animation.ease.inOut,
   '--ease-bounce': animation.ease.bounce,
-});
+});

@@ -1,3 +1,4 @@
+import env from '../config/env';
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import {
   Alert,
@@ -43,7 +44,7 @@ export const NotificationProvider = ({ children }) => {
   // Initialize socket connection
   useEffect(() => {
     if (currentUser) {
-      const socketConnection = io(process.env.REACT_APP_SOCKET_URL || 'ws://localhost:5000', {
+      const socketConnection = io(env.SOCKET_URL, {
         auth: {
           token: localStorage.getItem('authToken'),
           userId: currentUser.uid,
@@ -392,4 +393,4 @@ export const NotificationProvider = ({ children }) => {
 };
 
 export default NotificationProvider;
-
+

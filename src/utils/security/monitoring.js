@@ -433,4 +433,4 @@ const securityMonitoring = {
 };
 
 export default securityMonitoring;
-
+

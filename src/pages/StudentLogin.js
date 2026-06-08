@@ -1,49 +1,45 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Alert,
+  IconButton,
+  InputAdornment,
+  CircularProgress,
+  Fade,
+} from '@mui/material';
+import {
+  Visibility,
+  VisibilityOff,
+  School as SchoolIcon,
+} from '@mui/icons-material';
 import { useAuth } from '../auth/AuthContext';
 import { navigateToDashboard } from '../utils/navigationHelpers';
-import LinkBehavior from '../components/common/LinkBehavior';
-import { useFormInteractionFix } from '../utils/formInteractionFix';
-import { appleColors, appleGradients, appleShadows, appleTransitions } from '../styles/appleTheme';
-import { Alert, Box, Button, Checkbox, CircularProgress, Fade, FormControlLabel, IconButton, InputAdornment, Slide, TextField, Typography } from '@mui/material';
-import {
-  ArrowBack as ArrowBackIcon,
-  Person as PersonIcon,
-  Email as EmailIcon,
-  Lock as LockIcon,
-  Visibility as VisibilityIcon,
-  VisibilityOff as VisibilityOffIcon
-} from '@mui/icons-material';
+import LoginLayout from '../components/auth/LoginLayout';
 
 function StudentLogin() {
-  // Apply form interaction fixes
-  useFormInteractionFix();
+  const navigate = useNavigate();
+  const { login, currentUser, userRole } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [remember, setRemember] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
 
-  const { login, currentUser, userRole } = useAuth();
-  const navigate = useNavigate();
-
-  // If already authenticated with student role, redirect to dashboard
   useEffect(() => {
     if (currentUser && userRole === 'student') {
       navigateToDashboard(navigate, 'student', { replace: true });
     }
   }, [navigate, currentUser, userRole]);
 
-  const handleTogglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loading) return;
 
-    // Validation
     if (!email || !password) {
       setError('Please enter both email and password');
       return;
@@ -53,398 +49,177 @@ function StudentLogin() {
     setError('');
 
     try {
-      // Try to login
       await login(email, password, 'student');
-
-      // If we get here, we're logged in successfully
       navigateToDashboard(navigate, 'student', { replace: true });
-    } catch (error) {
-      console.error('Login error:', error);
-      setError(error.message || 'Login failed. Please try again.');
+    } catch (err) {
+      setError(err.message || 'Login failed. Please check your credentials.');
     } finally {
       setLoading(false);
     }
   };
 
+  const accentColor = '#60a5fa';
+
   return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 2,
-        background: appleGradients.student?.main || 'linear-gradient(135deg, #34C759 0%, #30D158 50%, #32D74B 100%)',
-        position: 'relative',
-        overflow: 'hidden',
-        '&::before': {
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundImage: `
-            radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-            radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
-            radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.06) 0%, transparent 50%)
-          `,
-          animation: 'backgroundFloat 20s ease-in-out infinite'
-        },
-        '@keyframes backgroundFloat': {
-          '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
-          '33%': { transform: 'translate(30px, -30px) scale(1.1)' },
-          '66%': { transform: 'translate(-20px, 20px) scale(0.9)' }
-        }
-      }}
+    <LoginLayout
+      title="Student Portal"
+      subtitle="Welcome back. Access your courses, track progress, and continue your learning journey."
+      icon={SchoolIcon}
+      color={accentColor}
+      backLink="/"
     >
-      <Fade in timeout={800}>
-        <Box
+      <Typography
+        variant="h5"
+        sx={{ fontWeight: 600, color: 'rgba(255, 255, 255, 0.95)', mb: 0.5 }}
+      >
+        Sign In
+      </Typography>
+      <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.4)', mb: 3 }}>
+        Enter your credentials to continue
+      </Typography>
+
+      {error && (
+        <Fade in>
+          <Alert
+            severity="error"
+            sx={{
+              mb: 3,
+              background: 'rgba(248, 113, 113, 0.08)',
+              border: '1px solid rgba(248, 113, 113, 0.2)',
+              borderRadius: '12px',
+              color: 'rgba(255, 255, 255, 0.9)',
+              '& .MuiAlert-icon': { color: '#f87171' },
+            }}
+          >
+            {error}
+          </Alert>
+        </Fade>
+      )}
+
+      <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+        <TextField
+          fullWidth
+          label="Email Address"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          autoComplete="email"
+          variant="outlined"
           sx={{
-            background: 'rgba(255, 255, 255, 0.1)',
-            backdropFilter: 'blur(20px)',
-            borderRadius: '24px',
-            padding: '40px',
-            maxWidth: '440px',
-            width: '100%',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            boxShadow: appleShadows.medium,
-            position: 'relative',
-            '&::before': {
-              content: '""',
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              borderRadius: '24px',
-              background: 'linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))',
-              zIndex: -1
-            }
+            '& .MuiOutlinedInput-root': {
+              borderRadius: '12px',
+              background: 'rgba(255, 255, 255, 0.03)',
+              transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+              '& fieldset': { borderColor: 'rgba(255, 255, 255, 0.08)' },
+              '&:hover fieldset': { borderColor: `${accentColor}60` },
+              '&.Mui-focused fieldset': { borderColor: accentColor, borderWidth: '1.5px' },
+            },
+            '& .MuiInputLabel-root': {
+              color: 'rgba(255, 255, 255, 0.4)',
+              '&.Mui-focused': { color: accentColor },
+            },
+            '& .MuiOutlinedInput-input': { color: 'rgba(255, 255, 255, 0.9)' },
+          }}
+        />
+
+        <TextField
+          fullWidth
+          label="Password"
+          type={showPassword ? 'text' : 'password'}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          autoComplete="current-password"
+          variant="outlined"
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={() => setShowPassword(!showPassword)}
+                  edge="end"
+                  sx={{ color: 'rgba(255, 255, 255, 0.4)' }}
+                  aria-label="toggle password visibility"
+                >
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              borderRadius: '12px',
+              background: 'rgba(255, 255, 255, 0.03)',
+              transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+              '& fieldset': { borderColor: 'rgba(255, 255, 255, 0.08)' },
+              '&:hover fieldset': { borderColor: `${accentColor}60` },
+              '&.Mui-focused fieldset': { borderColor: accentColor, borderWidth: '1.5px' },
+            },
+            '& .MuiInputLabel-root': {
+              color: 'rgba(255, 255, 255, 0.4)',
+              '&.Mui-focused': { color: accentColor },
+            },
+            '& .MuiOutlinedInput-input': { color: 'rgba(255, 255, 255, 0.9)' },
+          }}
+        />
+
+        <Button
+          type="submit"
+          fullWidth
+          disabled={loading || !email || !password}
+          sx={{
+            mt: 1,
+            py: 1.5,
+            borderRadius: '12px',
+            fontWeight: 600,
+            fontSize: '1rem',
+            textTransform: 'none',
+            background: `linear-gradient(135deg, ${accentColor} 0%, #3b82f6 100%)`,
+            color: '#ffffff',
+            boxShadow: `0 4px 20px ${accentColor}30`,
+            transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+            '&:hover': {
+              transform: 'translateY(-1px)',
+              boxShadow: `0 8px 30px ${accentColor}40`,
+              background: `linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%)`,
+            },
+            '&:disabled': {
+              background: 'rgba(255, 255, 255, 0.06)',
+              color: 'rgba(255, 255, 255, 0.3)',
+              boxShadow: 'none',
+            },
           }}
         >
-          <Slide direction="up" in timeout={1000}>
-            <Box sx={{ textAlign: 'center', mb: 4 }}>
-              <Box
-                sx={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: 80,
-                  height: 80,
-                  borderRadius: '20px',
-                  background: appleGradients.student?.light || 'linear-gradient(135deg, #30D158 0%, #32D74B 100%)',
-                  mb: 3,
-                  boxShadow: appleShadows.soft,
-                  animation: 'float 3s ease-in-out infinite',
-                  '@keyframes float': {
-                    '0%, 100%': { transform: 'translateY(0px)' },
-                    '50%': { transform: 'translateY(-10px)' }
-                  }
-                }}
-              >
-                <PersonIcon sx={{ fontSize: 40, color: 'white' }} />
-              </Box>
-
-              <Typography
-                variant="h4"
-                sx={{
-                  color: 'white',
-                  fontWeight: 700,
-                  mb: 1,
-                  textShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                }}
-              >
-                Student Portal
-              </Typography>
-
-              <Typography
-                variant="body1"
-                sx={{
-                  color: 'rgba(255, 255, 255, 0.8)',
-                  fontSize: '1.1rem'
-                }}
-              >
-                Access your courses and track your progress
-              </Typography>
+          {loading ? (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <CircularProgress size={18} sx={{ color: 'white' }} />
+              Signing in...
             </Box>
-          </Slide>
-
-          {error && (
-            <Fade in>
-              <Alert
-                severity="error"
-                sx={{
-                  mb: 3,
-                  borderRadius: '12px',
-                  background: 'rgba(244, 67, 54, 0.1)',
-                  border: '1px solid rgba(244, 67, 54, 0.3)',
-                  backdropFilter: 'blur(10px)',
-                  '& .MuiAlert-message': {
-                    color: 'rgba(255, 255, 255, 0.9)'
-                  }
-                }}
-              >
-                {error}
-              </Alert>
-            </Fade>
+          ) : (
+            'Sign In'
           )}
+        </Button>
+      </Box>
 
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}
-          >
-            <TextField
-              label="Email Address"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              autoFocus
-              placeholder="Enter your email address"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <EmailIcon sx={{ color: 'rgba(255, 255, 255, 0.7)' }} />
-                  </InputAdornment>
-                ),
-                style: {
-                  pointerEvents: 'auto',
-                  userSelect: 'auto',
-                  touchAction: 'manipulation'
-                }
-              }}
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  borderRadius: '12px',
-                  backdropFilter: 'blur(10px)',
-                  transition: appleTransitions.smooth,
-                  pointerEvents: 'auto',
-                  '& fieldset': {
-                    borderColor: 'rgba(255, 255, 255, 0.3)',
-                    borderWidth: '1px'
-                  },
-                  '&:hover fieldset': {
-                    borderColor: 'rgba(255, 255, 255, 0.5)'
-                  },
-                  '&.Mui-focused fieldset': {
-                    borderColor: appleColors.student.main,
-                    borderWidth: '2px',
-                    boxShadow: `0 0 0 4px ${appleColors.student.main}25`
-                  }
-                },
-                '& .MuiInputLabel-root': {
-                  color: 'rgba(255, 255, 255, 0.7)',
-                  '&.Mui-focused': {
-                    color: appleColors.student.main
-                  }
-                },
-                '& .MuiOutlinedInput-input': {
-                  color: 'white',
-                  '&::placeholder': {
-                    color: 'rgba(255, 255, 255, 0.5)'
-                  }
-                }
-              }}
-            />
-
-            <TextField
-              label="Password"
-              type={showPassword ? 'text' : 'password'}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              placeholder="Enter your password"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <LockIcon sx={{ color: 'rgba(255, 255, 255, 0.7)' }} />
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      onClick={handleTogglePasswordVisibility}
-                      edge="end"
-                      aria-label="toggle password visibility"
-                      sx={{
-                        color: 'rgba(255, 255, 255, 0.7)',
-                        pointerEvents: 'auto',
-                        touchAction: 'manipulation',
-                        '&:hover': {
-                          color: 'white',
-                          background: 'rgba(255, 255, 255, 0.1)'
-                        }
-                      }}
-                    >
-                      {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-                style: {
-                  pointerEvents: 'auto',
-                  userSelect: 'auto',
-                  touchAction: 'manipulation'
-                }
-              }}
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  borderRadius: '12px',
-                  backdropFilter: 'blur(10px)',
-                  transition: appleTransitions.smooth,
-                  pointerEvents: 'auto',
-                  '& fieldset': {
-                    borderColor: 'rgba(255, 255, 255, 0.3)',
-                    borderWidth: '1px'
-                  },
-                  '&:hover fieldset': {
-                    borderColor: 'rgba(255, 255, 255, 0.5)'
-                  },
-                  '&.Mui-focused fieldset': {
-                    borderColor: appleColors.student.main,
-                    borderWidth: '2px',
-                    boxShadow: `0 0 0 4px ${appleColors.student.main}25`
-                  }
-                },
-                '& .MuiInputLabel-root': {
-                  color: 'rgba(255, 255, 255, 0.7)',
-                  '&.Mui-focused': {
-                    color: appleColors.student.main
-                  }
-                },
-                '& .MuiOutlinedInput-input': {
-                  color: 'white',
-                  '&::placeholder': {
-                    color: 'rgba(255, 255, 255, 0.5)'
-                  }
-                }
-              }}
-            />
-
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={remember}
-                    onChange={(e) => setRemember(e.target.checked)}
-                    sx={{
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      pointerEvents: 'auto',
-                      touchAction: 'manipulation',
-                      '&.Mui-checked': {
-                        color: appleColors.student.main
-                      },
-                      '&:hover': {
-                        background: 'rgba(255, 255, 255, 0.1)'
-                      }
-                    }}
-                  />
-                }
-                label={
-                  <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.8)' }}>
-                    Remember me
-                  </Typography>
-                }
-              />
-
-              <Typography
-                component={LinkBehavior}
-                to="/forgot-password"
-                variant="body2"
-                sx={{
-                  color: appleColors.student.light,
-                  textDecoration: 'none',
-                  cursor: 'pointer',
-                  pointerEvents: 'auto',
-                  touchAction: 'manipulation',
-                  transition: appleTransitions.smooth,
-                  '&:hover': {
-                    color: 'white',
-                    textDecoration: 'underline'
-                  }
-                }}
-              >
-                Forgot Password?
-              </Typography>
-            </Box>
-
-            <Button
-              type="submit"
-              disabled={loading}
-              fullWidth
-              sx={{
-                background: appleGradients.student?.main || 'linear-gradient(135deg, #34C759 0%, #30D158 100%)',
-                color: 'white',
-                borderRadius: '12px',
-                padding: '16px',
-                fontSize: '1.1rem',
-                fontWeight: 600,
-                textTransform: 'none',
-                boxShadow: appleShadows.medium,
-                pointerEvents: 'auto',
-                touchAction: 'manipulation',
-                transition: appleTransitions.smooth,
-                '&:hover': {
-                  background: appleGradients.student?.light || 'linear-gradient(135deg, #30D158 0%, #32D74B 100%)',
-                  transform: 'translateY(-2px)',
-                  boxShadow: appleShadows.large
-                },
-                '&:active': {
-                  transform: 'translateY(0px)'
-                },
-                '&:disabled': {
-                  background: 'rgba(255, 255, 255, 0.2)',
-                  color: 'rgba(255, 255, 255, 0.5)'
-                }
-              }}
-            >
-              {loading ? (
-                <>
-                  <CircularProgress size={20} sx={{ mr: 1, color: 'white' }} />
-                  Signing In...
-                </>
-              ) : (
-                'Sign In to Student Portal'
-              )}
-            </Button>
-          </Box>
-
-          <Box sx={{ textAlign: 'center', mt: 4 }}>
-            <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.6)', mb: 2 }}>
-              Having trouble accessing your account? Contact the administrator
-            </Typography>
-
-            <Typography
-              component={LinkBehavior}
-              to="/"
-              variant="body2"
-              sx={{
-                color: 'rgba(255, 255, 255, 0.8)',
-                textDecoration: 'none',
-                display: 'inline-flex',
-                alignItems: 'center',
-                cursor: 'pointer',
-                pointerEvents: 'auto',
-                touchAction: 'manipulation',
-                transition: appleTransitions.smooth,
-                '&:hover': {
-                  color: 'white',
-                  transform: 'translateX(-4px)'
-                }
-              }}
-            >
-              <ArrowBackIcon sx={{ mr: 1, fontSize: 18 }} />
-              Back to Role Selection
-            </Typography>
-          </Box>
-        </Box>
-      </Fade>
-    </Box>
+      <Box sx={{ textAlign: 'center', mt: 2.5 }}>
+        <Typography
+          component="a"
+          href="/forgot-password"
+          onClick={(e) => { e.preventDefault(); navigate('/forgot-password'); }}
+          variant="body2"
+          sx={{
+            color: 'rgba(255, 255, 255, 0.4)',
+            textDecoration: 'none',
+            cursor: 'pointer',
+            transition: 'color 0.2s',
+            '&:hover': { color: accentColor },
+          }}
+        >
+          Forgot your password?
+        </Typography>
+      </Box>
+    </LoginLayout>
   );
 }
 
 export default StudentLogin;
-

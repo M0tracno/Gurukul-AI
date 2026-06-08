@@ -1,6 +1,7 @@
 import axios from '../utils/mockApiService';
+import env from '../config/env';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = `${env.API_URL}/api`;
 
 // Course Allocation API Service
 class CourseAllocationService {
@@ -137,4 +138,4 @@ export default CourseAllocationService;
 
 
 
-
+

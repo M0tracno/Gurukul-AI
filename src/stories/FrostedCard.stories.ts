@@ -2,7 +2,6 @@ import { Meta, StoryObj } from '@storybook/react';
 import { FrostedCard } from '../components/common/FrostedCard';
 import { Box, Typography } from '@mui/material';
 import React from 'react';
-
 const meta = {
   title: 'Components/FrostedCard',
   component: FrostedCard,
@@ -40,10 +39,8 @@ const meta = {
     },
   },
 };
-
 export default meta;
 type Story = StoryObj;
-
 export const Default = {
   args: {
     children: React.createElement(
@@ -58,7 +55,6 @@ export const Default = {
     ),
   },
 };
-
 export const WithNeonGlow = {
   args: {
     glassLevel: 'medium',
@@ -76,7 +72,6 @@ export const WithNeonGlow = {
     ),
   },
 };
-
 export const GlassVariant = {
   args: {
     glassLevel: 'dark',
@@ -92,7 +87,6 @@ export const GlassVariant = {
     ),
   },
 };
-
 export const Interactive = {
   args: {
     glassLevel: 'medium',

@@ -1,3 +1,4 @@
+import env from '../config/env';
 /**
  * Database Context
  * 
@@ -40,8 +41,7 @@ export const DatabaseProvider = ({ children }) => {
         setIsLoading(true);
         
         // For development/demo mode, use mock service
-        if (process.env.NODE_ENV === 'development' || process.env.REACT_APP_USE_MOCK_DATA === 'true') {
-          console.log('Using mock database service for development/demo');
+        if (env.USE_MOCK_SERVICES || env.USE_MOCK_DATA) {
           const mockService = new MockDatabaseService();
           setDatabaseService(mockService);
           

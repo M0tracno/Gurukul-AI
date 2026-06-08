@@ -452,4 +452,4 @@ Enrollment: ${course.enrolled}/${course.capacity}`);
   );
 };
 
-export default CourseManagementNew;
+export default CourseManagementNew;

@@ -240,4 +240,4 @@ export const usePrivacy = () => {
 };
 
 export default usePrivacy;
-
+

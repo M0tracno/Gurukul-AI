@@ -13,19 +13,15 @@ class SecurityService {
           "'unsafe-inline'", 
           "'unsafe-eval'", 
           'https://*.googleapis.com', 
-          'https://*.firebase.com', 
           'https://*.googletagmanager.com', 
-          'https://*.google-analytics.com',
-          'https://apis.google.com' // Explicitly allow Firebase Auth scripts
+          'https://*.google-analytics.com'
         ],
         'script-src-elem': [
           "'self'", 
           "'unsafe-inline'",
           'https://*.googleapis.com',
-          'https://*.firebase.com',
           'https://*.googletagmanager.com',
-          'https://*.google-analytics.com',
-          'https://apis.google.com' // Explicitly allow Firebase Auth scripts
+          'https://*.google-analytics.com'
         ],
         'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
         'font-src': ["'self'", 'https://fonts.gstatic.com'],
@@ -34,13 +30,9 @@ class SecurityService {
           "'self'", 
           'http://localhost:*', 
           'https://localhost:*', 
-          'https://*.firebase.com', 
-          'https://*.firebaseio.com', 
           'https://*.googleapis.com', 
           'https://*.google-analytics.com', 
-          'https://www.google-analytics.com',
-          'https://firebaseinstallations.googleapis.com', // Firebase Installations API
-          'https://identitytoolkit.googleapis.com' // Firebase Auth API
+          'https://www.google-analytics.com'
         ],
         'frame-src': ["'none'"],
         'object-src': ["'none'"],

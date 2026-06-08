@@ -209,4 +209,4 @@ errorMonitoring.initialize = function() {
 
 export default errorMonitoring;
 export { errorMonitoring };
-
+

@@ -702,4 +702,4 @@ const FacultyCommunication = () => {
   );
 };
 
-export default FacultyCommunication;
+export default FacultyCommunication;

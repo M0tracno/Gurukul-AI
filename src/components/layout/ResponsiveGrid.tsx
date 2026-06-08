@@ -1,7 +1,6 @@
 import React from 'react';
 import { Grid, GridProps, styled } from '@mui/material';
 import { spacing } from '../../styles/designTokens';
-
 interface ResponsiveGridProps extends Omit<GridProps, 'gap'> {
   /**
    * Spacing between grid items using design tokens
@@ -20,7 +19,6 @@ interface ResponsiveGridProps extends Omit<GridProps, 'gap'> {
    */
   responsive?: boolean;
 }
-
 const StyledGrid = styled(Grid, {
   shouldForwardProp: prop =>
     !['spacingLevel', 'maxWidth', 'centered', 'responsive'].includes(prop as string),
@@ -47,14 +45,12 @@ const StyledGrid = styled(Grid, {
         return spacing.md;
     }
   };
-
   return {
     // Apply consistent spacing using design tokens
     '& > .MuiGrid-item': {
       paddingLeft: getSpacing(spacingLevel),
       paddingTop: getSpacing(spacingLevel),
     },
-
     // Maximum width constraints
     ...(maxWidth && {
       maxWidth:
@@ -70,12 +66,10 @@ const StyledGrid = styled(Grid, {
                   ? '1536px'
                   : '100%',
     }),
-
     // Centering
     ...(centered && {
       margin: '0 auto',
     }),
-
     // Responsive behavior
     ...(responsive && {
       padding: getSpacing('md'),
@@ -92,7 +86,6 @@ const StyledGrid = styled(Grid, {
     }),
   };
 });
-
 /**
  * ResponsiveGrid - A responsive grid system using design tokens
  *
@@ -125,7 +118,6 @@ export const ResponsiveGrid: React.FC<ResponsiveGridProps> = ({
     </StyledGrid>
   );
 };
-
 // Grid item component with consistent spacing
 interface ResponsiveGridItemProps extends Omit<GridProps, 'item'> {
   /**
@@ -137,7 +129,6 @@ interface ResponsiveGridItemProps extends Omit<GridProps, 'item'> {
   lg?: number | 'auto';
   xl?: number | 'auto';
 }
-
 export const ResponsiveGridItem: React.FC<ResponsiveGridItemProps> = ({
   children,
   xs = 12,
@@ -165,5 +156,4 @@ export const ResponsiveGridItem: React.FC<ResponsiveGridItemProps> = ({
     </div>
   );
 };
-
 export default ResponsiveGrid;

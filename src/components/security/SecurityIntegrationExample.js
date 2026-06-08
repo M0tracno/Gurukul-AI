@@ -280,5 +280,4 @@ const SecurityIntegrationExample = () => {
   );
 };
 
-export default SecurityIntegrationExample;
-
+export default SecurityIntegrationExample;

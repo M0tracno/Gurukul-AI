@@ -1,267 +1,294 @@
-# 🎓 Gurukul AI
+# Gurukul AI
 
-An AI-powered educational platform built with React that automates grading, provides personalized feedback, and generates quizzes using Google's Gemini and Vertex AI.
+> Comprehensive educational platform bridging traditional schooling with modern technology.
 
-## ✨ Features
+![Node.js](https://img.shields.io/badge/Node.js-≥20-339933?logo=node.js&logoColor=white)
+![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-7-47A248?logo=mongodb&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-7-DC382D?logo=redis&logoColor=white)
+![Socket.IO](https://img.shields.io/badge/Socket.IO-4-010101?logo=socket.io&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
 
-### 👩‍🏫 For Faculty
-- **AI-Generated Quizzes**: Create quizzes instantly on any subject with customizable difficulty levels and question types
-- **Automated Grading**: Grade assignments and assessments quickly with AI assistance
-- **Personalized Feedback**: Generate tailored feedback for students based on their performance
-- **Student Performance Analytics**: Track student progress with detailed analytics
-- **Course Management**: Organize courses, assignments, and materials in one place
+---
 
-### 👨‍🎓 For Students
-- **Interactive Dashboard**: Access assignments, grades, and feedback in a user-friendly interface
-- **AI-Powered Learning Resources**: Get personalized learning recommendations
-- **Progress Tracking**: Monitor academic performance over time
-- **Quiz Taking**: Take quizzes with immediate feedback
+## Overview
 
-### 👪 For Parents
-- **Student Performance Monitoring**: Track children's academic progress
-- **Teacher Communication**: Communicate directly with teachers
-- **Attendance Tracking**: View attendance records
-- **Event Notifications**: Stay updated on important academic events
+Gurukul AI serves four user roles — **Teacher**, **Student**, **Parent**, and **Admin** — providing a unified platform for academic operations. Core capabilities include:
 
-### 🔧 For Administrators
-- **User Management**: Add and manage user accounts
-- **System Settings**: Configure platform settings
-- **Data Management**: Handle data backup and restoration
-- **Activity Monitoring**: Track platform usage and activities
+- **AI Grading Pipeline** — Automated assessment via Google Gemini with BullMQ job processing
+- **Real-Time Messaging** — Socket.IO powered chat with typing indicators and offline delivery
+- **Attendance Management** — Daily tracking with parent notifications
+- **Course Management** — Enrollment, scheduling, and curriculum organization
+- **Role-Based Access Control** — Granular permissions across all platform features
 
-## 🚀 Quick Start
+---
 
-### Prerequisites
-- Node.js 18+ 
-- Firebase CLI
-- Git
+## Tech Stack
 
-### Installation
+| Layer | Technologies |
+|-------|-------------|
+| **Frontend** | React 18, Vite 6, TypeScript, MUI 7, TanStack React Query 5, Socket.IO Client, Framer Motion, Recharts |
+| **Backend** | Express 5, TypeScript, Mongoose / MongoDB 7, BullMQ / Redis 7, Socket.IO, JWT Auth, Zod validation |
+| **Testing** | Jest 30 (backend), Vitest 3 (frontend), Playwright (E2E), fast-check (property-based), k6 (load) |
+| **DevOps** | Docker, Docker Compose, GitHub Actions, Nginx, Sentry, Winston logging |
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/your-username/ai-teacher-assistant.git
-   cd ai-teacher-assistant
-   ```
+---
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+## Architecture
 
-3. **Environment Setup**
-   ```bash
-   cp .env.example .env.local
-   # Edit .env.local with your Firebase and Google Cloud credentials
-   ```
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  Nginx (reverse proxy)                                          │
+├────────────────────────┬────────────────────────────────────────┤
+│  React SPA (Vite)      │  Express API + Socket.IO               │
+│  ├── Feature modules   │  ├── Controllers                       │
+│  │   (teacher/student/ │  ├── Services (business logic)         │
+│  │    parent/admin)    │  ├── Repositories (data access)        │
+│  ├── Design tokens     │  ├── RBAC Middleware                   │
+│  ├── Error boundaries  │  ├── BullMQ Workers (AI grading)       │
+│  └── React Query cache │  └── Structured JSON logging           │
+├────────────────────────┴────────────────────────────────────────┤
+│  MongoDB (data)  │  Redis (cache + job queue)  │  Firebase      │
+└──────────────────┴─────────────────────────────┴────────────────┘
+```
 
-4. **Firebase Setup**
-   ```bash
-   firebase login
-   firebase init
-   ```
+**Frontend** — Feature-based module structure with a design token system, MUI theming, error boundaries, and React Query for server state.
 
-5. **Start development server**
-   ```bash
-   npm start
-   ```
+**Backend** — Controller → Service → Repository pattern with RBAC middleware, request validation (Zod + express-validator), and structured JSON logging via Winston.
 
-### 🌐 Deployment
+**Real-Time** — Socket.IO with persistence-first messaging, typing indicators, and missed message delivery on reconnect.
 
-#### Firebase Hosting
+**AI Pipeline** — BullMQ job queue with configurable concurrency, exponential backoff retry, and Google Gemini integration for automated grading.
+
+---
+
+## Prerequisites
+
+- **Node.js** ≥ 20
+- **npm** (comes with Node.js)
+- **MongoDB** 7+ (or use Docker)
+- **Redis** 7+ (or use Docker)
+
+Or simply **Docker** + **Docker Compose** for zero local dependencies.
+
+---
+
+## Quick Start
+
+### Docker (recommended)
+
 ```bash
-npm run build
-firebase deploy
+# Clone the repository
+git clone <repository-url> && cd gurukul-ai
+
+# Copy environment files
+cp .env.example .env.local
+cp backend/.env.example backend/.env
+
+# Start all services
+docker compose up
 ```
 
-#### Environment Variables
-Create `.env.production` with:
-```
-REACT_APP_FIREBASE_API_KEY=your_api_key
-REACT_APP_FIREBASE_AUTH_DOMAIN=your_domain
-REACT_APP_FIREBASE_PROJECT_ID=your_project_id
-# ... other Firebase config
-```
+Services will be available at:
+- **Frontend:** http://localhost:3000
+- **Backend API:** http://localhost:5000
+- **Nginx (unified):** http://localhost:80
 
-## 🛠️ Tech Stack
+### Manual Setup
 
-- **Frontend**: React 18, Material-UI v7, React Router
-- **Backend**: Firebase Functions, Node.js
-- **Database**: Firestore
-- **Authentication**: Firebase Auth
-- **AI Services**: Google Gemini, Vertex AI
-- **Storage**: Firebase Storage
-- **Hosting**: Firebase Hosting
+```bash
+# 1. Install frontend dependencies
+npm install
 
-## 📁 Project Structure
+# 2. Install backend dependencies
+cd backend && npm install && cd ..
 
-```
-├── src/                    # React source code
-│   ├── components/         # Reusable components
-│   ├── pages/             # Page components
-│   ├── services/          # API services
-│   ├── utils/             # Utility functions
-│   └── hooks/             # Custom React hooks
-├── public/                # Static assets
-├── cloud-functions/       # Firebase Functions
-├── docs/                  # Documentation
-├── scripts/               # Build and utility scripts
-│   ├── fixes/            # Fix scripts
-│   └── deployment/       # Deployment scripts
-├── firebase.json          # Firebase configuration
-└── package.json          # Dependencies
+# 3. Copy environment files and configure
+cp .env.example .env.local
+cp backend/.env.example backend/.env
+# Edit both files with your actual values (MongoDB URI, JWT secret, etc.)
+
+# 4. Start backend
+cd backend && npm run dev
+
+# 5. Start frontend (in a new terminal)
+npm run dev
 ```
 
-## Technologies Used
+Frontend runs on `http://localhost:3000` with API proxy to the backend at port 5000.
 
-- **React**: Frontend UI library
-- **Material-UI**: Component library for responsive design
-- **MongoDB**: Database for storing user and application data
-- **Express**: Backend API server
-- **Mongoose**: MongoDB object modeling tool
-- **JWT**: JSON Web Token based authentication
-- **Gemini API**: Google's generative AI for content creation and analysis
-- **Vertex AI**: Google Cloud's AI platform for advanced analytics
-- **React Router**: Navigation management
-- **Chart.js**: Data visualization
+---
 
-## Installation
+## Environment Variables
 
-### Prerequisites
-- Node.js (v14 or later)
-- npm (v6 or later)
-- MongoDB (v4.4 or later)
-- Google AI API keys (Gemini and/or Vertex AI)
+### Frontend (`.env.local`)
 
-### Codebase Organization
+| Variable | Description |
+|----------|-------------|
+| `VITE_API_URL` | Backend API base URL |
+| `VITE_SOCKET_URL` | WebSocket URL for real-time features |
+| `VITE_FIREBASE_*` | Firebase project credentials |
+| `VITE_GEMINI_API_KEY` | Google Gemini API key |
+| `VITE_SENTRY_DSN` | Sentry error reporting DSN |
+| `VITE_FORCE_DEMO_MODE` | Run with mock data (no backend) |
 
-The codebase has been organized to reduce redundancy and improve maintainability. For details on the organization structure and development workflow, please see the [CODEBASE_ORGANIZATION.md](./CODEBASE_ORGANIZATION.md) document.
+### Backend (`backend/.env`)
 
-### Setup Instructions
+| Variable | Description |
+|----------|-------------|
+| `PORT` | Server port (default: 5000) |
+| `MONGO_URI` | MongoDB connection string |
+| `REDIS_HOST` / `REDIS_PORT` | Redis connection details |
+| `JWT_SECRET` | Token signing secret |
+| `GEMINI_API_KEY` | Google Gemini for AI grading |
+| `SMTP_*` | Email service configuration |
+| `LOG_LEVEL` | Logging verbosity (debug/info/warn/error) |
 
-1. Clone the repository:
-   ```
-   git clone https://github.com/yourusername/ai-teacher-assistant.git
-   cd ai-teacher-assistant
-   ```
+See [`.env.example`](.env.example) and [`backend/.env.example`](backend/.env.example) for all available options.
 
-2. Install dependencies for both frontend and backend:
-   ```
-   # Install frontend dependencies
-   npm install
-
-   # Install backend dependencies
-   cd backend
-   npm install
-   cd ..
-   ```
-
-3. Create a `.env` file in the root directory with the following variables:
-   ```
-   # MongoDB Configuration
-   MONGODB_URI=mongodb://localhost:27017/gdc
-   MONGODB_DB_NAME=gdc
-
-   # JWT Configuration
-   REACT_APP_JWT_SECRET=your_jwt_secret_here
-   REACT_APP_JWT_EXPIRATION=3600
-
-   # Authentication Configuration
-   AUTH_RATE_LIMIT=5 # Max login attempts per minute
-   AUTH_LOCKOUT_TIME=15 # Minutes to lock account after too many failed attempts
-   
-   # AI API Keys
-   REACT_APP_GEMINI_API_KEY=your_gemini_api_key
-   REACT_APP_VERTEX_API_KEY=your_vertex_api_key
-   REACT_APP_GCP_PROJECT_ID=your_gcp_project_id
-   
-   ```
-
-4. Start MongoDB:
-   ```
-   mongod
-   ```
-
-5. Start the backend server:
-   ```
-   cd backend
-   npm start
-   ```
-
-6. In a new terminal, start the frontend development server:
-   ```
-   npm start
-   ```
-
-6. Open [http://localhost:3000](http://localhost:3000) to view the application.
-
-## Usage
-
-### User Types and Access
-
-The application supports four user types, each with their own login flow:
-
-1. **Faculty**: Email/password login with CAPTCHA
-2. **Students**: Student ID/email and password login
-3. **Parents**: Phone number authentication with OTP
-4. **Administrators**: Email/password with security key and CAPTCHA
-
-### Creating an AI-Generated Quiz (Faculty)
-
-1. Log in as a faculty member
-2. Navigate to "Create Quiz" in the dashboard
-3. Enter quiz details (title, topics, question count, etc.)
-4. Click "Generate Quiz with AI"
-5. Review and optionally edit the generated quiz
-6. Save the quiz to make it available to students
-
-### Grading Assignments with AI (Faculty)
-
-1. Log in as a faculty member
-2. Navigate to "Grade Assignments" in the dashboard
-3. Select an assignment to grade
-4. Choose auto-grading or manual grading options
-5. For auto-grading, review AI-suggested scores and feedback
-6. Make adjustments if necessary and save the grades
-
-### Viewing Academic Performance (Student/Parent)
-
-1. Log in as a student or parent
-2. View the dashboard for an overview of grades and performance
-3. Navigate to specific sections for detailed information on assignments, quizzes, and feedback
+---
 
 ## Project Structure
 
 ```
-ai-teacher-assistant/
-├── public/                  # Public assets
-├── src/                     # Source files
-│   ├── auth/                # Authentication components and context
-│   │   ├── faculty/         # Faculty-specific components
-│   │   ├── student/         # Student-specific components
-│   │   ├── parent/          # Parent-specific components
-│   │   └── admin/           # Admin-specific components
-│   ├── pages/               # Page components
-│   ├── services/            # API and service functions
-│   ├── App.js               # Main app component
-│   └── index.js             # Application entry point
-└── package.json             # Project dependencies
+gurukul-ai/
+├── backend/              # Express API server
+│   ├── src/
+│   │   ├── config/       # App configuration & database setup
+│   │   ├── controllers/  # HTTP request handlers
+│   │   ├── jobs/         # BullMQ workers (AI grading pipeline)
+│   │   ├── middleware/   # Auth, RBAC, validation, security
+│   │   ├── models/       # Mongoose schemas
+│   │   ├── realtime/     # Socket.IO event handlers
+│   │   ├── repositories/ # Data access layer
+│   │   ├── routes/       # API route definitions
+│   │   ├── services/     # Business logic
+│   │   ├── types/        # TypeScript interfaces
+│   │   └── utils/        # Utilities (logger, helpers)
+│   ├── tests/            # Property-based & unit tests
+│   └── scripts/          # Deployment & seeding scripts
+├── src/                  # React frontend
+│   ├── app/              # Routes & app shell
+│   ├── design-system/    # Tokens, themes & typography
+│   ├── features/         # Feature modules
+│   │   ├── teacher/
+│   │   ├── student/
+│   │   ├── parent/
+│   │   ├── admin/
+│   │   └── shared/       # Shared components & hooks
+│   └── providers/        # React context providers
+├── tests/                # E2E & visual regression tests
+├── load-tests/           # k6 performance tests
+├── nginx/                # Reverse proxy configuration
+├── docs/                 # Documentation
+├── .github/workflows/    # CI/CD pipelines
+├── docker-compose.yml
+├── Dockerfile            # Frontend multi-stage build
+├── playwright.config.ts  # E2E test configuration
+├── vite.config.ts        # Frontend build configuration
+└── package.json
 ```
+
+---
+
+## Available Scripts
+
+### Frontend
+
+| Script | Description |
+|--------|-------------|
+| `npm run dev` | Start Vite dev server (port 3000) |
+| `npm run build` | Type-check + production build |
+| `npm run preview` | Preview production build locally |
+| `npm run lint` | ESLint with zero-warning policy |
+| `npm run lint:fix` | Auto-fix lint issues |
+| `npm run format` | Format with Prettier |
+| `npm run type-check` | TypeScript type checking |
+| `npm test` | Run Vitest unit tests |
+| `npm run test:coverage` | Tests with coverage report |
+| `npm run test:pbt` | Property-based tests (fast-check) |
+| `npm run test:e2e` | Playwright E2E tests |
+| `npm run test:visual` | Visual regression tests |
+
+### Backend
+
+| Script | Description |
+|--------|-------------|
+| `npm run dev` | Start with hot-reload (tsx watch) |
+| `npm run build` | Compile TypeScript to `dist/` |
+| `npm start` | Run compiled production build |
+| `npm test` | Run Jest unit tests |
+| `npm run test:pbt` | Property-based tests |
+| `npm run test:coverage` | Tests with coverage report |
+| `npm run seed:admin` | Seed initial admin user |
+| `npm run pre-deploy` | Pre-deployment checks |
+
+---
+
+## API Documentation
+
+OpenAPI/Swagger documentation is auto-generated and available when the server is running:
+
+```
+http://localhost:5000/api/v1/docs
+```
+
+---
+
+## Testing
+
+```bash
+# Unit tests (frontend)
+npm test
+
+# Unit tests (backend)
+cd backend && npm test
+
+# Property-based tests (backend)
+cd backend && npm run test:pbt
+
+# E2E tests (all browsers)
+npx playwright test
+
+# E2E with UI mode
+npx playwright test --ui
+
+# Visual regression tests
+npx playwright test --config=tests/visual-regression/playwright.visual.config.ts
+
+# Load testing
+k6 run load-tests/k6-load-test.js
+```
+
+The E2E suite covers Chromium, Firefox, WebKit, and mobile viewports (Pixel 5, iPhone 12). CI adds Edge and Chrome branded browsers.
+
+---
+
+## Deployment
+
+Deployment is handled via Docker and GitHub Actions CI/CD pipelines. See [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) for full instructions.
+
+The pipeline includes:
+- Lint + type-check gates
+- Unit and property-based test suites
+- Docker image build and push
+- Multi-stage builds for optimized production images
+
+---
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature-name`
-3. Commit your changes: `git commit -am 'Add some feature'`
-4. Push to the branch: `git push origin feature-name`
-5. Submit a pull request
+1. **Branch naming:** `feature/description`, `fix/description`, or `chore/description`
+2. **Commits:** Follow [Conventional Commits](https://www.conventionalcommits.org/) (enforced via commitlint)
+3. **Before opening a PR:**
+   - Ensure `npm run lint` and `npm run type-check` pass with zero warnings
+   - Add/update tests for any new functionality
+   - Run the full test suite locally
+4. **PR process:** Fill out the PR template, request review, and ensure CI passes
+
+---
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Acknowledgments
-
-- Google's Generative AI APIs for powering the AI features
-- Firebase for authentication and database solutions
-- Material-UI for the responsive design components 
+MIT © Gurukul AI

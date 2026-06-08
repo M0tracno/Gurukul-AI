@@ -569,4 +569,4 @@ const DataManagementNew = () => {
   );
 };
 
-export default DataManagementNew;
+export default DataManagementNew;

@@ -1,13 +1,39 @@
-import { getCLS, getFID, getFCP, getLCP, getTTFB } from 'web-vitals';
+import env from '../config/env';
 
-import { constructor } from '@mui/material';
+/**
+ * Native Web Vitals measurement — replaces the web-vitals package.
+ * Uses PerformanceObserver API directly (supported in all modern browsers).
+ */
+const observe = (type, callback) => {
+  try {
+    if (!('PerformanceObserver' in window)) return;
+    const po = new PerformanceObserver((list) => {
+      for (const entry of list.getEntries()) {
+        callback({ name: type, value: entry.startTime || entry.value || entry.duration, delta: 0, id: `v-${type}-${Date.now()}`, entries: [entry] });
+      }
+    });
+    po.observe({ type, buffered: true });
+  } catch { /* Observer not supported for this type */ }
+};
+
+const getCLS = (cb) => observe('layout-shift', (m) => cb({ ...m, name: 'CLS' }));
+const getFID = (cb) => observe('first-input', (m) => cb({ ...m, name: 'FID', value: m.entries[0]?.processingStart - m.entries[0]?.startTime }));
+const getFCP = (cb) => observe('paint', (m) => { if (m.entries[0]?.name === 'first-contentful-paint') cb({ ...m, name: 'FCP', value: m.entries[0].startTime }); });
+const getLCP = (cb) => observe('largest-contentful-paint', (m) => cb({ ...m, name: 'LCP' }));
+const getTTFB = (cb) => {
+  try {
+    const nav = performance.getEntriesByType('navigation')[0];
+    if (nav) cb({ name: 'TTFB', value: nav.responseStart, delta: 0, id: `v-TTFB-${Date.now()}`, entries: [nav] });
+  } catch { /* navigation timing not available */ }
+};
+
 // Performance Monitoring Service for Phase 1
 
 class PerformanceMonitoringService {  constructor() {
     this.metrics = new Map();
     this.observers = [];
-    this.isEnabled = process.env.REACT_APP_ENABLE_PERFORMANCE_MONITORING === 'true';
-    this.reportingEndpoint = process.env.REACT_APP_PERFORMANCE_ENDPOINT;
+    this.isEnabled = env.ENABLE_PERFORMANCE_MONITORING;
+    this.reportingEndpoint = env.PERFORMANCE_ENDPOINT;
     this.initialized = false;
   }
   
@@ -376,4 +402,4 @@ class PerformanceMonitoringService {  constructor() {
 const performanceMonitoringService = new PerformanceMonitoringService();
 
 export default performanceMonitoringService;
-
+

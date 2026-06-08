@@ -2,18 +2,14 @@
  * Database Service
  * Handles all database operations for the frontend
  */
+import env from '../config/env';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-const DEMO_MODE = process.env.REACT_APP_FORCE_DEMO_MODE === 'true' || !API_URL;
+const API_URL = env.API_URL;
 
 class DatabaseService {
   constructor() {
     this.token = localStorage.getItem('authToken');
-    this.demoMode = DEMO_MODE;
-    
-    if (this.demoMode) {
-      console.log('🚀 DatabaseService running in demo mode');
-    }
+    this.demoMode = false;
   }
   updateToken() {
     this.token = localStorage.getItem('authToken');

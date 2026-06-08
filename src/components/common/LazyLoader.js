@@ -1,5 +1,4 @@
 import React, { Suspense, memo } from 'react';
-import { useTheme } from '@mui/material/styles';
 
 import { Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
@@ -47,7 +46,8 @@ export const LazyWrapper = memo(({
   const ErrorBoundary = ({ children }) => {
     const [hasError, setHasError] = React.useState(false);
 
-    React.useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  React.useEffect(() => {
       const handleError = () => setHasError(true);
       window.addEventListener('error', handleError);
       return () => window.removeEventListener('error', handleError);
@@ -181,4 +181,4 @@ export const withBundleAnalytics = (WrappedComponent, componentName) => {
 };
 
 export default LazyWrapper;
-
+

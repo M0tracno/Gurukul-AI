@@ -2,20 +2,17 @@ import { Component, ReactNode, ErrorInfo } from 'react';
 import { Box, Button, Typography, Card, CardContent } from '@mui/material';
 import { Refresh, Warning, Home } from '@mui/icons-material';
 import { motion } from 'framer-motion';
-
 interface Props {
   children: ReactNode;
   fallback?: ReactNode;
   onError?: (error: Error, errorInfo: ErrorInfo) => void;
 }
-
 interface State {
   hasError: boolean;
   error: Error | null;
   errorInfo: ErrorInfo | null;
   errorId: string;
 }
-
 /**
  * Enhanced Error Boundary with futuristic design
  *
@@ -28,7 +25,6 @@ interface State {
  */
 export class FuturisticErrorBoundary extends Component<Props, State> {
   private retryTimeoutId: NodeJS.Timeout | null = null;
-
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -38,7 +34,6 @@ export class FuturisticErrorBoundary extends Component<Props, State> {
       errorId: '',
     };
   }
-
   static getDerivedStateFromError(error: Error): Partial<State> {
     return {
       hasError: true,
@@ -46,7 +41,6 @@ export class FuturisticErrorBoundary extends Component<Props, State> {
       errorId: Math.random().toString(36).substr(2, 9),
     };
   }
-
   override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Log error to console in development
     if (process.env['NODE_ENV'] === 'development') {
@@ -55,27 +49,22 @@ export class FuturisticErrorBoundary extends Component<Props, State> {
       console.error('Component Stack:', errorInfo.componentStack);
       console.groupEnd();
     }
-
     this.setState({
       error,
       errorInfo,
     });
-
     // Call onError prop if provided
     if (this.props.onError) {
       this.props.onError(error, errorInfo);
     }
-
     // Report to error monitoring service (e.g., Sentry)
     this.reportError(error, errorInfo);
   }
-
   override componentWillUnmount() {
     if (this.retryTimeoutId) {
       clearTimeout(this.retryTimeoutId);
     }
   }
-
   private reportError = (error: Error, errorInfo: ErrorInfo) => {
     // In a real app, send to error monitoring service
     const errorReport = {
@@ -92,7 +81,6 @@ export class FuturisticErrorBoundary extends Component<Props, State> {
       userAgent: navigator.userAgent,
       timestamp: new Date().toISOString(),
     };
-
     // Example: Send to monitoring service
     if (process.env['NODE_ENV'] === 'production') {
       // window.errorReportingService?.captureException(error, {
@@ -101,7 +89,6 @@ export class FuturisticErrorBoundary extends Component<Props, State> {
       console.error('Error reported:', errorReport);
     }
   };
-
   private handleRetry = () => {
     this.setState({
       hasError: false,
@@ -110,11 +97,9 @@ export class FuturisticErrorBoundary extends Component<Props, State> {
       errorId: '',
     });
   };
-
   private handleGoHome = () => {
     window.location.href = '/';
   };
-
   private handleReportIssue = () => {
     const subject = encodeURIComponent(`Error Report - ID: ${this.state.errorId}`);
     const body = encodeURIComponent(
@@ -125,21 +110,17 @@ export class FuturisticErrorBoundary extends Component<Props, State> {
         `Time: ${new Date().toISOString()}\n\n` +
         `Please describe what you were doing when this error occurred:`
     );
-
     window.open(`mailto:support@example.com?subject=${subject}&body=${body}`);
   };
-
   override render() {
     if (this.state.hasError) {
       if (this.props.fallback) {
         return this.props.fallback;
       }
-
       // Check for reduced motion preference
       const prefersReducedMotion =
         typeof window !== 'undefined' &&
         window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
       const containerVariants = {
         hidden: { opacity: 0, y: 20 },
         visible: {
@@ -147,7 +128,6 @@ export class FuturisticErrorBoundary extends Component<Props, State> {
           y: 0,
         },
       };
-
       return (
         <Box
           sx={{
@@ -215,7 +195,6 @@ export class FuturisticErrorBoundary extends Component<Props, State> {
                     Error ID: {this.state.errorId}
                   </Typography>
                 </Box>
-
                 {process.env['NODE_ENV'] === 'development' && this.state.error && (
                   <Box
                     sx={{
@@ -243,7 +222,6 @@ export class FuturisticErrorBoundary extends Component<Props, State> {
                     </Typography>
                   </Box>
                 )}
-
                 <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
                   <Button
                     variant="contained"
@@ -261,7 +239,6 @@ export class FuturisticErrorBoundary extends Component<Props, State> {
                   >
                     Try Again
                   </Button>
-
                   <Button
                     variant="outlined"
                     onClick={this.handleGoHome}
@@ -279,7 +256,6 @@ export class FuturisticErrorBoundary extends Component<Props, State> {
                   >
                     Go Home
                   </Button>
-
                   <Button
                     variant="text"
                     onClick={this.handleReportIssue}
@@ -302,9 +278,7 @@ export class FuturisticErrorBoundary extends Component<Props, State> {
         </Box>
       );
     }
-
     return this.props.children;
   }
 }
-
 export default FuturisticErrorBoundary;

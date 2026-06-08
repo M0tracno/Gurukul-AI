@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Box, Card, CardContent, Chip, CircularProgress, FormControl, Grid, IconButton, InputLabel, LinearProgress, MenuItem, Paper, Select, Tooltip, Typography } from '@mui/material';
+import { Box, Card, CardContent, Chip, CircularProgress, FormControl, Grid, IconButton, InputLabel, LinearProgressItem, Paper, Select, Tooltip, Typography } from '@mui/material';
 import { 
   Download,
   Insights as InsightsIcon,
@@ -406,4 +406,4 @@ const EnhancedAnalytics = () => {
 };
 
 export default EnhancedAnalytics;
-
+

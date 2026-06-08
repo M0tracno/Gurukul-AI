@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import env from '../config/env';
 
 /**
  * Enhanced AI Service for Phase 2 Smart Features
@@ -21,7 +22,7 @@ class EnhancedAIService {
 
   async initialize() {
     try {
-      const apiKey = process.env.REACT_APP_GEMINI_API_KEY;
+      const apiKey = env.GEMINI_API_KEY;
       if (!apiKey) {
         console.warn('Gemini API key not found. AI features will use mock data.');
         this.isInitialized = false;
@@ -725,4 +726,4 @@ Create a structured learning path in JSON format:
 const enhancedAIService = new EnhancedAIService();
 
 export default enhancedAIService;
-
+

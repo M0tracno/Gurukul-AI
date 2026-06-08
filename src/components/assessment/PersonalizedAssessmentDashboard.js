@@ -3,7 +3,7 @@ import { CheckCircle, Refresh, Warning } from '@mui/icons-material';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, PointElement, ArcElement, Title, Tooltip, Legend } from 'chart.js';
 import { Bar, Line, Doughnut } from 'react-chartjs-2';
 
-import { Alert, Avatar, Box, Button, Card, CardContent, Chip, CircularProgress, Container, Divider, FormControl, FormControlLabel, Grid, InputLabel, List, ListItem, ListItemIcon, ListItemText, MenuItem, Paper, Select, Switch, Tab, Tabs, Typography } from '@mui/material';
+import { Alert, Avatar, Box, Button, Card, CardContent, Chip, CircularProgress, Container, Divider, FormControl, FormControlLabel, Grid, InputLabel, List, ListItem, ListItemIcon, ListItemTextItem, Paper, Select, Switch, Tab, Tabs, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { Timeline } from '@mui/lab';
 // Phase 3C: Personalized Assessment Dashboard Component
@@ -708,4 +708,4 @@ const PersonalizedAssessmentDashboard = ({
 };
 
 export default PersonalizedAssessmentDashboard;
-
+

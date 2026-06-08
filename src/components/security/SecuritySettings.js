@@ -1,5 +1,5 @@
 // filepath: c:\Users\AYUSHMAN NANDA\OneDrive\Desktop\GDC\src\components\security\SecuritySettings.js
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Button,
@@ -480,5 +480,4 @@ function SecuritySettings({ onSettingsUpdate = () => {} }) {
   );
 }
 
-export default SecuritySettings;
-
+export default SecuritySettings;

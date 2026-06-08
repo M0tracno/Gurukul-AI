@@ -4,9 +4,7 @@ import { useTheme } from '@mui/material/styles';
 import { Brightness4, Brightness7 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { useEnhancedTheme } from '../../contexts/EnhancedThemeContext';
-
 const MotionIconButton = motion(IconButton);
-
 interface DarkModeToggleProps {
   /**
    * Size of the toggle button
@@ -25,7 +23,6 @@ interface DarkModeToggleProps {
    */
   reduceMotion?: boolean;
 }
-
 /**
  * DarkModeToggle - Accessible theme switcher with smooth animations
  *
@@ -44,16 +41,13 @@ export const DarkModeToggle: React.FC<DarkModeToggleProps> = ({
 }) => {
   const { mode, toggleMode } = useEnhancedTheme();
   const theme = useTheme();
-
   // Check for user's motion preferences
   const prefersReducedMotion =
     reduceMotion ||
     (typeof window !== 'undefined' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-
   const isDark = mode === 'dark';
   const defaultTooltipText = isDark ? 'Switch to light mode' : 'Switch to dark mode';
-
   const iconVariants = {
     light: {
       rotate: 0,
@@ -64,7 +58,6 @@ export const DarkModeToggle: React.FC<DarkModeToggleProps> = ({
       scale: 1,
     },
   };
-
   const buttonVariants = {
     hover: {
       scale: prefersReducedMotion ? 1 : 1.05,
@@ -79,7 +72,6 @@ export const DarkModeToggle: React.FC<DarkModeToggleProps> = ({
       },
     },
   };
-
   const ButtonComponent = (
     <MotionIconButton
       onClick={toggleMode}
@@ -118,7 +110,6 @@ export const DarkModeToggle: React.FC<DarkModeToggleProps> = ({
       </motion.div>
     </MotionIconButton>
   );
-
   if (showTooltip) {
     return (
       <Tooltip title={tooltipText || defaultTooltipText} placement="bottom" arrow>
@@ -126,8 +117,6 @@ export const DarkModeToggle: React.FC<DarkModeToggleProps> = ({
       </Tooltip>
     );
   }
-
   return ButtonComponent;
 };
-
 export default DarkModeToggle;

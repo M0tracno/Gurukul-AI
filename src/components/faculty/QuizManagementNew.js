@@ -714,4 +714,4 @@ const QuizManagement = () => {
   );
 };
 
-export default QuizManagement;
+export default QuizManagement;

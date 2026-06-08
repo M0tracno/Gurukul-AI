@@ -4,7 +4,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker as MUIDatePicker } from '@mui/x-date-pickers/DatePicker';
 
-import { Accordion, AccordionDetails, AccordionSummary, Badge, Box, Button, Checkbox, Chip, Divider, FormControl, FormControlLabel, Grid, IconButton, InputLabel, ListItemText, MenuItem, Paper, Select, Slider, Switch, TextField, Tooltip, Typography, toLocaleString, toString } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Badge, Box, Button, Checkbox, Chip, Divider, FormControl, FormControlLabel, Grid, IconButton, InputLabelItemTextItem, Paper, Select, Slider, Switch, TextField, Tooltip, Typography, toLocaleString, toString } from '@mui/material';
   ViewColumn as ViewColumnIcon
 
 const AdvancedSearchFilter = ({
@@ -573,4 +573,4 @@ const AdvancedSearchFilter = ({
 };
 
 export default AdvancedSearchFilter;
-
+

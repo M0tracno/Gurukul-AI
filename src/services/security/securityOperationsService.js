@@ -730,4 +730,4 @@ class InjectionDetector {
 const securityOperationsService = new SecurityOperationsService();
 
 export default securityOperationsService;
-
+

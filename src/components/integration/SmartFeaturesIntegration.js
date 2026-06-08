@@ -260,4 +260,4 @@ const SmartFeaturesIntegration = ({
 
 export default SmartFeaturesIntegration;
 export { SmartFeaturesCard, SmartFeaturesStats };
-
+

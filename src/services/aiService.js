@@ -1,7 +1,8 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import env from '../config/env';
 
 // Initialize the Google Generative AI with API key
-const API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
+const API_KEY = env.GEMINI_API_KEY;
 let genAI = null;
 
 // Only initialize if we have an API key and are in a secure context
@@ -970,4 +971,4 @@ export async function testQuizGeneration(quizParams) {
 } 
 
 
-
+

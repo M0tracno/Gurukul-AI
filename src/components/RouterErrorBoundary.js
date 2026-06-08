@@ -2,7 +2,6 @@ import React from 'react';
 import { Box, Button, Paper, Typography } from '@mui/material';
 import { Refresh } from '@mui/icons-material';
 
-import { constructor } from '@mui/material';
 class RouterErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
@@ -62,4 +61,4 @@ class RouterErrorBoundary extends React.Component {
 }
 
 export default RouterErrorBoundary;
-
+

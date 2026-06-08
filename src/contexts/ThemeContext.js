@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
 
@@ -250,4 +250,4 @@ export const CustomThemeProvider = ({ children }) => {
 };
 
 export default CustomThemeProvider;
-
+

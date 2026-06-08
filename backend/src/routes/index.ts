@@ -1,0 +1,10 @@
+export { default as authRoutes } from './authRoutes.js';
+export { default as studentRoutes } from './studentRoutes.js';
+export { default as courseRoutes } from './courseRoutes.js';
+export { default as facultyRoutes } from './facultyRoutes.js';
+export { default as enrollmentRoutes } from './enrollmentRoutes.js';
+export { default as attendanceRoutes } from './attendanceRoutes.js';
+export { default as markRoutes } from './markRoutes.js';
+export { default as gradingRoutes } from './gradingRoutes.js';
+export { default as metricsRoutes } from './metricsRoutes.js';
+export { default as healthRoutes } from './healthRoutes.js';

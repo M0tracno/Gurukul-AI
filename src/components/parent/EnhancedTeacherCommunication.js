@@ -4,7 +4,7 @@ import makeStyles from '../../utils/makeStylesCompat';
 import { useAuth } from '../../contexts/AuthContext';
 import { useDatabase } from '../../contexts/DatabaseContext';
 import messagingService from '../../services/messagingService';
-import { Alert, Avatar, Badge, Box, Card, CardContent, Chip, CircularProgress, Container, Dialog, DialogContent, DialogTitle, FormControl, Grid, IconButton, InputLabel, ListItem, ListItemAvatar, ListItemText, MenuItem, Paper, Select, Snackbar, TextField, Tooltip, Typography } from '@mui/material';
+import { Alert, Avatar, Badge, Box, Card, CardContent, Chip, CircularProgress, Container, Dialog, DialogContent, DialogTitle, FormControl, Grid, IconButton, InputLabel, ListItem, ListItemAvatar, ListItemTextItem, Paper, Select, Snackbar, TextField, Tooltip, Typography } from '@mui/material';
 import {
   Send as SendIcon,
   AttachFile as AttachFileIcon,
@@ -1056,4 +1056,4 @@ function EnhancedTeacherCommunication() {
 }
 
 export default EnhancedTeacherCommunication;
-
+

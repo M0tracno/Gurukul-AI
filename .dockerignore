@@ -1,0 +1,71 @@
+# Dependencies
+node_modules/
+
+# Build output (rebuilt in container)
+dist/
+build/
+
+# Backend (separate Dockerfile)
+backend/
+
+# Environment files (not needed for frontend build)
+.env
+.env.*
+!.env.example
+!.env.production
+
+# Logs
+logs/
+*.log
+
+# Tests
+tests/
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+vitest.config.ts
+playwright.config.ts
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose*.yml
+
+# Documentation
+README.md
+docs/
+PR_SUMMARY.md
+PROJECT_STATUS_SUMMARY.md
+
+# Storybook
+.storybook/
+
+# Misc
+cloud-functions/
+create-react-app/
+scripts/
+uploads/
+ssl/
+grafana/
+logstash/
+prometheus/
+.netlify/
+.firebase/
+.husky/
+.kiro/
+gdg-build.zip

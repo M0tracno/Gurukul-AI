@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Assignment, Close, Grade, Message, Refresh } from '@mui/icons-material';
-import { useTheme } from '@mui/material/styles';
 import makeStyles from '../../utils/makeStylesCompat';
 import { gradeAssignmentWithAI, generatePersonalizedFeedback, evaluateEssayWithVertexAI } from '../../services/aiService';
 import EnhancedFacultyService from '../../services/enhancedFacultyService';
@@ -638,4 +637,4 @@ function GradeAssignments() {
   );
 }
 
-export default GradeAssignments;
+export default GradeAssignments;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { useTheme, styled } from '@mui/material/styles';
-import { Box, Button, Typography, Container } from '@mui/material';
+import {  styled } from '@mui/material/styles';
+import {  Button, Typography, Container } from '@mui/material';
 import { Home as HomeIcon, Error as ErrorIcon } from '@mui/icons-material';
 
 const Root = styled('div')(({ theme }) => ({
@@ -60,4 +60,4 @@ const NotFound = () => {
 };
 
 export default NotFound;
-
+

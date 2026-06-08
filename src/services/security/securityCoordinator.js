@@ -664,4 +664,4 @@ class SecurityCoordinator {
 const securityCoordinator = new SecurityCoordinator();
 
 export default securityCoordinator;
-
+

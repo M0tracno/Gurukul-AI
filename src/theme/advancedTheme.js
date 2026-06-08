@@ -432,4 +432,4 @@ export const createAdvancedTheme = (mode = 'light') => {
 
 // Export default theme
 export default createAdvancedTheme();
-
+

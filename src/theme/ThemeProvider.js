@@ -1,10 +1,10 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
 import { CssBaseline, ThemeProvider as MUIThemeProvider } from '@mui/material';
-import createEnhancedTheme from './createEnhancedTheme';
+import React, { createContext, useContext } from 'react';
+
 import LinkBehavior from '../components/common/LinkBehavior';
+import createEnhancedTheme from './createEnhancedTheme';
 
-// Theme Context for Dark Mode Support
-
+// Theme Context — Always dark mode
 const ThemeContext = createContext();
 
 export const useTheme = () => {
@@ -16,48 +16,13 @@ export const useTheme = () => {
 };
 
 export const ThemeProvider = ({ children }) => {
-  // Initialize theme mode from localStorage or system preference
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    const savedMode = localStorage.getItem('themeMode');
-    if (savedMode) {
-      return savedMode === 'dark';
-    }
-    // Check system preference
-    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  });
-
-  // Listen for system theme changes
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = (e) => {
-      if (!localStorage.getItem('themeMode')) {
-        setIsDarkMode(e.matches);
-      }
-    };
-
-    mediaQuery.addListener(handleChange);
-    return () => mediaQuery.removeListener(handleChange);
-  }, []);
-
-  // Save theme preference to localStorage
-  useEffect(() => {
-    localStorage.setItem('themeMode', isDarkMode ? 'dark' : 'light');
-  }, [isDarkMode]);
-
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-  };
-
-  const setThemeMode = (mode) => {
-    setIsDarkMode(mode === 'dark');
-  };
-
+  const isDarkMode = true;
   const theme = createEnhancedTheme(isDarkMode, LinkBehavior);
 
   const contextValue = {
     isDarkMode,
-    toggleTheme,
-    setThemeMode,
+    toggleTheme: () => {},
+    setThemeMode: () => {},
     theme,
   };
 
@@ -72,4 +37,3 @@ export const ThemeProvider = ({ children }) => {
 };
 
 export default ThemeProvider;
-

@@ -589,4 +589,4 @@ export const securityHelpers = {
 
 // Export default for backward compatibility
 export default securityHelpers;
-
+

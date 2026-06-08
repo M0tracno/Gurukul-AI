@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { CheckCircle, ExpandMore, Warning } from '@mui/icons-material';
 
 import { Alert, Box, Button, Card, CardContent, Chip, CircularProgress, Collapse, Fade, IconButton, LinearProgress, Paper, Slide, Snackbar, Typography, Zoom, toString } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
 // Phase 3C: Real-time Feedback Interface Component
 
 const RealTimeFeedbackInterface = ({
@@ -441,4 +440,4 @@ const RealTimeFeedbackProvider = ({ children, ...props }) => {
 
 export default RealTimeFeedbackInterface;
 export { RealTimeFeedbackProvider };
-
+

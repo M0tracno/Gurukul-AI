@@ -640,4 +640,4 @@ const PrivacyConsentManager = ({ open, onClose, userType = 'student' }) => {
 };
 
 export default PrivacyConsentManager;
-
+

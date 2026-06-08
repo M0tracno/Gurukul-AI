@@ -1,3 +1,4 @@
+import env from '../config/env';
 import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
 
 import { constructor } from '@mui/material';
@@ -31,7 +32,7 @@ class ServiceRegistry {
     this.services = new Map();
     this.initializationPromises = new Map();
     this.isDevelopment = process.env.NODE_ENV === 'development';
-    this.useMockServices = this.isDevelopment && process.env.REACT_APP_USE_MOCK_SERVICES !== 'false';
+    this.useMockServices = this.isDevelopment && !env.USE_MOCK_SERVICES;
   }
 
   async getService(serviceName) {
@@ -386,4 +387,4 @@ export const Phase2ServicesStatus = () => {
 };
 
 export default OptimizedPhase2ServicesProvider;
-
+

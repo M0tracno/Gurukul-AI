@@ -635,4 +635,4 @@ class AdvancedAnalyticsService {
 const advancedAnalyticsService = new AdvancedAnalyticsService();
 
 export default advancedAnalyticsService;
-
+

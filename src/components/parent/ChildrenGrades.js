@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Grade as GradeIcon } from '@mui/icons-material';
-import { useTheme } from '@mui/material/styles';
 import makeStyles from '../../utils/makeStylesCompat';
 import { useAuth } from '../../auth/AuthContext';
 import { useDatabase } from '../../hooks/useDatabase';
@@ -194,4 +193,4 @@ function ChildrenGrades() {
 }
 
 export default ChildrenGrades;
-
+

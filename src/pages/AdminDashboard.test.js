@@ -34,58 +34,6 @@ jest.mock('../components/monitoring/ProductionMonitor', () => {
 jest.mock('../components/analytics/EnhancedAnalytics');
 jest.mock('../components/mobile/MobileOptimization');
 
-// Mock Firebase Email Service
-jest.mock('../services/firebaseEmailService', () => {
-  const mockService = {
-    signInWithEmail: () => Promise.resolve({
-      user: {
-        uid: 'test-user-id',
-        email: 'admin@test.com',
-        displayName: 'Test Admin',
-        emailVerified: true,
-      }
-    }),
-    createUserWithEmail: () => Promise.resolve({
-      user: {
-        uid: 'test-user-id',
-        email: 'admin@test.com',
-        displayName: 'Test Admin',
-        emailVerified: false,
-      }
-    }),
-    signOut: () => Promise.resolve(),
-    sendPasswordReset: () => Promise.resolve(),
-    updateUserProfile: () => Promise.resolve(),
-    sendEmailVerification: () => Promise.resolve(),
-    getCurrentUser: () => ({
-      uid: 'test-user-id',
-      email: 'admin@test.com',
-      displayName: 'Test Admin',
-      emailVerified: true,
-    }),
-    onAuthStateChanged: (callback) => {
-      const user = {
-        uid: 'test-user-id',
-        email: 'admin@test.com',
-        displayName: 'Test Admin',
-        emailVerified: true,
-      };
-      if (callback) {
-        setTimeout(() => callback(user), 0);
-      }
-      return () => {}; // Return unsubscribe function
-    },
-    isEmailVerified: () => true,
-  };
-
-  return {
-    __esModule: true,
-    default: function() {
-      return mockService;
-    },
-  };
-});
-
 // Mock axios
 jest.mock('axios', () => ({
   create: () => ({
@@ -98,58 +46,6 @@ jest.mock('axios', () => ({
   post: () => Promise.resolve({ data: {} }),
   put: () => Promise.resolve({ data: {} }),
   delete: () => Promise.resolve({ data: {} }),
-}));
-
-// Mock Firebase Auth functions
-jest.mock('firebase/auth', () => ({
-  signInWithEmailAndPassword: () => Promise.resolve({
-    user: {
-      uid: 'test-user-id',
-      email: 'admin@test.com',
-      displayName: 'Test Admin',
-      emailVerified: true,
-    }
-  }),
-  createUserWithEmailAndPassword: () => Promise.resolve({
-    user: {
-      uid: 'test-user-id',
-      email: 'admin@test.com',
-      displayName: 'Test Admin',
-      emailVerified: false,
-    }
-  }),
-  signOut: () => Promise.resolve(),
-  sendPasswordResetEmail: () => Promise.resolve(),
-  updateProfile: () => Promise.resolve(),
-  sendEmailVerification: () => Promise.resolve(),
-  onAuthStateChanged: (auth, callback) => {
-    // Simulate an authenticated user
-    const user = {
-      uid: 'test-user-id',
-      email: 'admin@test.com',
-      displayName: 'Test Admin',
-      emailVerified: true,
-    };
-    // Call the callback immediately with the user
-    if (callback) {
-      setTimeout(() => callback(user), 0);
-    }
-    // Return an unsubscribe function
-    return () => {};
-  },
-}));
-
-// Mock Firebase config
-jest.mock('../config/firebase', () => ({
-  auth: {
-    currentUser: {
-      uid: 'test-user-id',
-      email: 'admin@test.com',
-      displayName: 'Test Admin',
-      emailVerified: true,
-    },
-  },
-  db: {},
 }));
 
 // Mock API calls

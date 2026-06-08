@@ -656,4 +656,4 @@ const CourseAttendance = () => {
   );
 };
 
-export default CourseAttendance;
+export default CourseAttendance;

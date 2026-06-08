@@ -358,5 +358,4 @@ const LearningVisualization = ({ studentId, courseId }) => {
   );
 };
 
-export default LearningVisualization;
-
+export default LearningVisualization;

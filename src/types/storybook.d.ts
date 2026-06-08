@@ -8,12 +8,10 @@ declare module '@storybook/react' {
     decorators?: any[];
     [key: string]: any;
   }
-
   export interface StoryObj<T = {}> {
     args?: any;
     parameters?: any;
     [key: string]: any;
   }
-
   export type Story<T = {}> = StoryObj<T>;
 }

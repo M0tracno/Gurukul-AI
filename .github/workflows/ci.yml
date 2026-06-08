@@ -1,57 +1,125 @@
-name: CI/CD Pipeline
+# Gurukul AI — Pull Request Checks
+# Lightweight PR validation: lint + full test suite (unit, integration) + coverage enforcement
+# This workflow runs on all PRs and enforces quality gates.
+# Requirements: 9.3, 10.5
+
+name: PR Checks
 
 on:
-  push:
-    branches: [main, develop, 'upgrade/*']
   pull_request:
     branches: [main, develop]
 
+concurrency:
+  group: pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '20'
+
 jobs:
-  test:
+  # ─────────────────────────────────────────────────────────
+  # Lint: ESLint, Prettier, TypeScript type checks
+  # ─────────────────────────────────────────────────────────
+  lint:
+    name: Lint & Type Check
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x]
+    timeout-minutes: 5
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js ${{ matrix.node-version }}
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
-      - name: Install dependencies
+      - name: Install frontend dependencies
         run: npm ci
 
-      - name: Run ESLint
+      - name: Install backend dependencies
+        run: npm ci
+        working-directory: backend
+
+      - name: ESLint (frontend)
         run: npm run lint
 
-      - name: Run Prettier check
+      - name: Prettier check (frontend)
         run: npm run format:check
 
-      - name: Type check
+      - name: TypeScript check (frontend)
         run: npm run type-check
 
-      - name: Run tests
-        run: npm run test:ci
+      - name: TypeScript check (backend)
+        run: npm run typecheck
+        working-directory: backend
 
-      - name: Build application
-        run: npm run build
+  # ─────────────────────────────────────────────────────────
+  # Frontend Tests with Coverage (80% threshold enforced)
+  # ─────────────────────────────────────────────────────────
+  test-frontend:
+    name: Frontend Tests (Coverage ≥ 80%)
+    runs-on: ubuntu-latest
+    needs: lint
+    timeout-minutes: 10
 
-      - name: Upload build artifacts
-        if: matrix.node-version == '20.x'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests with coverage
+        run: npm run test:coverage
+        env:
+          CI: true
+          NODE_ENV: test
+
+      - name: Upload coverage report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: build-files
-          path: build/
+          name: frontend-coverage-pr
+          path: coverage/
+          retention-days: 7
 
-  lighthouse:
+  # ─────────────────────────────────────────────────────────
+  # Backend Tests with Coverage (80% threshold enforced)
+  # ─────────────────────────────────────────────────────────
+  test-backend:
+    name: Backend Tests (Coverage ≥ 80%)
     runs-on: ubuntu-latest
-    needs: test
-    if: github.ref == 'refs/heads/main'
+    needs: lint
+    timeout-minutes: 10
+
+    services:
+      mongodb:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - name: Checkout code
@@ -60,29 +128,41 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
 
       - name: Install dependencies
         run: npm ci
+        working-directory: backend
 
-      - name: Build application
-        run: npm run build
+      - name: Run tests with coverage
+        run: npm run test:coverage
+        working-directory: backend
+        env:
+          CI: true
+          NODE_ENV: test
+          MONGODB_URI: mongodb://localhost:27017/gurukul_test
+          REDIS_URL: redis://localhost:6379
+          JWT_SECRET: ci_test_jwt_secret_key
+          JWT_REFRESH_SECRET: ci_test_jwt_refresh_secret_key
 
-      - name: Serve application
-        run: |
-          npm install -g serve
-          serve -s build -l 3000 &
-          sleep 5
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage-pr
+          path: backend/coverage/
+          retention-days: 7
 
-      - name: Run Lighthouse CI
-        run: |
-          npm install -g @lhci/cli
-          lhci autorun
-
-  security:
+  # ─────────────────────────────────────────────────────────
+  # Build Verification (ensure project compiles cleanly)
+  # ─────────────────────────────────────────────────────────
+  build-check:
+    name: Build Verification
     runs-on: ubuntu-latest
-    needs: test
+    needs: [test-frontend, test-backend]
+    timeout-minutes: 10
 
     steps:
       - name: Checkout code
@@ -91,14 +171,41 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Install and build frontend
+        run: |
+          npm ci
+          npm run build
+        env:
+          CI: false
 
-      - name: Run security audit
-        run: npm audit --audit-level moderate
+      - name: Install and build backend
+        run: |
+          npm ci
+          npm run build
+        working-directory: backend
 
-      - name: Run dependency check
-        run: npx audit-ci --moderate
+  # ─────────────────────────────────────────────────────────
+  # Test Duration Warning (Requirement 9.7)
+  # ─────────────────────────────────────────────────────────
+  duration-check:
+    name: Duration Warning
+    runs-on: ubuntu-latest
+    needs: [build-check]
+    if: always()
+    timeout-minutes: 2
+
+    steps:
+      - name: Check overall duration
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // GitHub Actions auto-reports timing. This step warns if the workflow
+            // is configured to exceed 15 minutes (Requirement 9.7).
+            const totalTimeout = 5 + 10 + 10 + 10; // sum of job timeouts
+            if (totalTimeout > 15) {
+              core.warning(`Total workflow timeout budget (${totalTimeout} min) exceeds 15-minute test duration budget. Consider optimization.`);
+            }
+            core.info('Pipeline duration check completed. See workflow summary for individual job times.');

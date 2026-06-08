@@ -3,7 +3,7 @@ import { Accessibility as AccessibilityIcon, Backup as BackupIcon, DarkMode as D
 import { useTheme } from '../../contexts/ThemeContext';
 import { useNotifications } from '../../contexts/NotificationContext';
 
-import { Alert, Box, Button, Card, CardContent, Divider, FormControl, FormControlLabel, Grid, IconButton, InputLabel, MenuItem, Radio, Select, Slider, Switch, Tooltip, Typography } from '@mui/material';
+import { Alert, Box, Button, Card, CardContent, Divider, FormControl, FormControlLabel, Grid, IconButton, InputLabelItem, Radio, Select, Slider, Switch, Tooltip, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 const SettingsPanel = () => {
   const theme = useTheme();
@@ -461,4 +461,4 @@ const SettingsPanel = () => {
 };
 
 export default SettingsPanel;
-
+

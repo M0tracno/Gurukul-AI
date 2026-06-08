@@ -151,4 +151,4 @@ const SmartFeaturesRoutes = () => {
 };
 
 export default SmartFeaturesRoutes;
-
+

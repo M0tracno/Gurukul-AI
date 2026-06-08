@@ -7,7 +7,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import facultyService from '../../services/facultyService';
 import { generateQuizWithAI } from '../../services/aiService';
 
-import { Box, Button, Card, CardContent, Checkbox, Chip, Container, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, Grid, IconButton, InputLabel, MenuItem, Select, Step, StepLabel, Stepper, Switch, Tab, Tabs, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, Checkbox, Chip, Container, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, Grid, IconButton, InputLabelItem, Select, Step, StepLabel, Stepper, Switch, Tab, Tabs, TextField, Typography } from '@mui/material';
   Save as SaveIcon
 
 function TabPanel({ children, value, index, ...other }) {
@@ -1160,5 +1160,4 @@ const EnhancedQuizCreation = () => {
   );
 };
 
-export default EnhancedQuizCreation;
-
+export default EnhancedQuizCreation;

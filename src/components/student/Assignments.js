@@ -4,7 +4,7 @@ import { useTheme } from '@mui/material/styles';
 import {
 import makeStyles from '../../utils/makeStylesCompat';
 
-import { Box, Button, Card, CardContent, Chip, Container, Divider, FormControl, Grid, InputAdornment, InputLabel, LinearProgress, MenuItem, Paper, Select, Tab, Tabs, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, Chip, Container, Divider, FormControl, Grid, InputAdornment, InputLabel, LinearProgressItem, Paper, Select, Tab, Tabs, TextField, Typography } from '@mui/material';
   Search as SearchIcon,
   Assignment as AssignmentIcon,
   LibraryBooks as CourseIcon,
@@ -371,5 +371,4 @@ const StudentAssignments = () => {
   );
 };
 
-export default StudentAssignments;
-
+export default StudentAssignments;

@@ -9,7 +9,6 @@ import LinkBehavior from '../common/LinkBehavior';
 
 import { Alert, Box, Button, Checkbox, CircularProgress, Container, Divider, FormControlLabel, IconButton, InputAdornment, Link, Paper, Tab, Tabs, TextField, Typography } from '@mui/material';
   School as SchoolIcon} from '@mui/icons-material';
-
 const useStyles = makeStyles((theme) => ({
   root: {
     minHeight: '100vh',
@@ -91,11 +90,7 @@ function UnifiedEmailLogin({ defaultUserType = 'student' }) {
     currentUser,
     userRole,
     login,
-    firebaseEmailSignIn,
-    firebaseResetPassword,
-    firebaseResendEmailVerification,
-    isFirebaseEmailVerified,
-    verifyFirebaseEmailAuth
+    resetPassword,
   } = useAuth();
 
   const navigate = useNavigate();
@@ -150,38 +145,11 @@ function UnifiedEmailLogin({ defaultUserType = 'student' }) {
     setEmailNotVerified(false);
 
     try {
-      if (authMethod === 'email') {
-        // Firebase Email Authentication
-        const firebaseResult = await firebaseEmailSignIn(email, password);
+      // Use standard JWT login
+      const result = await login(email, password, userType);
 
-        if (!firebaseResult.success) {
-          throw new Error(firebaseResult.message || 'Login failed');
-        }
-
-        // Check email verification
-        if (!isFirebaseEmailVerified()) {
-          setEmailNotVerified(true);
-          setLoading(false);
-          return;
-        }
-
-        // Verify with backend
-        const backendResult = await verifyFirebaseEmailAuth(
-          firebaseResult.user,
-          userType,
-          { loginType: 'email' }
-        );
-
-        if (backendResult.success) {
-          navigateToDashboard(navigate, userType);
-        }
-      } else {
-        // Traditional backend login
-        const result = await login(email, password, userType);
-
-        if (result) {
-          navigateToDashboard(navigate, userType);
-        }
+      if (result) {
+        navigateToDashboard(navigate, userType);
       }
     } catch (error) {
       console.error('Login error:', error);
@@ -199,14 +167,9 @@ function UnifiedEmailLogin({ defaultUserType = 'student' }) {
 
     setLoading(true);
     try {
-      if (authMethod === 'email') {
-        await firebaseResetPassword(email);
-        setError('');
-        alert('Password reset email sent! Please check your inbox.');
-      } else {
-        // Handle traditional password reset
-        alert('Password reset functionality will be available soon.');
-      }
+      await resetPassword(email);
+      setError('');
+      alert('Password reset email sent! Please check your inbox.');
     } catch (error) {
       setError(error.message || 'Failed to send password reset email');
     } finally {
@@ -215,16 +178,8 @@ function UnifiedEmailLogin({ defaultUserType = 'student' }) {
   };
 
   const handleResendVerification = async () => {
-    setLoading(true);
-    try {
-      await firebaseResendEmailVerification();
-      alert('Verification email sent! Please check your inbox.');
-      setEmailNotVerified(false);
-    } catch (error) {
-      setError(error.message || 'Failed to resend verification email');
-    } finally {
-      setLoading(false);
-    }
+    // Email verification is now handled by the backend
+    alert('Please contact support if you need to verify your email.');
   };
 
   const handlePhoneLogin = () => {
@@ -404,4 +359,3 @@ function UnifiedEmailLogin({ defaultUserType = 'student' }) {
 }
 
 export default UnifiedEmailLogin;
-

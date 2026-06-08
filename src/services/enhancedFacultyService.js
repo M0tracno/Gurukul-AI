@@ -1,4 +1,5 @@
 import DatabaseService from './databaseService';
+import env from '../config/env';
 
 /**
  * Enhanced Faculty Service
@@ -7,7 +8,7 @@ import DatabaseService from './databaseService';
 class EnhancedFacultyService {
   constructor() {
     this.databaseService = DatabaseService;
-    this.baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+    this.baseUrl = env.API_URL;
   }
 
   /**
@@ -460,4 +461,4 @@ class EnhancedFacultyService {
   }
 }
 
-export default new EnhancedFacultyService();
+export default new EnhancedFacultyService();

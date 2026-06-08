@@ -1,4 +1,5 @@
 import DatabaseService from './databaseService';
+import env from '../config/env';
 
 /**
  * Enhanced Parent Service
@@ -9,7 +10,7 @@ import DatabaseService from './databaseService';
 class ParentService {
   constructor() {
     this.databaseService = DatabaseService;
-    this.baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+    this.baseUrl = env.API_URL;
   }
   /**
    * Get parent profile information
@@ -734,4 +735,4 @@ export default new ParentService();
 
 
 
-
+

@@ -4,7 +4,7 @@ import { PeopleIcon, PersonAdd as AddIcon, SchoolIcon, Shield as SecurityIcon } 
 import { useAuth } from '../auth/AuthContext';
 import LinkBehavior from '../components/common/LinkBehavior';
 
-import { Alert, Box, Button, CircularProgress, Container, FormControl, Grid, IconButton, InputAdornment, InputLabel, Link, MenuItem, Paper, Select, Step, StepLabel, Stepper, TextField, Typography } from '@mui/material';
+import { Alert, Box, Button, CircularProgress, Container, FormControl, Grid, IconButton, InputAdornment, InputLabel, LinkItem, Paper, Select, Step, StepLabel, Stepper, TextField, Typography } from '@mui/material';
   SupervisorAccount as SupervisorIcon
 
 const ROLES = {
@@ -564,4 +564,4 @@ function UnifiedRegistration() {
 }
 
 export default UnifiedRegistration;
-
+

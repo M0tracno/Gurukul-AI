@@ -302,9 +302,9 @@ function RoleSelection() {
         </Box>        {/* Authors Section */}
         <Box className={classes.authorsSection} sx={{ textAlign: 'center', mt: 4, mb: 2 }}>
           <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
-            Created by:
-            <Link href="https://www.instagram.com/motomandevanshu/" target="_blank" rel="noopener" sx={{ ml: 1 }}>
-              Devanshu Jena
+            Developed by:
+            <Link href="https://www.linkedin.com/in/ayushman-nanda-4a1377312/" target="_blank" rel="noopener" sx={{ ml: 1 }}>
+              Ayushman Nanda
             </Link>
           </Typography>
         </Box>

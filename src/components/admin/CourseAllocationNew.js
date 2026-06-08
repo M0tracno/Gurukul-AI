@@ -532,4 +532,4 @@ const CourseAllocationNew = () => {
   );
 };
 
-export default CourseAllocationNew;
+export default CourseAllocationNew;

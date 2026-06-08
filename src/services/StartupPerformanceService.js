@@ -192,7 +192,8 @@ class StartupPerformanceService {
       return (props) => {
         const startTime = performance.now();
         
-        React.useEffect(() => {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+  React.useEffect(() => {
           const mountTime = performance.now() - startTime;
           this.recordComponentMount(componentName, mountTime);
         }, []);
@@ -234,4 +235,4 @@ if (typeof window !== 'undefined') {
 }
 
 export default startupPerformanceService;
-
+

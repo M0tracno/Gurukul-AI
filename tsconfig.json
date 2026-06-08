@@ -1,60 +1,68 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "ES2020",
+    "useDefineForClassFields": true,
     "lib": [
-      "dom",
-      "dom.iterable",
-      "es6"
+      "ES2020",
+      "DOM",
+      "DOM.Iterable"
     ],
-    "allowJs": true,
+    "module": "ESNext",
     "skipLibCheck": true,
+
+    /* Bundler mode — works with Vite */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Disable JS type-checking — legacy JS handled by Vite/esbuild at runtime */
+    "allowJs": true,
+    "checkJs": false,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
+
+    /* Strictness */
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx",
-    "declaration": false,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "exactOptionalPropertyTypes": false,
     "noImplicitReturns": true,
     "noImplicitOverride": true,
+
+    /* Relaxed for migration — tighten later */
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false,
     "noUncheckedIndexedAccess": false,
-    "baseUrl": "src",
+
+    /* Path aliases matching vite.config.ts */
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["*"],
-      "@/components/*": ["components/*"],
-      "@/pages/*": ["pages/*"],
-      "@/utils/*": ["utils/*"],
-      "@/hooks/*": ["hooks/*"],
-      "@/services/*": ["services/*"],
-      "@/types/*": ["types/*"]
+      "@/*": ["src/*"],
+      "@/components/*": ["src/components/*"],
+      "@/pages/*": ["src/pages/*"],
+      "@/utils/*": ["src/utils/*"],
+      "@/hooks/*": ["src/hooks/*"],
+      "@/services/*": ["src/services/*"],
+      "@/types/*": ["src/types/*"]
     },
-    "typeRoots": [
-      "node_modules/@types"
-    ],
-    "types": [],
-    "skipDefaultLibCheck": true
+    
+    "types": ["vite/client"]
   },
   "include": [
     "src"
   ],
   "exclude": [
     "node_modules",
+    "dist",
     "build",
+    "src/**/*.js",
+    "src/**/*.jsx",
     "**/*.test.ts",
     "**/*.test.tsx",
-    "*.config.js",
-    "config-overrides.js",
-    "commitlint.config.js",
-    "jest.config.js",
-    "node_modules/@types/minimatch"
+    "src/test/**",
+    "src/__tests__/**"
   ]
 }

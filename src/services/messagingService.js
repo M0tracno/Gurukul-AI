@@ -1,5 +1,6 @@
 import io from 'socket.io-client';
 import axios from '../utils/mockApiService';
+import env from '../config/env';
 
 /**
  * Messaging Service
@@ -11,7 +12,7 @@ import axios from '../utils/mockApiService';
 class MessagingService {
   constructor() {
     this.socket = null;
-    this.baseURL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+    this.baseURL = env.API_URL;
     this.apiURL = `${this.baseURL}/api/messages`;
     this.isConnected = false;
     this.messageListeners = new Set();
@@ -736,4 +737,4 @@ class MessagingService {
 // Create and export singleton instance
 const messagingService = new MessagingService();
 export default messagingService;
-
+

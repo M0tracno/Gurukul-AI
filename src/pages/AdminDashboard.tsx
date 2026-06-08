@@ -37,7 +37,6 @@ import {
 import { motion } from 'framer-motion';
 import { FrostedCard } from '../components/common/FrostedCard';
 import { colors } from '../styles/designTokens';
-
 // Dashboard Statistics Interface
 interface DashboardStats {
   students: number;
@@ -49,7 +48,6 @@ interface DashboardStats {
   activeUsersChange: number;
   parentAccountsChange: number;
 }
-
 // Activity Item Interface
 interface ActivityItem {
   id: string;
@@ -59,7 +57,6 @@ interface ActivityItem {
   time: string;
   icon: React.ReactNode;
 }
-
 // Main Admin Dashboard Component
 const AdminDashboard: React.FC = () => {
   const theme = useTheme();
@@ -75,7 +72,6 @@ const AdminDashboard: React.FC = () => {
     activeUsersChange: 15,
     parentAccountsChange: 5,
   });
-
   const [recentActivity] = useState<ActivityItem[]>([
     {
       id: '1',
@@ -110,16 +106,13 @@ const AdminDashboard: React.FC = () => {
       icon: <Group sx={{ color: colors.neon.purple }} />,
     },
   ]);
-
   const [systemHealth] = useState({
     status: 'All Systems Operational',
     isLoading: false,
   });
-
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
-
   // Sidebar Navigation Items
   const navigationItems = [
     { text: 'Dashboard', icon: <DashboardIcon />, active: true },
@@ -131,7 +124,6 @@ const AdminDashboard: React.FC = () => {
     { text: 'System Settings', icon: <SettingsIcon />, active: false },
     { text: 'Logout', icon: <LogoutIcon />, active: false },
   ];
-
   // Futuristic Sidebar Component
   const FuturisticSidebar = () => (
     <Box
@@ -194,7 +186,6 @@ const AdminDashboard: React.FC = () => {
           </Box>
         </Box>
       </Box>
-
       {/* Navigation Items */}
       <List sx={{ p: 2 }}>
         {navigationItems.map((item, index) => (
@@ -246,7 +237,6 @@ const AdminDashboard: React.FC = () => {
       </List>
     </Box>
   );
-
   // Statistics Card Component
   const StatCard: React.FC<{
     title: string;
@@ -295,7 +285,6 @@ const AdminDashboard: React.FC = () => {
           </Typography>
           <Box sx={{ color }}>{icon}</Box>
         </Box>
-
         <Typography
           variant="h3"
           sx={{
@@ -307,7 +296,6 @@ const AdminDashboard: React.FC = () => {
         >
           {value}
         </Typography>
-
         <Typography
           variant="body2"
           sx={{
@@ -318,7 +306,6 @@ const AdminDashboard: React.FC = () => {
         >
           {subtitle}
         </Typography>
-
         <Chip
           label={`+${change}% this week`}
           size="small"
@@ -336,7 +323,6 @@ const AdminDashboard: React.FC = () => {
       </Box>
     </FrostedCard>
   );
-
   return (
     <Box
       sx={{
@@ -388,7 +374,6 @@ const AdminDashboard: React.FC = () => {
           >
             <MenuIcon />
           </IconButton>
-
           <Typography
             variant="h6"
             sx={{
@@ -403,18 +388,15 @@ const AdminDashboard: React.FC = () => {
           >
             Educational Management System - Admin Dashboard
           </Typography>
-
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <IconButton sx={{ color: colors.neutral[300] }}>
               <Badge badgeContent={4} color="error">
                 <NotificationsIcon />
               </Badge>
             </IconButton>
-
             <IconButton sx={{ color: colors.neutral[300] }}>
               <RefreshIcon />
             </IconButton>
-
             <Avatar
               sx={{
                 width: 32,
@@ -427,7 +409,6 @@ const AdminDashboard: React.FC = () => {
           </Box>
         </Toolbar>
       </AppBar>
-
       {/* Sidebar */}
       <Drawer
         variant={isMobile ? 'temporary' : 'permanent'}
@@ -442,7 +423,6 @@ const AdminDashboard: React.FC = () => {
       >
         <FuturisticSidebar />
       </Drawer>
-
       {/* Main Content */}
       <Box
         component="main"
@@ -476,7 +456,6 @@ const AdminDashboard: React.FC = () => {
               Monitor your system performance and key metrics
             </Typography>
           </Box>
-
           {/* Statistics Cards */}
           <Box
             sx={{
@@ -523,7 +502,6 @@ const AdminDashboard: React.FC = () => {
               color={colors.neon.purple}
             />
           </Box>
-
           {/* Content Grid */}
           <Box
             sx={{
@@ -544,7 +522,6 @@ const AdminDashboard: React.FC = () => {
               >
                 Recent Activity
               </Typography>
-
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                 {recentActivity.map((activity, index) => (
                   <motion.div
@@ -583,7 +560,6 @@ const AdminDashboard: React.FC = () => {
                 ))}
               </Box>
             </FrostedCard>
-
             {/* System Health */}
             <FrostedCard glassLevel="medium" neonGlow neonColor="blue" animate>
               <Box
@@ -612,7 +588,6 @@ const AdminDashboard: React.FC = () => {
                   }}
                 />
               </Box>
-
               <Box
                 sx={{
                   display: 'flex',
@@ -681,5 +656,4 @@ const AdminDashboard: React.FC = () => {
     </Box>
   );
 };
-
 export default AdminDashboard;

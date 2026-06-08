@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { useTheme } from '@mui/material/styles';
 import makeStyles from '../../utils/makeStylesCompat';
 import { InlineMath, BlockMath } from 'react-katex';
 
-import { Box, Button, Card, CardActions, CardContent, Chip, CircularProgress, Container, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grid, InputLabel, MenuItem, Paper, Select, Typography } from '@mui/material';
+import { Box, Button, Card, CardActions, CardContent, Chip, CircularProgress, Container, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grid, InputLabelItem, Paper, Select, Typography } from '@mui/material';
 // Helper function to safely render math expressions (same as in QuizCreation.js)
 const renderMathExpression = (text) => {
   const theme = useTheme();
@@ -663,4 +662,4 @@ function StudentQuizzes() {
 export default StudentQuizzes;
 
 
-
+

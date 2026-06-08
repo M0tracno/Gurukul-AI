@@ -1,4 +1,5 @@
 import React from 'react';
+import env from '../../config/env';
 import { useTheme } from '@mui/material/styles';
 import {
   Alert,
@@ -84,13 +85,13 @@ class EnhancedErrorBoundary extends React.Component {
       userAgent: navigator.userAgent,
       url: window.location.href,
       userId: this.props.userId || 'anonymous',
-      buildVersion: process.env.REACT_APP_VERSION || 'unknown'
+      buildVersion: env.VERSION || 'unknown'
     };
 
     try {
       // Send to error reporting service
-      if (process.env.REACT_APP_ERROR_REPORTING_ENDPOINT) {
-        await fetch(process.env.REACT_APP_ERROR_REPORTING_ENDPOINT, {
+      if (env.ERROR_REPORTING_ENDPOINT) {
+        await fetch(env.ERROR_REPORTING_ENDPOINT, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -391,4 +392,4 @@ export const withErrorBoundary = (Component, errorBoundaryProps = {}) => {
 };
 
 export default EnhancedErrorBoundary;
-
+

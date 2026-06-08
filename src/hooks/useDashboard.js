@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../auth/AuthContext';
 import errorMonitoring from '../utils/errorMonitoring';
 import securityHelpers from '../utils/securityHelpers';
+import env from '../config/env';
 
 // Import utilities with fallback handling
 
@@ -11,7 +12,7 @@ console.log({
 });
 
 // Base API URL
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = `${env.API_URL}/api`;
 
 export const useDashboard = (userType) => {
   const { currentUser, userRole } = useAuth();
@@ -254,4 +255,4 @@ export const useDashboard = (userType) => {
 
 // Adding default export to maintain compatibility with existing code
 export default useDashboard;
-
+

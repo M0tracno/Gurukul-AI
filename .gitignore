@@ -8,18 +8,17 @@ yarn-error.log*
 build/
 dist/
 
-# Environment variables
+# Environment variables (root)
 .env
 .env.local
 .env.development
 .env.production
 .env.test
 
-# Firebase
-.firebase/
-firebase-debug.log*
-firebase-debug.*.log*
-.firebaserc
+# Backend environment variables (CRITICAL — contains DB credentials)
+backend/.env
+backend/.env.*
+!backend/.env.example
 
 # IDE and editor files
 .vscode/settings.json
@@ -95,5 +94,22 @@ Thumbs.db
 
 .vercel
 
-# Local Netlify folder
-.netlify
+# Playwright test artifacts
+test-results/
+playwright-report/
+blob-report/
+
+# Visual regression test build output
+dist-visual-test/
+
+# Runtime directories
+uploads/
+backend/uploads/
+backend/logs/
+
+# Build artifacts
+gdg-build.zip
+
+# Obsolete
+create-react-app/
+cloud-functions/

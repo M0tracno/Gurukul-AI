@@ -42,7 +42,6 @@ export const SecurityProvider = ({ children }) => {
     const initializeSecurity = async () => {
       try {
         setIsSecurityLoading(true);
-        console.log('🔐 Initializing Security Context...');
         
         // Initialize security coordinator
         await securityCoordinator.initialize();
@@ -52,7 +51,6 @@ export const SecurityProvider = ({ children }) => {
         setDeviceFingerprint(fingerprint);
         
         setSecurityInitialized(true);
-        console.log('✅ Security Context initialized successfully');
       } catch (error) {
         console.error('❌ Security initialization failed:', error);
         setSecurityError(error.message);

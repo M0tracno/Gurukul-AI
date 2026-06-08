@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {  useEffect } from 'react';
 import { Assignment as AssignmentIcon, CheckCircle, Download, EventNote as EventNoteIcon, Grade, Quiz as QuizIcon, Refresh, Star as StarIcon, TrendingDown as TrendingDownIcon, TrendingUp as TrendingUpIcon, Warning, AccessTime as AccessTimeIcon } from '@mui/icons-material';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
 
@@ -474,4 +474,4 @@ const ChildProgress = () => {
 };
 
 export default ChildProgress;
-
+

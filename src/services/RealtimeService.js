@@ -1,4 +1,5 @@
 import { io } from 'socket.io-client';
+import env from '../config/env';
 
 /**
  * Real-time WebSocket Service for Phase 2 Smart Features
@@ -24,7 +25,7 @@ class RealtimeService {
 
   async initialize() {
     try {
-      const socketUrl = process.env.REACT_APP_SOCKET_URL || 'ws://localhost:3001';
+      const socketUrl = env.SOCKET_URL;
       
       this.socket = io(socketUrl, {
         transports: ['websocket', 'polling'],
@@ -456,4 +457,4 @@ class RealtimeService {
 const realtimeService = new RealtimeService();
 
 export default realtimeService;
-
+

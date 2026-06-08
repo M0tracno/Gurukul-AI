@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useTheme } from '@mui/material/styles';
 import makeStyles from '../../utils/makeStylesCompat';
 import {
   Box,
@@ -599,4 +598,4 @@ const MFASetupDialog = ({ open, onClose, onMFASetup }) => {
 };
 
 export default MFASetupDialog;
-
+

@@ -1,4 +1,31 @@
-import { EventEmitter } from 'events';
+// Browser-compatible event emitter (replaces Node.js 'events' module)
+class EventEmitter {
+  constructor() {
+    this._listeners = new Map();
+  }
+  on(event, listener) {
+    if (!this._listeners.has(event)) this._listeners.set(event, []);
+    this._listeners.get(event).push(listener);
+    return this;
+  }
+  emit(event, ...args) {
+    const listeners = this._listeners.get(event);
+    if (listeners) listeners.forEach(fn => fn(...args));
+    return !!listeners;
+  }
+  off(event, listener) {
+    const listeners = this._listeners.get(event);
+    if (listeners) {
+      this._listeners.set(event, listeners.filter(fn => fn !== listener));
+    }
+    return this;
+  }
+  removeAllListeners(event) {
+    if (event) this._listeners.delete(event);
+    else this._listeners.clear();
+    return this;
+  }
+}
 
 // src/services/SmartNotificationService.js
 

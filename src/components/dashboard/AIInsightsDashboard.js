@@ -278,4 +278,4 @@ const AIInsightsDashboard = ({ userId }) => {
 };
 
 export default AIInsightsDashboard;
-
+

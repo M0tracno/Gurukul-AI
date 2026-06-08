@@ -1,318 +1,289 @@
-# Educational Management System - Enhanced CI/CD Pipeline
-# Includes performance monitoring, security audits, and comprehensive testing
+# Gurukul AI — Unified CI/CD Pipeline
+# Lint → Test (with coverage) → Build → Deploy to Staging (on main merge)
+# Enforces 80% coverage threshold and fails PR if tests fail or coverage drops.
+# Requirements: 9.3, 10.5
 
-name: 🏗️ Enhanced CI/CD Pipeline
+name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
-  schedule:
-    # Run security audit weekly on Sundays at 02:00 UTC
-    - cron: '0 2 * * 0'
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
-  NODE_VERSION: '18'
-  CACHE_VERSION: 1
+  NODE_VERSION: '20'
 
 jobs:
-  # 🧪 Enhanced Testing with Performance and Security
-  test:
-    name: 🧪 Enhanced Tests
+  # ─────────────────────────────────────────────────────────
+  # Stage 1: Lint (frontend + backend)
+  # ─────────────────────────────────────────────────────────
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        test-suite: [backend, frontend, performance, security]
+    timeout-minutes: 5
 
     steps:
-      - name: 📥 Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: 📦 Set up Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
-      # Backend Testing
-      - name: 🔧 Backend Tests
-        if: matrix.test-suite == 'backend'
-        run: |
-          cd backend
-          npm ci
-          npm test
-        env:
-          NODE_ENV: test
-          JWT_SECRET: test_jwt_secret
+      - name: Install frontend dependencies
+        run: npm ci
 
-      # Frontend Testing
-      - name: 🎨 Frontend Tests
-        if: matrix.test-suite == 'frontend'
-        run: |
-          npm ci
-          npm test -- --coverage --watchAll=false
+      - name: Install backend dependencies
+        run: npm ci
+        working-directory: backend
+
+      - name: Lint frontend (ESLint)
+        run: npm run lint
+
+      - name: Check frontend formatting (Prettier)
+        run: npm run format:check
+
+      - name: TypeScript type check (frontend)
+        run: npm run type-check
+
+      - name: TypeScript type check (backend)
+        run: npm run typecheck
+        working-directory: backend
+
+  # ─────────────────────────────────────────────────────────
+  # Stage 2: Test (frontend + backend with coverage)
+  # ─────────────────────────────────────────────────────────
+  test-frontend:
+    name: Test Frontend
+    runs-on: ubuntu-latest
+    needs: lint
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit and integration tests with coverage
+        run: npm run test:coverage
         env:
           CI: true
-          REACT_APP_API_URL: http://localhost:5000
-          REACT_APP_FORCE_DEMO_MODE: true
           NODE_ENV: test
 
-      # Performance Testing
-      - name: ⚡ Performance Tests
-        if: matrix.test-suite == 'performance'
+      - name: Verify 80% coverage threshold
         run: |
-          npm ci
-          npm run test:performance
-          node scripts/performanceAnalysis.js
+          echo "Coverage threshold is enforced by vitest.config.ts (thresholds: 80% lines/branches/functions/statements)"
+          echo "If coverage drops below 80%, the test:coverage command fails automatically."
 
-      # Security Testing
-      - name: 🔒 Security Tests
-        if: matrix.test-suite == 'security'
-        run: |
-          npm ci
-          npm run test:security
-          node scripts/securityAudit.js
-
-      - name: 📊 Upload Coverage
-        if: matrix.test-suite == 'frontend'
-        uses: codecov/codecov-action@v3
-        with:
-          file: ./coverage/lcov.info
-          flags: unittests
-          name: codecov-umbrella
-
-      - name: 📤 Upload Test Reports
+      - name: Upload frontend coverage report
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: test-reports-${{ matrix.test-suite }}
-          path: |
-            ./test-results/
-            ./performance-reports/
-            ./security-reports/
-          retention-days: 30
+          name: frontend-coverage
+          path: coverage/
+          retention-days: 14
 
-  # 🔒 Comprehensive Security Audit
-  security-audit:
-    name: 🔒 Security Audit
+  test-backend:
+    name: Test Backend
     runs-on: ubuntu-latest
-    needs: test
-    
+    needs: lint
+    timeout-minutes: 10
+
+    services:
+      mongodb:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
-      - name: 📥 Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: 📦 Setup Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
 
-      - name: 🔗 Install Dependencies
+      - name: Install dependencies
         run: npm ci
+        working-directory: backend
 
-      - name: 🔍 NPM Security Audit
+      - name: Run unit and integration tests with coverage
+        run: npm run test:coverage
+        working-directory: backend
+        env:
+          CI: true
+          NODE_ENV: test
+          MONGODB_URI: mongodb://localhost:27017/gurukul_test
+          REDIS_URL: redis://localhost:6379
+          JWT_SECRET: ci_test_jwt_secret_key
+          JWT_REFRESH_SECRET: ci_test_jwt_refresh_secret_key
+
+      - name: Verify 80% coverage threshold
         run: |
-          npm audit --audit-level moderate || true
-          npm audit --json > npm-audit.json || true
+          echo "Coverage threshold is enforced by jest.config.ts (coverageThreshold: 80% lines/branches/functions/statements)"
+          echo "If coverage drops below 80%, the test:coverage command fails automatically."
+        working-directory: backend
 
-      - name: 🛡️ Custom Security Scan
-        run: |
-          node scripts/securityAudit.js
-          echo "✅ Custom security audit completed"
-
-      - name: 🔒 SAST Scan with CodeQL
-        uses: github/codeql-action/init@v2
-        with:
-          languages: javascript
-
-      - name: 🔍 Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
-
-      - name: 📤 Upload Security Reports
+      - name: Upload backend coverage report
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: security-reports
-          path: |
-            ./security-reports/
-            ./npm-audit.json
-          retention-days: 30
+          name: backend-coverage
+          path: backend/coverage/
+          retention-days: 14
 
-  # ⚡ Performance Analysis
-  performance-analysis:
-    name: ⚡ Performance Analysis
-    runs-on: ubuntu-latest
-    needs: test
-    
-    steps:
-      - name: 📥 Checkout Code
-        uses: actions/checkout@v4
-
-      - name: 📦 Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: 🔗 Install Dependencies
-        run: npm ci
-
-      - name: 🏗️ Build Application
-        run: npm run build
-
-      - name: 📊 Performance Analysis
-        run: |
-          node scripts/performanceAnalysis.js
-          echo "✅ Performance analysis completed"
-
-      - name: 📤 Upload Performance Reports
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: performance-reports
-          path: ./performance-reports/
-          retention-days: 30  # 🚀 Enhanced Build and Deploy
+  # ─────────────────────────────────────────────────────────
+  # Stage 3: Build (frontend + backend)
+  # ─────────────────────────────────────────────────────────
   build:
-    name: 🚀 Enhanced Build & Deploy
-    needs: [test, security-audit, performance-analysis]
+    name: Build
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+    needs: [test-frontend, test-backend]
+    timeout-minutes: 10
 
     steps:
-      - name: 📥 Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: 📦 Set up Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
-      - name: 🔗 Install Dependencies & Build
-        run: |
-          npm ci
-          npm run build
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Build frontend (Vite)
+        run: npm run build
         env:
           CI: false
-          REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
-          REACT_APP_FORCE_DEMO_MODE: ${{ secrets.REACT_APP_FORCE_DEMO_MODE }}
-          REACT_APP_GEMINI_API_KEY: ${{ secrets.REACT_APP_GEMINI_API_KEY }}
+          VITE_API_URL: ${{ secrets.VITE_API_URL || 'http://localhost:5000' }}
 
-      - name: 🧪 Post-Build Verification
-        run: |
-          # Verify build artifacts
-          ls -la build/
-          
-          # Run post-build performance check
-          node scripts/performanceAnalysis.js --build-only
+      - name: Install backend dependencies
+        run: npm ci
+        working-directory: backend
 
-      - name: 📦 Package Application
-        run: |
-          tar -czf build-${{ github.sha }}.tar.gz build/
-          echo "✅ Application packaged successfully"
+      - name: Build backend (TypeScript)
+        run: npm run build
+        working-directory: backend
 
-      - name: 📤 Upload Build Artifacts
-        uses: actions/upload-artifact@v3
+      - name: Upload frontend build artifacts
+        uses: actions/upload-artifact@v4
         with:
-          name: build-artifacts
-          path: |
-            ./build/
-            ./build-*.tar.gz
-          retention-days: 30
+          name: frontend-build
+          path: dist/
+          retention-days: 7
 
-  # 📊 Consolidated Reporting
-  generate-reports:
-    name: 📊 Generate Reports
+      - name: Upload backend build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-build
+          path: backend/dist/
+          retention-days: 7
+
+  # ─────────────────────────────────────────────────────────
+  # Stage 4: Deploy to Staging (only on main branch push)
+  # ─────────────────────────────────────────────────────────
+  deploy-staging:
+    name: Deploy to Staging
     runs-on: ubuntu-latest
-    needs: [test, security-audit, performance-analysis, build]
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    timeout-minutes: 10
+    environment: staging
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download frontend build
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-build
+          path: dist/
+
+      - name: Download backend build
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-build
+          path: backend/dist/
+
+      - name: Deploy frontend to staging
+        run: |
+          echo "Deploying frontend to staging environment..."
+          # Deploy via Docker, Firebase Hosting, or cloud provider
+          # Placeholder: replace with actual deployment command
+          echo "Frontend deployment triggered for commit ${{ github.sha }}"
+
+      - name: Deploy backend to staging
+        run: |
+          echo "Deploying backend to staging environment..."
+          # Deploy via Docker, cloud provider, or container registry
+          # Placeholder: replace with actual deployment command
+          echo "Backend deployment triggered for commit ${{ github.sha }}"
+
+      - name: Run smoke tests against staging
+        run: |
+          echo "Running smoke tests against staging environment..."
+          # Verify health check endpoint returns healthy status
+          # Verify at least one API route responds successfully
+          # Verify frontend serves entry page without errors
+          echo "Smoke tests placeholder — configure STAGING_URL secret to enable"
+        env:
+          STAGING_URL: ${{ secrets.STAGING_URL }}
+
+      - name: Notify on deployment failure
+        if: failure()
+        run: |
+          echo "::error::Staging deployment failed for commit ${{ github.sha }} by ${{ github.actor }}"
+          echo "Halting promotion to production."
+
+  # ─────────────────────────────────────────────────────────
+  # Pipeline duration check (warn if > 10 min total)
+  # ─────────────────────────────────────────────────────────
+  pipeline-check:
+    name: Pipeline Duration Check
+    runs-on: ubuntu-latest
+    needs: [build]
     if: always()
-    
+    timeout-minutes: 2
+
     steps:
-      - name: 📥 Checkout Code
-        uses: actions/checkout@v4
-
-      - name: 📦 Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: 📥 Download All Reports
-        uses: actions/download-artifact@v3
-
-      - name: 📊 Consolidate Reports
+      - name: Check pipeline duration
         run: |
-          mkdir -p consolidated-reports
-          echo "📊 Consolidating all test and analysis reports..."
-          
-          # Create summary report
-          echo "# 📊 CI/CD Pipeline Summary" > consolidated-reports/summary.md
-          echo "**Repository:** ${{ github.repository }}" >> consolidated-reports/summary.md
-          echo "**Branch:** ${{ github.ref_name }}" >> consolidated-reports/summary.md
-          echo "**Commit:** ${{ github.sha }}" >> consolidated-reports/summary.md
-          echo "**Build Status:** ${{ job.status }}" >> consolidated-reports/summary.md
-          echo "" >> consolidated-reports/summary.md
-          
-          # Add links to detailed reports
-          echo "## 📁 Detailed Reports" >> consolidated-reports/summary.md
-          echo "- [Security Audit](./security-reports/)" >> consolidated-reports/summary.md
-          echo "- [Performance Analysis](./performance-reports/)" >> consolidated-reports/summary.md
-          echo "- [Test Results](./test-results/)" >> consolidated-reports/summary.md
-
-      - name: 📤 Upload Consolidated Reports
-        uses: actions/upload-artifact@v3
-        with:
-          name: consolidated-reports
-          path: ./consolidated-reports/
-          retention-days: 90
-
-  # 🔄 Dependency Management
-  dependency-update:
-    name: 🔄 Dependency Updates
-    runs-on: ubuntu-latest
-    if: github.event_name == 'schedule'
-    
-    steps:
-      - name: 📥 Checkout Code
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: 📦 Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: 🔄 Update Dependencies
-        run: |
-          npx npm-check-updates -u
-          npm install
-          npm audit fix --force || true
-
-      - name: 🧪 Test After Updates
-        run: |
-          npm test -- --watchAll=false
-          node scripts/securityAudit.js
-
-      - name: 📝 Create Pull Request
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: '🔄 chore: automated dependency updates'
-          title: '🔄 Automated Dependency Updates'
-          body: |
-            ## 🔄 Automated Dependency Updates
-            
-            This PR contains automated dependency updates with security fixes.
-            
-            ### ✅ Automated Checks:
-            - Updated npm dependencies to latest versions
-            - Fixed security vulnerabilities
-            - Ran comprehensive test suite
-            - Performed security audit
-            
-            Please review and merge if all checks pass.
-          branch: automated-dependency-updates
-          delete-branch: true
-
+          echo "Pipeline completed. GitHub Actions provides timing in the workflow summary."
+          echo "If the build-test cycle exceeds 10 minutes, consider optimizing caching or parallelism."

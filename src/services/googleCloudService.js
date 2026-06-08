@@ -562,4 +562,4 @@ class GoogleCloudService {
 // Export singleton instance
 const googleCloudService = new GoogleCloudService();
 export default googleCloudService;
-
+

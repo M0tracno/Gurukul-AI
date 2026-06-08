@@ -1,8 +1,9 @@
 import axios from '../../utils/mockApiService';
+import env from '../config/env';
 
 // Vertex AI API configuration
-const API_KEY = process.env.REACT_APP_VERTEX_API_KEY || 'YOUR_API_KEY';
-const PROJECT_ID = process.env.REACT_APP_GCP_PROJECT_ID || 'YOUR_PROJECT_ID';
+const API_KEY = env.VERTEX_API_KEY || 'YOUR_API_KEY';
+const PROJECT_ID = env.GCP_PROJECT_ID || 'YOUR_PROJECT_ID';
 const LOCATION = 'us-central1';
 const MODEL_ID = 'gemini-pro';
 
@@ -467,4 +468,4 @@ const getMockPerformanceAnalysis = (studentId, assessmentHistory, subjectArea) =
 }; 
 
 
-
+
