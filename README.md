@@ -291,4 +291,4 @@ The pipeline includes:
 
 ## License
 
-MIT © Gurukul AI
+© Gurukul AI
