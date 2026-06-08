@@ -117,6 +117,72 @@ app.get('/api/health-check', (_req, res) => {
   res.status(200).json({ status: 'ok', message: 'API is running' });
 });
 
+// One-time seed endpoint — creates initial users, call via browser
+// GET /api/seed-initial — no auth required, idempotent (skips existing)
+app.get('/api/seed-initial', async (_req, res) => {
+  try {
+    const bcrypt = await import('bcryptjs');
+    const mongoose = await import('mongoose');
+
+    const FacultyModel = mongoose.default.models.Faculty || mongoose.default.model('Faculty',
+      new mongoose.default.Schema({
+        firstName: String, lastName: String, email: { type: String, unique: true },
+        password: String, employeeId: String, department: String,
+        role: { type: String, default: 'faculty' }, isActive: { type: Boolean, default: true },
+      }, { timestamps: true })
+    );
+
+    const StudentModel = mongoose.default.models.Student || mongoose.default.model('Student',
+      new mongoose.default.Schema({
+        firstName: String, lastName: String, email: { type: String, unique: true },
+        password: String, studentId: { type: String, unique: true }, grade: String,
+        active: { type: Boolean, default: true }, parentPhone: String,
+      }, { timestamps: true })
+    );
+
+    const ParentModel = mongoose.default.models.Parent || mongoose.default.model('Parent',
+      new mongoose.default.Schema({
+        name: String, phone: { type: String, unique: true }, email: String,
+        studentIds: [{ type: mongoose.default.Schema.Types.ObjectId, ref: 'Student' }],
+        isActive: { type: Boolean, default: true }, isVerified: { type: Boolean, default: true },
+      }, { timestamps: true })
+    );
+
+    const results: string[] = [];
+    const SALT = 12;
+
+    // Admin
+    if (!(await FacultyModel.findOne({ email: 'admin@gurukul.edu' }))) {
+      await FacultyModel.create({ firstName: 'Krishna', lastName: 'Admin', email: 'admin@gurukul.edu', password: await bcrypt.default.hash('Admin@2024', SALT), employeeId: 'ADM001', department: 'Administration', role: 'admin', isActive: true });
+      results.push('✅ Admin created: admin@gurukul.edu / Admin@2024');
+    } else results.push('⏭️ Admin exists');
+
+    // Faculty
+    if (!(await FacultyModel.findOne({ email: 'teacher@gurukul.edu' }))) {
+      await FacultyModel.create({ firstName: 'Dronacharya', lastName: 'Singh', email: 'teacher@gurukul.edu', password: await bcrypt.default.hash('Teacher@2024', SALT), employeeId: 'FAC001', department: 'Computer Science', role: 'faculty', isActive: true });
+      results.push('✅ Faculty created: teacher@gurukul.edu / Teacher@2024');
+    } else results.push('⏭️ Faculty exists');
+
+    // Student
+    let studentDoc = await StudentModel.findOne({ email: 'student@gurukul.edu' });
+    if (!studentDoc) {
+      studentDoc = await StudentModel.create({ firstName: 'Arjun', lastName: 'Sharma', email: 'student@gurukul.edu', password: await bcrypt.default.hash('Student@2024', SALT), studentId: 'STU001', grade: '10', active: true, parentPhone: '9876543210' });
+      results.push('✅ Student created: student@gurukul.edu / Student@2024');
+    } else results.push('⏭️ Student exists');
+
+    // Parent
+    if (!(await ParentModel.findOne({ phone: '9876543210' }))) {
+      await ParentModel.create({ name: 'Rajesh Sharma', phone: '9876543210', email: 'parent@gurukul.edu', studentIds: [studentDoc._id], isActive: true, isVerified: true });
+      results.push('✅ Parent created: phone 9876543210 / Student ID: STU001');
+    } else results.push('⏭️ Parent exists');
+
+    res.json({ success: true, results });
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : String(error);
+    res.status(500).json({ success: false, error: msg });
+  }
+});
+
 logger.info('Using MongoDB database exclusively');
 
 // Socket.IO Real-time Messaging Setup
