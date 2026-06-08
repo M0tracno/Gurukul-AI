@@ -144,10 +144,17 @@ app.get('/api/debug-users', async (_req, res) => {
     const bcrypt = await import('bcryptjs');
     const mongoose = await import('mongoose');
     const FacultyModel = mongoose.default.models.Faculty;
-    if (!FacultyModel) return res.json({ error: 'Faculty model not registered' });
+    if (!FacultyModel) {
+      res.json({ error: 'Faculty model not registered' });
+      return;
+    }
 
     const admin = await FacultyModel.findOne({ email: 'admin@gurukul.edu' }).select('+password');
-    if (!admin) return res.json({ error: 'Admin not found in DB', allFaculty: await FacultyModel.find({}).select('email role').lean() });
+    if (!admin) {
+      const allFaculty = await FacultyModel.find({}).select('email role').lean();
+      res.json({ error: 'Admin not found in DB', allFaculty });
+      return;
+    }
 
     const hasPassword = !!admin.password;
     const passwordMatch = hasPassword ? await bcrypt.default.compare('Admin@2024', admin.password) : false;
