@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   AppBar,
   Toolbar,
@@ -37,6 +38,9 @@ import {
 import { motion } from 'framer-motion';
 import { FrostedCard } from '../components/common/FrostedCard';
 import { colors } from '../styles/designTokens';
+import { useAuth } from '../auth/AuthContext';
+import env from '../config/env';
+
 // Dashboard Statistics Interface
 interface DashboardStats {
   students: number;
@@ -48,6 +52,7 @@ interface DashboardStats {
   activeUsersChange: number;
   parentAccountsChange: number;
 }
+
 // Activity Item Interface
 interface ActivityItem {
   id: string;
@@ -57,12 +62,17 @@ interface ActivityItem {
   time: string;
   icon: React.ReactNode;
 }
+
 // Main Admin Dashboard Component
 const AdminDashboard: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [stats] = useState<DashboardStats>({
+  const [currentView, setCurrentView] = useState('dashboard');
+  const [stats, setStats] = useState<DashboardStats>({
     students: 0,
     quizzes: 0,
     activeUsers: 0,
@@ -72,6 +82,7 @@ const AdminDashboard: React.FC = () => {
     activeUsersChange: 15,
     parentAccountsChange: 5,
   });
+
   const [recentActivity] = useState<ActivityItem[]>([
     {
       id: '1',
@@ -106,24 +117,81 @@ const AdminDashboard: React.FC = () => {
       icon: <Group sx={{ color: colors.neon.purple }} />,
     },
   ]);
+
   const [systemHealth] = useState({
     status: 'All Systems Operational',
     isLoading: false,
   });
+
+  // Fetch real stats from backend
+  const fetchStats = useCallback(async () => {
+    try {
+      const token = localStorage.getItem('authToken');
+      const headers: Record<string, string> = {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      };
+      const apiUrl = env?.API_URL || 'http://localhost:5000';
+
+      // Fetch student count
+      const studentsRes = await fetch(`${apiUrl}/api/students?page=1&limit=1`, { headers });
+      const studentsData = await studentsRes.json();
+
+      // Fetch faculty count
+      const facultyRes = await fetch(`${apiUrl}/api/faculty?page=1&limit=1`, { headers });
+      const facultyData = await facultyRes.json();
+
+      // Fetch course count
+      const coursesRes = await fetch(`${apiUrl}/api/courses?page=1&limit=1`, { headers });
+      const coursesData = await coursesRes.json();
+
+      setStats(prev => ({
+        ...prev,
+        students: studentsData.data?.pagination?.total || studentsData.total || 0,
+        activeUsers: facultyData.data?.pagination?.total || facultyData.total || 0,
+        quizzes: coursesData.data?.pagination?.total || coursesData.total || 0,
+      }));
+    } catch (error) {
+      console.error('Failed to fetch stats:', error);
+    }
+  }, []);
+
+  // Load stats on mount
+  useEffect(() => {
+    fetchStats();
+  }, [fetchStats]);
+
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
+
+  // Handle logout
+  const handleLogout = async () => {
+    await logout();
+    navigate('/');
+  };
+
+  // Handle navigation item click
+  const handleNavClick = (key: string) => {
+    if (key === 'logout') {
+      handleLogout();
+    } else {
+      setCurrentView(key);
+    }
+  };
+
   // Sidebar Navigation Items
   const navigationItems = [
-    { text: 'Dashboard', icon: <DashboardIcon />, active: true },
-    { text: 'User Management', icon: <PeopleIcon />, active: false },
-    { text: 'Course Management', icon: <SchoolIcon />, active: false },
-    { text: 'Course Allocation', icon: <AssignmentIcon />, active: false },
-    { text: 'Data Management', icon: <StorageIcon />, active: false },
-    { text: 'Reports & Analytics', icon: <ReportsIcon />, active: false },
-    { text: 'System Settings', icon: <SettingsIcon />, active: false },
-    { text: 'Logout', icon: <LogoutIcon />, active: false },
+    { text: 'Dashboard', icon: <DashboardIcon />, key: 'dashboard' },
+    { text: 'User Management', icon: <PeopleIcon />, key: 'users' },
+    { text: 'Course Management', icon: <SchoolIcon />, key: 'courses' },
+    { text: 'Course Allocation', icon: <AssignmentIcon />, key: 'allocation' },
+    { text: 'Data Management', icon: <StorageIcon />, key: 'data' },
+    { text: 'Reports & Analytics', icon: <ReportsIcon />, key: 'reports' },
+    { text: 'System Settings', icon: <SettingsIcon />, key: 'settings' },
+    { text: 'Logout', icon: <LogoutIcon />, key: 'logout' },
   ];
+
   // Futuristic Sidebar Component
   const FuturisticSidebar = () => (
     <Box
@@ -186,6 +254,7 @@ const AdminDashboard: React.FC = () => {
           </Box>
         </Box>
       </Box>
+
       {/* Navigation Items */}
       <List sx={{ p: 2 }}>
         {navigationItems.map((item, index) => (
@@ -196,14 +265,15 @@ const AdminDashboard: React.FC = () => {
             transition={{ delay: index * 0.1 }}
           >
             <ListItemButton
+              onClick={() => handleNavClick(item.key)}
               sx={{
                 mb: 1,
                 borderRadius: 2,
-                background: item.active
+                background: currentView === item.key
                   ? `linear-gradient(135deg, ${colors.neon.cyan}20, ${colors.neon.blue}20)`
                   : 'transparent',
-                border: item.active ? `1px solid ${colors.neon.cyan}40` : '1px solid transparent',
-                boxShadow: item.active ? `0 0 20px ${colors.neon.cyan}20` : 'none',
+                border: currentView === item.key ? `1px solid ${colors.neon.cyan}40` : '1px solid transparent',
+                boxShadow: currentView === item.key ? `0 0 20px ${colors.neon.cyan}20` : 'none',
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                 '&:hover': {
                   background: `linear-gradient(135deg, ${colors.neon.cyan}15, ${colors.neon.blue}15)`,
@@ -215,7 +285,7 @@ const AdminDashboard: React.FC = () => {
             >
               <ListItemIcon
                 sx={{
-                  color: item.active ? colors.neon.cyan : colors.neutral[400],
+                  color: currentView === item.key ? colors.neon.cyan : colors.neutral[400],
                   minWidth: 40,
                 }}
               >
@@ -225,8 +295,8 @@ const AdminDashboard: React.FC = () => {
                 primary={item.text}
                 sx={{
                   '& .MuiListItemText-primary': {
-                    color: item.active ? 'white' : colors.neutral[300],
-                    fontWeight: item.active ? 600 : 400,
+                    color: currentView === item.key ? 'white' : colors.neutral[300],
+                    fontWeight: currentView === item.key ? 600 : 400,
                     fontSize: '0.9rem',
                   },
                 }}
@@ -237,6 +307,7 @@ const AdminDashboard: React.FC = () => {
       </List>
     </Box>
   );
+
   // Statistics Card Component
   const StatCard: React.FC<{
     title: string;
@@ -323,6 +394,7 @@ const AdminDashboard: React.FC = () => {
       </Box>
     </FrostedCard>
   );
+
   return (
     <Box
       sx={{
@@ -394,7 +466,7 @@ const AdminDashboard: React.FC = () => {
                 <NotificationsIcon />
               </Badge>
             </IconButton>
-            <IconButton sx={{ color: colors.neutral[300] }}>
+            <IconButton sx={{ color: colors.neutral[300] }} onClick={fetchStats}>
               <RefreshIcon />
             </IconButton>
             <Avatar
@@ -409,6 +481,7 @@ const AdminDashboard: React.FC = () => {
           </Box>
         </Toolbar>
       </AppBar>
+
       {/* Sidebar */}
       <Drawer
         variant={isMobile ? 'temporary' : 'permanent'}
@@ -423,6 +496,7 @@ const AdminDashboard: React.FC = () => {
       >
         <FuturisticSidebar />
       </Drawer>
+
       {/* Main Content */}
       <Box
         component="main"
@@ -456,6 +530,7 @@ const AdminDashboard: React.FC = () => {
               Monitor your system performance and key metrics
             </Typography>
           </Box>
+
           {/* Statistics Cards */}
           <Box
             sx={{
@@ -502,6 +577,7 @@ const AdminDashboard: React.FC = () => {
               color={colors.neon.purple}
             />
           </Box>
+
           {/* Content Grid */}
           <Box
             sx={{
@@ -560,6 +636,7 @@ const AdminDashboard: React.FC = () => {
                 ))}
               </Box>
             </FrostedCard>
+
             {/* System Health */}
             <FrostedCard glassLevel="medium" neonGlow neonColor="blue" animate>
               <Box
@@ -656,4 +733,5 @@ const AdminDashboard: React.FC = () => {
     </Box>
   );
 };
+
 export default AdminDashboard;

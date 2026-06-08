@@ -257,10 +257,10 @@ const StudentDashboard = () => {
 
   const [dashboardData] = useState({
     profile: {
-      firstName: 'Arjun',
-      lastName: 'Patel',
-      studentId: 'STU123456',
-      email: 'arjun.patel@gdc.edu',
+      firstName: currentUser?.firstName || 'Student',
+      lastName: currentUser?.lastName || 'User',
+      studentId: currentUser?.studentId || 'STU000000',
+      email: currentUser?.email || 'student@gdc.edu',
       class: '12th Grade',
       section: 'A',
       enrollmentYear: '2023',

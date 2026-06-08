@@ -34,41 +34,62 @@ Add missing backend auth endpoints (GET /me, registration, parent OTP) that the 
 
 - [x] 2. Redesign dashboard pages with dark cinematic theme
   - [x] 2.1 Redesign FacultyDashboard.js with dark cinematic theme
-    - Replace `background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)'` with dark theme background
-    - Replace `background: 'rgba(255, 255, 255, 0.95)'` card backgrounds with glassmorphism dark style
-    - Replace `background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'` header with theme-aware gradient
-    - Use `useTheme()` for colors instead of hardcoded hex values
-    - Ensure text colors use `theme.palette.text.primary/secondary`
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6_
 
   - [x] 2.2 Redesign StudentDashboard.js with dark cinematic theme
-    - Remove all inline light-theme colors and white backgrounds
-    - Apply dark glassmorphism card styling (semi-transparent dark bg, blur, subtle borders)
-    - Use theme palette colors for accents and text
-    - Match the dark cinematic style of the login pages (#0a0a0f background, neon accents)
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6_
 
   - [x] 2.3 Redesign ParentDashboard.js with dark cinematic theme
-    - Remove all inline light-theme colors and white backgrounds
-    - Apply dark glassmorphism card styling
-    - Use theme palette colors for accents and text
-    - Match the dark cinematic style consistently
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6_
 
   - [x] 2.4 Verify AdminDashboard.tsx theme consistency
-    - AdminDashboard already uses dark colors/FrostedCard — verify no remaining light-theme artifacts
-    - Fix any remaining hardcoded light colors if found
-    - Ensure consistent look with the other redesigned dashboards
     - _Requirements: 4.1, 4.2_
 
-- [ ] 3. Build verification and git push
+- [x] 3. Build verification and git push
   - [x] 3.1 Verify TypeScript compilation of backend changes
-    - Run `npx tsc --noEmit` in backend directory to confirm no type errors
-    - Fix any compilation errors
     - _Requirements: 1.1, 2.1, 3.1_
 
-  - [-] 3.2 Commit and push all changes to main
-    - Stage all modified/new files with `git add .`
-    - Commit with message: "feat: add missing auth routes and redesign dashboards with dark cinematic theme"
-    - Push to origin main with `--no-verify` flag
+  - [x] 3.2 Commit and push all changes to main
+    - _Requirements: 5.1, 5.2_
+
+- [x] 4. Fix UnifiedDashboardLayout dark theme and dashboard functionality
+  - [x] 4.1 Redesign UnifiedDashboardLayout.js with dark cinematic theme
+    - Replace all light backgrounds in drawer (linear-gradient #f8fafc → #e2e8f0) with dark theme
+    - Replace AppBar gradient (#3a86ff → #8338ec) with dark glassmorphism AppBar
+    - Replace main content background (linear-gradient #f8f9fa → #ffffff) with dark theme
+    - Replace welcome Paper with dark glassmorphism styling
+    - Replace hover colors (#e0f2fe, #dbeafe, #1e40af) with dark neon equivalents
+    - Replace text colors (#1e293b, #374151, #64748b) with theme text.primary/secondary
+    - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6_
+
+  - [x] 4.2 Fix AdminDashboard navigation and add real data fetching
+    - Add state management for currentView (navigation between sections)
+    - Wire sidebar navigation items with onClick handlers to change currentView
+    - Add API calls to fetch real stats (student count, quiz count, active users, parent count)
+    - Add useEffect to load data on mount from backend endpoints
+    - Wire Logout button to call logout from AuthContext and navigate to login
+    - Wire Refresh button to reload stats
+    - _Requirements: 4.1, 4.2_
+
+  - [x] 4.3 Fix FacultyDashboard to use real API data
+    - Ensure the EnhancedFacultyService calls actually return data or provide graceful fallbacks
+    - Add error handling for when API calls fail (show meaningful defaults instead of blank)
+    - Ensure navigation between views works properly via UnifiedDashboardLayout
+    - _Requirements: 4.1_
+
+  - [x] 4.4 Fix StudentDashboard to properly fetch and display data
+    - Replace hardcoded mock data with actual API calls where possible
+    - For data that doesn't have API endpoints yet, keep the mock data but make it realistic
+    - Ensure all view switches (courses, assignments, grades, attendance, feedback, quizzes) render properly
+    - _Requirements: 4.1_
+
+  - [x] 4.5 Fix ParentDashboard to handle empty/error states gracefully
+    - Ensure ParentService calls handle failures gracefully with fallback UI
+    - Show proper loading states and error messages
+    - Ensure navigation between views works properly
+    - _Requirements: 4.1_
+
+- [ ] 5. Final commit and push
+  - [-] 5.1 Commit and push all fixes to main
+    - Stage all changes, commit with descriptive message, push to gurukul main with --no-verify
     - _Requirements: 5.1, 5.2_

@@ -63,8 +63,8 @@ const UnifiedDashboardLayout = ({
       height: '100%', 
       display: 'flex', 
       flexDirection: 'column',
-      background: 'linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%)',
-      color: '#1e293b'
+      background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 100%)',
+      color: 'rgba(255, 255, 255, 0.95)'
     }}>
       <Box sx={{ height: 64 }} />
 
@@ -72,8 +72,8 @@ const UnifiedDashboardLayout = ({
       <Box sx={{ 
         p: 3, 
         textAlign: 'center', 
-        borderBottom: '1px solid rgba(0, 0, 0, 0.08)',
-        background: 'rgba(59, 130, 246, 0.05)'
+        borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+        background: 'rgba(167, 139, 250, 0.08)'
       }}>
         <Avatar
           sx={{
@@ -88,12 +88,12 @@ const UnifiedDashboardLayout = ({
         >
           {currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : 'U'}
         </Avatar>
-        <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5, color: '#1e293b' }}>
+        <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5, color: 'rgba(255, 255, 255, 0.95)' }}>
           {currentUser?.name || 'User'}
         </Typography>
         <Typography variant="body2" sx={{ 
           textTransform: 'capitalize',
-          color: '#64748b',
+          color: 'rgba(255, 255, 255, 0.6)',
           fontSize: '0.875rem'
         }}>
           {userRole || 'User'}
@@ -110,19 +110,20 @@ const UnifiedDashboardLayout = ({
               transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
               minHeight: 48,
               cursor: 'pointer',
-              color: '#374151',
+              color: 'rgba(255, 255, 255, 0.7)',
               '&:hover': {
-                backgroundColor: '#e0f2fe',
+                backgroundColor: 'rgba(167, 139, 250, 0.1)',
                 transform: 'translateX(4px)',
-                boxShadow: '0 4px 12px rgba(59, 130, 246, 0.15)',
-                color: '#1e40af'
+                boxShadow: '0 4px 12px rgba(167, 139, 250, 0.15)',
+                color: '#a78bfa'
               },
               ...(currentView === item.key && {
-                backgroundColor: '#dbeafe',
-                color: '#1e40af',
-                boxShadow: '0 4px 12px rgba(59, 130, 246, 0.2)',
+                backgroundColor: 'rgba(167, 139, 250, 0.15)',
+                color: '#a78bfa',
+                border: '1px solid rgba(167, 139, 250, 0.3)',
+                boxShadow: '0 4px 12px rgba(167, 139, 250, 0.2)',
                 '& .MuiListItemIcon-root': {
-                  color: '#1e40af'
+                  color: '#a78bfa'
                 }
               })
             }}
@@ -144,7 +145,7 @@ const UnifiedDashboardLayout = ({
         ))}
       </List>
 
-      <Divider sx={{ backgroundColor: 'rgba(0, 0, 0, 0.08)' }} />
+      <Divider sx={{ backgroundColor: 'rgba(255, 255, 255, 0.06)' }} />
 
       {/* Settings Menu */}
       <List sx={{ p: 2 }}>
@@ -155,12 +156,12 @@ const UnifiedDashboardLayout = ({
             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
             minHeight: 48,
             cursor: 'pointer',
-            color: '#374151',
+            color: 'rgba(255, 255, 255, 0.7)',
             '&:hover': {
-              backgroundColor: '#e0f2fe',
+              backgroundColor: 'rgba(167, 139, 250, 0.1)',
               transform: 'translateX(4px)',
-              boxShadow: '0 4px 12px rgba(59, 130, 246, 0.15)',
-              color: '#1e40af'
+              boxShadow: '0 4px 12px rgba(167, 139, 250, 0.15)',
+              color: '#a78bfa'
             }
           }}
         >
@@ -193,7 +194,9 @@ const UnifiedDashboardLayout = ({
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           ml: { sm: `${drawerWidth}px` },
           zIndex: (theme) => theme.zIndex.drawer + 1,
-          background: 'linear-gradient(135deg, #3a86ff 0%, #8338ec 100%)',
+          background: 'rgba(10, 10, 15, 0.85)',
+          backdropFilter: 'blur(20px)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
           boxShadow: '0 2px 4px -1px rgba(0,0,0,0.2), 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12)'}}
       >
         <Toolbar>
@@ -261,9 +264,9 @@ const UnifiedDashboardLayout = ({
             '& .MuiDrawer-paper': {
               boxSizing: 'border-box',
               width: drawerWidth,
-              background: 'linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%)',
+              background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 100%)',
               border: 'none',
-              boxShadow: '4px 0 20px rgba(0, 0, 0, 0.3)'
+              boxShadow: '4px 0 20px rgba(0, 0, 0, 0.8)'
             }
           }}
         >{drawerContent}
@@ -277,9 +280,9 @@ const UnifiedDashboardLayout = ({
             '& .MuiDrawer-paper': {
               boxSizing: 'border-box',
               width: drawerWidth,
-              background: 'linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%)',
+              background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 100%)',
               border: 'none',
-              boxShadow: '4px 0 20px rgba(0, 0, 0, 0.1)'
+              boxShadow: '4px 0 20px rgba(0, 0, 0, 0.5)'
             }
           }}
           open
@@ -374,7 +377,7 @@ const UnifiedDashboardLayout = ({
           flexGrow: 1,
           p: 3,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
-          background: 'linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%)',
+          background: 'linear-gradient(135deg, #0a0a0f 0%, #111118 50%, #0a0a1a 100%)',
           minHeight: '100vh'}}
       >
         <Toolbar />
@@ -384,9 +387,11 @@ const UnifiedDashboardLayout = ({
           <Paper sx={{
             mb: 3,
             p: 3,
-            background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
+            background: 'rgba(255, 255, 255, 0.03)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255, 255, 255, 0.06)',
             borderRadius: 2,
-            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'}}>
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.6)'}}>
             <Typography variant="h4" gutterBottom>
               Welcome, {currentUser?.firstName || 'User'}!
             </Typography>
@@ -400,12 +405,13 @@ const UnifiedDashboardLayout = ({
                     <Paper sx={{
                       p: 2,
                       textAlign: 'center',
-                      background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
+                      background: 'rgba(255, 255, 255, 0.03)',
+                      border: '1px solid rgba(255, 255, 255, 0.06)',
+                      backdropFilter: 'blur(10px)',
                       borderRadius: 2,
-                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
                       '&:hover': {
                         transform: 'translateY(-2px)',
-                        boxShadow: '0 4px 8px rgba(0,0,0,0.15)'},
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.6)'},
                       transition: 'all 0.3s ease'}}>
                       <Typography variant="h4" color="primary">
                         {value}
@@ -431,4 +437,4 @@ const UnifiedDashboardLayout = ({
 };
 
 export default UnifiedDashboardLayout;
-
+
