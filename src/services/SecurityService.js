@@ -30,9 +30,11 @@ class SecurityService {
           "'self'", 
           'http://localhost:*', 
           'https://localhost:*', 
+          'https://*.onrender.com',
           'https://*.googleapis.com', 
           'https://*.google-analytics.com', 
-          'https://www.google-analytics.com'
+          'https://www.google-analytics.com',
+          'wss://*.onrender.com'
         ],
         'frame-src': ["'none'"],
         'object-src': ["'none'"],
