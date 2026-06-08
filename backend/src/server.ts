@@ -124,28 +124,17 @@ app.get('/api/seed-initial', async (_req, res) => {
     const bcrypt = await import('bcryptjs');
     const mongoose = await import('mongoose');
 
+    // Use already-registered models (from the compiled TS code)
     const FacultyModel = mongoose.default.models.Faculty || mongoose.default.model('Faculty',
-      new mongoose.default.Schema({
-        firstName: String, lastName: String, email: { type: String, unique: true },
-        password: String, employeeId: String, department: String,
-        role: { type: String, default: 'faculty' }, isActive: { type: Boolean, default: true },
-      }, { timestamps: true })
+      new mongoose.default.Schema({ firstName: String, lastName: String, email: { type: String, unique: true }, password: String, employeeId: String, department: String, role: { type: String, default: 'faculty' }, isActive: { type: Boolean, default: true } }, { timestamps: true, strict: false })
     );
 
     const StudentModel = mongoose.default.models.Student || mongoose.default.model('Student',
-      new mongoose.default.Schema({
-        firstName: String, lastName: String, email: { type: String, unique: true },
-        password: String, studentId: { type: String, unique: true }, grade: String,
-        active: { type: Boolean, default: true }, parentPhone: String,
-      }, { timestamps: true })
+      new mongoose.default.Schema({ firstName: String, lastName: String, email: { type: String, unique: true }, password: String, studentId: { type: String, unique: true }, grade: String, active: { type: Boolean, default: true }, parentPhone: String }, { timestamps: true, strict: false })
     );
 
     const ParentModel = mongoose.default.models.Parent || mongoose.default.model('Parent',
-      new mongoose.default.Schema({
-        name: String, phone: { type: String, unique: true }, email: String,
-        studentIds: [{ type: mongoose.default.Schema.Types.ObjectId, ref: 'Student' }],
-        isActive: { type: Boolean, default: true }, isVerified: { type: Boolean, default: true },
-      }, { timestamps: true })
+      new mongoose.default.Schema({ parentId: String, firstName: String, lastName: String, phoneNumber: String, email: String, phone: String, studentIds: [{ type: mongoose.default.Schema.Types.ObjectId }], isActive: { type: Boolean, default: true }, isVerified: { type: Boolean, default: true }, relationToStudent: String }, { timestamps: true, strict: false })
     );
 
     const results: string[] = [];
@@ -171,8 +160,8 @@ app.get('/api/seed-initial', async (_req, res) => {
     } else results.push('⏭️ Student exists');
 
     // Parent
-    if (!(await ParentModel.findOne({ phone: '9876543210' }))) {
-      await ParentModel.create({ name: 'Rajesh Sharma', phone: '9876543210', email: 'parent@gurukul.edu', studentIds: [studentDoc._id], isActive: true, isVerified: true });
+    if (!(await ParentModel.findOne({ phoneNumber: '9876543210' }))) {
+      await ParentModel.create({ parentId: 'PAR001', firstName: 'Rajesh', lastName: 'Sharma', phoneNumber: '9876543210', email: 'parent@gurukul.edu', studentIds: [studentDoc._id], isActive: true, isVerified: true, relationToStudent: 'Father' });
       results.push('✅ Parent created: phone 9876543210 / Student ID: STU001');
     } else results.push('⏭️ Parent exists');
 
