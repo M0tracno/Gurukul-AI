@@ -14,12 +14,13 @@ import Parent from '../models/Parent.js';
 /**
  * Map the request body userType to internal model naming conventions.
  */
-type UserType = 'student' | 'teacher' | 'parent';
+type UserType = 'student' | 'teacher' | 'parent' | 'admin' | 'faculty';
 
 interface LoginBody {
   email: string;
   password: string;
-  userType: UserType;
+  userType?: UserType;
+  role?: UserType;
 }
 
 interface RefreshBody {
@@ -46,6 +47,8 @@ async function findUserByEmail(email: string, userType: UserType): Promise<AuthU
     case 'student':
       return Student.findOne({ email, deletedAt: null }).select('+password') as unknown as AuthUser | null;
     case 'teacher':
+    case 'faculty':
+    case 'admin':
       return Faculty.findOne({ email, deletedAt: null }).select('+password') as unknown as AuthUser | null;
     case 'parent':
       return Parent.findOne({ email, deletedAt: null }).select('+password') as unknown as AuthUser | null;
@@ -61,6 +64,8 @@ function toUserModelType(userType: UserType): UserModelType {
   const mapping: Record<UserType, UserModelType> = {
     student: 'Student',
     teacher: 'Faculty',
+    faculty: 'Faculty',
+    admin: 'Faculty',
     parent: 'Parent',
   };
   return mapping[userType];
@@ -73,6 +78,8 @@ function toPasswordModelName(userType: UserType): ModelName {
   const mapping: Record<UserType, ModelName> = {
     student: 'Student',
     teacher: 'Faculty',
+    faculty: 'Faculty',
+    admin: 'Faculty',
     parent: 'Parent',
   };
   return mapping[userType];
@@ -90,12 +97,13 @@ export const authController = {
    * Records failed attempts on bad password, resets on success.
    */
   async login(req: Request, res: Response): Promise<void> {
-    const { email, password, userType } = req.body as LoginBody;
+    const { email, password, userType, role } = req.body as LoginBody;
+    const resolvedUserType = (userType || role || 'student') as UserType;
 
-    const modelName = toPasswordModelName(userType);
+    const modelName = toPasswordModelName(resolvedUserType);
 
     // Look up user by email (include password field which is select: false)
-    const user = await findUserByEmail(email, userType);
+    const user = await findUserByEmail(email, resolvedUserType);
 
     if (!user) {
       throw AppError.unauthorized('Invalid email or password');
@@ -124,8 +132,8 @@ export const authController = {
     await passwordService.resetFailedAttempts(userId, modelName);
 
     // Generate token pair
-    const userModelType = toUserModelType(userType);
-    const tokens = await authTokenService.generateTokenPair(userId, userType, userModelType);
+    const userModelType = toUserModelType(resolvedUserType);
+    const tokens = await authTokenService.generateTokenPair(userId, resolvedUserType, userModelType);
 
     res.status(200).json({
       data: {
@@ -136,7 +144,7 @@ export const authController = {
           email: user.email || email,
           firstName: user.firstName,
           lastName: user.lastName,
-          role: userType,
+          role: resolvedUserType,
         },
       },
     });

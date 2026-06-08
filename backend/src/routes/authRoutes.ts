@@ -12,10 +12,12 @@ const router = Router();
 const loginBodySchema = z.object({
   email: z.string().email('Valid email is required').trim(),
   password: z.string().min(1, 'Password is required'),
-  userType: z.enum(['student', 'teacher', 'parent'], {
-    errorMap: () => ({ message: 'userType must be one of: student, teacher, parent' }),
-  }),
-}).strict();
+  userType: z.enum(['student', 'teacher', 'parent', 'admin', 'faculty']).optional(),
+  role: z.enum(['student', 'teacher', 'parent', 'admin', 'faculty']).optional(),
+}).strict().refine(
+  (data) => data.userType || data.role,
+  { message: 'Either userType or role is required' }
+);
 
 const refreshBodySchema = z.object({
   refreshToken: z.string().min(1, 'Refresh token is required'),
