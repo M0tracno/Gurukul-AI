@@ -15,9 +15,8 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 # Copy source code
-COPY tsconfig.json ./
+COPY tsconfig.json tsconfig.build.json ./
 COPY src/ ./src/
-COPY config/ ./config/
 
 # Compile TypeScript
 RUN npm run build
@@ -40,9 +39,6 @@ RUN npm ci --omit=dev && npm cache clean --force
 
 # Copy compiled output from builder stage
 COPY --from=builder /app/dist ./dist
-
-# Copy config directory (legacy JS configs still needed at runtime)
-COPY config/ ./config/
 
 # Create logs directory
 RUN mkdir -p logs && chown -R appuser:appgroup /app
