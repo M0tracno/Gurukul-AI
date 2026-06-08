@@ -8,3 +8,5 @@ export { default as markRoutes } from './markRoutes.js';
 export { default as gradingRoutes } from './gradingRoutes.js';
 export { default as metricsRoutes } from './metricsRoutes.js';
 export { default as healthRoutes } from './healthRoutes.js';
+export { default as studentMeRoutes } from './studentMeRoutes.js';
+export { default as parentMeRoutes } from './parentMeRoutes.js';

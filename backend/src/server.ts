@@ -47,6 +47,8 @@ import {
   gradingRoutes,
   metricsRoutes,
   healthRoutes,
+  studentMeRoutes,
+  parentMeRoutes,
 } from './routes/index.js';
 
 // Rate limiter configuration
@@ -395,6 +397,10 @@ app.use('/api/courses', courseRoutes);
 app.use('/api/enrollment', enrollmentRoutes);
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/marks', markRoutes);
+
+// Student & Parent self-service routes
+app.use('/api/students', studentMeRoutes);
+app.use('/api/parents', parentMeRoutes);
 
 // Modernized v1 API routes
 app.use('/api/v1/grading', gradingRoutes);
