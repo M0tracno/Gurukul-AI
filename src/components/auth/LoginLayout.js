@@ -181,6 +181,11 @@ const LoginLayout = ({ title, subtitle, icon: Icon, color = '#a78bfa', children,
                 borderRadius: '24px',
                 padding: { xs: 3, md: 4 },
                 backdropFilter: 'blur(20px)',
+                transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                '&:hover': {
+                  border: '1px solid rgba(255, 255, 255, 0.12)',
+                  boxShadow: `0 0 40px ${color}08`,
+                },
               }}
             >
               {children}
@@ -221,6 +226,21 @@ const LoginLayout = ({ title, subtitle, icon: Icon, color = '#a78bfa', children,
           </Box>
         </Box>
       </Container>
+
+      {/* Gurukul AI Watermark */}
+      <Typography
+        sx={{
+          position: 'absolute',
+          bottom: 24,
+          left: 24,
+          fontSize: '0.75rem',
+          color: 'rgba(255,255,255,0.15)',
+          fontWeight: 500,
+          letterSpacing: '0.1em',
+        }}
+      >
+        GURUKUL AI
+      </Typography>
     </Box>
   );
 };
