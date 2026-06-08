@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Card,
@@ -58,6 +58,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import UnifiedDashboardLayout from '../components/layout/UnifiedDashboardLayout';
 import StudentService from '../services/studentService';
 import { useAuth } from '../auth/AuthContext';
+import env from '../config/env';
 
 // Lazy load student components
 const StudentCourses = React.lazy(() => import('../components/student/Courses'));
@@ -75,6 +76,10 @@ const StudentDashboard = () => {
   const [loading, setLoading] = useState(false); // Start with false for immediate content
   const [error, setError] = useState(null);
   const [currentView, setCurrentView] = useState('dashboard');
+  const [courses, setCourses] = useState([]);
+  const [grades, setGrades] = useState([]);
+  const [attendance, setAttendance] = useState([]);
+  const [dataLoaded, setDataLoaded] = useState(false);
 
   // Mock data for all sections
   const mockCourses = [
@@ -255,7 +260,46 @@ const StudentDashboard = () => {
     }
   ];
 
-  const [dashboardData] = useState({
+  const fetchStudentData = useCallback(async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+      const headers = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
+      const apiUrl = env?.API_URL || 'http://localhost:5000';
+
+      const [coursesRes, gradesRes, attendanceRes] = await Promise.allSettled([
+        fetch(`${apiUrl}/api/students/me/courses`, { headers }).then(r => r.json()),
+        fetch(`${apiUrl}/api/students/me/grades`, { headers }).then(r => r.json()),
+        fetch(`${apiUrl}/api/students/me/attendance`, { headers }).then(r => r.json()),
+      ]);
+
+      if (coursesRes.status === 'fulfilled' && coursesRes.value.success) {
+        setCourses(coursesRes.value.data);
+      }
+      if (gradesRes.status === 'fulfilled' && gradesRes.value.success) {
+        setGrades(gradesRes.value.data);
+      }
+      if (attendanceRes.status === 'fulfilled' && attendanceRes.value.success) {
+        setAttendance(attendanceRes.value.data);
+      }
+      setDataLoaded(true);
+    } catch (err) {
+      console.error('Failed to fetch student data:', err);
+      setError('Failed to load data from server');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchStudentData();
+  }, [fetchStudentData]);
+
+  const dashboardData = {
     profile: {
       firstName: currentUser?.firstName || 'Student',
       lastName: currentUser?.lastName || 'User',
@@ -266,19 +310,59 @@ const StudentDashboard = () => {
       enrollmentYear: '2023',
       gpa: '3.7'
     },
-    courses: mockCourses,
+    courses: courses.length > 0 ? courses.map((c, i) => ({
+      id: c.enrollmentId || i + 1,
+      name: c.course?.name || 'Unknown Course',
+      code: c.course?.code || 'N/A',
+      instructor: c.course?.faculty || 'TBD',
+      schedule: 'See schedule',
+      assignments: 0,
+      grade: c.grade || 'N/A',
+      progress: 75,
+      color: ['#60a5fa', '#34d399', '#fbbf24', '#f87171'][i % 4],
+      credits: 3,
+      room: 'TBD'
+    })) : mockCourses,
     stats: {
-      totalCourses: mockCourses.length,
+      totalCourses: courses.length || mockCourses.length,
       completedAssignments: mockAssignments.filter(a => a.status === 'completed').length,
       pendingAssignments: mockAssignments.filter(a => a.status === 'pending').length,
-      averageGrade: '87%',
-      attendanceRate: 94,
+      averageGrade: grades.length > 0
+        ? `${Math.round(grades.flatMap(g => g.marks).reduce((sum, m) => sum + m.percentage, 0) / Math.max(grades.flatMap(g => g.marks).length, 1))}%`
+        : '87%',
+      attendanceRate: attendance.length > 0
+        ? Math.round((attendance.filter(a => a.status === 'present').length / Math.max(attendance.length, 1)) * 100)
+        : 94,
       gpa: '3.7'
     },
-    recentGrades: mockGrades.slice(0, 3),
+    recentGrades: grades.length > 0
+      ? grades.flatMap(g => g.marks.map(m => ({
+          id: m.id,
+          subject: g.course?.name,
+          course: g.course?.code,
+          assignment: m.title,
+          grade: m.percentage >= 90 ? 'A' : m.percentage >= 80 ? 'B+' : m.percentage >= 70 ? 'B' : 'C',
+          percentage: m.percentage,
+          date: new Date().toISOString(),
+          feedback: m.feedback || '',
+          points: `${m.score}/${m.maxScore}`
+        }))).slice(0, 3)
+      : mockGrades.slice(0, 3),
     upcomingAssignments: mockAssignments.filter(a => a.status === 'pending'),
     allAssignments: mockAssignments,
-    allGrades: mockGrades,
+    allGrades: grades.length > 0
+      ? grades.flatMap(g => g.marks.map(m => ({
+          id: m.id,
+          subject: g.course?.name,
+          course: g.course?.code,
+          assignment: m.title,
+          grade: m.percentage >= 90 ? 'A' : m.percentage >= 80 ? 'B+' : m.percentage >= 70 ? 'B' : 'C',
+          percentage: m.percentage,
+          date: new Date().toISOString(),
+          feedback: m.feedback || '',
+          points: `${m.score}/${m.maxScore}`
+        })))
+      : mockGrades,
     recentFeedback: [
       {
         id: 1,
@@ -326,19 +410,30 @@ const StudentDashboard = () => {
         rating: 5
       }
     ],
-    attendance: {
-      totalClasses: 120,
-      attendedClasses: 113,
-      percentage: 94,
-      recentRecords: [
-        { date: '2025-06-12', status: 'present', subject: 'Computer Science' },
-        { date: '2025-06-11', status: 'present', subject: 'Mathematics' },
-        { date: '2025-06-10', status: 'absent', subject: 'History' },
-        { date: '2025-06-09', status: 'present', subject: 'Physics' },
-        { date: '2025-06-08', status: 'present', subject: 'Computer Science' }
-      ]
-    }
-  });
+    attendance: attendance.length > 0
+      ? {
+          totalClasses: attendance.length,
+          attendedClasses: attendance.filter(a => a.status === 'present').length,
+          percentage: Math.round((attendance.filter(a => a.status === 'present').length / Math.max(attendance.length, 1)) * 100),
+          recentRecords: attendance.slice(0, 5).map(a => ({
+            date: typeof a.date === 'string' ? a.date : new Date(a.date).toISOString().split('T')[0],
+            status: a.status,
+            subject: a.course?.name || 'Unknown'
+          }))
+        }
+      : {
+          totalClasses: 120,
+          attendedClasses: 113,
+          percentage: 94,
+          recentRecords: [
+            { date: '2025-06-12', status: 'present', subject: 'Computer Science' },
+            { date: '2025-06-11', status: 'present', subject: 'Mathematics' },
+            { date: '2025-06-10', status: 'absent', subject: 'History' },
+            { date: '2025-06-09', status: 'present', subject: 'Physics' },
+            { date: '2025-06-08', status: 'present', subject: 'Computer Science' }
+          ]
+        }
+  };
 
   // Menu items for student dashboard
   const menuItems = [
@@ -663,7 +758,7 @@ const StudentDashboard = () => {
                   <Button
                     variant="outlined"
                     startIcon={<RefreshIcon />}
-                    onClick={() => window.location.reload()}
+                    onClick={fetchStudentData}
                     sx={{ mr: 1 }}
                   >
                     Refresh

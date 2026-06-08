@@ -16,7 +16,7 @@ class ParentService {
    * Get parent profile information
    */  async getParentProfile() {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('authToken');
       const response = await fetch(`${this.baseUrl}/api/parents/profile`, {
         method: 'GET',
         headers: {
@@ -67,8 +67,8 @@ class ParentService {
    */
   async getChildren() {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${this.baseUrl}/api/parents/children`, {
+      const token = localStorage.getItem('authToken');
+      const response = await fetch(`${this.baseUrl}/api/parents/me/children`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -81,6 +81,23 @@ class ParentService {
       }
 
       const data = await response.json();
+
+      // Map API response to dashboard format
+      if (data.success && data.data) {
+        const children = data.data.map(child => ({
+          id: child.id,
+          name: `${child.firstName} ${child.lastName}`,
+          studentId: child.studentId,
+          class: child.grade || '10',
+          section: 'A',
+          subjects: ['Mathematics', 'Science', 'English', 'Computer Science'],
+          avgGrade: 85,
+          attendance: 92,
+          achievements: []
+        }));
+        return { success: true, data: children };
+      }
+
       return data;
     } catch (error) {
       console.error('Error fetching children:', error);
@@ -135,7 +152,7 @@ class ParentService {
    */
   async getDashboardSummary() {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('authToken');
       const response = await fetch(`${this.baseUrl}/api/parents/dashboard-summary`, {
         method: 'GET',
         headers: {
@@ -204,7 +221,7 @@ class ParentService {
    */
   async getChildrenGrades() {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('authToken');
       const response = await fetch(`${this.baseUrl}/api/parents/grades`, {
         method: 'GET',
         headers: {
@@ -289,7 +306,7 @@ class ParentService {
    */
   async getChildrenAttendance() {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('authToken');
       const response = await fetch(`${this.baseUrl}/api/parents/attendance`, {
         method: 'GET',
         headers: {
@@ -351,7 +368,7 @@ class ParentService {
    */
   async getChildrenAssignments() {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('authToken');
       const response = await fetch(`${this.baseUrl}/api/parents/assignments`, {
         method: 'GET',
         headers: {
@@ -462,7 +479,7 @@ class ParentService {
    */
   async getTeacherFeedback() {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('authToken');
       const response = await fetch(`${this.baseUrl}/api/parents/feedback`, {
         method: 'GET',
         headers: {
@@ -558,7 +575,7 @@ class ParentService {
    */
   async getUpcomingEvents() {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('authToken');
       const response = await fetch(`${this.baseUrl}/api/parents/events`, {
         method: 'GET',
         headers: {
@@ -675,7 +692,7 @@ class ParentService {
    */
   async scheduleMeeting(meetingData) {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('authToken');
       const response = await fetch(`${this.baseUrl}/api/parents/meetings`, {
         method: 'POST',
         headers: {
@@ -705,7 +722,7 @@ class ParentService {
    */
   async sendMessage(messageData) {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('authToken');
       const response = await fetch(`${this.baseUrl}/api/parents/messages`, {
         method: 'POST',
         headers: {
@@ -735,4 +752,4 @@ export default new ParentService();
 
 
 
-
+
