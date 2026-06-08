@@ -138,6 +138,34 @@ app.get('/api/health-check', (_req, res) => {
   res.status(200).json({ status: 'ok', message: 'API is running' });
 });
 
+// Debug: check if seeded users exist and password works
+app.get('/api/debug-users', async (_req, res) => {
+  try {
+    const bcrypt = await import('bcryptjs');
+    const mongoose = await import('mongoose');
+    const FacultyModel = mongoose.default.models.Faculty;
+    if (!FacultyModel) return res.json({ error: 'Faculty model not registered' });
+
+    const admin = await FacultyModel.findOne({ email: 'admin@gurukul.edu' }).select('+password');
+    if (!admin) return res.json({ error: 'Admin not found in DB', allFaculty: await FacultyModel.find({}).select('email role').lean() });
+
+    const hasPassword = !!admin.password;
+    const passwordMatch = hasPassword ? await bcrypt.default.compare('Admin@2024', admin.password) : false;
+
+    res.json({
+      found: true,
+      email: admin.email,
+      role: admin.role,
+      hasPassword,
+      passwordLength: admin.password?.length,
+      passwordMatch,
+      id: admin._id.toString(),
+    });
+  } catch (e) {
+    res.status(500).json({ error: e instanceof Error ? e.message : String(e) });
+  }
+});
+
 // One-time seed endpoint — creates initial users, call via browser
 // GET /api/seed-initial — no auth required, idempotent (skips existing)
 app.get('/api/seed-initial', async (_req, res) => {

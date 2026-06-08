@@ -136,16 +136,15 @@ export const authController = {
     const tokens = await authTokenService.generateTokenPair(userId, resolvedUserType, userModelType);
 
     res.status(200).json({
-      data: {
-        accessToken: tokens.accessToken,
-        refreshToken: tokens.refreshToken,
-        user: {
-          id: userId,
-          email: user.email || email,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          role: resolvedUserType,
-        },
+      success: true,
+      token: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+      user: {
+        id: userId,
+        email: user.email || email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: resolvedUserType,
       },
     });
   },
