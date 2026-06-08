@@ -382,51 +382,6 @@ const UnifiedDashboardLayout = ({
       >
         <Toolbar />
 
-        {/* Welcome Section */}
-        {currentView === 'dashboard' && (
-          <Paper sx={{
-            mb: 3,
-            p: 3,
-            background: 'rgba(255, 255, 255, 0.03)',
-            backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(255, 255, 255, 0.06)',
-            borderRadius: 2,
-            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.6)'}}>
-            <Typography variant="h4" gutterBottom>
-              Welcome, {currentUser?.firstName || 'User'}!
-            </Typography>
-            <Typography variant="body1" color="textSecondary">
-              Here's your {userRole} dashboard overview
-            </Typography>            {/* Stats Grid */}
-            {userStats && Object.keys(userStats).length > 0 && (
-              <Grid container spacing={3} sx={{ mt: 2 }}>
-                {Object.entries(userStats || {}).map(([key, value]) => (
-                  <Grid size={{xs:12,sm:6,md:3}} key={key}>
-                    <Paper sx={{
-                      p: 2,
-                      textAlign: 'center',
-                      background: 'rgba(255, 255, 255, 0.03)',
-                      border: '1px solid rgba(255, 255, 255, 0.06)',
-                      backdropFilter: 'blur(10px)',
-                      borderRadius: 2,
-                      '&:hover': {
-                        transform: 'translateY(-2px)',
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.6)'},
-                      transition: 'all 0.3s ease'}}>
-                      <Typography variant="h4" color="primary">
-                        {value}
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary">
-                        {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
-                      </Typography>
-                    </Paper>
-                  </Grid>
-                ))}
-              </Grid>
-            )}
-          </Paper>
-        )}
-
         {/* Dynamic Content */}
         <Container maxWidth="xl" sx={{ p: 0 }}>
           {children}

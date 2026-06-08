@@ -351,7 +351,7 @@ const StudentDashboard = () => {
     { key: 'feedback', label: 'Feedback', icon: <FeedbackIcon /> },
   ];
 
-  const StatCard = ({ title, value, icon, color, subtitle, trend }) => (
+  const StatCard = ({ title, value, icon, color, subtitle }) => (
     <motion.div
       whileHover={{ scale: 1.02 }}
       transition={{ type: "spring", stiffness: 300 }}
@@ -385,17 +385,6 @@ const StudentDashboard = () => {
             >
               {icon}
             </Avatar>
-            {trend && (
-              <Chip
-                label={trend}
-                size="small"
-                sx={{
-                  bgcolor: alpha(color, 0.15),
-                  color: color,
-                  fontWeight: 'bold'
-                }}
-              />
-            )}
           </Box>
           <Typography variant="h4" sx={{ fontWeight: 'bold', color: color, mb: 0.5 }}>
             {value}
@@ -699,7 +688,6 @@ const StudentDashboard = () => {
                 icon={<SchoolIcon />}
                 color="#60a5fa"
                 subtitle="Active this semester"
-                trend="Current"
               />
             </Grid>
             <Grid size={{xs:12,sm:6,md:3}}>
@@ -709,7 +697,6 @@ const StudentDashboard = () => {
                 icon={<CheckIcon />}
                 color="#34d399"
                 subtitle={`${stats.pendingAssignments} pending`}
-                trend="On Track"
               />
             </Grid>
             <Grid size={{xs:12,sm:6,md:3}}>
@@ -719,7 +706,6 @@ const StudentDashboard = () => {
                 icon={<StarIcon />}
                 color="#fbbf24"
                 subtitle="Overall performance"
-                trend="Excellent"
               />
             </Grid>
             <Grid size={{xs:12,sm:6,md:3}}>
@@ -729,7 +715,6 @@ const StudentDashboard = () => {
                 icon={<AttendanceIcon />}
                 color="#c084fc"
                 subtitle="This semester"
-                trend="Great"
               />
             </Grid>
           </Grid>

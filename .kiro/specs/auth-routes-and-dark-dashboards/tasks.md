@@ -89,7 +89,7 @@ Add missing backend auth endpoints (GET /me, registration, parent OTP) that the 
     - Ensure navigation between views works properly
     - _Requirements: 4.1_
 
-- [ ] 5. Final commit and push
-  - [-] 5.1 Commit and push all fixes to main
+- [x] 5. Final commit and push
+  - [x] 5.1 Commit and push all fixes to main
     - Stage all changes, commit with descriptive message, push to gurukul main with --no-verify
     - _Requirements: 5.1, 5.2_
