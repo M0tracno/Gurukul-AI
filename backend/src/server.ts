@@ -60,8 +60,24 @@ const apiLimiter = rateLimit({
 
 // App configuration
 const PORT = parseInt(process.env.PORT || '5000', 10);
+
+// CORS: Allow FRONTEND_URL + any Vercel preview deployments
+const allowedOrigins = [
+  process.env.FRONTEND_URL || 'http://localhost:3000',
+  'http://localhost:3000',
+  'http://localhost:5173',
+].filter(Boolean) as string[];
+
 const corsOptions: cors.CorsOptions = {
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    // Allow if it matches an allowed origin or is a Vercel preview URL
+    if (allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+      return callback(null, true);
+    }
+    callback(null, false);
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Correlation-ID'],
   credentials: true,
@@ -72,7 +88,12 @@ const app = express();
 const server = http.createServer(app);
 const io = new SocketIOServer(server, {
   cors: {
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+        return callback(null, true);
+      }
+      callback(null, false);
+    },
     methods: ['GET', 'POST'],
     credentials: true,
   },
