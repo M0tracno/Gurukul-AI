@@ -138,7 +138,45 @@ app.get('/api/health-check', (_req, res) => {
   res.status(200).json({ status: 'ok', message: 'API is running' });
 });
 
-// Debug: check if seeded users exist and password works
+// Reset seed passwords (fixes double-hashing from previous seed)
+app.get('/api/reset-seed-passwords', async (_req, res) => {
+  try {
+    const mongoose = await import('mongoose');
+    const FacultyModel = mongoose.default.models.Faculty;
+    const StudentModel = mongoose.default.models.Student;
+    const results: string[] = [];
+
+    // Update via findOne + save to trigger the pre-save hook correctly
+    // We need to set password as plain text so the hook hashes it once
+    const admin = await FacultyModel?.findOne({ email: 'admin@gurukul.edu' });
+    if (admin) {
+      admin.password = 'Admin@2024';
+      admin.markModified('password');
+      await admin.save();
+      results.push('✅ Admin password reset');
+    }
+
+    const teacher = await FacultyModel?.findOne({ email: 'teacher@gurukul.edu' });
+    if (teacher) {
+      teacher.password = 'Teacher@2024';
+      teacher.markModified('password');
+      await teacher.save();
+      results.push('✅ Teacher password reset');
+    }
+
+    const student = await StudentModel?.findOne({ email: 'student@gurukul.edu' });
+    if (student) {
+      student.password = 'Student@2024';
+      student.markModified('password');
+      await student.save();
+      results.push('✅ Student password reset');
+    }
+
+    res.json({ success: true, results });
+  } catch (e) {
+    res.status(500).json({ error: e instanceof Error ? e.message : String(e) });
+  }
+});
 app.get('/api/debug-users', async (_req, res) => {
   try {
     const bcrypt = await import('bcryptjs');
@@ -196,22 +234,22 @@ app.get('/api/seed-initial', async (_req, res) => {
     const results: string[] = [];
     const SALT = 12;
 
-    // Admin
+    // Admin — store plain password, the model's pre-save hook will hash it
     if (!(await FacultyModel.findOne({ email: 'admin@gurukul.edu' }))) {
-      await FacultyModel.create({ firstName: 'Krishna', lastName: 'Admin', email: 'admin@gurukul.edu', password: await bcrypt.default.hash('Admin@2024', SALT), employeeId: 'ADM001', department: 'Administration', role: 'admin', isActive: true });
+      await FacultyModel.create({ firstName: 'Krishna', lastName: 'Admin', email: 'admin@gurukul.edu', password: 'Admin@2024', employeeId: 'ADM001', department: 'Administration', role: 'admin', isActive: true });
       results.push('✅ Admin created: admin@gurukul.edu / Admin@2024');
     } else results.push('⏭️ Admin exists');
 
     // Faculty
     if (!(await FacultyModel.findOne({ email: 'teacher@gurukul.edu' }))) {
-      await FacultyModel.create({ firstName: 'Dronacharya', lastName: 'Singh', email: 'teacher@gurukul.edu', password: await bcrypt.default.hash('Teacher@2024', SALT), employeeId: 'FAC001', department: 'Computer Science', role: 'faculty', isActive: true });
+      await FacultyModel.create({ firstName: 'Dronacharya', lastName: 'Singh', email: 'teacher@gurukul.edu', password: 'Teacher@2024', employeeId: 'FAC001', department: 'Computer Science', role: 'faculty', isActive: true });
       results.push('✅ Faculty created: teacher@gurukul.edu / Teacher@2024');
     } else results.push('⏭️ Faculty exists');
 
     // Student
     let studentDoc = await StudentModel.findOne({ email: 'student@gurukul.edu' });
     if (!studentDoc) {
-      studentDoc = await StudentModel.create({ firstName: 'Arjun', lastName: 'Sharma', email: 'student@gurukul.edu', password: await bcrypt.default.hash('Student@2024', SALT), studentId: 'STU001', grade: '10', active: true, parentPhone: '9876543210' });
+      studentDoc = await StudentModel.create({ firstName: 'Arjun', lastName: 'Sharma', email: 'student@gurukul.edu', password: 'Student@2024', studentId: 'STU001', grade: '10', active: true, parentPhone: '9876543210' });
       results.push('✅ Student created: student@gurukul.edu / Student@2024');
     } else results.push('⏭️ Student exists');
 
