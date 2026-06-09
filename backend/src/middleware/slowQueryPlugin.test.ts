@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach, jest } from '@jest/globals';
-import mongoose, { Schema, Model, Document } from 'mongoose';
+import mongoose, { Schema, Model, Document, Connection } from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
 // Mock logger to avoid import.meta.url issues in ts-jest
@@ -22,12 +22,14 @@ interface ITestDoc extends Document {
 
 describe('slowQueryPlugin', () => {
   let mongoServer: MongoMemoryServer;
+  let connection: Connection;
   let TestModel: Model<ITestDoc>;
 
   beforeAll(async () => {
     mongoServer = await MongoMemoryServer.create();
     const uri = mongoServer.getUri();
-    await mongoose.connect(uri);
+    // Use a separate connection instead of the global mongoose instance
+    connection = mongoose.createConnection(uri);
 
     const testSchema = new Schema<ITestDoc>({
       name: { type: String, required: true },
@@ -37,11 +39,11 @@ describe('slowQueryPlugin', () => {
     // Apply plugin with a very low threshold so we can test the logging
     testSchema.plugin(slowQueryPlugin, { thresholdMs: 0 });
 
-    TestModel = mongoose.model<ITestDoc>('SlowQueryTest', testSchema);
+    TestModel = connection.model<ITestDoc>('SlowQueryTest', testSchema);
   });
 
   afterAll(async () => {
-    await mongoose.disconnect();
+    await connection.close();
     await mongoServer.stop();
   });
 
@@ -97,7 +99,7 @@ describe('slowQueryPlugin', () => {
       value: { type: Number, required: true },
     });
     fastSchema.plugin(slowQueryPlugin, { thresholdMs: 60000 });
-    const FastModel = mongoose.model<ITestDoc>('FastQueryTest', fastSchema);
+    const FastModel = connection.model<ITestDoc>('FastQueryTest', fastSchema);
 
     await FastModel.create({ name: 'fast', value: 99 });
     mockLoggerWarn.mockClear();
@@ -146,7 +148,7 @@ describe('slowQueryPlugin', () => {
       value: { type: Number, required: true },
     });
     defaultSchema.plugin(slowQueryPlugin);
-    const DefaultModel = mongoose.model<ITestDoc>('DefaultThresholdTest', defaultSchema);
+    const DefaultModel = connection.model<ITestDoc>('DefaultThresholdTest', defaultSchema);
 
     await DefaultModel.create({ name: 'default', value: 0 });
     mockLoggerWarn.mockClear();

@@ -127,7 +127,7 @@ jobs:
     name: Backend Tests (Coverage ≥ 80%)
     runs-on: ubuntu-latest
     needs: lint
-    timeout-minutes: 10
+    timeout-minutes: 20
 
     services:
       mongodb:
