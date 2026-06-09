@@ -1,6 +1,10 @@
-import type { Config } from 'jest';
+// Jest configuration (ESM .mjs so it loads without a TypeScript loader).
+// Using .ts here requires ts-node, which is not a project dependency and
+// is absent after a clean `npm ci` in CI — see the "ts-node is required"
+// failure. A plain ESM config avoids that entirely.
 
-const config: Config = {
+/** @type {import('jest').Config} */
+const config = {
   // ESM support for TypeScript
   preset: 'ts-jest/presets/default-esm',
   extensionsToTreatAsEsm: ['.ts'],
