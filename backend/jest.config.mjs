@@ -54,8 +54,14 @@ const config = {
     },
   },
 
-  // Run tests sequentially to avoid Mongoose singleton collisions
-  maxWorkers: 1,
+  // Run tests in parallel across 2 workers. This is safe because:
+  //  - Socket.IO test servers bind to OS-assigned ephemeral ports (listen(0)),
+  //  - each suite gets its own isolated mongodb-memory-server instance, and
+  //  - the Mongo binary is pre-downloaded in CI (scripts/warm-mongo-binary.mjs),
+  //    so workers don't race to download it.
+  // Sequential (maxWorkers: 1) execution pushed the suite past the 20-minute
+  // CI budget; 2 workers roughly halves wall-clock time.
+  maxWorkers: 2,
 
   // Timeout for async tests (increased for sequential execution)
   testTimeout: 15000,

@@ -127,7 +127,7 @@ jobs:
     name: Backend Tests (Coverage ≥ 80%)
     runs-on: ubuntu-22.04
     needs: lint
-    timeout-minutes: 20
+    timeout-minutes: 25
 
     services:
       mongodb:
@@ -163,6 +163,16 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+        working-directory: backend
+
+      - name: Cache mongodb-memory-server binary
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/mongodb-binaries
+          key: mongodb-binaries-${{ runner.os }}-v1
+
+      - name: Pre-download mongodb-memory-server binary
+        run: node scripts/warm-mongo-binary.mjs
         working-directory: backend
 
       - name: Run tests with coverage
