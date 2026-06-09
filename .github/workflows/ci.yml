@@ -125,7 +125,7 @@ jobs:
   # ─────────────────────────────────────────────────────────
   test-backend:
     name: Backend Tests (Coverage ≥ 80%)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: lint
     timeout-minutes: 20
 
