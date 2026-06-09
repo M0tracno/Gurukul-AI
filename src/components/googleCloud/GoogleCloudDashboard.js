@@ -298,9 +298,6 @@ const GoogleCloudDashboard = () => {
         >
           <Tab icon={<Storage />} label="Cloud Storage" />
           <Tab icon={<Translate />} label="AI Services" />
-          <Tab icon={<Analytics />} label="Analytics" />
-          <Tab icon={<Security />} label="Security" />
-          <Tab icon={<Functions />} label="Functions" />
         </Tabs>
 
         {/* Cloud Storage Tab */}
@@ -403,30 +400,6 @@ const GoogleCloudDashboard = () => {
             </Grid>
           </Grid>
         </TabPanel>
-
-        {/* Analytics Tab */}
-        <TabPanel value={activeTab} index={2}>
-          <Typography variant="h6" gutterBottom>Analytics & Monitoring</Typography>
-          <Typography variant="body1">
-            Real-time analytics and monitoring dashboard will be implemented here.
-          </Typography>
-        </TabPanel>
-
-        {/* Security Tab */}
-        <TabPanel value={activeTab} index={3}>
-          <Typography variant="h6" gutterBottom>Security & Compliance</Typography>
-          <Typography variant="body1">
-            Security monitoring and compliance dashboard will be implemented here.
-          </Typography>
-        </TabPanel>
-
-        {/* Functions Tab */}
-        <TabPanel value={activeTab} index={4}>
-          <Typography variant="h6" gutterBottom>Cloud Functions</Typography>
-          <Typography variant="body1">
-            Serverless functions management dashboard will be implemented here.
-          </Typography>
-        </TabPanel>
       </Paper>
 
       {/* Recent Activities */}
@@ -521,4 +494,4 @@ const GoogleCloudDashboard = () => {
 };
 
 export default GoogleCloudDashboard;
-
+

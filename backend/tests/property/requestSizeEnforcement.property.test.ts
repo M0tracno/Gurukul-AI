@@ -227,11 +227,11 @@ describe('Property 33: Request Size Enforcement', () => {
         expect(res._status).toBe(400);
 
         const responseBody = res._body as {
-          error: string;
+          success: false;
           message: string;
-          details: Array<{ field: string; value: string; reason: string }>;
+          details: Array<{ field: string; reason: string }>;
         };
-        expect(responseBody.error).toBe('BAD_REQUEST');
+        expect(responseBody.success).toBe(false);
         expect(responseBody.message).toContain('10 MB');
         expect(responseBody.details).toBeDefined();
         expect(responseBody.details[0].field).toBe('body');

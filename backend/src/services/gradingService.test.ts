@@ -12,7 +12,7 @@ import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
 // Mock BullMQ gradingQueue before importing the service
-const mockQueueAdd = jest.fn<() => Promise<{ id: string }>>().mockResolvedValue({ id: 'mock-bull-job-id' });
+const mockQueueAdd = jest.fn<(...args: unknown[]) => Promise<{ id: string }>>().mockResolvedValue({ id: 'mock-bull-job-id' });
 const mockGetJob = jest.fn<() => Promise<null>>().mockResolvedValue(null);
 
 jest.unstable_mockModule('../jobs/gradingQueue.js', () => ({
@@ -194,10 +194,10 @@ describe('GradingService', () => {
           expect(appErr.statusCode).toBe(400);
           expect(appErr.details).toBeDefined();
           expect(appErr.details!.length).toBeGreaterThanOrEqual(2);
-          // Check that both bad submissions are reported individually
-          const reportedIds = appErr.details!.map((d) => d.value);
-          expect(reportedIds).toContain('bad-size');
-          expect(reportedIds).toContain('bad-type');
+          // Check that both bad submissions are reported individually via field names
+          const reportedFields = appErr.details!.map((d) => d.field);
+          expect(reportedFields.some((f) => f.includes('bad-size'))).toBe(true);
+          expect(reportedFields.some((f) => f.includes('bad-type'))).toBe(true);
         }
       });
 
@@ -360,6 +360,96 @@ describe('GradingService', () => {
         const appErr = err as InstanceType<typeof AppError>;
         expect(appErr.statusCode).toBe(400);
         expect(appErr.message).toContain('completed');
+      }
+    });
+  });
+
+  describe('getJobStatus', () => {
+    it('should return queued status for a pending job', async () => {
+      const input = makeValidInput();
+      const { jobId } = await service.submitBatch(input);
+
+      const status = await service.getJobStatus(jobId);
+      expect(status.jobId).toBe(jobId);
+      expect(status.status).toBe('queued');
+      expect(status.resultRef).toBeUndefined();
+    });
+
+    it('should return processing status for a processing job', async () => {
+      const input = makeValidInput();
+      const { jobId } = await service.submitBatch(input);
+
+      await GradingJob.findByIdAndUpdate(jobId, {
+        status: 'processing',
+        startedAt: new Date(),
+      });
+
+      const status = await service.getJobStatus(jobId);
+      expect(status.jobId).toBe(jobId);
+      expect(status.status).toBe('processing');
+      expect(status.startedAt).toBeDefined();
+      expect(status.resultRef).toBeUndefined();
+    });
+
+    it('should return completed status with result reference for a completed job', async () => {
+      const input = makeValidInput();
+      const { jobId } = await service.submitBatch(input);
+
+      await GradingJob.findByIdAndUpdate(jobId, {
+        status: 'completed',
+        completedAt: new Date(),
+      });
+
+      // Create a Submission linked to this grading job
+      const { default: Submission } = await import('../models/Submission.js');
+      const submission = await Submission.create({
+        assessmentId: new mongoose.Types.ObjectId(),
+        studentId: new mongoose.Types.ObjectId(),
+        answers: [{ questionId: 'q1', response: 'answer' }],
+        submittedAt: new Date(),
+        gradingJobId: new mongoose.Types.ObjectId(jobId),
+        gradingStatus: 'completed',
+        gradedAnswers: [
+          { questionId: 'q1', score: 8, maxScore: 10, confidence: 0.9, feedback: 'Good answer', overriddenByTeacher: false },
+        ],
+        finalized: false,
+      });
+
+      const status = await service.getJobStatus(jobId);
+      expect(status.jobId).toBe(jobId);
+      expect(status.status).toBe('completed');
+      expect(status.completedAt).toBeDefined();
+      expect(status.submissionId).toBe(submission._id.toString());
+      expect(status.gradedAnswerCount).toBe(1);
+      expect(status.resultRef).toBe(`submissions/${submission._id.toString()}/graded-answers`);
+
+      // Clean up
+      await Submission.deleteMany({});
+    });
+
+    it('should return failed status for a completed_with_failures job', async () => {
+      const input = makeValidInput();
+      const { jobId } = await service.submitBatch(input);
+
+      await GradingJob.findByIdAndUpdate(jobId, {
+        status: 'completed_with_failures',
+        completedAt: new Date(),
+      });
+
+      const status = await service.getJobStatus(jobId);
+      expect(status.jobId).toBe(jobId);
+      expect(status.status).toBe('failed');
+      expect(status.completedAt).toBeDefined();
+    });
+
+    it('should throw NotFound for a non-existent job', async () => {
+      const fakeId = new mongoose.Types.ObjectId().toString();
+      try {
+        await service.getJobStatus(fakeId);
+        throw new Error('Should have thrown');
+      } catch (err) {
+        expect(err).toBeInstanceOf(AppError);
+        expect((err as InstanceType<typeof AppError>).statusCode).toBe(404);
       }
     });
   });

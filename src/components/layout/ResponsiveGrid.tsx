@@ -46,6 +46,10 @@ const StyledGrid = styled(Grid, {
     }
   };
   return {
+    // Prevent horizontal overflow (Requirement 8.1)
+    overflowX: 'hidden' as const,
+    maxWidth: '100%',
+    boxSizing: 'border-box' as const,
     // Apply consistent spacing using design tokens
     '& > .MuiGrid-item': {
       paddingLeft: getSpacing(spacingLevel),
@@ -70,10 +74,11 @@ const StyledGrid = styled(Grid, {
     ...(centered && {
       margin: '0 auto',
     }),
-    // Responsive behavior
+    // Responsive behavior adjusted to the defined breakpoints (Requirement 8.2)
     ...(responsive && {
       padding: getSpacing('md'),
-      [theme.breakpoints.down('sm')]: {
+      // ≤768px: compact padding for mobile (Requirement 8.3)
+      [theme.breakpoints.down('md')]: {
         padding: getSpacing('sm'),
         '& > .MuiGrid-item': {
           paddingLeft: getSpacing('sm'),

@@ -18,9 +18,12 @@
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
     "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
-    "test:pbt": "node --experimental-vm-modules node_modules/jest/bin/jest.js --testPathPatterns=property"
+    "test:pbt": "node --experimental-vm-modules node_modules/jest/bin/jest.js --testPathPatterns=property",
+    "check:route-map": "tsx scripts/check-route-map.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1064.0",
+    "@aws-sdk/s3-request-presigner": "^3.1064.0",
     "bcryptjs": "3.0.3",
     "bullmq": "5.52.1",
     "compression": "1.8.1",

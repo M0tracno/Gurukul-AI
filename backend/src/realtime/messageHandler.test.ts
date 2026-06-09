@@ -31,9 +31,20 @@ jest.unstable_mockModule('../utils/logger.js', () => ({
 }));
 
 // Mock messaging RBAC - default to allowing all messages
-const mockValidateMessagingPermission = jest.fn<() => Promise<{ allowed: boolean; reason?: string }>>();
+const mockValidateMessagingPermission = jest.fn<(senderId: string, senderRole: string, recipientId: string, recipientModel: string) => Promise<{ allowed: boolean; reason?: string }>>();
 jest.unstable_mockModule('./messagingRbac.js', () => ({
   validateMessagingPermission: mockValidateMessagingPermission,
+  canPost: jest.fn().mockReturnValue({ allowed: true }),
+  resolveChannelType: jest.fn().mockReturnValue('parent_teacher'),
+}));
+
+// Mock envelope utilities
+jest.unstable_mockModule('../utils/envelope.js', () => ({
+  failure: jest.fn((message: string, details?: unknown[]) => ({
+    success: false,
+    message,
+    ...(details && { details }),
+  })),
 }));
 
 const { setupMessageHandlers } = await import('./messageHandler.js');

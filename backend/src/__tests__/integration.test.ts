@@ -10,10 +10,21 @@
  * Validates: Requirements 9.1
  */
 
+import { jest, describe, it, expect, beforeAll, afterAll, beforeEach, afterEach } from '@jest/globals';
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import express, { type Express } from 'express';
 import request from 'supertest';
+
+// Mock logger to avoid import.meta.url issues in ts-jest
+jest.mock('../utils/logger.js', () => ({
+  logger: {
+    warn: jest.fn(),
+    error: jest.fn(),
+    info: jest.fn(),
+    debug: jest.fn(),
+  },
+}));
 
 // Models (imported to register Mongoose schemas)
 import Student from '../models/Student.js';
@@ -23,7 +34,7 @@ import '../models/Enrollment.js';
 import '../models/RefreshToken.js';
 
 // Middleware
-import { globalErrorHandler } from '../middleware/errorHandler.js';
+import { globalErrorHandler, notFoundHandler } from '../middleware/errorHandler.js';
 
 // Routes
 import authRoutes from '../routes/authRoutes.js';
@@ -46,10 +57,8 @@ function createTestApp(): Express {
   testApp.use('/api/v1/courses', courseRoutes);
   testApp.use('/api/v1/enrollments', enrollmentRoutes);
 
-  // 404 handler — Express 5 uses a different catch-all route syntax
-  testApp.use((_req, res) => {
-    res.status(404).json({ error: 'NOT_FOUND', message: 'Route not found' });
-  });
+  // 404 handler — uses the canonical notFoundHandler
+  testApp.use(notFoundHandler);
 
   // Error handler
   testApp.use(globalErrorHandler);
@@ -193,7 +202,7 @@ describe('Auth Flow Integration Tests', () => {
         });
 
       expect(res.status).toBe(401);
-      expect(res.body).toHaveProperty('error', 'UNAUTHORIZED');
+      expect(res.body).toHaveProperty('success', false);
       expect(res.body).toHaveProperty('message');
     });
 
@@ -207,7 +216,7 @@ describe('Auth Flow Integration Tests', () => {
         });
 
       expect(res.status).toBe(401);
-      expect(res.body).toHaveProperty('error', 'UNAUTHORIZED');
+      expect(res.body).toHaveProperty('success', false);
     });
 
     it('should return 400 for missing required fields', async () => {
@@ -216,7 +225,7 @@ describe('Auth Flow Integration Tests', () => {
         .send({ email: 'john@test.com' });
 
       expect(res.status).toBe(400);
-      expect(res.body).toHaveProperty('error', 'VALIDATION_ERROR');
+      expect(res.body).toHaveProperty('success', false);
       expect(res.body).toHaveProperty('details');
       expect(res.body.details.length).toBeGreaterThan(0);
     });
@@ -231,7 +240,7 @@ describe('Auth Flow Integration Tests', () => {
         });
 
       expect(res.status).toBe(400);
-      expect(res.body).toHaveProperty('error', 'VALIDATION_ERROR');
+      expect(res.body).toHaveProperty('success', false);
     });
 
     it('should return 400 for invalid userType', async () => {
@@ -244,7 +253,7 @@ describe('Auth Flow Integration Tests', () => {
         });
 
       expect(res.status).toBe(400);
-      expect(res.body).toHaveProperty('error', 'VALIDATION_ERROR');
+      expect(res.body).toHaveProperty('success', false);
     });
   });
 
@@ -279,7 +288,7 @@ describe('Auth Flow Integration Tests', () => {
         .send({ refreshToken: loginData.refreshToken });
 
       expect(res.status).toBe(401);
-      expect(res.body).toHaveProperty('error', 'UNAUTHORIZED');
+      expect(res.body).toHaveProperty('success', false);
     });
 
     it('should return 401 for invalid refresh token', async () => {
@@ -288,7 +297,7 @@ describe('Auth Flow Integration Tests', () => {
         .send({ refreshToken: 'totally-invalid-token-value' });
 
       expect(res.status).toBe(401);
-      expect(res.body).toHaveProperty('error', 'UNAUTHORIZED');
+      expect(res.body).toHaveProperty('success', false);
     });
 
     it('should return 400 for missing refresh token', async () => {
@@ -297,7 +306,7 @@ describe('Auth Flow Integration Tests', () => {
         .send({});
 
       expect(res.status).toBe(400);
-      expect(res.body).toHaveProperty('error', 'VALIDATION_ERROR');
+      expect(res.body).toHaveProperty('success', false);
     });
   });
 
@@ -336,7 +345,7 @@ describe('Auth Flow Integration Tests', () => {
         .post('/api/v1/auth/logout');
 
       expect(res.status).toBe(401);
-      expect(res.body).toHaveProperty('error', 'UNAUTHORIZED');
+      expect(res.body).toHaveProperty('success', false);
     });
 
     it('should return 401 with expired/invalid access token', async () => {
@@ -345,7 +354,7 @@ describe('Auth Flow Integration Tests', () => {
         .set('Authorization', 'Bearer invalid.token.here');
 
       expect(res.status).toBe(401);
-      expect(res.body).toHaveProperty('error', 'UNAUTHORIZED');
+      expect(res.body).toHaveProperty('success', false);
     });
   });
 });
@@ -386,7 +395,7 @@ describe('Student CRUD Integration Tests', () => {
         .query({ page: -1 });
 
       expect(res.status).toBe(400);
-      expect(res.body).toHaveProperty('error', 'VALIDATION_ERROR');
+      expect(res.body).toHaveProperty('success', false);
     });
 
     it('should return 400 for unknown query parameters', async () => {
@@ -395,7 +404,7 @@ describe('Student CRUD Integration Tests', () => {
         .query({ unknownField: 'value' });
 
       expect(res.status).toBe(400);
-      expect(res.body).toHaveProperty('error', 'VALIDATION_ERROR');
+      expect(res.body).toHaveProperty('success', false);
     });
   });
 
@@ -405,7 +414,7 @@ describe('Student CRUD Integration Tests', () => {
       const res = await request(app).get(`/api/v1/students/${fakeId}`);
 
       expect(res.status).toBe(404);
-      expect(res.body).toHaveProperty('error', 'NOT_FOUND');
+      expect(res.body).toHaveProperty('success', false);
     });
 
     it('should return 400 for whitespace-only ID param', async () => {
@@ -415,7 +424,7 @@ describe('Student CRUD Integration Tests', () => {
       const res = await request(app).get('/api/v1/students/%20');
 
       expect([400, 404]).toContain(res.status);
-      expect(res.body).toHaveProperty('error');
+      expect(res.body).toHaveProperty('success', false);
     });
   });
 
@@ -445,7 +454,7 @@ describe('Student CRUD Integration Tests', () => {
         });
 
       expect(res.status).toBe(400);
-      expect(res.body).toHaveProperty('error', 'VALIDATION_ERROR');
+      expect(res.body).toHaveProperty('success', false);
       expect(res.body.details.length).toBeGreaterThan(0);
     });
 
@@ -462,7 +471,7 @@ describe('Student CRUD Integration Tests', () => {
         });
 
       expect(res.status).toBe(400);
-      expect(res.body).toHaveProperty('error', 'VALIDATION_ERROR');
+      expect(res.body).toHaveProperty('success', false);
     });
 
     it('should return 400 for password too short', async () => {
@@ -478,7 +487,7 @@ describe('Student CRUD Integration Tests', () => {
         });
 
       expect(res.status).toBe(400);
-      expect(res.body).toHaveProperty('error', 'VALIDATION_ERROR');
+      expect(res.body).toHaveProperty('success', false);
     });
 
     it('should return 400 for unknown fields in request body', async () => {
@@ -495,7 +504,7 @@ describe('Student CRUD Integration Tests', () => {
         });
 
       expect(res.status).toBe(400);
-      expect(res.body).toHaveProperty('error', 'VALIDATION_ERROR');
+      expect(res.body).toHaveProperty('success', false);
     });
   });
 
@@ -507,7 +516,7 @@ describe('Student CRUD Integration Tests', () => {
         .send({ firstName: 'Updated' });
 
       expect(res.status).toBe(404);
-      expect(res.body).toHaveProperty('error', 'NOT_FOUND');
+      expect(res.body).toHaveProperty('success', false);
     });
 
     it('should return 400 for invalid update body', async () => {
@@ -517,7 +526,7 @@ describe('Student CRUD Integration Tests', () => {
         .send({ email: 'not-valid-email' });
 
       expect(res.status).toBe(400);
-      expect(res.body).toHaveProperty('error', 'VALIDATION_ERROR');
+      expect(res.body).toHaveProperty('success', false);
     });
 
     it('should return 400 for unknown fields in update body', async () => {
@@ -527,7 +536,7 @@ describe('Student CRUD Integration Tests', () => {
         .send({ hackField: 'injected' });
 
       expect(res.status).toBe(400);
-      expect(res.body).toHaveProperty('error', 'VALIDATION_ERROR');
+      expect(res.body).toHaveProperty('success', false);
     });
   });
 
@@ -568,7 +577,7 @@ describe('Course CRUD Integration Tests', () => {
         .query({ limit: 200 }); // max is 100
 
       expect(res.status).toBe(400);
-      expect(res.body).toHaveProperty('error', 'VALIDATION_ERROR');
+      expect(res.body).toHaveProperty('success', false);
     });
 
     it('should return 400 for unknown query fields', async () => {
@@ -577,7 +586,7 @@ describe('Course CRUD Integration Tests', () => {
         .query({ badField: 'value' });
 
       expect(res.status).toBe(400);
-      expect(res.body).toHaveProperty('error', 'VALIDATION_ERROR');
+      expect(res.body).toHaveProperty('success', false);
     });
   });
 
@@ -587,7 +596,7 @@ describe('Course CRUD Integration Tests', () => {
       const res = await request(app).get(`/api/v1/courses/${fakeId}`);
 
       expect(res.status).toBe(404);
-      expect(res.body).toHaveProperty('error', 'NOT_FOUND');
+      expect(res.body).toHaveProperty('success', false);
     });
   });
 
@@ -618,7 +627,7 @@ describe('Course CRUD Integration Tests', () => {
         });
 
       expect(res.status).toBe(400);
-      expect(res.body).toHaveProperty('error', 'VALIDATION_ERROR');
+      expect(res.body).toHaveProperty('success', false);
       expect(res.body.details.length).toBeGreaterThan(0);
     });
 
@@ -636,7 +645,7 @@ describe('Course CRUD Integration Tests', () => {
         });
 
       expect(res.status).toBe(400);
-      expect(res.body).toHaveProperty('error', 'VALIDATION_ERROR');
+      expect(res.body).toHaveProperty('success', false);
     });
 
     it('should return 400 for unknown fields', async () => {
@@ -654,7 +663,7 @@ describe('Course CRUD Integration Tests', () => {
         });
 
       expect(res.status).toBe(400);
-      expect(res.body).toHaveProperty('error', 'VALIDATION_ERROR');
+      expect(res.body).toHaveProperty('success', false);
     });
 
     it('should return 400 for invalid date format', async () => {
@@ -671,7 +680,7 @@ describe('Course CRUD Integration Tests', () => {
         });
 
       expect(res.status).toBe(400);
-      expect(res.body).toHaveProperty('error', 'VALIDATION_ERROR');
+      expect(res.body).toHaveProperty('success', false);
     });
   });
 
@@ -683,7 +692,7 @@ describe('Course CRUD Integration Tests', () => {
         .send({ title: 'Updated Course' });
 
       expect(res.status).toBe(404);
-      expect(res.body).toHaveProperty('error', 'NOT_FOUND');
+      expect(res.body).toHaveProperty('success', false);
     });
 
     it('should return 400 for invalid credits in update', async () => {
@@ -693,7 +702,7 @@ describe('Course CRUD Integration Tests', () => {
         .send({ credits: -5 });
 
       expect(res.status).toBe(400);
-      expect(res.body).toHaveProperty('error', 'VALIDATION_ERROR');
+      expect(res.body).toHaveProperty('success', false);
     });
   });
 
@@ -742,7 +751,7 @@ describe('Enrollment CRUD Integration Tests', () => {
         .query({ status: 'invalid_status' });
 
       expect(res.status).toBe(400);
-      expect(res.body).toHaveProperty('error', 'VALIDATION_ERROR');
+      expect(res.body).toHaveProperty('success', false);
     });
 
     it('should return 400 for unknown query fields', async () => {
@@ -751,7 +760,7 @@ describe('Enrollment CRUD Integration Tests', () => {
         .query({ unknownField: 'value' });
 
       expect(res.status).toBe(400);
-      expect(res.body).toHaveProperty('error', 'VALIDATION_ERROR');
+      expect(res.body).toHaveProperty('success', false);
     });
   });
 
@@ -761,7 +770,7 @@ describe('Enrollment CRUD Integration Tests', () => {
       const res = await request(app).get(`/api/v1/enrollments/${fakeId}`);
 
       expect(res.status).toBe(404);
-      expect(res.body).toHaveProperty('error', 'NOT_FOUND');
+      expect(res.body).toHaveProperty('success', false);
     });
   });
 
@@ -786,7 +795,7 @@ describe('Enrollment CRUD Integration Tests', () => {
         });
 
       expect(res.status).toBe(400);
-      expect(res.body).toHaveProperty('error', 'VALIDATION_ERROR');
+      expect(res.body).toHaveProperty('success', false);
     });
 
     it('should return 400 when course ID is missing', async () => {
@@ -797,7 +806,7 @@ describe('Enrollment CRUD Integration Tests', () => {
         });
 
       expect(res.status).toBe(400);
-      expect(res.body).toHaveProperty('error', 'VALIDATION_ERROR');
+      expect(res.body).toHaveProperty('success', false);
     });
 
     it('should return 400 for invalid status value', async () => {
@@ -810,7 +819,7 @@ describe('Enrollment CRUD Integration Tests', () => {
         });
 
       expect(res.status).toBe(400);
-      expect(res.body).toHaveProperty('error', 'VALIDATION_ERROR');
+      expect(res.body).toHaveProperty('success', false);
     });
 
     it('should return 400 for unknown fields', async () => {
@@ -823,7 +832,7 @@ describe('Enrollment CRUD Integration Tests', () => {
         });
 
       expect(res.status).toBe(400);
-      expect(res.body).toHaveProperty('error', 'VALIDATION_ERROR');
+      expect(res.body).toHaveProperty('success', false);
     });
   });
 
@@ -835,7 +844,7 @@ describe('Enrollment CRUD Integration Tests', () => {
         .send({ status: 'completed' });
 
       expect(res.status).toBe(404);
-      expect(res.body).toHaveProperty('error', 'NOT_FOUND');
+      expect(res.body).toHaveProperty('success', false);
     });
 
     it('should return 400 for invalid status in update', async () => {
@@ -845,7 +854,7 @@ describe('Enrollment CRUD Integration Tests', () => {
         .send({ status: 'not_a_valid_status' });
 
       expect(res.status).toBe(400);
-      expect(res.body).toHaveProperty('error', 'VALIDATION_ERROR');
+      expect(res.body).toHaveProperty('success', false);
     });
 
     it('should return 400 for invalid grade in update', async () => {
@@ -855,7 +864,7 @@ describe('Enrollment CRUD Integration Tests', () => {
         .send({ grade: 'Z' });
 
       expect(res.status).toBe(400);
-      expect(res.body).toHaveProperty('error', 'VALIDATION_ERROR');
+      expect(res.body).toHaveProperty('success', false);
     });
 
     it('should return 400 for finalScore out of range', async () => {
@@ -865,7 +874,7 @@ describe('Enrollment CRUD Integration Tests', () => {
         .send({ finalScore: 150 });
 
       expect(res.status).toBe(400);
-      expect(res.body).toHaveProperty('error', 'VALIDATION_ERROR');
+      expect(res.body).toHaveProperty('success', false);
     });
   });
 
@@ -889,7 +898,7 @@ describe('Error Handling Integration Tests', () => {
     const res = await request(app).get('/api/v1/nonexistent');
 
     expect(res.status).toBe(404);
-    expect(res.body).toHaveProperty('error', 'NOT_FOUND');
+    expect(res.body).toHaveProperty('success', false);
     expect(res.body).toHaveProperty('message');
   });
 
@@ -899,7 +908,7 @@ describe('Error Handling Integration Tests', () => {
       .send({}); // Empty body — validation will fail
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('error');
+    expect(res.body).toHaveProperty('success', false);
     expect(res.body).toHaveProperty('message');
     expect(res.body).toHaveProperty('details');
     expect(Array.isArray(res.body.details)).toBe(true);

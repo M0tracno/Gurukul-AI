@@ -4,6 +4,10 @@ import { authTokenService, type DecodedToken } from '../services/authTokenServic
 import { logger } from '../utils/logger.js';
 import type { UserRole } from '../types/common.js';
 import { setupTypingHandlers } from './typingHandler.js';
+import { setupMessageHandlers } from './messageHandler.js';
+import { setupWebRTCSignaling } from './webrtcSignaling.js';
+import { canJoin, resolveChannelType, type ChannelType } from './messagingRbac.js';
+import { failure } from '../utils/envelope.js';
 import Message from '../models/Message.js';
 
 /**
@@ -42,10 +46,16 @@ export interface ISocketManager {
  * SocketManager implements the ISocketManager interface, encapsulating
  * all Socket.IO server logic: JWT authentication middleware, room/namespace
  * management for conversations, and utility methods for message delivery.
+ *
+ * Phase 4 additions:
+ * - Channel-type enforcement via canJoin/canPost (Requirement 16.3)
+ * - Exactly-once offline message flush on reconnect (Requirement 16.5)
  */
 export class SocketManager implements ISocketManager {
   private io: SocketIOServer;
   private connectedUsers = new Map<string, ConnectedUserInfo>();
+  /** Tracks ongoing flush operations to ensure exactly-once delivery (Requirement 16.5) */
+  private flushingUsers = new Set<string>();
 
   constructor(io: SocketIOServer) {
     this.io = io;
@@ -79,6 +89,47 @@ export class SocketManager implements ISocketManager {
   }
 
   /**
+   * Join a channel with role-based enforcement (Requirement 16.3).
+   * Returns true if the join was permitted, false otherwise.
+   * On denial, a 403 Error_Envelope is emitted to the socket.
+   */
+  joinChannel(userId: string, channelType: ChannelType, channelId: string): boolean {
+    const userInfo = this.connectedUsers.get(userId);
+    if (!userInfo) {
+      logger.warn('Cannot join channel — user not connected', { userId, channelType, channelId });
+      return false;
+    }
+
+    const accessResult = canJoin(userInfo.role, channelType);
+    if (!accessResult.allowed) {
+      const socket = this.io.sockets.sockets.get(userInfo.socketId);
+      if (socket) {
+        socket.emit('channel_error', {
+          status: 403,
+          envelope: accessResult.errorEnvelope,
+          channelType,
+          channelId,
+        });
+      }
+      logger.warn('Channel join denied by RBAC', {
+        userId,
+        role: userInfo.role,
+        channelType,
+        channelId,
+        reason: accessResult.reason,
+      });
+      return false;
+    }
+
+    const socket = this.io.sockets.sockets.get(userInfo.socketId);
+    if (socket) {
+      socket.join(`channel_${channelType}_${channelId}`);
+      logger.info('User joined channel', { userId, channelType, channelId });
+    }
+    return true;
+  }
+
+  /**
    * Broadcast a message to all sockets in a conversation room.
    */
   broadcastMessage(conversationId: string, message: unknown): void {
@@ -108,12 +159,23 @@ export class SocketManager implements ISocketManager {
 
   /**
    * Deliver messages that were sent while the user was disconnected.
+   * Implements exactly-once flush semantics (Requirement 16.5):
+   * - Uses a `flushingUsers` set to prevent concurrent/duplicate flushes
+   * - Atomically marks messages as 'delivered' using findOneAndUpdate
+   * - Each message is emitted to the user's personal room exactly once
+   *
    * Queries messages where the user is the recipient, created after
    * the provided timestamp, and still in 'pending' delivery status.
-   * Each missed message is emitted to the user's personal room and
-   * its delivery status is updated to 'delivered'.
    */
   async deliverMissedMessages(userId: string, lastMessageTimestamp: Date): Promise<void> {
+    // Exactly-once guard: if a flush is already in progress, skip
+    if (this.flushingUsers.has(userId)) {
+      logger.info('Flush already in progress, skipping duplicate', { userId });
+      return;
+    }
+
+    this.flushingUsers.add(userId);
+
     try {
       const missedMessages = await Message.find({
         recipientId: userId,
@@ -136,19 +198,23 @@ export class SocketManager implements ISocketManager {
       });
 
       for (const message of missedMessages) {
+        // Atomically claim this message for delivery (exactly-once)
+        const updated = await Message.findOneAndUpdate(
+          { _id: message._id, deliveryStatus: 'pending' },
+          { $set: { deliveryStatus: 'delivered', deliveredAt: new Date() } },
+          { new: true }
+        );
+
+        // If update returns null, another flush already delivered this message
+        if (!updated) {
+          logger.debug('Message already delivered by concurrent flush', {
+            messageId: (message._id as unknown as string).toString(),
+          });
+          continue;
+        }
+
         // Emit the missed message to the user's personal room
         this.io.to(`user_${userId}`).emit('new_message', message);
-
-        // Update delivery status to 'delivered'
-        await Message.updateOne(
-          { _id: message._id },
-          {
-            $set: {
-              deliveryStatus: 'delivered',
-              deliveredAt: new Date(),
-            },
-          }
-        );
 
         // Notify the sender of successful delivery
         this.emitDeliveryConfirmation(
@@ -168,6 +234,9 @@ export class SocketManager implements ISocketManager {
         error: error instanceof Error ? error.message : String(error),
       });
       throw error;
+    } finally {
+      // Always release the flush lock
+      this.flushingUsers.delete(userId);
     }
   }
 
@@ -218,7 +287,7 @@ export class SocketManager implements ISocketManager {
   /**
    * Set up connection event handlers: track connected users, join personal
    * rooms, and register per-socket event listeners for conversation
-   * join/leave and disconnect.
+   * join/leave, channel join with RBAC, and disconnect.
    */
   private setupConnectionHandlers(): void {
     this.io.on('connection', (socket: Socket) => {
@@ -241,8 +310,40 @@ export class SocketManager implements ISocketManager {
       // Set up typing indicator handlers with rate limiting
       setupTypingHandlers(authSocket, this.io);
 
-      // Handle message synchronization on reconnection
-      // Client emits this event with the timestamp of its last received message
+      // Set up message send handlers with RBAC and persistence
+      setupMessageHandlers(authSocket, this);
+
+      // Set up WebRTC signaling handlers for PTM video (Phase 4, Requirement 18)
+      setupWebRTCSignaling(authSocket, this.io);
+
+      // ─── Channel Join with RBAC Enforcement (Requirement 16.3) ──────────
+      socket.on('join_channel', (data: { channelType: ChannelType; channelId: string }) => {
+        const { channelType, channelId } = data;
+        if (!channelType || !channelId) {
+          socket.emit('channel_error', {
+            status: 400,
+            envelope: failure('channelType and channelId are required'),
+            channelType,
+            channelId,
+          });
+          return;
+        }
+
+        this.joinChannel(userId, channelType, channelId);
+      });
+
+      // ─── Channel Leave ──────────────────────────────────────────────────
+      socket.on('leave_channel', (data: { channelType: ChannelType; channelId: string }) => {
+        const { channelType, channelId } = data;
+        if (channelType && channelId) {
+          socket.leave(`channel_${channelType}_${channelId}`);
+          logger.info('User left channel', { userId, channelType, channelId });
+        }
+      });
+
+      // Handle message synchronization on reconnection (Requirement 16.5)
+      // Client emits this event with the timestamp of its last received message.
+      // Flush is exactly-once: concurrent calls for the same user are deduplicated.
       socket.on('sync_messages', async (data: { lastMessageTimestamp: string | Date }) => {
         try {
           const timestamp = new Date(data.lastMessageTimestamp);
@@ -277,7 +378,7 @@ export class SocketManager implements ISocketManager {
         }
       });
 
-      // Handle joining a conversation room
+      // Handle joining a conversation room (legacy / direct)
       socket.on('join_conversation', (conversationId: string) => {
         socket.join(`conversation_${conversationId}`);
         logger.info('User joined conversation', { userId, conversationId });

@@ -1,11 +1,8 @@
 import type { Request, Response } from 'express';
 
 import { AppError } from '../middleware/errorHandler.js';
-import type { ApiSuccessResponse } from '../types/api.js';
+import { success } from '../utils/envelope.js';
 import type { Pagination } from '../types/common.js';
-
-// Placeholder service import — will be implemented in Task 5.6
-// import { markService } from '../services/markService.js';
 
 /**
  * Mark resource controller.
@@ -33,16 +30,11 @@ export const markController = {
     // const result = await markService.findAll(filters, pagination);
     const result = { data: [], meta: { page: pagination.page, limit: pagination.limit, total: 0, totalPages: 0 } };
 
-    const response: ApiSuccessResponse<unknown[]> = {
-      data: result.data,
-      meta: {
-        page: result.meta.page,
-        limit: result.meta.limit,
-        total: result.meta.total,
-      },
-    };
-
-    res.json(response);
+    res.json(success(result.data, {
+      page: result.meta.page,
+      limit: result.meta.limit,
+      total: result.meta.total,
+    }));
   },
 
   /**
@@ -60,8 +52,7 @@ export const markController = {
       throw AppError.notFound(`Mark with id '${id}' not found`);
     }
 
-    const response: ApiSuccessResponse<unknown> = { data: mark };
-    res.json(response);
+    res.json(success(mark));
   },
 
   /**
@@ -75,8 +66,7 @@ export const markController = {
     // const mark = await markService.create(data);
     const mark = data as unknown;
 
-    const response: ApiSuccessResponse<unknown> = { data: mark };
-    res.status(201).json(response);
+    res.status(201).json(success(mark));
   },
 
   /**
@@ -95,8 +85,7 @@ export const markController = {
       throw AppError.notFound(`Mark with id '${id}' not found`);
     }
 
-    const response: ApiSuccessResponse<unknown> = { data: mark };
-    res.json(response);
+    res.json(success(mark));
   },
 
   /**

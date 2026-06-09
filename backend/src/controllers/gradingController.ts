@@ -1,8 +1,8 @@
 import type { Request, Response } from 'express';
 
 import { gradingService } from '../services/gradingService.js';
+import { success } from '../utils/envelope.js';
 import type { AuthenticatedRequest } from '../middleware/rbacMiddleware.js';
-import type { ApiSuccessResponse } from '../types/api.js';
 
 /**
  * Grading resource controller.
@@ -25,8 +25,7 @@ export const gradingController = {
       concurrency,
     });
 
-    const response: ApiSuccessResponse<{ jobId: string }> = { data: result };
-    res.status(201).json(response);
+    res.status(201).json(success(result));
   },
 
   /**
@@ -38,8 +37,7 @@ export const gradingController = {
 
     const progress = await gradingService.getJobProgress(jobId);
 
-    const response: ApiSuccessResponse<typeof progress> = { data: progress };
-    res.json(response);
+    res.json(success(progress));
   },
 
   /**
@@ -51,9 +49,58 @@ export const gradingController = {
 
     await gradingService.cancelJob(jobId);
 
-    const response: ApiSuccessResponse<{ message: string }> = {
-      data: { message: `Grading job '${jobId}' has been cancelled` },
-    };
-    res.json(response);
+    res.json(success({ message: `Grading job '${jobId}' has been cancelled` }));
+  },
+
+  /**
+   * GET /api/v1/grading/jobs/:jobId/status
+   * Get the current status of a grading job following the state machine:
+   * queued → processing → (completed | failed)
+   * Returns a result reference when completed.
+   * Requirements: 14.3, 14.4
+   */
+  async getJobStatus(req: Request, res: Response): Promise<void> {
+    const { jobId } = req.params as { jobId: string };
+
+    const status = await gradingService.getJobStatus(jobId);
+
+    res.json(success(status));
+  },
+
+  /**
+   * PUT /api/v1/grading/submissions/:submissionId/answers/:questionId/override
+   * Allow a Teacher to override AI-generated score/feedback for a specific
+   * graded answer before the submission is finalized.
+   * Requirement 13.4
+   */
+  async overrideGradedAnswer(req: Request, res: Response): Promise<void> {
+    const { submissionId, questionId } = req.params as { submissionId: string; questionId: string };
+    const { score, feedback } = req.body;
+    const { userId: teacherId } = (req as AuthenticatedRequest).user;
+
+    const result = await gradingService.overrideGradedAnswer({
+      submissionId,
+      questionId,
+      teacherId,
+      score,
+      feedback,
+    });
+
+    res.json(success(result));
+  },
+
+  /**
+   * POST /api/v1/grading/submissions/:submissionId/finalize
+   * Finalize a submission after teacher review. Once finalized, no further
+   * overrides are allowed.
+   * Requirement 13.4
+   */
+  async finalizeSubmission(req: Request, res: Response): Promise<void> {
+    const { submissionId } = req.params as { submissionId: string };
+    const { userId: teacherId } = (req as AuthenticatedRequest).user;
+
+    const result = await gradingService.finalizeSubmission(submissionId, teacherId);
+
+    res.json(success(result));
   },
 };

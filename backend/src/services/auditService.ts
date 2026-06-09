@@ -12,8 +12,22 @@ export interface AuditEventParams {
   metadata?: Record<string, unknown>;
 }
 
+/**
+ * Structured entry for the design-spec `record` method.
+ * Matches the contract: `auditService.record({ actor, action, target, timestamp })`
+ * as described in the design (Requirement 4.9, 22.3).
+ */
+export interface AuditRecordEntry {
+  actor: string;
+  action: string;
+  target: string;
+  timestamp: Date;
+  metadata?: Record<string, unknown>;
+}
+
 export interface IAuditService {
   logEvent(params: AuditEventParams): Promise<void>;
+  record(entry: AuditRecordEntry): Promise<void>;
   logLogin(userId: string, role: string, ip: string, correlationId: string): Promise<void>;
   logLogout(userId: string, role: string, ip: string, correlationId: string): Promise<void>;
   logFailedAuth(userId: string, role: string, ip: string, correlationId: string, reason: string): Promise<void>;
@@ -27,7 +41,7 @@ export class AuditService implements IAuditService {
    * Log a security-relevant event to the AuditLog collection.
    *
    * Tracks: login, logout, password change, role modification,
-   * failed auth, and account lockout events.
+   * failed auth, account lockout, and admin override events.
    */
   async logEvent(params: AuditEventParams): Promise<void> {
     await AuditLog.create({
@@ -44,6 +58,31 @@ export class AuditService implements IAuditService {
       },
       correlationId: params.correlationId,
       metadata: params.metadata,
+    });
+  }
+
+  /**
+   * Record an audit entry using the design-spec interface.
+   * Matches the contract: `auditService.record({ actor, action, target, timestamp })`
+   *
+   * This method is used by admin override mutations to produce audit entries
+   * per Requirements 4.9 and 22.3.
+   */
+  async record(entry: AuditRecordEntry): Promise<void> {
+    await AuditLog.create({
+      timestamp: entry.timestamp,
+      actor: {
+        userId: entry.actor,
+        role: 'admin',
+        ip: 'system',
+      },
+      action: 'admin_override',
+      target: {
+        resource: entry.action,
+        resourceId: entry.target,
+      },
+      correlationId: `override-${Date.now()}`,
+      metadata: entry.metadata,
     });
   }
 

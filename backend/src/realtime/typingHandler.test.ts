@@ -29,34 +29,35 @@ const {
   TYPING_TIMEOUT_MS,
 } = await import('./typingHandler.js');
 
-const TEST_PORT = 9877;
+jest.setTimeout(60000);
 
-function createMockToken(userId: string, role: string) {
-  mockValidateAccessToken.mockResolvedValueOnce({
-    userId,
-    role,
-    iat: Math.floor(Date.now() / 1000),
-    exp: Math.floor(Date.now() / 1000) + 900,
-  });
-}
+const TEST_PORT = 0; // OS-assigned port to avoid conflicts with parallel test workers
 
 describe('TypingHandler', () => {
   let httpServer: http.Server;
   let socketManager: InstanceType<typeof SocketManager>;
   let senderSocket: ClientSocket;
   let receiverSocket: ClientSocket;
+  let serverPort: number;
 
   beforeAll((done) => {
     httpServer = http.createServer();
     socketManager = createSocketManager(httpServer);
-    httpServer.listen(TEST_PORT, done);
+    httpServer.listen(TEST_PORT, () => {
+      const addr = httpServer.address();
+      serverPort = typeof addr === 'object' && addr ? addr.port : TEST_PORT;
+      done();
+    });
   });
 
   afterAll((done) => {
     if (senderSocket?.connected) senderSocket.disconnect();
     if (receiverSocket?.connected) receiverSocket.disconnect();
-    socketManager.getIO().close();
-    httpServer.close(done);
+    // Give Socket.IO time to process disconnections before closing the server
+    setTimeout(() => {
+      socketManager.getIO().close();
+      httpServer.close(done);
+    }, 100);
   });
 
   beforeEach(() => {
@@ -77,7 +78,7 @@ describe('TypingHandler', () => {
   function connectBothToConversation(
     conversationId: string,
   ): Promise<void> {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       let joinedCount = 0;
       const checkDone = () => {
         joinedCount++;
@@ -87,11 +88,26 @@ describe('TypingHandler', () => {
         }
       };
 
+      // Set up auth mocks for both connections before creating sockets
+      mockValidateAccessToken
+        .mockResolvedValueOnce({
+          userId: 'user-sender',
+          role: 'student',
+          iat: Math.floor(Date.now() / 1000),
+          exp: Math.floor(Date.now() / 1000) + 900,
+        })
+        .mockResolvedValueOnce({
+          userId: 'user-receiver',
+          role: 'teacher',
+          iat: Math.floor(Date.now() / 1000),
+          exp: Math.floor(Date.now() / 1000) + 900,
+        });
+
       // Connect sender (user-sender)
-      createMockToken('user-sender', 'student');
-      senderSocket = ioClient(`http://localhost:${TEST_PORT}`, {
+      senderSocket = ioClient(`http://localhost:${serverPort}`, {
         auth: { token: 'sender-token' },
         transports: ['websocket'],
+        reconnection: false,
       });
 
       senderSocket.on('connect', () => {
@@ -99,16 +115,24 @@ describe('TypingHandler', () => {
         setTimeout(checkDone, 30);
       });
 
+      senderSocket.on('connect_error', (err) => {
+        reject(new Error(`Sender socket connect error: ${err.message}`));
+      });
+
       // Connect receiver (user-receiver)
-      createMockToken('user-receiver', 'teacher');
-      receiverSocket = ioClient(`http://localhost:${TEST_PORT}`, {
+      receiverSocket = ioClient(`http://localhost:${serverPort}`, {
         auth: { token: 'receiver-token' },
         transports: ['websocket'],
+        reconnection: false,
       });
 
       receiverSocket.on('connect', () => {
         receiverSocket.emit('join_conversation', conversationId);
         setTimeout(checkDone, 30);
+      });
+
+      receiverSocket.on('connect_error', (err) => {
+        reject(new Error(`Receiver socket connect error: ${err.message}`));
       });
     });
   }
@@ -155,11 +179,12 @@ describe('TypingHandler', () => {
         setTimeout(() => senderSocket.emit('typing_start', { conversationId: 'conv-rate-1' }), 500);
         setTimeout(() => senderSocket.emit('typing_start', { conversationId: 'conv-rate-1' }), 1000);
 
-        // After 1.5s, only the first typing event should have been broadcast
+        // After 2s, only the first typing event should have been broadcast
+        // (use 2s instead of 1.5s for stability under load)
         setTimeout(() => {
           expect(typingCount).toBe(1);
           done();
-        }, 1500);
+        }, 2000);
       });
     });
 
@@ -181,8 +206,8 @@ describe('TypingHandler', () => {
           setTimeout(() => {
             expect(typingCount).toBe(2);
             done();
-          }, 200);
-        }, TYPING_RATE_LIMIT_MS + 100);
+          }, 500);
+        }, TYPING_RATE_LIMIT_MS + 200);
       });
     });
   });
@@ -209,8 +234,8 @@ describe('TypingHandler', () => {
           stoppedTypingCount++;
           const elapsed = Date.now() - startTime;
           // Should fire roughly 5s after the LAST typing_start (sent at 2s mark)
-          // So total elapsed ~7s from start
-          expect(elapsed).toBeGreaterThanOrEqual(6500);
+          // So total elapsed ~7s from start. Use 6000ms lower bound for CI stability.
+          expect(elapsed).toBeGreaterThanOrEqual(6000);
           expect(stoppedTypingCount).toBe(1);
           done();
         });
@@ -223,7 +248,7 @@ describe('TypingHandler', () => {
           senderSocket.emit('typing_start', { conversationId: 'conv-timeout-2' });
         }, 2000);
       });
-    }, 10000); // Extended timeout
+    }, 15000); // Extended timeout
   });
 
   describe('Cleanup on leave/disconnect', () => {

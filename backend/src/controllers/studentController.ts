@@ -1,11 +1,8 @@
 import type { Request, Response } from 'express';
 
 import { AppError } from '../middleware/errorHandler.js';
-import type { ApiSuccessResponse } from '../types/api.js';
+import { success } from '../utils/envelope.js';
 import type { Pagination } from '../types/common.js';
-
-// Placeholder service import — will be implemented in Task 5.6
-// import { studentService } from '../services/studentService.js';
 
 /**
  * Student resource controller.
@@ -34,16 +31,11 @@ export const studentController = {
     // const result = await studentService.findAll(filters, pagination);
     const result = { data: [], meta: { page: pagination.page, limit: pagination.limit, total: 0, totalPages: 0 } };
 
-    const response: ApiSuccessResponse<unknown[]> = {
-      data: result.data,
-      meta: {
-        page: result.meta.page,
-        limit: result.meta.limit,
-        total: result.meta.total,
-      },
-    };
-
-    res.json(response);
+    res.json(success(result.data, {
+      page: result.meta.page,
+      limit: result.meta.limit,
+      total: result.meta.total,
+    }));
   },
 
   /**
@@ -61,8 +53,7 @@ export const studentController = {
       throw AppError.notFound(`Student with id '${id}' not found`);
     }
 
-    const response: ApiSuccessResponse<unknown> = { data: student };
-    res.json(response);
+    res.json(success(student));
   },
 
   /**
@@ -76,8 +67,7 @@ export const studentController = {
     // const student = await studentService.create(data);
     const student = data as unknown;
 
-    const response: ApiSuccessResponse<unknown> = { data: student };
-    res.status(201).json(response);
+    res.status(201).json(success(student));
   },
 
   /**
@@ -96,8 +86,7 @@ export const studentController = {
       throw AppError.notFound(`Student with id '${id}' not found`);
     }
 
-    const response: ApiSuccessResponse<unknown> = { data: student };
-    res.json(response);
+    res.json(success(student));
   },
 
   /**

@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import mongoose from 'mongoose';
 import { Redis } from 'ioredis';
 import { redisConfig } from '../config/redis.js';
+import { success } from '../utils/envelope.js';
 
 /**
  * Health check endpoint.
@@ -251,7 +252,7 @@ router.get('/', async (_req: Request, res: Response) => {
 
   // Return 200 for healthy/degraded, 503 for unhealthy
   const httpStatus = overallStatus === 'unhealthy' ? 503 : 200;
-  res.status(httpStatus).json(response);
+  res.status(httpStatus).json(success(response));
 });
 
 export default router;

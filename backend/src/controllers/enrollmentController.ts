@@ -1,11 +1,8 @@
 import type { Request, Response } from 'express';
 
 import { AppError } from '../middleware/errorHandler.js';
-import type { ApiSuccessResponse } from '../types/api.js';
+import { success } from '../utils/envelope.js';
 import type { Pagination } from '../types/common.js';
-
-// Placeholder service import — will be implemented in Task 5.6
-// import { enrollmentService } from '../services/enrollmentService.js';
 
 /**
  * Enrollment resource controller.
@@ -34,16 +31,11 @@ export const enrollmentController = {
     // const result = await enrollmentService.findAll(filters, pagination);
     const result = { data: [], meta: { page: pagination.page, limit: pagination.limit, total: 0, totalPages: 0 } };
 
-    const response: ApiSuccessResponse<unknown[]> = {
-      data: result.data,
-      meta: {
-        page: result.meta.page,
-        limit: result.meta.limit,
-        total: result.meta.total,
-      },
-    };
-
-    res.json(response);
+    res.json(success(result.data, {
+      page: result.meta.page,
+      limit: result.meta.limit,
+      total: result.meta.total,
+    }));
   },
 
   /**
@@ -61,8 +53,7 @@ export const enrollmentController = {
       throw AppError.notFound(`Enrollment with id '${id}' not found`);
     }
 
-    const response: ApiSuccessResponse<unknown> = { data: enrollment };
-    res.json(response);
+    res.json(success(enrollment));
   },
 
   /**
@@ -76,8 +67,7 @@ export const enrollmentController = {
     // const enrollment = await enrollmentService.create(data);
     const enrollment = data as unknown;
 
-    const response: ApiSuccessResponse<unknown> = { data: enrollment };
-    res.status(201).json(response);
+    res.status(201).json(success(enrollment));
   },
 
   /**
@@ -96,8 +86,7 @@ export const enrollmentController = {
       throw AppError.notFound(`Enrollment with id '${id}' not found`);
     }
 
-    const response: ApiSuccessResponse<unknown> = { data: enrollment };
-    res.json(response);
+    res.json(success(enrollment));
   },
 
   /**

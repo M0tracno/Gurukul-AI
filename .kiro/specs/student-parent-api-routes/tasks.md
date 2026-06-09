@@ -76,8 +76,8 @@ Implement student self-service and parent ward-monitoring API routes following t
   - Ensure `npx tsc --noEmit` passes with no type errors
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ]* 9. Write unit tests for studentMeService
-  - [ ]* 9.1 Create `backend/src/services/__tests__/studentMeService.test.ts`
+- [x]* 9. Write unit tests for studentMeService
+  - [x]* 9.1 Create `backend/src/services/__tests__/studentMeService.test.ts`
     - Test `getCourses` returns only active enrollments for given studentId
     - Test `getCourses` returns empty array when no enrollments exist
     - Test `getGrades` groups marks by course correctly
@@ -88,8 +88,8 @@ Implement student self-service and parent ward-monitoring API routes following t
     - **Property 6: Date range filter correctness** — verify all returned dates within range
     - _Requirements: 1.1, 1.4, 2.1, 2.5, 3.1, 3.3, 3.6_
 
-- [ ]* 10. Write unit tests for parentMeService
-  - [ ]* 10.1 Create `backend/src/services/__tests__/parentMeService.test.ts`
+- [x]* 10. Write unit tests for parentMeService
+  - [x]* 10.1 Create `backend/src/services/__tests__/parentMeService.test.ts`
     - Test `getChildren` returns only students with active relations
     - Test `getChildren` returns empty array when no active relations
     - Test `getChildCourses` throws 403 when no active relation exists
@@ -100,15 +100,15 @@ Implement student self-service and parent ward-monitoring API routes following t
     - **Property 3: Empty result consistency** — verify empty array with 200 for no data
     - _Requirements: 4.1, 4.2, 4.5, 5.1, 5.2, 5.3, 5.4, 6.1, 6.2, 6.3, 6.4, 6.5, 7.1, 7.2, 7.3, 7.4_
 
-- [ ]* 11. Write integration tests for API routes
-  - [ ]* 11.1 Create `backend/src/routes/__tests__/studentMeRoutes.test.ts`
+- [x]* 11. Write integration tests for API routes
+  - [x]* 11.1 Create `backend/src/routes/__tests__/studentMeRoutes.test.ts`
     - Test auth middleware rejects unauthenticated requests (401)
     - Test RBAC rejects non-student roles (403)
     - Test successful course/grades/attendance retrieval
     - **Property 4: Response envelope consistency** — verify all responses have `{ success: true, data }` shape
     - _Requirements: 1.2, 1.3, 2.3, 2.4, 3.4, 3.5, 8.1, 8.3_
 
-  - [ ]* 11.2 Create `backend/src/routes/__tests__/parentMeRoutes.test.ts`
+  - [x]* 11.2 Create `backend/src/routes/__tests__/parentMeRoutes.test.ts`
     - Test auth middleware rejects unauthenticated requests (401)
     - Test RBAC rejects non-parent roles (403)
     - Test parent access gate rejects unlinked children (403)

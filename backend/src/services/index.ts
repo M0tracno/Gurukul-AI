@@ -22,4 +22,37 @@ export { markService, MarkService } from './markService.js';
 export type { MarkFilters } from './markService.js';
 
 export { auditService, AuditService } from './auditService.js';
-export type { AuditEventParams, IAuditService } from './auditService.js';
+export type { AuditEventParams, AuditRecordEntry, IAuditService } from './auditService.js';
+
+export { adminOverrideService, AdminOverrideService } from './adminOverrideService.js';
+export type { AdminOverrideParams } from './adminOverrideService.js';
+
+export { assessmentService, AssessmentService } from './assessmentService.js';
+export type {
+  CreateAssessmentDto,
+  SubmitAnswersDto,
+  AssessmentResult,
+  SubmissionResult,
+} from './assessmentService.js';
+
+export { analyticsService, AnalyticsService } from './analyticsService.js';
+export type {
+  TrendMetric,
+  StudentTrendResult,
+  CourseAnalyticsResult,
+  PredictiveInsightResult,
+} from './analyticsService.js';
+
+export { ptmService, PTMService } from './ptmService.js';
+export type {
+  SchedulePTMDto,
+  PTMResult,
+} from './ptmService.js';
+
+export { recordingService, RecordingService } from './recordingService.js';
+export type {
+  RecordingConfig,
+  RecordingUser,
+  CaptureSessionResult,
+  RecordingUrlResult,
+} from './recordingService.js';

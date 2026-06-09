@@ -50,6 +50,7 @@ const SEVEN_DAYS_IN_MS = 7 * 24 * 60 * 60 * 1000;
 const ROLE_TO_MODEL: Record<UserRole, UserModelType> = {
   student: 'Student',
   teacher: 'Faculty',
+  faculty: 'Faculty',
   parent: 'Parent',
   admin: 'Admin',
 };

@@ -489,8 +489,8 @@ const QuizAnalytics = () => {
       console.error('Error exporting results:', error);
       setSnackbar({
         open: true,
-        message: 'Error exporting results. Feature will be available soon.',
-        severity: 'info'
+        message: 'Error exporting results. Please try again later.',
+        severity: 'error'
       });
     }
   };
@@ -1111,4 +1111,4 @@ const QuizAnalytics = () => {
 };
 
 export default QuizAnalytics;
-
+

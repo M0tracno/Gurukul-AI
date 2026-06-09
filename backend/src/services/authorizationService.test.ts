@@ -1,29 +1,40 @@
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import mongoose from 'mongoose';
 
-import { AuthorizationService } from './authorizationService.js';
-import { AppError } from '../middleware/errorHandler.js';
-import Course from '../models/Course.js';
-import Enrollment from '../models/Enrollment.js';
-
-// Mock Mongoose models
-jest.mock('../models/Course.js', () => ({
-  __esModule: true,
-  default: {
-    findOne: jest.fn(),
-    find: jest.fn(),
+// Mock logger to avoid import.meta.url issues in ts-jest
+jest.mock('../utils/logger.js', () => ({
+  logger: {
+    warn: jest.fn(),
+    error: jest.fn(),
+    info: jest.fn(),
+    debug: jest.fn(),
   },
 }));
 
-jest.mock('../models/Enrollment.js', () => ({
-  __esModule: true,
+// Mock Mongoose models with controllable mock functions
+const mockCourseFindOne = jest.fn();
+const mockCourseFind = jest.fn();
+const mockEnrollmentFindOne = jest.fn();
+
+jest.unstable_mockModule('../models/Course.js', () => ({
   default: {
-    findOne: jest.fn(),
+    findOne: mockCourseFindOne,
+    find: mockCourseFind,
   },
 }));
+
+jest.unstable_mockModule('../models/Enrollment.js', () => ({
+  default: {
+    findOne: mockEnrollmentFindOne,
+  },
+}));
+
+const { AuthorizationService } = await import('./authorizationService.js');
+const { AppError } = await import('../middleware/errorHandler.js');
+type AppErrorInstance = InstanceType<typeof AppError>;
 
 describe('AuthorizationService', () => {
-  let service: AuthorizationService;
+  let service: InstanceType<typeof AuthorizationService>;
 
   beforeEach(() => {
     service = new AuthorizationService();
@@ -58,8 +69,8 @@ describe('AuthorizationService', () => {
         service.assertStudentOwnership('student-1', 'student-2', 'student');
       } catch (error) {
         expect(error).toBeInstanceOf(AppError);
-        expect((error as AppError).statusCode).toBe(403);
-        expect((error as AppError).message).toContain('own records');
+        expect((error as AppErrorInstance).statusCode).toBe(403);
+        expect((error as AppErrorInstance).message).toContain('own records');
       }
     });
 
@@ -137,8 +148,8 @@ describe('AuthorizationService', () => {
         await service.assertParentAccess(parentId, studentId, 'parent');
       } catch (error) {
         expect(error).toBeInstanceOf(AppError);
-        expect((error as AppError).statusCode).toBe(403);
-        expect((error as AppError).message).toContain('ward');
+        expect((error as AppErrorInstance).statusCode).toBe(403);
+        expect((error as AppErrorInstance).message).toContain('ward');
       }
     });
   });
@@ -154,7 +165,7 @@ describe('AuthorizationService', () => {
       const teacherId = new mongoose.Types.ObjectId().toString();
       const courseId = new mongoose.Types.ObjectId().toString();
 
-      (Course.findOne as jest.Mock).mockReturnValue({
+      mockCourseFindOne.mockReturnValue({
         lean: () => Promise.resolve({ _id: courseId, faculty: teacherId }),
       });
 
@@ -167,7 +178,7 @@ describe('AuthorizationService', () => {
       const teacherId = new mongoose.Types.ObjectId().toString();
       const courseId = new mongoose.Types.ObjectId().toString();
 
-      (Course.findOne as jest.Mock).mockReturnValue({
+      mockCourseFindOne.mockReturnValue({
         lean: () => Promise.resolve(null),
       });
 
@@ -179,8 +190,8 @@ describe('AuthorizationService', () => {
         await service.assertTeacherCourseAccess(teacherId, courseId, 'teacher');
       } catch (error) {
         expect(error).toBeInstanceOf(AppError);
-        expect((error as AppError).statusCode).toBe(403);
-        expect((error as AppError).message).toContain('assigned courses');
+        expect((error as AppErrorInstance).statusCode).toBe(403);
+        expect((error as AppErrorInstance).message).toContain('assigned courses');
       }
     });
   });
@@ -197,13 +208,13 @@ describe('AuthorizationService', () => {
       const studentId = new mongoose.Types.ObjectId().toString();
       const courseId = new mongoose.Types.ObjectId();
 
-      (Course.find as jest.Mock).mockReturnValue({
+      mockCourseFind.mockReturnValue({
         select: () => ({
           lean: () => Promise.resolve([{ _id: courseId }]),
         }),
       });
 
-      (Enrollment.findOne as jest.Mock).mockReturnValue({
+      mockEnrollmentFindOne.mockReturnValue({
         lean: () => Promise.resolve({ student: studentId, course: courseId }),
       });
 
@@ -216,7 +227,7 @@ describe('AuthorizationService', () => {
       const teacherId = new mongoose.Types.ObjectId().toString();
       const studentId = new mongoose.Types.ObjectId().toString();
 
-      (Course.find as jest.Mock).mockReturnValue({
+      mockCourseFind.mockReturnValue({
         select: () => ({
           lean: () => Promise.resolve([]),
         }),
@@ -230,7 +241,7 @@ describe('AuthorizationService', () => {
         await service.assertTeacherStudentAccess(teacherId, studentId, 'teacher');
       } catch (error) {
         expect(error).toBeInstanceOf(AppError);
-        expect((error as AppError).statusCode).toBe(403);
+        expect((error as AppErrorInstance).statusCode).toBe(403);
       }
     });
 
@@ -239,13 +250,13 @@ describe('AuthorizationService', () => {
       const studentId = new mongoose.Types.ObjectId().toString();
       const courseId = new mongoose.Types.ObjectId();
 
-      (Course.find as jest.Mock).mockReturnValue({
+      mockCourseFind.mockReturnValue({
         select: () => ({
           lean: () => Promise.resolve([{ _id: courseId }]),
         }),
       });
 
-      (Enrollment.findOne as jest.Mock).mockReturnValue({
+      mockEnrollmentFindOne.mockReturnValue({
         lean: () => Promise.resolve(null),
       });
 
@@ -257,8 +268,8 @@ describe('AuthorizationService', () => {
         await service.assertTeacherStudentAccess(teacherId, studentId, 'teacher');
       } catch (error) {
         expect(error).toBeInstanceOf(AppError);
-        expect((error as AppError).statusCode).toBe(403);
-        expect((error as AppError).message).toContain('enrolled');
+        expect((error as AppErrorInstance).statusCode).toBe(403);
+        expect((error as AppErrorInstance).message).toContain('enrolled');
       }
     });
   });

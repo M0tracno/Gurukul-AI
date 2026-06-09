@@ -1,5 +1,15 @@
-import { describe, it, expect, beforeEach } from '@jest/globals';
+import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import type { Request, Response, NextFunction } from 'express';
+
+// Mock logger to avoid import.meta.url issues in ts-jest
+jest.mock('../utils/logger.js', () => ({
+  logger: {
+    warn: jest.fn(),
+    error: jest.fn(),
+    info: jest.fn(),
+    debug: jest.fn(),
+  },
+}));
 
 import { requireRoles, adminOnly, teacherOrAdmin } from './rbacMiddleware.js';
 import { AppError } from './errorHandler.js';

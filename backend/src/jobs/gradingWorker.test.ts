@@ -1,4 +1,4 @@
-import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import { jest, describe, it, expect, beforeEach, afterEach } from '@jest/globals';
 import type { Job } from 'bullmq';
 import type { IGradingSubmission } from '../models/GradingJob.js';
 
@@ -57,6 +57,22 @@ type GradingJobPayload = import('./gradingWorker.js').GradingJobPayload;
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
+
+/**
+ * Run an async function that uses setTimeout-based delays (e.g. retry backoff)
+ * under fake timers to avoid real waiting time.
+ */
+async function runWithFakeTimers<T>(fn: () => Promise<T>): Promise<T> {
+  jest.useFakeTimers();
+  const promise = fn();
+  // Advance timers enough to cover all retry delays (max 3 retries × up to 4s each)
+  for (let i = 0; i < 10; i++) {
+    await jest.advanceTimersByTimeAsync(5000);
+  }
+  const result = await promise;
+  jest.useRealTimers();
+  return result;
+}
 
 function makeSubmission(id: string, overrides?: Partial<IGradingSubmission>): IGradingSubmission {
   return {
@@ -145,7 +161,7 @@ describe('gradingWorker', () => {
       const mockAI: IGradingAI = { gradeSubmission };
       const submission = makeSubmission('sub-2');
 
-      const result = await processSubmission(submission, mockAI);
+      const result = await runWithFakeTimers(() => processSubmission(submission, mockAI));
 
       expect(result.status).toBe('success');
       expect(result.retryCount).toBe(1);
@@ -159,7 +175,7 @@ describe('gradingWorker', () => {
       const mockAI: IGradingAI = { gradeSubmission };
       const submission = makeSubmission('sub-3');
 
-      const result = await processSubmission(submission, mockAI);
+      const result = await runWithFakeTimers(() => processSubmission(submission, mockAI));
 
       expect(result.status).toBe('failed');
       expect(result.failureReason).toBe('Service unavailable');
@@ -271,7 +287,7 @@ describe('gradingWorker', () => {
       const mockAI: IGradingAI = { gradeSubmission };
       const job = createMockJob({ gradingJobId: 'job-123' });
 
-      await processGradingJob(job, mockAI);
+      await runWithFakeTimers(() => processGradingJob(job, mockAI));
 
       expect(mockGradingJobDoc.status).toBe('completed_with_failures');
       expect(mockGradingJobDoc.successCount).toBe(2);
@@ -349,7 +365,7 @@ describe('gradingWorker', () => {
       const mockAI: IGradingAI = { gradeSubmission };
       const job = createMockJob({ gradingJobId: 'job-123' });
 
-      await processGradingJob(job, mockAI);
+      await runWithFakeTimers(() => processGradingJob(job, mockAI));
 
       // sub-a failed, sub-b and sub-c succeeded
       expect(mockGradingJobDoc.submissions[0].status).toBe('failed');

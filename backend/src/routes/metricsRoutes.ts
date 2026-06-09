@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { metricsCollector } from '../middleware/performanceMonitor.js';
+import { success } from '../utils/envelope.js';
 
 const router = Router();
 
@@ -49,14 +50,14 @@ router.get('/metrics/json', (_req: Request, res: Response) => {
     };
   }
 
-  res.json({
+  res.json(success({
     totalRequests: metricsCollector.getTotalRequests(),
     totalErrors: metricsCollector.getTotalErrors(),
     alertThresholdMs: config.alertThresholdMs,
     notificationChannel: config.notificationChannel,
     alertingEnabled: config.alertingEnabled,
     endpoints,
-  });
+  }));
 });
 
 export default router;

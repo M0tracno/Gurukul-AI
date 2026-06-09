@@ -11,11 +11,14 @@ const mockValidateAccessToken = jest.fn<(token: string) => Promise<{ userId: str
 const mockFind = jest.fn<(...args: any[]) => any>();
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const mockUpdateOne = jest.fn<(...args: any[]) => any>();
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const mockFindOneAndUpdate = jest.fn<(...args: any[]) => any>();
 
 jest.unstable_mockModule('../models/Message.js', () => ({
   default: {
     find: mockFind,
     updateOne: mockUpdateOne,
+    findOneAndUpdate: mockFindOneAndUpdate,
   },
 }));
 
@@ -35,10 +38,38 @@ jest.unstable_mockModule('../utils/logger.js', () => ({
   },
 }));
 
+// Mock messageHandler since socketManager imports it
+jest.unstable_mockModule('./messageHandler.js', () => ({
+  setupMessageHandlers: jest.fn(),
+}));
+
+// Mock messagingRbac since socketManager imports it
+jest.unstable_mockModule('./messagingRbac.js', () => ({
+  canJoin: jest.fn<() => { allowed: boolean }>().mockReturnValue({ allowed: true }),
+  canPost: jest.fn<() => { allowed: boolean }>().mockReturnValue({ allowed: true }),
+  resolveChannelType: jest.fn<() => string>().mockReturnValue('parent_teacher'),
+  validateMessagingPermission: jest.fn<() => Promise<{ allowed: boolean }>>().mockResolvedValue({ allowed: true }),
+  CHANNEL_ROLE_PAIRS: {
+    parent_teacher: ['parent', 'teacher'],
+    teacher_student: ['teacher', 'student'],
+    teacher_admin: ['teacher', 'admin'],
+  },
+  ALL_CHANNEL_TYPES: ['parent_teacher', 'teacher_student', 'teacher_admin'],
+}));
+
+// Mock envelope utilities
+jest.unstable_mockModule('../utils/envelope.js', () => ({
+  failure: jest.fn((message: string, details?: unknown[]) => ({
+    success: false,
+    message,
+    ...(details && { details }),
+  })),
+}));
+
 // Dynamic imports after mocks are registered
 const { SocketManager, createSocketManager } = await import('./socketManager.js');
 
-const TEST_PORT = 9876;
+const TEST_PORT = 0; // OS-assigned port to avoid conflicts with parallel test workers
 const JWT_SECRET = 'test-secret-key';
 
 function generateTestToken(userId: string, role: string): string {
@@ -49,11 +80,16 @@ describe('SocketManager', () => {
   let httpServer: http.Server;
   let socketManager: InstanceType<typeof SocketManager>;
   let clientSocket: ClientSocket;
+  let serverPort: number;
 
   beforeAll((done) => {
     httpServer = http.createServer();
     socketManager = createSocketManager(httpServer);
-    httpServer.listen(TEST_PORT, done);
+    httpServer.listen(TEST_PORT, () => {
+      const addr = httpServer.address();
+      serverPort = typeof addr === 'object' && addr ? addr.port : TEST_PORT;
+      done();
+    });
   });
 
   afterAll((done) => {
@@ -75,7 +111,7 @@ describe('SocketManager', () => {
 
   describe('Authentication', () => {
     it('should reject connections without a token', (done) => {
-      clientSocket = ioClient(`http://localhost:${TEST_PORT}`, {
+      clientSocket = ioClient(`http://localhost:${serverPort}`, {
         auth: {},
         transports: ['websocket'],
       });
@@ -91,7 +127,7 @@ describe('SocketManager', () => {
         new Error('Invalid access token')
       );
 
-      clientSocket = ioClient(`http://localhost:${TEST_PORT}`, {
+      clientSocket = ioClient(`http://localhost:${serverPort}`, {
         auth: { token: 'invalid-token' },
         transports: ['websocket'],
       });
@@ -111,7 +147,7 @@ describe('SocketManager', () => {
         exp: Math.floor(Date.now() / 1000) + 900,
       });
 
-      clientSocket = ioClient(`http://localhost:${TEST_PORT}`, {
+      clientSocket = ioClient(`http://localhost:${serverPort}`, {
         auth: { token },
         transports: ['websocket'],
       });
@@ -134,7 +170,7 @@ describe('SocketManager', () => {
         exp: Math.floor(Date.now() / 1000) + 900,
       });
 
-      clientSocket = ioClient(`http://localhost:${TEST_PORT}`, {
+      clientSocket = ioClient(`http://localhost:${serverPort}`, {
         auth: { token },
         transports: ['websocket'],
       });
@@ -169,7 +205,7 @@ describe('SocketManager', () => {
         exp: Math.floor(Date.now() / 1000) + 900,
       });
 
-      clientSocket = ioClient(`http://localhost:${TEST_PORT}`, {
+      clientSocket = ioClient(`http://localhost:${serverPort}`, {
         auth: { token },
         transports: ['websocket'],
       });
@@ -218,7 +254,7 @@ describe('SocketManager', () => {
         exp: Math.floor(Date.now() / 1000) + 900,
       });
 
-      clientSocket = ioClient(`http://localhost:${TEST_PORT}`, {
+      clientSocket = ioClient(`http://localhost:${serverPort}`, {
         auth: { token },
         transports: ['websocket'],
       });
@@ -246,7 +282,7 @@ describe('SocketManager', () => {
         exp: Math.floor(Date.now() / 1000) + 900,
       });
 
-      clientSocket = ioClient(`http://localhost:${TEST_PORT}`, {
+      clientSocket = ioClient(`http://localhost:${serverPort}`, {
         auth: { token },
         transports: ['websocket'],
       });
@@ -273,7 +309,7 @@ describe('SocketManager', () => {
         exp: Math.floor(Date.now() / 1000) + 900,
       });
 
-      clientSocket = ioClient(`http://localhost:${TEST_PORT}`, {
+      clientSocket = ioClient(`http://localhost:${serverPort}`, {
         auth: { token },
         transports: ['websocket'],
       });
@@ -331,9 +367,9 @@ describe('SocketManager', () => {
           lean: () => Promise.resolve([missedMessage]),
         }),
       });
-      mockUpdateOne.mockResolvedValueOnce({ modifiedCount: 1 });
+      mockFindOneAndUpdate.mockResolvedValueOnce(missedMessage);
 
-      clientSocket = ioClient(`http://localhost:${TEST_PORT}`, {
+      clientSocket = ioClient(`http://localhost:${serverPort}`, {
         auth: { token },
         transports: ['websocket'],
       });
@@ -356,9 +392,10 @@ describe('SocketManager', () => {
           expect(received.recipientId).toBe(missedMessage.recipientId);
           expect(received.content).toBe(missedMessage.content);
           expect(received.deliveryStatus).toBe(missedMessage.deliveryStatus);
-          expect(mockUpdateOne).toHaveBeenCalledWith(
-            { _id: 'msg-missed-1' },
-            { $set: { deliveryStatus: 'delivered', deliveredAt: expect.any(Date) } }
+          expect(mockFindOneAndUpdate).toHaveBeenCalledWith(
+            { _id: 'msg-missed-1', deliveryStatus: 'pending' },
+            { $set: { deliveryStatus: 'delivered', deliveredAt: expect.any(Date) } },
+            { new: true }
           );
           done();
         });
@@ -387,7 +424,7 @@ describe('SocketManager', () => {
         }),
       });
 
-      clientSocket = ioClient(`http://localhost:${TEST_PORT}`, {
+      clientSocket = ioClient(`http://localhost:${serverPort}`, {
         auth: { token },
         transports: ['websocket'],
       });
@@ -416,7 +453,7 @@ describe('SocketManager', () => {
         exp: Math.floor(Date.now() / 1000) + 900,
       });
 
-      clientSocket = ioClient(`http://localhost:${TEST_PORT}`, {
+      clientSocket = ioClient(`http://localhost:${serverPort}`, {
         auth: { token },
         transports: ['websocket'],
       });
@@ -452,7 +489,7 @@ describe('SocketManager', () => {
         }),
       });
 
-      clientSocket = ioClient(`http://localhost:${TEST_PORT}`, {
+      clientSocket = ioClient(`http://localhost:${serverPort}`, {
         auth: { token },
         transports: ['websocket'],
       });

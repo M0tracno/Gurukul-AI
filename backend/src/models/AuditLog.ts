@@ -17,7 +17,8 @@ export type AuditAction =
   | 'password_change'
   | 'role_modification'
   | 'failed_auth'
-  | 'account_locked';
+  | 'account_locked'
+  | 'admin_override';
 
 export interface IAuditLog extends Document {
   timestamp: Date;
@@ -62,6 +63,7 @@ const AuditLogSchema = new Schema<IAuditLog>(
           'role_modification',
           'failed_auth',
           'account_locked',
+          'admin_override',
         ],
         message: '{VALUE} is not a valid audit action',
       },

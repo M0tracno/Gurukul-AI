@@ -160,7 +160,6 @@ describe('Property 14: Grading Batch Size Validation', () => {
           expect(appErr.details).toBeDefined();
           expect(appErr.details!.length).toBeGreaterThan(0);
           expect(appErr.details![0].field).toBe('submissions');
-          expect(appErr.details![0].value).toBe(batchSize);
           expect(appErr.details![0].reason).toContain('200');
         }
 
@@ -241,7 +240,7 @@ describe('Property 14: Grading Batch Size Validation', () => {
       const appErr = err as AppError;
       expect(appErr.statusCode).toBe(400);
       expect(appErr.message).toContain('200');
-      expect(appErr.details![0].value).toBe(201);
+      expect(appErr.details![0].reason).toContain('200');
     }
 
     expect(mockCreate).not.toHaveBeenCalled();

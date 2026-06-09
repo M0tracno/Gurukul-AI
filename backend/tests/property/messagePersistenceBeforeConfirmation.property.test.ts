@@ -56,6 +56,24 @@ jest.unstable_mockModule('../../src/utils/logger.js', () => ({
 const mockValidateMessagingPermission = jest.fn<() => Promise<{ allowed: boolean; reason?: string }>>();
 jest.unstable_mockModule('../../src/realtime/messagingRbac.js', () => ({
   validateMessagingPermission: mockValidateMessagingPermission,
+  canPost: jest.fn().mockReturnValue({ allowed: true }),
+  canJoin: jest.fn().mockReturnValue({ allowed: true }),
+  resolveChannelType: jest.fn().mockReturnValue('parent_teacher'),
+  CHANNEL_ROLE_PAIRS: {
+    parent_teacher: ['parent', 'teacher'],
+    teacher_student: ['teacher', 'student'],
+    teacher_admin: ['teacher', 'admin'],
+  },
+  ALL_CHANNEL_TYPES: ['parent_teacher', 'teacher_student', 'teacher_admin'],
+}));
+
+// Mock envelope utilities
+jest.unstable_mockModule('../../src/utils/envelope.js', () => ({
+  failure: jest.fn((message: string, details?: unknown[]) => ({
+    success: false,
+    message,
+    ...(details && { details }),
+  })),
 }));
 
 const { setupMessageHandlers } = await import('../../src/realtime/messageHandler.js');

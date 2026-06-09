@@ -317,8 +317,6 @@ function CourseAllocationDashboard() {
         <Tabs value={tabValue} onChange={handleTabChange} indicatorColor="primary" textColor="primary">
           <Tab label="Course Allocations" />
           <Tab label="Faculty Assignments" />
-          <Tab label="Student Enrollments" />
-          <Tab label="Analytics" />
         </Tabs>
 
         {/* Course Allocations Tab */}
@@ -483,21 +481,9 @@ function CourseAllocationDashboard() {
             ))}
           </Grid>
         </TabPanel>
-
-        {/* Student Enrollments Tab */}
-        <TabPanel value={tabValue} index={2}>
-          <Typography variant="h6" gutterBottom>Enrollment Management</Typography>
-          {/* Add enrollment management content here */}
-        </TabPanel>
-
-        {/* Analytics Tab */}
-        <TabPanel value={tabValue} index={3}>
-          <Typography variant="h6" gutterBottom>Allocation Analytics</Typography>
-          {/* Add analytics charts and reports here */}
-        </TabPanel>
       </Paper>
 
-      {/* Faculty Assignment Dialog */}
+        {/* Faculty Assignment Dialog */}
       <Dialog
         open={facultyAssignDialog}
         onClose={() => setFacultyAssignDialog(false)}
@@ -625,4 +611,4 @@ function CourseAllocationDashboard() {
 }
 
 export default CourseAllocationDashboard;
-
+

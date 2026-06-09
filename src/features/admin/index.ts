@@ -11,10 +11,14 @@
 export * from './types';
 
 // Components
-// export * from './components';
-
-// Hooks
-// export * from './hooks';
+export { SystemMetricsPanel } from './components/SystemMetricsPanel';
+export { GradingOverridePanel } from './components/GradingOverridePanel';
+export { OverrideControls } from './components/OverrideControls';
 
 // Services
-// export * from './services';
+export {
+  fetchSystemMetrics,
+  fetchDashboardMetrics,
+  submitGradeOverride,
+  finalizeSubmission,
+} from './services/adminApiService';

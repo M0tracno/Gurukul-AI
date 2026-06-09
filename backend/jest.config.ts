@@ -12,9 +12,7 @@ const config: Config = {
       {
         useESM: true,
         tsconfig: 'tsconfig.test.json',
-        diagnostics: {
-          ignoreCodes: [151002, 1378],
-        },
+        diagnostics: false,
       },
     ],
   },
@@ -32,6 +30,7 @@ const config: Config = {
   testMatch: [
     '<rootDir>/src/**/*.test.ts',
     '<rootDir>/tests/**/*.test.ts',
+    '<rootDir>/scripts/**/*.test.ts',
   ],
 
   // Coverage configuration

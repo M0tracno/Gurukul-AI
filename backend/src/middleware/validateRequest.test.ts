@@ -1,3 +1,4 @@
+import { jest, describe, it, expect } from '@jest/globals';
 import { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 import { validateRequest, ValidationSchemas } from './validateRequest.js';
@@ -44,7 +45,7 @@ describe('validateRequest middleware', () => {
       expect(res.status).not.toHaveBeenCalled();
     });
 
-    it('should return 400 when required field is missing', () => {
+    it('should return 400 ErrorEnvelope when required field is missing', () => {
       const { req, res, next } = createMocks({
         body: { age: 25 },
       });
@@ -55,7 +56,7 @@ describe('validateRequest middleware', () => {
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          error: 'VALIDATION_ERROR',
+          success: false,
           message: expect.stringContaining('1 error'),
           details: expect.arrayContaining([
             expect.objectContaining({
@@ -67,7 +68,7 @@ describe('validateRequest middleware', () => {
       );
     });
 
-    it('should return 400 when field has wrong type', () => {
+    it('should return 400 ErrorEnvelope when field has wrong type', () => {
       const { req, res, next } = createMocks({
         body: { name: 'Alice', age: 'not-a-number' },
       });
@@ -78,11 +79,10 @@ describe('validateRequest middleware', () => {
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          error: 'VALIDATION_ERROR',
+          success: false,
           details: expect.arrayContaining([
             expect.objectContaining({
               field: 'body.age',
-              value: 'not-a-number',
               reason: expect.any(String),
             }),
           ]),
@@ -101,7 +101,7 @@ describe('validateRequest middleware', () => {
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          error: 'VALIDATION_ERROR',
+          success: false,
           details: expect.arrayContaining([
             expect.objectContaining({
               field: expect.stringContaining('body'),
@@ -131,7 +131,7 @@ describe('validateRequest middleware', () => {
       expect(next).toHaveBeenCalled();
     });
 
-    it('should return 400 when query has invalid format', () => {
+    it('should return 400 ErrorEnvelope when query has invalid format', () => {
       const { req, res, next } = createMocks({
         query: { page: 'abc', limit: '10' },
       });
@@ -142,11 +142,10 @@ describe('validateRequest middleware', () => {
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          error: 'VALIDATION_ERROR',
+          success: false,
           details: expect.arrayContaining([
             expect.objectContaining({
               field: 'query.page',
-              value: 'abc',
             }),
           ]),
         })
@@ -182,7 +181,7 @@ describe('validateRequest middleware', () => {
       expect(next).toHaveBeenCalled();
     });
 
-    it('should return 400 for invalid params', () => {
+    it('should return 400 ErrorEnvelope for invalid params', () => {
       const { req, res, next } = createMocks({
         params: { id: 'not-an-objectid' },
       });
@@ -193,11 +192,10 @@ describe('validateRequest middleware', () => {
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          error: 'VALIDATION_ERROR',
+          success: false,
           details: expect.arrayContaining([
             expect.objectContaining({
               field: 'params.id',
-              value: 'not-an-objectid',
             }),
           ]),
         })
@@ -230,9 +228,9 @@ describe('validateRequest middleware', () => {
       expect(next).not.toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(400);
 
-      const jsonCall = (res.json as jest.Mock).mock.calls[0][0];
-      expect(jsonCall.error).toBe('VALIDATION_ERROR');
-      expect(jsonCall.details.length).toBeGreaterThanOrEqual(3);
+      const jsonCall = (res.json as jest.Mock).mock.calls[0][0] as Record<string, unknown>;
+      expect(jsonCall.success).toBe(false);
+      expect((jsonCall.details as unknown[]).length).toBeGreaterThanOrEqual(3);
     });
 
     it('should pass when all schemas are satisfied', () => {
@@ -262,7 +260,7 @@ describe('validateRequest middleware', () => {
   });
 
   describe('error response format', () => {
-    it('should match ApiErrorResponse interface', () => {
+    it('should match ErrorEnvelope interface', () => {
       const schemas: ValidationSchemas = {
         body: z.object({ email: z.string().email() }).strict(),
       };
@@ -273,24 +271,38 @@ describe('validateRequest middleware', () => {
 
       validateRequest(schemas)(req, res, next);
 
-      const response = (res.json as jest.Mock).mock.calls[0][0];
+      const response = (res.json as jest.Mock).mock.calls[0][0] as Record<string, unknown>;
 
-      // Verify structure matches ApiErrorResponse
-      expect(response).toHaveProperty('error');
+      // Verify structure matches ErrorEnvelope
+      expect(response.success).toBe(false);
       expect(response).toHaveProperty('message');
       expect(response).toHaveProperty('details');
-      expect(typeof response.error).toBe('string');
       expect(typeof response.message).toBe('string');
-      expect(Array.isArray(response.details)).toBe(true);
+      expect(Array.isArray((response.details as unknown[]))).toBe(true);
 
-      // Verify each detail entry
-      for (const detail of response.details) {
+      // Verify each detail entry has { field, reason }
+      for (const detail of (response.details as Array<Record<string, string>>)) {
         expect(detail).toHaveProperty('field');
-        expect(detail).toHaveProperty('value');
         expect(detail).toHaveProperty('reason');
         expect(typeof detail.field).toBe('string');
         expect(typeof detail.reason).toBe('string');
       }
+    });
+
+    it('should NOT include an error code in the response body', () => {
+      const schemas: ValidationSchemas = {
+        body: z.object({ name: z.string() }).strict(),
+      };
+
+      const { req, res, next } = createMocks({
+        body: { name: 123 },
+      });
+
+      validateRequest(schemas)(req, res, next);
+
+      const response = (res.json as jest.Mock).mock.calls[0][0] as Record<string, unknown>;
+      // ErrorEnvelope has no top-level `error` field
+      expect(response).not.toHaveProperty('error');
     });
   });
 
@@ -319,9 +331,8 @@ describe('validateRequest middleware', () => {
       validateRequest(schemas)(req, res, next);
 
       expect(res.status).toHaveBeenCalledWith(400);
-      const response = (res.json as jest.Mock).mock.calls[0][0];
-      expect(response.details[0].field).toBe('body.user.address.city');
-      expect(response.details[0].value).toBe(123);
+      const response = (res.json as jest.Mock).mock.calls[0][0] as Record<string, unknown>;
+      expect((response.details as Array<Record<string, string>>)[0].field).toBe('body.user.address.city');
     });
   });
 });

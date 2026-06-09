@@ -1,7 +1,8 @@
 import type { AuthenticatedSocket, SocketManager } from './socketManager.js';
 import Message from '../models/Message.js';
 import { logger } from '../utils/logger.js';
-import { validateMessagingPermission } from './messagingRbac.js';
+import { validateMessagingPermission, canPost, resolveChannelType } from './messagingRbac.js';
+import { failure } from '../utils/envelope.js';
 
 /**
  * Payload expected from the client when emitting a `send_message` event.
@@ -11,7 +12,7 @@ export interface SendMessagePayload {
   subject: string;
   content: string;
   recipientId: string;
-  recipientModel: 'Parent' | 'Faculty';
+  recipientModel: 'Parent' | 'Faculty' | 'Student';
   recipientName: string;
   studentId: string;
   studentName: string;
@@ -93,6 +94,47 @@ export function setupMessageHandlers(
         message: 'Failed to verify messaging permissions. Please try again.',
         recipientId: payload.recipientId,
         timestamp: new Date().toISOString(),
+      });
+      return;
+    }
+
+    // Channel-level canPost enforcement (Requirement 16.3)
+    // Determine the recipient role from model for channel resolution
+    const recipientRole = payload.recipientModel === 'Faculty' ? 'teacher'
+      : payload.recipientModel === 'Student' ? 'student'
+      : 'parent';
+    const channelType = resolveChannelType(role, recipientRole);
+
+    if (channelType) {
+      const postResult = canPost(role, channelType);
+      if (!postResult.allowed) {
+        logger.warn('Channel canPost rejected', {
+          senderId: userId,
+          senderRole: role,
+          channelType,
+          reason: postResult.reason,
+        });
+
+        socket.emit('channel_error', {
+          status: 403,
+          envelope: postResult.errorEnvelope,
+          channelType,
+        });
+        return;
+      }
+    } else {
+      // No valid channel type exists for this role pair
+      logger.warn('No valid channel for role pair', {
+        senderId: userId,
+        senderRole: role,
+        recipientRole,
+      });
+
+      socket.emit('channel_error', {
+        status: 403,
+        envelope: failure(
+          `No messaging channel exists between '${role}' and '${recipientRole}' roles`
+        ),
       });
       return;
     }

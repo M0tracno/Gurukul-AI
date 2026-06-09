@@ -1,5 +1,15 @@
-import { describe, it, expect } from '@jest/globals';
+import { describe, it, expect, jest } from '@jest/globals';
 import type { Request, Response, NextFunction } from 'express';
+
+// Mock logger to avoid import.meta.url issues in ts-jest
+jest.mock('../utils/logger.js', () => ({
+  logger: {
+    warn: jest.fn(),
+    error: jest.fn(),
+    info: jest.fn(),
+    debug: jest.fn(),
+  },
+}));
 
 import { AppError } from './errorHandler.js';
 import {
@@ -249,12 +259,11 @@ describe('payloadTooLargeHandler', () => {
 
     expect(res._status).toBe(400);
     expect(res._body).toEqual({
-      error: 'BAD_REQUEST',
+      success: false,
       message: 'Request body exceeds the maximum allowed size of 10 MB',
       details: [
         {
           field: 'body',
-          value: '[too large]',
           reason: 'Exceeds 10 MB size limit',
         },
       ],

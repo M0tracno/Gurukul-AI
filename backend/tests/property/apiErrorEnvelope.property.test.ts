@@ -4,10 +4,9 @@
  * Feature: gurukul-ai-modernization, Property 1: API Error Envelope Consistency
  *
  * For any HTTP request that results in a 4xx or 5xx response from the API,
- * the response body SHALL contain at minimum the fields `error` (string,
- * machine-readable code) and `message` (string, human-readable description),
- * and for validation errors (400) SHALL additionally contain a `details` array
- * with field/value/reason entries.
+ * the response body SHALL contain `success: false` and `message` (string,
+ * human-readable description), and for validation errors (400) SHALL
+ * additionally contain a `details` array with field/reason entries.
  *
  * **Validates: Requirements 2.2, 2.7, 2.8**
  */
@@ -15,6 +14,7 @@
 import * as fc from 'fast-check';
 import express, { type Request, type Response, type NextFunction } from 'express';
 import { AppError, globalErrorHandler, notFoundHandler } from '../../src/middleware/errorHandler.js';
+import type { ErrorDetail } from '../../src/utils/envelope.js';
 
 /**
  * Helper: create a minimal Express app with an error-throwing route and
@@ -31,8 +31,8 @@ function createTestApp() {
     const message = req.query.message as string;
     const hasDetails = req.query.hasDetails === 'true';
 
-    const details = hasDetails
-      ? [{ field: 'testField', value: req.query.detailValue ?? null, reason: 'test reason' }]
+    const details: ErrorDetail[] | undefined = hasDetails
+      ? [{ field: 'testField', reason: 'test reason' }]
       : undefined;
 
     next(new AppError(statusCode, errorCode, message, details));
@@ -87,21 +87,12 @@ const fieldNameArb = fc.integer({ min: 1, max: 50 }).chain(len =>
   ).map(chars => chars.join(''))
 ).filter(s => /^[a-z]/.test(s));
 
-// Validation detail value (any JSON-serializable value)
-const detailValueArb = fc.oneof(
-  fc.string(),
-  fc.integer(),
-  fc.boolean(),
-  fc.constant(null)
-);
-
 // Validation detail reason
 const detailReasonArb = fc.string({ minLength: 1, maxLength: 100 }).filter(s => s.trim().length > 0);
 
-// A single detail entry
+// A single detail entry (field + reason only, per ErrorDetail interface)
 const detailEntryArb = fc.record({
   field: fieldNameArb,
-  value: detailValueArb,
   reason: detailReasonArb,
 });
 
@@ -111,9 +102,9 @@ const detailsArrayArb = fc.array(detailEntryArb, { minLength: 1, maxLength: 5 })
 describe('Property 1: API Error Envelope Consistency', () => {
   /**
    * Property: For any 4xx/5xx error (non-400), the response body contains
-   * `error` (string) and `message` (string) fields.
+   * `success: false` and `message` (string) fields.
    */
-  it('all 4xx/5xx responses contain "error" and "message" string fields', async () => {
+  it('all 4xx/5xx responses contain "success: false" and "message" string fields', async () => {
     await fc.assert(
       fc.asyncProperty(
         nonValidationErrorStatusArb,
@@ -132,16 +123,12 @@ describe('Property 1: API Error Envelope Consistency', () => {
           // Status code must match
           expect(response.status).toBe(statusCode);
 
-          // Body must have `error` as a string
-          expect(response.body).toHaveProperty('error');
-          expect(typeof response.body.error).toBe('string');
+          // Body must have `success: false`
+          expect(response.body).toHaveProperty('success', false);
 
-          // Body must have `message` as a string
+          // Body must have `message` as a non-empty string
           expect(response.body).toHaveProperty('message');
           expect(typeof response.body.message).toBe('string');
-
-          // Error and message must be non-empty
-          expect(response.body.error.length).toBeGreaterThan(0);
           expect(response.body.message.length).toBeGreaterThan(0);
         }
       ),
@@ -151,10 +138,10 @@ describe('Property 1: API Error Envelope Consistency', () => {
 
   /**
    * Property: For any 400 validation error, the response body contains
-   * `error` (string), `message` (string), AND a `details` array where each
-   * entry has `field`, `value`, and `reason` fields.
+   * `success: false`, `message` (string), AND a `details` array where each
+   * entry has `field` and `reason` fields.
    */
-  it('400 validation errors additionally contain a "details" array with field/value/reason entries', async () => {
+  it('400 validation errors additionally contain a "details" array with field/reason entries', async () => {
     await fc.assert(
       fc.asyncProperty(
         errorCodeArb,
@@ -178,10 +165,8 @@ describe('Property 1: API Error Envelope Consistency', () => {
           // Status code must be 400
           expect(response.status).toBe(400);
 
-          // Body must have `error` as a string
-          expect(response.body).toHaveProperty('error');
-          expect(typeof response.body.error).toBe('string');
-          expect(response.body.error.length).toBeGreaterThan(0);
+          // Body must have `success: false`
+          expect(response.body).toHaveProperty('success', false);
 
           // Body must have `message` as a string
           expect(response.body).toHaveProperty('message');
@@ -193,13 +178,10 @@ describe('Property 1: API Error Envelope Consistency', () => {
           expect(Array.isArray(response.body.details)).toBe(true);
           expect(response.body.details.length).toBeGreaterThan(0);
 
-          // Each detail entry must have field, value, and reason
+          // Each detail entry must have field and reason
           for (const detail of response.body.details) {
             expect(detail).toHaveProperty('field');
             expect(typeof detail.field).toBe('string');
-
-            expect(detail).toHaveProperty('value');
-            // value can be any type, so we just ensure it exists
 
             expect(detail).toHaveProperty('reason');
             expect(typeof detail.reason).toBe('string');
@@ -211,10 +193,10 @@ describe('Property 1: API Error Envelope Consistency', () => {
   }, 60000);
 
   /**
-   * Property: For unhandled exceptions, the response is 500 with `error`
+   * Property: For unhandled exceptions, the response is 500 with `success: false`
    * and `message` fields (consistent envelope).
    */
-  it('unhandled exceptions return 500 with consistent error envelope', async () => {
+  it('unhandled exceptions return 500 with consistent ErrorEnvelope', async () => {
     const app = createTestApp();
     const { default: request } = await import('supertest');
 
@@ -227,9 +209,7 @@ describe('Property 1: API Error Envelope Consistency', () => {
           const response = await request(app).get('/test-unhandled');
 
           expect(response.status).toBe(500);
-          expect(response.body).toHaveProperty('error');
-          expect(typeof response.body.error).toBe('string');
-          expect(response.body.error).toBe('INTERNAL_ERROR');
+          expect(response.body).toHaveProperty('success', false);
 
           expect(response.body).toHaveProperty('message');
           expect(typeof response.body.message).toBe('string');
@@ -242,9 +222,9 @@ describe('Property 1: API Error Envelope Consistency', () => {
 
   /**
    * Property: For any request to a non-existent route (404), the response
-   * follows the consistent error envelope with `error` and `message` fields.
+   * follows the consistent ErrorEnvelope with `success: false` and `message` fields.
    */
-  it('404 for unregistered routes returns consistent error envelope', async () => {
+  it('404 for unregistered routes returns consistent ErrorEnvelope', async () => {
     await fc.assert(
       fc.asyncProperty(
         // Generate random path segments
@@ -261,10 +241,8 @@ describe('Property 1: API Error Envelope Consistency', () => {
 
           expect(response.status).toBe(404);
 
-          // Body must have `error` as a string
-          expect(response.body).toHaveProperty('error');
-          expect(typeof response.body.error).toBe('string');
-          expect(response.body.error.length).toBeGreaterThan(0);
+          // Body must have `success: false`
+          expect(response.body).toHaveProperty('success', false);
 
           // Body must have `message` as a string
           expect(response.body).toHaveProperty('message');

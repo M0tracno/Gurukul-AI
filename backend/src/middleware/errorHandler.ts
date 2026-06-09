@@ -1,23 +1,32 @@
 import type { Request, Response, NextFunction } from 'express';
 
 import { logger } from '../utils/logger.js';
-import type { ApiErrorResponse } from '../types/api.js';
+import { failure } from '../utils/envelope.js';
+import type { ErrorDetail } from '../utils/envelope.js';
 
 /**
  * Custom application error class for structured error handling.
  * Carries an HTTP status code and machine-readable error code so the
- * global error handler can produce a consistent error envelope.
+ * global error handler can produce a consistent ErrorEnvelope response.
+ *
+ * AppError taxonomy and HTTP status mapping:
+ *   unauthorized → 401
+ *   forbidden    → 403
+ *   badRequest   → 400
+ *   notFound     → 404
+ *   conflict     → 409
+ *   internal     → 500
  */
 export class AppError extends Error {
   public readonly statusCode: number;
   public readonly errorCode: string;
-  public readonly details?: Array<{ field: string; value: unknown; reason: string }>;
+  public readonly details?: ErrorDetail[];
 
   constructor(
     statusCode: number,
     errorCode: string,
     message: string,
-    details?: Array<{ field: string; value: unknown; reason: string }>,
+    details?: ErrorDetail[],
   ) {
     super(message);
     this.name = 'AppError';
@@ -26,11 +35,8 @@ export class AppError extends Error {
     this.details = details;
   }
 
-  /** 400 Bad Request */
-  static badRequest(
-    message: string,
-    details?: Array<{ field: string; value: unknown; reason: string }>,
-  ): AppError {
+  /** 400 Bad Request — also used for validation failures */
+  static badRequest(message: string, details?: ErrorDetail[]): AppError {
     return new AppError(400, 'BAD_REQUEST', message, details);
   }
 
@@ -39,24 +45,40 @@ export class AppError extends Error {
     return new AppError(404, 'NOT_FOUND', message);
   }
 
-  /** 401 Unauthorized */
+  /** 401 Unauthorized — missing or invalid token */
   static unauthorized(message: string): AppError {
     return new AppError(401, 'UNAUTHORIZED', message);
   }
 
-  /** 403 Forbidden */
+  /** 403 Forbidden — authenticated but insufficient role/scope */
   static forbidden(message: string): AppError {
     return new AppError(403, 'FORBIDDEN', message);
+  }
+
+  /** 409 Conflict — e.g. duplicate record or scheduling overlap */
+  static conflict(message: string): AppError {
+    return new AppError(409, 'CONFLICT', message);
+  }
+
+  /** 500 Internal Server Error — unexpected failure */
+  static internal(message: string): AppError {
+    return new AppError(500, 'INTERNAL_ERROR', message);
   }
 }
 
 /**
  * Global error handler middleware.
  *
- * - AppError instances produce a structured error envelope with the
- *   configured status code and error code.
- * - Unhandled exceptions produce a generic 500 response with NO stack
- *   traces, file paths, database identifiers, or environment variables leaked.
+ * Maps `AppError` instances and unknown errors to a standardized
+ * `ErrorEnvelope` (`{ success: false, message, details? }`) so that
+ * all error responses follow Requirement 2.2 and carry a 4xx/5xx
+ * status code consistent with Requirement 2.3.
+ *
+ * Validation details (`{ field, reason }`) are forwarded from `AppError`
+ * to satisfy Requirement 2.4 and 22.5.
+ *
+ * Unhandled exceptions produce a generic 500 response with NO stack
+ * traces, file paths, database identifiers, or environment variables leaked.
  */
 export function globalErrorHandler(
   err: Error,
@@ -77,18 +99,12 @@ export function globalErrorHandler(
       method: req.method,
     });
 
-    const body: ApiErrorResponse = {
-      error: err.errorCode,
-      message: err.message,
-      ...(err.details && { details: err.details }),
-    };
-
-    res.status(err.statusCode).json(body);
+    res.status(err.statusCode).json(failure(err.message, err.details));
     return;
   }
 
   // Unhandled exception: log the full stack server-side but return only
-  // a static message to the client.
+  // a static message to the client to avoid leaking internal details.
   logger.error('Unhandled error', {
     correlationId,
     stack: err.stack,
@@ -98,12 +114,7 @@ export function globalErrorHandler(
     errorMessage: err.message,
   });
 
-  const body: ApiErrorResponse = {
-    error: 'INTERNAL_ERROR',
-    message: 'An internal error occurred',
-  };
-
-  res.status(500).json(body);
+  res.status(500).json(failure('An internal error occurred'));
 }
 
 /**
@@ -111,10 +122,7 @@ export function globalErrorHandler(
  * Mount this after all route definitions but before the global error handler.
  */
 export function notFoundHandler(req: Request, res: Response): void {
-  const body: ApiErrorResponse = {
-    error: 'NOT_FOUND',
-    message: `The requested route ${req.method} ${req.path} does not exist`,
-  };
-
-  res.status(404).json(body);
+  res
+    .status(404)
+    .json(failure(`The requested route ${req.method} ${req.path} does not exist`));
 }

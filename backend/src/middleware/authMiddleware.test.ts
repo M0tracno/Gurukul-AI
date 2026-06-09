@@ -1,20 +1,26 @@
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import type { Request, Response, NextFunction } from 'express';
 
-import { authMiddleware } from './authMiddleware.js';
-import { AppError } from './errorHandler.js';
-import { authTokenService } from '../services/authTokenService.js';
-
-// Mock the authTokenService
-jest.mock('../services/authTokenService.js', () => ({
-  authTokenService: {
-    validateAccessToken: jest.fn(),
+// Mock logger to avoid import.meta.url issues in ts-jest
+jest.mock('../utils/logger.js', () => ({
+  logger: {
+    warn: jest.fn(),
+    error: jest.fn(),
+    info: jest.fn(),
+    debug: jest.fn(),
   },
 }));
 
-const mockValidateAccessToken = authTokenService.validateAccessToken as jest.MockedFunction<
-  typeof authTokenService.validateAccessToken
->;
+// Mock the authTokenService with unstable_mockModule for ESM compatibility
+const mockValidateAccessToken = jest.fn<() => Promise<{ userId: string; role: string; iat: number; exp: number }>>();
+jest.unstable_mockModule('../services/authTokenService.js', () => ({
+  authTokenService: {
+    validateAccessToken: mockValidateAccessToken,
+  },
+}));
+
+const { authMiddleware } = await import('./authMiddleware.js');
+const { AppError } = await import('./errorHandler.js');
 
 function createMockRequest(headers: Record<string, string> = {}): Request {
   return {
@@ -45,8 +51,8 @@ describe('authMiddleware', () => {
       await authMiddleware(req, createMockResponse(), mockNext);
     } catch (error) {
       expect(error).toBeInstanceOf(AppError);
-      expect((error as AppError).statusCode).toBe(401);
-      expect((error as AppError).message).toContain('missing');
+      expect((error as InstanceType<typeof AppError>).statusCode).toBe(401);
+      expect((error as InstanceType<typeof AppError>).message).toContain('missing');
     }
   });
 
@@ -61,8 +67,8 @@ describe('authMiddleware', () => {
       await authMiddleware(req, createMockResponse(), mockNext);
     } catch (error) {
       expect(error).toBeInstanceOf(AppError);
-      expect((error as AppError).statusCode).toBe(401);
-      expect((error as AppError).message).toContain('Bearer');
+      expect((error as InstanceType<typeof AppError>).statusCode).toBe(401);
+      expect((error as InstanceType<typeof AppError>).message).toContain('Bearer');
     }
   });
 
@@ -77,7 +83,7 @@ describe('authMiddleware', () => {
       await authMiddleware(req, createMockResponse(), mockNext);
     } catch (error) {
       expect(error).toBeInstanceOf(AppError);
-      expect((error as AppError).statusCode).toBe(401);
+      expect((error as InstanceType<typeof AppError>).statusCode).toBe(401);
     }
   });
 
@@ -96,8 +102,8 @@ describe('authMiddleware', () => {
       await authMiddleware(req, createMockResponse(), mockNext);
     } catch (error) {
       expect(error).toBeInstanceOf(AppError);
-      expect((error as AppError).statusCode).toBe(401);
-      expect((error as AppError).message).toContain('expired');
+      expect((error as InstanceType<typeof AppError>).statusCode).toBe(401);
+      expect((error as InstanceType<typeof AppError>).message).toContain('expired');
     }
   });
 
@@ -116,8 +122,8 @@ describe('authMiddleware', () => {
       await authMiddleware(req, createMockResponse(), mockNext);
     } catch (error) {
       expect(error).toBeInstanceOf(AppError);
-      expect((error as AppError).statusCode).toBe(401);
-      expect((error as AppError).message).toContain('Invalid');
+      expect((error as InstanceType<typeof AppError>).statusCode).toBe(401);
+      expect((error as InstanceType<typeof AppError>).message).toContain('Invalid');
     }
   });
 

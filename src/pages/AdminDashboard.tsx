@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   AppBar,
@@ -15,8 +15,8 @@ import {
   ListItemIcon,
   ListItemText,
   Badge,
-  Chip,
   ListItemButton,
+  CircularProgress,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -40,6 +40,23 @@ import { FrostedCard } from '../components/common/FrostedCard';
 import { colors } from '../styles/designTokens';
 import { useAuth } from '../auth/AuthContext';
 import env from '../config/env';
+import { SystemMetricsPanel } from '../features/admin/components/SystemMetricsPanel';
+import { GradingOverridePanel } from '../features/admin/components/GradingOverridePanel';
+
+// Lazy-loaded admin feature components backed by live API data
+const UserManagementNew = React.lazy(() => import('../components/admin/UserManagementNew'));
+const CourseManagementNew = React.lazy(() => import('../components/admin/CourseManagementNew'));
+const CourseAllocationNew = React.lazy(() => import('../components/admin/CourseAllocationNew'));
+const DataManagementNew = React.lazy(() => import('../components/admin/DataManagementNew'));
+const ReportsAnalyticsNew = React.lazy(() => import('../components/admin/ReportsAnalyticsNew'));
+const SystemSettingsNew = React.lazy(() => import('../components/admin/SystemSettingsNew'));
+
+// Loading fallback for lazy components
+const SectionLoader: React.FC = () => (
+  <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 300 }}>
+    <CircularProgress sx={{ color: colors.neon.cyan }} />
+  </Box>
+);
 
 // Dashboard Statistics Interface
 interface DashboardStats {
@@ -110,18 +127,14 @@ const AdminDashboard: React.FC = () => {
     },
   ]);
 
-  const [systemHealth] = useState({
-    status: 'All Systems Operational',
-    isLoading: false,
-  });
+  // systemHealth state replaced by SystemMetricsPanel (Requirement 11.1)
 
-  // Fetch real stats from backend
+  // Fetch real stats from backend (Requirement 11.1: live metrics, not placeholder values)
   const fetchStats = useCallback(async () => {
     try {
       const token = localStorage.getItem('authToken');
       if (!token) {
-        // No auth — show fallback demo data
-        setStats(prev => ({ ...prev, students: 24, activeUsers: 8, quizzes: 12, parentAccounts: 18 }));
+        setStats(prev => ({ ...prev, students: 0, activeUsers: 0, quizzes: 0, parentAccounts: 0 }));
         return;
       }
       const headers: Record<string, string> = {
@@ -136,7 +149,7 @@ const AdminDashboard: React.FC = () => {
         fetch(`${apiUrl}/api/courses?page=1&limit=1`, { headers }).then(r => r.json()),
       ]);
 
-      const extractTotal = (result: any): number => {
+      const extractTotal = (result: PromiseSettledResult<any>): number => {
         if (result.status !== 'fulfilled') return 0;
         const data = result.value;
         return data?.data?.pagination?.total ?? data?.pagination?.total ?? data?.total ?? data?.data?.total ?? 0;
@@ -146,17 +159,15 @@ const AdminDashboard: React.FC = () => {
       const faculty = extractTotal(facultyRes);
       const courses = extractTotal(coursesRes);
 
-      setStats(prev => ({
-        ...prev,
-        students: students || 24,
-        activeUsers: faculty || 8,
-        quizzes: courses || 12,
-        parentAccounts: 18, // No parent endpoint yet
-      }));
+      setStats({
+        students,
+        activeUsers: faculty,
+        quizzes: courses,
+        parentAccounts: 0,
+      });
     } catch (error) {
       console.error('Failed to fetch stats:', error);
-      // Always show meaningful fallback
-      setStats(prev => ({ ...prev, students: 24, activeUsers: 8, quizzes: 12, parentAccounts: 18 }));
+      setStats({ students: 0, activeUsers: 0, quizzes: 0, parentAccounts: 0 });
     }
   }, []);
 
@@ -560,6 +571,7 @@ const AdminDashboard: React.FC = () => {
               display: 'grid',
               gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
               gap: 3,
+              mb: 3,
             }}
           >
             {/* Recent Activity */}
@@ -613,109 +625,24 @@ const AdminDashboard: React.FC = () => {
               </Box>
             </FrostedCard>
 
-            {/* System Health */}
-            <FrostedCard glassLevel="medium" neonGlow neonColor="blue" animate>
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  mb: 3,
-                }}
-              >
-                <Typography
-                  variant="h6"
-                  sx={{
-                    color: 'white',
-                    fontWeight: 600,
-                  }}
-                >
-                  System Health
-                </Typography>
-                <Chip
-                  label={systemHealth.status}
-                  sx={{
-                    background: `linear-gradient(135deg, ${colors.semantic.success}20, ${colors.semantic.success}10)`,
-                    color: colors.semantic.success,
-                    fontSize: '0.75rem',
-                  }}
-                />
-              </Box>
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  height: 200,
-                  position: 'relative',
-                }}
-              >
-                {systemHealth.isLoading ? (
-                  <Box sx={{ textAlign: 'center' }}>
-                    <Box
-                      sx={{
-                        width: 60,
-                        height: 60,
-                        border: `3px solid ${colors.neon.blue}40`,
-                        borderTop: `3px solid ${colors.neon.blue}`,
-                        borderRadius: '50%',
-                        animation: 'spin 1s linear infinite',
-                        mb: 2,
-                        '@keyframes spin': {
-                          '0%': { transform: 'rotate(0deg)' },
-                          '100%': { transform: 'rotate(360deg)' },
-                        },
-                      }}
-                    />
-                    <Typography variant="body2" sx={{ color: colors.neutral[400] }}>
-                      Loading system health...
-                    </Typography>
-                  </Box>
-                ) : (
-                  <Box sx={{ textAlign: 'center' }}>
-                    <Box
-                      sx={{
-                        width: 80,
-                        height: 80,
-                        borderRadius: '50%',
-                        background: `linear-gradient(135deg, ${colors.semantic.success}30, ${colors.semantic.success}10)`,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        mb: 2,
-                        boxShadow: `0 0 30px ${colors.semantic.success}20`,
-                      }}
-                    >
-                      <Typography
-                        variant="h4"
-                        sx={{ color: colors.semantic.success, fontWeight: 700 }}
-                      >
-                        ✓
-                      </Typography>
-                    </Box>
-                    <Typography variant="body1" sx={{ color: 'white', fontWeight: 500 }}>
-                      All systems operational
-                    </Typography>
-                    <Typography variant="caption" sx={{ color: colors.neutral[400] }}>
-                      Updated: 10:30:04 AM
-                    </Typography>
-                  </Box>
-                )}
-              </Box>
-            </FrostedCard>
+            {/* Live System Metrics (Requirement 11.1) */}
+            <SystemMetricsPanel autoRefreshMs={30000} />
           </Box>
+
+          {/* Grading Override Controls (Requirements 11.2, 11.3, 11.4) */}
+          <GradingOverridePanel />
             </>
           )}
 
           {currentView !== 'dashboard' && (
-            <FrostedCard glassLevel="medium">
-              <Typography variant="h5" sx={{ color: 'white', fontWeight: 600, mb: 2 }}>
-                {navigationItems.find(item => item.key === currentView)?.text || 'Section'}
-              </Typography>
-              <Typography variant="body1" sx={{ color: colors.neutral[400] }}>
-                This section is under development. Check back soon for full functionality.
-              </Typography>
-            </FrostedCard>
+            <Suspense fallback={<SectionLoader />}>
+              {currentView === 'users' && <UserManagementNew />}
+              {currentView === 'courses' && <CourseManagementNew />}
+              {currentView === 'allocation' && <CourseAllocationNew />}
+              {currentView === 'data' && <DataManagementNew />}
+              {currentView === 'reports' && <ReportsAnalyticsNew />}
+              {currentView === 'settings' && <SystemSettingsNew />}
+            </Suspense>
           )}
         </Container>
       </Box>

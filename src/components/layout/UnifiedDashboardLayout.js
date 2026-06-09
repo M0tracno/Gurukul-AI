@@ -5,15 +5,23 @@ import {
   Dashboard as DashboardIcon,
   Logout as LogoutIcon,
   Menu as MenuIcon,
+  Close as CloseIcon,
   Notifications as NotificationsIcon,
   Settings as SettingsIcon
 } from '@mui/icons-material';
 import { CssBaseline } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { useAuth } from '../../auth/AuthContext';
 
 import { AppBar, Avatar, Badge, Box, Container, Divider, Drawer, Grid, IconButton, List, ListItem, ListItemIcon, ListItemText, Menu, MenuItem, Paper, Toolbar, Typography } from '@mui/material';
 const drawerWidth = 240;
+
+/**
+ * Mobile breakpoint key — navigation collapses at ≤768px (theme.breakpoints.values.md).
+ * Requirements: 8.3 (collapsible mobile navigation at ≤768px)
+ */
+const MOBILE_BREAKPOINT = 'md';
 
 const UnifiedDashboardLayout = ({
   children,
@@ -27,6 +35,7 @@ const UnifiedDashboardLayout = ({
   const navigate = useNavigate();
   const { currentUser, userRole, logout } = useAuth();
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down(MOBILE_BREAKPOINT));
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -184,15 +193,21 @@ const UnifiedDashboardLayout = ({
   );
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{
+      display: 'flex',
+      // Prevent horizontal scroll across all viewports 320–2560px (Requirement 8.1)
+      overflowX: 'hidden',
+      maxWidth: '100vw',
+      minHeight: '100vh',
+    }}>
       <CssBaseline />
 
       {/* App Bar */}
       <AppBar
         position="fixed"
         sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          ml: { sm: `${drawerWidth}px` },
+          width: { xs: '100%', [MOBILE_BREAKPOINT]: `calc(100% - ${drawerWidth}px)` },
+          ml: { xs: 0, [MOBILE_BREAKPOINT]: `${drawerWidth}px` },
           zIndex: (theme) => theme.zIndex.drawer + 1,
           background: 'rgba(10, 10, 15, 0.85)',
           backdropFilter: 'blur(20px)',
@@ -202,15 +217,15 @@ const UnifiedDashboardLayout = ({
         <Toolbar>
           <IconButton
             color="inherit"
-            aria-label="open drawer"
+            aria-label={mobileOpen ? "close navigation menu" : "open navigation menu"}
             edge="start"
             onClick={handleDrawerToggle}
             sx={{
               mr: 2,
-              display: { sm: 'none' }
+              display: { [MOBILE_BREAKPOINT]: 'none' }
             }}
           >
-            <MenuIcon />
+            {mobileOpen ? <CloseIcon /> : <MenuIcon />}
           </IconButton>
           <Typography
             variant="h6"
@@ -252,15 +267,16 @@ const UnifiedDashboardLayout = ({
       {/* Navigation Drawer */}
       <Box
         component="nav"
-        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-      >        {/* Mobile drawer */}
+        sx={{ width: { [MOBILE_BREAKPOINT]: drawerWidth }, flexShrink: { [MOBILE_BREAKPOINT]: 0 } }}
+        aria-label="Sidebar navigation"
+      >        {/* Mobile drawer — collapsible at ≤768px (Requirement 8.3) */}
         <Drawer
           variant="temporary"
           open={mobileOpen}
           onClose={handleDrawerToggle}
           ModalProps={{ keepMounted: true }}
           sx={{
-            display: { xs: 'block', sm: 'none' },
+            display: { xs: 'block', [MOBILE_BREAKPOINT]: 'none' },
             '& .MuiDrawer-paper': {
               boxSizing: 'border-box',
               width: drawerWidth,
@@ -272,11 +288,11 @@ const UnifiedDashboardLayout = ({
         >{drawerContent}
         </Drawer>
 
-        {/* Desktop drawer */}
+        {/* Desktop drawer — permanent, visible above 768px */}
         <Drawer
           variant="permanent"
           sx={{
-            display: { xs: 'none', sm: 'block' },
+            display: { xs: 'none', [MOBILE_BREAKPOINT]: 'block' },
             '& .MuiDrawer-paper': {
               boxSizing: 'border-box',
               width: drawerWidth,
@@ -375,15 +391,29 @@ const UnifiedDashboardLayout = ({
         component="main"
         sx={{
           flexGrow: 1,
-          p: 3,
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          p: { xs: 2, sm: 3 },
+          width: { xs: '100%', [MOBILE_BREAKPOINT]: `calc(100% - ${drawerWidth}px)` },
+          // Prevent horizontal scroll across 320–2560px (Requirement 8.1)
+          minWidth: 0,
+          overflowX: 'hidden',
+          maxWidth: '100vw',
           background: 'linear-gradient(135deg, #0a0a0f 0%, #111118 50%, #0a0a1a 100%)',
-          minHeight: '100vh'}}
+          minHeight: '100vh',
+          boxSizing: 'border-box',
+        }}
       >
         <Toolbar />
 
         {/* Dynamic Content */}
-        <Container maxWidth="xl" sx={{ p: 0 }}>
+        <Container
+          maxWidth="xl"
+          sx={{
+            p: 0,
+            // Prevent any child overflow from causing horizontal scroll
+            overflowX: 'hidden',
+            maxWidth: '2560px',
+          }}
+        >
           {children}
         </Container>
       </Box>

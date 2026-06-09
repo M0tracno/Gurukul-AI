@@ -3,6 +3,7 @@ import type { Document } from 'mongoose';
 import crypto from 'node:crypto';
 
 import { AppError } from '../middleware/errorHandler.js';
+import { success } from '../utils/envelope.js';
 import { authTokenService } from '../services/authTokenService.js';
 import { passwordService } from '../services/passwordService.js';
 import type { AuthenticatedRequest } from '../middleware/rbacMiddleware.js';
@@ -151,9 +152,8 @@ export const authController = {
     const userModelType = toUserModelType(resolvedUserType);
     const tokens = await authTokenService.generateTokenPair(userId, resolvedUserType, userModelType);
 
-    res.status(200).json({
-      success: true,
-      token: tokens.accessToken,
+    res.status(200).json(success({
+      accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,
       user: {
         id: userId,
@@ -162,7 +162,7 @@ export const authController = {
         lastName: user.lastName,
         role: resolvedUserType,
       },
-    });
+    }));
   },
 
   /**
@@ -176,12 +176,10 @@ export const authController = {
     try {
       const tokens = await authTokenService.refreshTokens(refreshToken);
 
-      res.status(200).json({
-        data: {
-          accessToken: tokens.accessToken,
-          refreshToken: tokens.refreshToken,
-        },
-      });
+      res.status(200).json(success({
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
+      }));
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Invalid refresh token';
 
@@ -228,15 +226,13 @@ export const authController = {
       throw AppError.unauthorized('User not found');
     }
 
-    res.status(200).json({
-      user: {
-        id: user._id.toString(),
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        role,
-      },
-    });
+    res.status(200).json(success({
+      id: user._id.toString(),
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      role,
+    }));
   },
 
   /**
@@ -249,11 +245,7 @@ export const authController = {
 
     await authTokenService.revokeTokenFamily(userId);
 
-    res.status(200).json({
-      data: {
-        message: 'Successfully logged out',
-      },
-    });
+    res.status(200).json(success({ message: 'Successfully logged out' }));
   },
 
   /**
@@ -281,8 +273,7 @@ export const authController = {
       grade,
     });
 
-    res.status(201).json({
-      success: true,
+    res.status(201).json(success({
       message: 'Registration successful',
       user: {
         id: student._id.toString(),
@@ -291,7 +282,7 @@ export const authController = {
         lastName: student.lastName,
         role: 'student',
       },
-    });
+    }));
   },
 
   /**
@@ -319,8 +310,7 @@ export const authController = {
       department,
     });
 
-    res.status(201).json({
-      success: true,
+    res.status(201).json(success({
       message: 'Registration successful',
       user: {
         id: faculty._id.toString(),
@@ -329,7 +319,7 @@ export const authController = {
         lastName: faculty.lastName,
         role: 'faculty',
       },
-    });
+    }));
   },
 
   /**
@@ -379,11 +369,10 @@ export const authController = {
       console.log(`[DEV] OTP for ${phoneNumber}: ${otp}`);
     }
 
-    res.status(200).json({
-      success: true,
+    res.status(200).json(success({
       otpId,
       message: 'OTP sent successfully',
-    });
+    }));
   },
 
   /**
@@ -435,8 +424,8 @@ export const authController = {
       'Parent',
     );
 
-    res.status(200).json({
-      token: tokens.accessToken,
+    res.status(200).json(success({
+      accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,
       parent: {
         id: parent._id.toString(),
@@ -445,6 +434,6 @@ export const authController = {
         phoneNumber: parent.phoneNumber,
         role: 'parent',
       },
-    });
+    }));
   },
 };
