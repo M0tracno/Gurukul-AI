@@ -8,7 +8,7 @@ class ErrorMonitoringService {
 
   setupGlobalErrorHandling() {
     // Enhanced window error handler
-    window.addEventListener('error', (event) => {
+    window.addEventListener('error', event => {
       this.logError({
         type: 'JavaScript Error',
         message: event.error?.message || event.message,
@@ -18,31 +18,31 @@ class ErrorMonitoringService {
         colno: event.colno,
         timestamp: new Date().toISOString(),
         url: window.location.href,
-        userAgent: navigator.userAgent
+        userAgent: navigator.userAgent,
       });
     });
 
     // Enhanced unhandled promise rejection handler
-    window.addEventListener('unhandledrejection', (event) => {
+    window.addEventListener('unhandledrejection', event => {
       this.logError({
         type: 'Unhandled Promise Rejection',
         message: event.reason?.message || String(event.reason),
         stack: event.reason?.stack,
         timestamp: new Date().toISOString(),
         url: window.location.href,
-        userAgent: navigator.userAgent
+        userAgent: navigator.userAgent,
       });
     });
 
     // React error boundary integration
-    window.addEventListener('react-error', (event) => {
+    window.addEventListener('react-error', event => {
       this.logError({
         type: 'React Error',
         message: event.detail?.error?.message,
         stack: event.detail?.error?.stack,
         componentStack: event.detail?.errorInfo?.componentStack,
         timestamp: new Date().toISOString(),
-        url: window.location.href
+        url: window.location.href,
       });
     });
   }
@@ -66,7 +66,7 @@ class ErrorMonitoringService {
     console.error('Context:', {
       url: errorInfo.url,
       timestamp: errorInfo.timestamp,
-      userAgent: errorInfo.userAgent
+      userAgent: errorInfo.userAgent,
     });
     console.groupEnd();
 
@@ -115,7 +115,7 @@ class ErrorMonitoringService {
         message: `Error in ${name}: ${error.message}`,
         stack: error.stack,
         duration: end - start,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
       throw error;
     }
@@ -136,7 +136,7 @@ class ErrorMonitoringService {
         message: `Error in ${name}: ${error.message}`,
         stack: error.stack,
         duration: end - start,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
       throw error;
     }
@@ -151,27 +151,27 @@ class ErrorMonitoringService {
         data: eventData,
         timestamp: new Date().toISOString(),
         url: window.location.href,
-        source: 'error_monitoring'
+        source: 'error_monitoring',
       };
-      
+
       console.log(`📊 Analytics Event: ${eventName}`, eventData);
-      
+
       // In production, send to analytics service
       if (process.env.NODE_ENV === 'production') {
         this.sendEventToService(event);
       }
-      
+
       return event;
     } catch (error) {
       console.error('Error capturing analytics event:', error);
     }
   }
-  
+
   // Track event (alias for captureEvent)
   trackEvent(eventName, eventData) {
     return this.captureEvent(eventName, eventData);
   }
-  
+
   // Capture error for tracking
   captureError(error, context = {}) {
     const errorInfo = {
@@ -181,13 +181,13 @@ class ErrorMonitoringService {
       timestamp: new Date().toISOString(),
       url: window.location.href,
       userAgent: navigator.userAgent,
-      context
+      context,
     };
-    
+
     this.logError(errorInfo);
     return errorInfo;
   }
-  
+
   // Send event to analytics service
   sendEventToService(event) {
     // TODO: Implement analytics service integration
@@ -199,9 +199,9 @@ class ErrorMonitoringService {
 const errorMonitoring = new ErrorMonitoringService();
 
 // Add initialize method for compatibility with other security helpers
-errorMonitoring.initialize = function() {
+errorMonitoring.initialize = function () {
   // This method is called by dashboard components
-  // The constructor already sets up error handling, 
+  // The constructor already sets up error handling,
   // but we can do additional initialization here if needed
   console.log('Error monitoring initialized');
   return true;
@@ -209,4 +209,3 @@ errorMonitoring.initialize = function() {
 
 export default errorMonitoring;
 export { errorMonitoring };
-

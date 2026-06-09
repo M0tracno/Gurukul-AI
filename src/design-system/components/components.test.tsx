@@ -8,17 +8,19 @@
  * - Conform to Requirements 7.1, 7.2, 7.3, 7.4
  */
 
-import { render, screen, fireEvent } from '@testing-library/react';
 import { ThemeProvider } from '@mui/material/styles';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
+
 import { lightTheme } from '../theme';
+import { borderRadius, elevation, spacing, typography } from '../tokens';
+
 import { Button } from './Button';
 import { Card } from './Card';
 import { DataTable } from './DataTable';
 import { Form, TextField, SelectField } from './Form';
 import { Modal } from './Modal';
 import { Navigation } from './Navigation';
-import { borderRadius, elevation, spacing, typography } from '../tokens';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -91,7 +93,11 @@ describe('Card', () => {
   });
 
   it('renders a subtitle when provided', () => {
-    renderWithTheme(<Card title="Stats" subtitle="Last 7 days">Body</Card>);
+    renderWithTheme(
+      <Card title="Stats" subtitle="Last 7 days">
+        Body
+      </Card>
+    );
     expect(screen.getByText('Last 7 days')).toBeInTheDocument();
   });
 
@@ -99,7 +105,7 @@ describe('Card', () => {
     renderWithTheme(
       <Card title="Users" action={<button>Export</button>}>
         Body
-      </Card>,
+      </Card>
     );
     expect(screen.getByRole('button', { name: 'Export' })).toBeInTheDocument();
   });
@@ -129,7 +135,7 @@ describe('Form', () => {
     renderWithTheme(
       <Form aria-label="sign-in form">
         <TextField label="Email" />
-      </Form>,
+      </Form>
     );
     expect(screen.getByRole('form', { name: 'sign-in form' })).toBeInTheDocument();
   });
@@ -195,7 +201,7 @@ describe('Modal', () => {
     renderWithTheme(
       <Modal open title="Confirm deletion">
         Are you sure?
-      </Modal>,
+      </Modal>
     );
     expect(screen.getByText('Confirm deletion')).toBeInTheDocument();
     expect(screen.getByText('Are you sure?')).toBeInTheDocument();
@@ -205,7 +211,7 @@ describe('Modal', () => {
     renderWithTheme(
       <Modal open={false} title="Hidden">
         Hidden content
-      </Modal>,
+      </Modal>
     );
     expect(screen.queryByText('Hidden content')).not.toBeInTheDocument();
   });
@@ -215,7 +221,7 @@ describe('Modal', () => {
     renderWithTheme(
       <Modal open title="Deletable" onClose={onClose}>
         Content
-      </Modal>,
+      </Modal>
     );
     fireEvent.click(screen.getByRole('button', { name: 'Close dialog' }));
     expect(onClose).toHaveBeenCalledTimes(1);
@@ -225,7 +231,7 @@ describe('Modal', () => {
     renderWithTheme(
       <Modal open title="No close" showCloseButton={false}>
         Content
-      </Modal>,
+      </Modal>
     );
     expect(screen.queryByRole('button', { name: 'Close dialog' })).not.toBeInTheDocument();
   });
@@ -234,7 +240,7 @@ describe('Modal', () => {
     renderWithTheme(
       <Modal open title="Confirm" actions={<button>OK</button>}>
         Body
-      </Modal>,
+      </Modal>
     );
     expect(screen.getByRole('button', { name: 'OK' })).toBeInTheDocument();
   });
@@ -286,15 +292,16 @@ describe('Navigation', () => {
   it('does not call onSelect for a disabled item', () => {
     const onSelect = vi.fn();
     renderWithTheme(<Navigation items={items} onSelect={onSelect} />);
-    const reportsBtn = screen.getByText('Reports').closest('li')?.querySelector('[role="button"]') as HTMLElement;
+    const reportsBtn = screen
+      .getByText('Reports')
+      .closest('li')
+      ?.querySelector('[role="button"]') as HTMLElement;
     if (reportsBtn) fireEvent.click(reportsBtn);
     expect(onSelect).not.toHaveBeenCalledWith('reports');
   });
 
   it('uses a custom aria-label on the nav element', () => {
-    renderWithTheme(
-      <Navigation items={items} aria-label="Sidebar navigation" />,
-    );
+    renderWithTheme(<Navigation items={items} aria-label="Sidebar navigation" />);
     expect(screen.getByRole('navigation', { name: 'Sidebar navigation' })).toBeInTheDocument();
   });
 
@@ -354,19 +361,18 @@ describe('Design token derivation', () => {
   });
 
   it('borderRadius values are non-negative numbers', () => {
-    Object.values(borderRadius).forEach((v) => {
+    Object.values(borderRadius).forEach(v => {
       expect(typeof v).toBe('number');
       expect(v).toBeGreaterThanOrEqual(0);
     });
   });
 
   it('elevation values are strings (CSS box-shadow or "none")', () => {
-    Object.values(elevation).forEach((v) => {
+    Object.values(elevation).forEach(v => {
       expect(typeof v).toBe('string');
     });
   });
 });
-
 
 // ---------------------------------------------------------------------------
 // DataTable drill-down behavior (Requirement 10.4)
@@ -387,7 +393,7 @@ describe('DataTable drill-down (Requirement 10.4)', () => {
   it('fires onRowSelect with the row data when a row is clicked', () => {
     const onRowSelect = vi.fn();
     renderWithTheme(
-      <DataTable columns={columns} rows={rows} rowKey="id" onRowSelect={onRowSelect} />,
+      <DataTable columns={columns} rows={rows} rowKey="id" onRowSelect={onRowSelect} />
     );
 
     // Click the row containing "Bob"
@@ -399,7 +405,7 @@ describe('DataTable drill-down (Requirement 10.4)', () => {
   it('fires onRowSelect when row is activated via Enter key', () => {
     const onRowSelect = vi.fn();
     renderWithTheme(
-      <DataTable columns={columns} rows={rows} rowKey="id" onRowSelect={onRowSelect} />,
+      <DataTable columns={columns} rows={rows} rowKey="id" onRowSelect={onRowSelect} />
     );
 
     const row = screen.getByText('Alice').closest('tr')!;
@@ -411,7 +417,7 @@ describe('DataTable drill-down (Requirement 10.4)', () => {
   it('fires onRowSelect when row is activated via Space key', () => {
     const onRowSelect = vi.fn();
     renderWithTheme(
-      <DataTable columns={columns} rows={rows} rowKey="id" onRowSelect={onRowSelect} />,
+      <DataTable columns={columns} rows={rows} rowKey="id" onRowSelect={onRowSelect} />
     );
 
     const row = screen.getByText('Charlie').closest('tr')!;
@@ -421,9 +427,7 @@ describe('DataTable drill-down (Requirement 10.4)', () => {
   });
 
   it('does NOT fire onRowSelect when onRowSelect is not provided', () => {
-    renderWithTheme(
-      <DataTable columns={columns} rows={rows} rowKey="id" />,
-    );
+    renderWithTheme(<DataTable columns={columns} rows={rows} rowKey="id" />);
 
     // Rows should not have button role when not selectable
     const row = screen.getByText('Alice').closest('tr')!;
@@ -433,7 +437,7 @@ describe('DataTable drill-down (Requirement 10.4)', () => {
   it('rows have role="button" and tabIndex when onRowSelect is provided', () => {
     const onRowSelect = vi.fn();
     renderWithTheme(
-      <DataTable columns={columns} rows={rows} rowKey="id" onRowSelect={onRowSelect} />,
+      <DataTable columns={columns} rows={rows} rowKey="id" onRowSelect={onRowSelect} />
     );
 
     const row = screen.getByText('Bob').closest('tr')!;
@@ -444,7 +448,7 @@ describe('DataTable drill-down (Requirement 10.4)', () => {
   it('rows have aria-label for accessibility when selectable', () => {
     const onRowSelect = vi.fn();
     renderWithTheme(
-      <DataTable columns={columns} rows={rows} rowKey="id" onRowSelect={onRowSelect} />,
+      <DataTable columns={columns} rows={rows} rowKey="id" onRowSelect={onRowSelect} />
     );
 
     const firstRow = screen.getByText('Alice').closest('tr')!;

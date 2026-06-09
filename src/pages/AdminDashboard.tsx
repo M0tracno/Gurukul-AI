@@ -1,5 +1,20 @@
-import React, { useState, useEffect, useCallback, Suspense } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {
+  Menu as MenuIcon,
+  Dashboard as DashboardIcon,
+  People as PeopleIcon,
+  School as SchoolIcon,
+  Assignment as AssignmentIcon,
+  Storage as StorageIcon,
+  Assessment as ReportsIcon,
+  Settings as SettingsIcon,
+  Logout as LogoutIcon,
+  Notifications as NotificationsIcon,
+  Refresh as RefreshIcon,
+  TrendingUp,
+  Group,
+  Quiz,
+  PersonAdd,
+} from '@mui/icons-material';
 import {
   AppBar,
   Toolbar,
@@ -18,30 +33,15 @@ import {
   ListItemButton,
   CircularProgress,
 } from '@mui/material';
-import {
-  Menu as MenuIcon,
-  Dashboard as DashboardIcon,
-  People as PeopleIcon,
-  School as SchoolIcon,
-  Assignment as AssignmentIcon,
-  Storage as StorageIcon,
-  Assessment as ReportsIcon,
-  Settings as SettingsIcon,
-  Logout as LogoutIcon,
-  Notifications as NotificationsIcon,
-  Refresh as RefreshIcon,
-  TrendingUp,
-  Group,
-  Quiz,
-  PersonAdd,
-} from '@mui/icons-material';
 import { motion } from 'framer-motion';
-import { FrostedCard } from '../components/common/FrostedCard';
-import { colors } from '../styles/designTokens';
+import React, { useState, useEffect, useCallback, Suspense } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import { useAuth } from '../auth/AuthContext';
+import { FrostedCard } from '../components/common/FrostedCard';
 import env from '../config/env';
-import { SystemMetricsPanel } from '../features/admin/components/SystemMetricsPanel';
-import { GradingOverridePanel } from '../features/admin/components/GradingOverridePanel';
+import { GradingOverridePanel, SystemMetricsPanel } from '../features/admin';
+import { colors } from '../styles/designTokens';
 
 // Lazy-loaded admin feature components backed by live API data
 const UserManagementNew = React.lazy(() => import('../components/admin/UserManagementNew'));
@@ -138,7 +138,7 @@ const AdminDashboard: React.FC = () => {
         return;
       }
       const headers: Record<string, string> = {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       };
       const apiUrl = env?.API_URL || 'http://localhost:5000';
@@ -149,10 +149,17 @@ const AdminDashboard: React.FC = () => {
         fetch(`${apiUrl}/api/courses?page=1&limit=1`, { headers }).then(r => r.json()),
       ]);
 
-      const extractTotal = (result: PromiseSettledResult<any>): number => {
+      const extractTotal = (result: PromiseSettledResult<unknown>): number => {
         if (result.status !== 'fulfilled') return 0;
-        const data = result.value;
-        return data?.data?.pagination?.total ?? data?.pagination?.total ?? data?.total ?? data?.data?.total ?? 0;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const data = result.value as any;
+        return (
+          data?.data?.pagination?.total ??
+          data?.pagination?.total ??
+          data?.total ??
+          data?.data?.total ??
+          0
+        );
       };
 
       const students = extractTotal(studentsRes);
@@ -284,10 +291,14 @@ const AdminDashboard: React.FC = () => {
               sx={{
                 mb: 1,
                 borderRadius: 2,
-                background: currentView === item.key
-                  ? `linear-gradient(135deg, ${colors.neon.cyan}20, ${colors.neon.blue}20)`
-                  : 'transparent',
-                border: currentView === item.key ? `1px solid ${colors.neon.cyan}40` : '1px solid transparent',
+                background:
+                  currentView === item.key
+                    ? `linear-gradient(135deg, ${colors.neon.cyan}20, ${colors.neon.blue}20)`
+                    : 'transparent',
+                border:
+                  currentView === item.key
+                    ? `1px solid ${colors.neon.cyan}40`
+                    : '1px solid transparent',
                 boxShadow: currentView === item.key ? `0 0 20px ${colors.neon.cyan}20` : 'none',
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                 '&:hover': {
@@ -522,115 +533,115 @@ const AdminDashboard: React.FC = () => {
                 </Typography>
               </Box>
 
-          {/* Statistics Cards */}
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: {
-                xs: '1fr',
-                sm: 'repeat(2, 1fr)',
-                lg: 'repeat(4, 1fr)',
-              },
-              gap: 3,
-              mb: 4,
-            }}
-          >
-            <StatCard
-              title="STUDENTS"
-              value={stats.students}
-              subtitle="0 Faculty"
-              icon={<PeopleIcon />}
-              color={colors.neon.cyan}
-            />
-            <StatCard
-              title="QUIZZES"
-              value={stats.quizzes}
-              subtitle="created"
-              icon={<Quiz />}
-              color={colors.neon.blue}
-            />
-            <StatCard
-              title="ACTIVE USERS"
-              value={stats.activeUsers}
-              subtitle="currently online"
-              icon={<TrendingUp />}
-              color={colors.neon.orange}
-            />
-            <StatCard
-              title="PARENT ACCOUNTS"
-              value={stats.parentAccounts}
-              subtitle="registered"
-              icon={<Group />}
-              color={colors.neon.purple}
-            />
-          </Box>
-
-          {/* Content Grid */}
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
-              gap: 3,
-              mb: 3,
-            }}
-          >
-            {/* Recent Activity */}
-            <FrostedCard glassLevel="medium" neonGlow neonColor="cyan" animate>
-              <Typography
-                variant="h6"
+              {/* Statistics Cards */}
+              <Box
                 sx={{
-                  color: 'white',
-                  fontWeight: 600,
+                  display: 'grid',
+                  gridTemplateColumns: {
+                    xs: '1fr',
+                    sm: 'repeat(2, 1fr)',
+                    lg: 'repeat(4, 1fr)',
+                  },
+                  gap: 3,
+                  mb: 4,
+                }}
+              >
+                <StatCard
+                  title="STUDENTS"
+                  value={stats.students}
+                  subtitle="0 Faculty"
+                  icon={<PeopleIcon />}
+                  color={colors.neon.cyan}
+                />
+                <StatCard
+                  title="QUIZZES"
+                  value={stats.quizzes}
+                  subtitle="created"
+                  icon={<Quiz />}
+                  color={colors.neon.blue}
+                />
+                <StatCard
+                  title="ACTIVE USERS"
+                  value={stats.activeUsers}
+                  subtitle="currently online"
+                  icon={<TrendingUp />}
+                  color={colors.neon.orange}
+                />
+                <StatCard
+                  title="PARENT ACCOUNTS"
+                  value={stats.parentAccounts}
+                  subtitle="registered"
+                  icon={<Group />}
+                  color={colors.neon.purple}
+                />
+              </Box>
+
+              {/* Content Grid */}
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+                  gap: 3,
                   mb: 3,
                 }}
               >
-                Recent Activity
-              </Typography>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                {recentActivity.map((activity, index) => (
-                  <motion.div
-                    key={activity.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
+                {/* Recent Activity */}
+                <FrostedCard glassLevel="medium" neonGlow neonColor="cyan" animate>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      color: 'white',
+                      fontWeight: 600,
+                      mb: 3,
+                    }}
                   >
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 2,
-                        p: 2,
-                        borderRadius: 2,
-                        background: `${colors.neutral[800]}40`,
-                        border: `1px solid ${colors.neutral[700]}30`,
-                        transition: 'all 0.3s ease',
-                        '&:hover': {
-                          background: `${colors.neutral[700]}40`,
-                          transform: 'translateX(4px)',
-                        },
-                      }}
-                    >
-                      <Box>{activity.icon}</Box>
-                      <Box sx={{ flexGrow: 1 }}>
-                        <Typography variant="body2" sx={{ color: 'white', fontWeight: 500 }}>
-                          {activity.title}
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: colors.neutral[400] }}>
-                          {activity.user} • {activity.time}
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </motion.div>
-                ))}
+                    Recent Activity
+                  </Typography>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    {recentActivity.map((activity, index) => (
+                      <motion.div
+                        key={activity.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                      >
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 2,
+                            p: 2,
+                            borderRadius: 2,
+                            background: `${colors.neutral[800]}40`,
+                            border: `1px solid ${colors.neutral[700]}30`,
+                            transition: 'all 0.3s ease',
+                            '&:hover': {
+                              background: `${colors.neutral[700]}40`,
+                              transform: 'translateX(4px)',
+                            },
+                          }}
+                        >
+                          <Box>{activity.icon}</Box>
+                          <Box sx={{ flexGrow: 1 }}>
+                            <Typography variant="body2" sx={{ color: 'white', fontWeight: 500 }}>
+                              {activity.title}
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: colors.neutral[400] }}>
+                              {activity.user} • {activity.time}
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </motion.div>
+                    ))}
+                  </Box>
+                </FrostedCard>
+
+                {/* Live System Metrics (Requirement 11.1) */}
+                <SystemMetricsPanel autoRefreshMs={30000} />
               </Box>
-            </FrostedCard>
 
-            {/* Live System Metrics (Requirement 11.1) */}
-            <SystemMetricsPanel autoRefreshMs={30000} />
-          </Box>
-
-          {/* Grading Override Controls (Requirements 11.2, 11.3, 11.4) */}
-          <GradingOverridePanel />
+              {/* Grading Override Controls (Requirements 11.2, 11.3, 11.4) */}
+              <GradingOverridePanel />
             </>
           )}
 

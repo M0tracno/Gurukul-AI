@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import {  styled } from '@mui/material/styles';
-import {  Button, Typography, Container } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import { Button, Typography, Container } from '@mui/material';
 import { Home as HomeIcon, Error as ErrorIcon } from '@mui/icons-material';
 
 const Root = styled('div')(({ theme }) => ({
@@ -12,26 +12,26 @@ const Root = styled('div')(({ theme }) => ({
   alignItems: 'center',
   padding: theme.spacing(2),
   background: '#f5f5f5',
-  textAlign: 'center'
+  textAlign: 'center',
 }));
 
 const IconStyled = styled(ErrorIcon)(({ theme }) => ({
   fontSize: 80,
   color: theme.palette.error.main,
-  marginBottom: theme.spacing(2)
+  marginBottom: theme.spacing(2),
 }));
 
 const TitleStyled = styled(Typography)(({ theme }) => ({
-  marginBottom: theme.spacing(1)
+  marginBottom: theme.spacing(1),
 }));
 
 const SubtitleStyled = styled(Typography)(({ theme }) => ({
   marginBottom: theme.spacing(4),
-  color: theme.palette.text.secondary
+  color: theme.palette.text.secondary,
 }));
 
 const ButtonStyled = styled(Button)(({ theme }) => ({
-  marginTop: theme.spacing(2)
+  marginTop: theme.spacing(2),
 }));
 
 const NotFound = () => {
@@ -60,4 +60,3 @@ const NotFound = () => {
 };
 
 export default NotFound;
-

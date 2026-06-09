@@ -109,11 +109,13 @@ export function initSentry(): void {
  * Set the authenticated user context on Sentry.
  * Call this after login or when user identity is established.
  */
-export function setSentryUser(user: {
-  id: string;
-  email?: string;
-  role?: string;
-} | null): void {
+export function setSentryUser(
+  user: {
+    id: string;
+    email?: string;
+    role?: string;
+  } | null
+): void {
   if (user) {
     Sentry.setUser({
       id: user.id,

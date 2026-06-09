@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Assignment, Close, Grade, Message, Refresh } from '@mui/icons-material';
 import makeStyles from '../../utils/makeStylesCompat';
-import { gradeAssignmentWithAI, generatePersonalizedFeedback, evaluateEssayWithVertexAI } from '../../services/aiService';
+import {
+  gradeAssignmentWithAI,
+  generatePersonalizedFeedback,
+  evaluateEssayWithVertexAI,
+} from '../../services/aiService';
 import EnhancedFacultyService from '../../services/enhancedFacultyService';
 import {
   Alert,
@@ -26,7 +30,7 @@ import {
   Tab,
   TextField,
   Tabs,
-  Typography
+  Typography,
 } from '@mui/material';
 import {
   AutorenewRounded as AIIcon,
@@ -42,7 +46,7 @@ import {
   People as PeopleIcon,
   Add as AddIcon,
   Visibility as ViewIcon,
-  TrendingUp as TrendingUpIcon
+  TrendingUp as TrendingUpIcon,
 } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 
@@ -67,7 +71,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
     right: 0,
     height: 4,
     background: 'linear-gradient(90deg, #667eea 0%, #764ba2 50%, #667eea 100%)',
-  }
+  },
 }));
 
 const HeaderSection = styled(Box)(({ theme }) => ({
@@ -97,7 +101,7 @@ const HeaderSection = styled(Box)(({ theme }) => ({
     height: 150,
     background: 'rgba(255, 255, 255, 0.05)',
     borderRadius: '50%',
-  }
+  },
 }));
 
 const AssignmentCard = styled(StyledCard)(({ theme }) => ({
@@ -109,7 +113,7 @@ const AssignmentCard = styled(StyledCard)(({ theme }) => ({
     display: 'flex',
     flexDirection: 'column',
     padding: theme.spacing(3),
-  }
+  },
 }));
 
 const StatusChip = styled(Chip)(({ theme, status }) => {
@@ -125,7 +129,7 @@ const StatusChip = styled(Chip)(({ theme, status }) => {
         return { bg: '#f44336', color: 'white' };
     }
   };
-  
+
   const colors = getColors();
   return {
     backgroundColor: colors.bg,
@@ -146,7 +150,7 @@ const ActionButton = styled(Button)(({ theme }) => ({
   },
 }));
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   container: {
     minHeight: '100vh',
     background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
@@ -159,15 +163,15 @@ const useStyles = makeStyles((theme) => ({
       background: 'rgba(255, 255, 255, 0.9)',
       backdropFilter: 'blur(10px)',
       '& fieldset': {
-        borderColor: 'rgba(102, 126, 234, 0.3)'
+        borderColor: 'rgba(102, 126, 234, 0.3)',
       },
       '&:hover fieldset': {
-        borderColor: 'rgba(102, 126, 234, 0.6)'
+        borderColor: 'rgba(102, 126, 234, 0.6)',
       },
       '&.Mui-focused fieldset': {
-        borderColor: '#667eea'
-      }
-    }
+        borderColor: '#667eea',
+      },
+    },
   },
   tabsContainer: {
     marginBottom: theme.spacing(3),
@@ -191,7 +195,7 @@ const useStyles = makeStyles((theme) => ({
   assignmentGrid: {
     '& .MuiGrid-item': {
       transition: 'all 0.3s ease',
-    }
+    },
   },
   emptyState: {
     textAlign: 'center',
@@ -240,83 +244,83 @@ const useStyles = makeStyles((theme) => ({
 
 // Mock data for assignments
 const MOCK_ASSIGNMENTS = [
-  { 
-    id: 'a1', 
-    title: 'Algorithm Analysis Assignment', 
-    subject: 'Data Structures & Algorithms', 
-    dueDate: '2025-06-20', 
-    totalSubmissions: 18, 
+  {
+    id: 'a1',
+    title: 'Algorithm Analysis Assignment',
+    subject: 'Data Structures & Algorithms',
+    dueDate: '2025-06-20',
+    totalSubmissions: 18,
     pendingGrading: 5,
     gradedSubmissions: 13,
     totalPoints: 50,
-    status: 'pending'
+    status: 'pending',
   },
-  { 
-    id: 'a2', 
-    title: 'Binary Tree Implementation', 
-    subject: 'Data Structures & Algorithms', 
-    dueDate: '2025-06-15', 
-    totalSubmissions: 20, 
+  {
+    id: 'a2',
+    title: 'Binary Tree Implementation',
+    subject: 'Data Structures & Algorithms',
+    dueDate: '2025-06-15',
+    totalSubmissions: 20,
     pendingGrading: 0,
     gradedSubmissions: 20,
     totalPoints: 75,
-    status: 'completed'
+    status: 'completed',
   },
-  { 
-    id: 'a3', 
-    title: 'Database Design Project', 
-    subject: 'Database Systems', 
-    dueDate: '2025-06-18', 
-    totalSubmissions: 15, 
+  {
+    id: 'a3',
+    title: 'Database Design Project',
+    subject: 'Database Systems',
+    dueDate: '2025-06-18',
+    totalSubmissions: 15,
     pendingGrading: 8,
     gradedSubmissions: 7,
     totalPoints: 40,
-    status: 'in-progress'
+    status: 'in-progress',
   },
-  { 
-    id: 'a4', 
-    title: 'Machine Learning Basics', 
-    subject: 'Artificial Intelligence', 
-    dueDate: '2025-06-25', 
-    totalSubmissions: 12, 
+  {
+    id: 'a4',
+    title: 'Machine Learning Basics',
+    subject: 'Artificial Intelligence',
+    dueDate: '2025-06-25',
+    totalSubmissions: 12,
     pendingGrading: 12,
     gradedSubmissions: 0,
     totalPoints: 60,
-    status: 'pending'
+    status: 'pending',
   },
-  { 
-    id: 'a5', 
-    title: 'Network Protocol Analysis', 
-    subject: 'Computer Networks', 
-    dueDate: '2025-06-22', 
-    totalSubmissions: 22, 
+  {
+    id: 'a5',
+    title: 'Network Protocol Analysis',
+    subject: 'Computer Networks',
+    dueDate: '2025-06-22',
+    totalSubmissions: 22,
     pendingGrading: 3,
     gradedSubmissions: 19,
     totalPoints: 45,
-    status: 'in-progress'
+    status: 'in-progress',
   },
-  { 
-    id: 'a6', 
-    title: 'Web Development Portfolio', 
-    subject: 'Web Technologies', 
-    dueDate: '2025-06-30', 
-    totalSubmissions: 35, 
+  {
+    id: 'a6',
+    title: 'Web Development Portfolio',
+    subject: 'Web Technologies',
+    dueDate: '2025-06-30',
+    totalSubmissions: 35,
     pendingGrading: 10,
     gradedSubmissions: 25,
     totalPoints: 80,
-    status: 'in-progress'
+    status: 'in-progress',
   },
-  { 
-    id: 'a7', 
-    title: 'Software Engineering Case Study', 
-    subject: 'Software Engineering', 
-    dueDate: '2025-07-05', 
-    totalSubmissions: 28, 
+  {
+    id: 'a7',
+    title: 'Software Engineering Case Study',
+    subject: 'Software Engineering',
+    dueDate: '2025-07-05',
+    totalSubmissions: 28,
     pendingGrading: 15,
     gradedSubmissions: 13,
     totalPoints: 100,
-    status: 'pending'
-  }
+    status: 'pending',
+  },
 ];
 
 function GradeAssignments() {
@@ -343,7 +347,7 @@ function GradeAssignments() {
             pendingGrading: assignment.pending || 0,
             gradedSubmissions: assignment.graded || 0,
             totalPoints: assignment.totalPoints || 100,
-            status: assignment.status === 'Active' ? 'pending' : assignment.status || 'pending'
+            status: assignment.status === 'Active' ? 'pending' : assignment.status || 'pending',
           }));
           setAssignments(formattedAssignments);
         } else {
@@ -363,7 +367,7 @@ function GradeAssignments() {
   }, []);
 
   // Handle search change
-  const handleSearchChange = (event) => {
+  const handleSearchChange = event => {
     setSearchQuery(event.target.value);
   };
 
@@ -373,9 +377,10 @@ function GradeAssignments() {
 
     // Filter by search query
     if (searchQuery.trim() !== '') {
-      filtered = filtered.filter(assignment =>
-        assignment.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        assignment.subject.toLowerCase().includes(searchQuery.toLowerCase())
+      filtered = filtered.filter(
+        assignment =>
+          assignment.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          assignment.subject.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
@@ -394,7 +399,7 @@ function GradeAssignments() {
 
   const filteredAssignments = getFilteredAssignments();
 
-  const handleSelectAssignment = (assignment) => {
+  const handleSelectAssignment = assignment => {
     setSelectedAssignment(assignment);
     console.log('Selected assignment:', assignment);
   };
@@ -446,29 +451,31 @@ function GradeAssignments() {
           textColor="primary"
           centered
         >
-          <Tab 
+          <Tab
             label={
               <Box display="flex" alignItems="center" gap={1}>
                 <span>📋</span>
                 <span>Pending ({assignments.filter(a => a.status === 'pending').length})</span>
               </Box>
-            } 
+            }
           />
-          <Tab 
+          <Tab
             label={
               <Box display="flex" alignItems="center" gap={1}>
                 <span>⏳</span>
-                <span>In Progress ({assignments.filter(a => a.status === 'in-progress').length})</span>
+                <span>
+                  In Progress ({assignments.filter(a => a.status === 'in-progress').length})
+                </span>
               </Box>
-            } 
+            }
           />
-          <Tab 
+          <Tab
             label={
               <Box display="flex" alignItems="center" gap={1}>
                 <span>✅</span>
                 <span>Completed ({assignments.filter(a => a.status === 'completed').length})</span>
               </Box>
-            } 
+            }
           />
         </Tabs>
       </Box>
@@ -481,13 +488,15 @@ function GradeAssignments() {
             No assignments found
           </Typography>
           <Typography variant="body2">
-            {searchQuery ? 'Try adjusting your search criteria' : 'No assignments available for this filter'}
+            {searchQuery
+              ? 'Try adjusting your search criteria'
+              : 'No assignments available for this filter'}
           </Typography>
         </Box>
       ) : (
         <Grid container spacing={3} className={classes.assignmentGrid}>
-          {filteredAssignments.map((assignment) => (
-            <Grid size={{xs:12,sm:6,md:4}} key={assignment.id}>
+          {filteredAssignments.map(assignment => (
+            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={assignment.id}>
               <AssignmentCard>
                 <CardContent>
                   {/* Assignment Header */}
@@ -502,8 +511,13 @@ function GradeAssignments() {
                     </Box>
                     <StatusChip
                       status={assignment.status}
-                      label={assignment.status === 'pending' ? 'Pending' : 
-                             assignment.status === 'in-progress' ? 'In Progress' : 'Completed'}
+                      label={
+                        assignment.status === 'pending'
+                          ? 'Pending'
+                          : assignment.status === 'in-progress'
+                            ? 'In Progress'
+                            : 'Completed'
+                      }
                       size="small"
                     />
                   </Box>
@@ -540,58 +554,58 @@ function GradeAssignments() {
                         {assignment.gradedSubmissions}/{assignment.totalSubmissions}
                       </Typography>
                     </Box>
-                    <Box sx={{ 
-                      width: '100%', 
-                      bgcolor: 'rgba(102, 126, 234, 0.1)', 
-                      borderRadius: 1,
-                      height: 8,
-                      overflow: 'hidden'
-                    }}>
-                      <Box sx={{
-                        width: `${(assignment.gradedSubmissions / assignment.totalSubmissions) * 100}%`,
-                        height: '100%',
-                        background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)',
-                        transition: 'width 0.3s ease'
-                      }} />
+                    <Box
+                      sx={{
+                        width: '100%',
+                        bgcolor: 'rgba(102, 126, 234, 0.1)',
+                        borderRadius: 1,
+                        height: 8,
+                        overflow: 'hidden',
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: `${(assignment.gradedSubmissions / assignment.totalSubmissions) * 100}%`,
+                          height: '100%',
+                          background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)',
+                          transition: 'width 0.3s ease',
+                        }}
+                      />
                     </Box>
                   </Box>
 
                   {/* Stats Cards */}
                   <Grid container spacing={1} mb={3}>
-                    <Grid size={{xs:6}}>
+                    <Grid size={{ xs: 6 }}>
                       <Box
                         sx={{
                           p: 1.5,
                           borderRadius: 2,
                           background: 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)',
                           color: 'white',
-                          textAlign: 'center'
+                          textAlign: 'center',
                         }}
                       >
                         <Typography variant="h6" fontWeight="bold">
                           {assignment.gradedSubmissions}
                         </Typography>
-                        <Typography variant="caption">
-                          Graded
-                        </Typography>
+                        <Typography variant="caption">Graded</Typography>
                       </Box>
                     </Grid>
-                    <Grid size={{xs:6}}>
+                    <Grid size={{ xs: 6 }}>
                       <Box
                         sx={{
                           p: 1.5,
                           borderRadius: 2,
                           background: 'linear-gradient(135deg, #FF9800 0%, #f57c00 100%)',
                           color: 'white',
-                          textAlign: 'center'
+                          textAlign: 'center',
                         }}
                       >
                         <Typography variant="h6" fontWeight="bold">
                           {assignment.pendingGrading}
                         </Typography>
-                        <Typography variant="caption">
-                          Pending
-                        </Typography>
+                        <Typography variant="caption">Pending</Typography>
                       </Box>
                     </Grid>
                   </Grid>
@@ -607,7 +621,7 @@ function GradeAssignments() {
                         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                         '&:hover': {
                           background: 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)',
-                        }
+                        },
                       }}
                     >
                       Grade Now
@@ -621,7 +635,7 @@ function GradeAssignments() {
                         '&:hover': {
                           backgroundColor: 'rgba(102, 126, 234, 0.1)',
                           borderColor: '#667eea',
-                        }
+                        },
                       }}
                     >
                       View
@@ -637,4 +651,4 @@ function GradeAssignments() {
   );
 }
 
-export default GradeAssignments;
+export default GradeAssignments;

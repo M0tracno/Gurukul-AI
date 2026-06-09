@@ -12,7 +12,3 @@ const LinkBehavior = forwardRef(({ href, ...props }, ref) => {
 LinkBehavior.displayName = 'LinkBehavior';
 
 export default LinkBehavior;
-
-
-
-

@@ -8,16 +8,6 @@
  * rather than static placeholder values.
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
-import {
-  Box,
-  Typography,
-  CircularProgress,
-  Chip,
-  IconButton,
-  Tooltip,
-  Alert,
-} from '@mui/material';
 import {
   Refresh as RefreshIcon,
   Speed as SpeedIcon,
@@ -25,8 +15,12 @@ import {
   Timer as TimerIcon,
   CloudQueue as CloudIcon,
 } from '@mui/icons-material';
+import { Box, Typography, CircularProgress, Chip, IconButton, Tooltip, Alert } from '@mui/material';
+import React, { useState, useEffect, useCallback } from 'react';
+
 import { FrostedCard } from '@/components/common/FrostedCard';
 import { colors } from '@/styles/designTokens';
+
 import {
   fetchSystemMetrics,
   ApiClientError,
@@ -91,16 +85,27 @@ const EndpointRow: React.FC<{ path: string; metrics: EndpointMetrics }> = ({ pat
       <Chip
         label={`${metrics.requestCount} reqs`}
         size="small"
-        sx={{ fontSize: '0.65rem', color: colors.neutral[300], background: `${colors.neutral[700]}60` }}
+        sx={{
+          fontSize: '0.65rem',
+          color: colors.neutral[300],
+          background: `${colors.neutral[700]}60`,
+        }}
       />
-      <Typography variant="caption" sx={{ color: colors.neon.cyan, minWidth: 60, textAlign: 'right' }}>
+      <Typography
+        variant="caption"
+        sx={{ color: colors.neon.cyan, minWidth: 60, textAlign: 'right' }}
+      >
         {metrics.avgResponseTime}ms avg
       </Typography>
       {metrics.slowResponseCount > 0 && (
         <Chip
           label={`${metrics.slowResponseCount} slow`}
           size="small"
-          sx={{ fontSize: '0.65rem', color: colors.neon.orange, background: `${colors.neon.orange}15` }}
+          sx={{
+            fontSize: '0.65rem',
+            color: colors.neon.orange,
+            background: `${colors.neon.orange}15`,
+          }}
         />
       )}
     </Box>
@@ -156,7 +161,9 @@ export const SystemMetricsPanel: React.FC<SystemMetricsPanelProps> = ({
   if (loading && !metrics) {
     return (
       <FrostedCard glassLevel="medium" neonGlow neonColor="cyan" animate>
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 200 }}>
+        <Box
+          sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 200 }}
+        >
           <CircularProgress sx={{ color: colors.neon.cyan }} />
         </Box>
       </FrostedCard>
@@ -248,7 +255,10 @@ export const SystemMetricsPanel: React.FC<SystemMetricsPanelProps> = ({
           )}
 
           {Object.keys(metrics.endpoints).length === 0 && (
-            <Typography variant="body2" sx={{ color: colors.neutral[500], textAlign: 'center', py: 2 }}>
+            <Typography
+              variant="body2"
+              sx={{ color: colors.neutral[500], textAlign: 'center', py: 2 }}
+            >
               No endpoint metrics recorded yet.
             </Typography>
           )}

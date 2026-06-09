@@ -56,7 +56,15 @@ const selectOptions = [
   { value: 'admin', label: 'Admin' },
 ];
 
-function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
+function Section({
+  id,
+  title,
+  children,
+}: {
+  id: string;
+  title: string;
+  children: React.ReactNode;
+}) {
   return (
     <Box id={id} sx={{ mb: 6, p: 3 }}>
       <Typography variant="h5" gutterBottom>
@@ -82,32 +90,38 @@ export function ComponentShowcase() {
         {/* DataTable Section */}
         <Section id="section-datatable" title="DataTable">
           <Box id="datatable-default" sx={{ mb: 4 }}>
-            <Typography variant="subtitle2" gutterBottom>Default state with data</Typography>
+            <Typography variant="subtitle2" gutterBottom>
+              Default state with data
+            </Typography>
             <DataTable
               columns={sampleColumns}
               rows={sampleRows}
-              getRowId={(row) => row.id}
+              getRowId={row => row.id}
               ariaLabel="Sample data table"
               showPagination={true}
               rowsPerPage={5}
             />
           </Box>
           <Box id="datatable-empty" sx={{ mb: 4 }}>
-            <Typography variant="subtitle2" gutterBottom>Empty state</Typography>
+            <Typography variant="subtitle2" gutterBottom>
+              Empty state
+            </Typography>
             <DataTable
               columns={sampleColumns}
               rows={[]}
-              getRowId={(row) => row.id}
+              getRowId={row => row.id}
               ariaLabel="Empty data table"
               emptyMessage="No records found"
             />
           </Box>
           <Box id="datatable-loading">
-            <Typography variant="subtitle2" gutterBottom>Loading state</Typography>
+            <Typography variant="subtitle2" gutterBottom>
+              Loading state
+            </Typography>
             <DataTable
               columns={sampleColumns}
               rows={[]}
-              getRowId={(row) => row.id}
+              getRowId={row => row.id}
               ariaLabel="Loading data table"
               loading={true}
             />
@@ -117,47 +131,96 @@ export function ComponentShowcase() {
         {/* Buttons Section */}
         <Section id="section-buttons" title="Buttons">
           <Box id="buttons-variants" sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 3 }}>
-            <Button variant="contained" color="primary">Primary</Button>
-            <Button variant="contained" color="secondary">Secondary</Button>
-            <Button variant="outlined" color="primary">Outlined</Button>
-            <Button variant="text" color="primary">Text</Button>
-            <Button variant="contained" color="error">Error</Button>
-            <Button variant="contained" color="success">Success</Button>
+            <Button variant="contained" color="primary">
+              Primary
+            </Button>
+            <Button variant="contained" color="secondary">
+              Secondary
+            </Button>
+            <Button variant="outlined" color="primary">
+              Outlined
+            </Button>
+            <Button variant="text" color="primary">
+              Text
+            </Button>
+            <Button variant="contained" color="error">
+              Error
+            </Button>
+            <Button variant="contained" color="success">
+              Success
+            </Button>
           </Box>
           <Box id="buttons-sizes" sx={{ display: 'flex', gap: 2, alignItems: 'center', mb: 3 }}>
-            <Button variant="contained" size="small">Small</Button>
-            <Button variant="contained" size="medium">Medium</Button>
-            <Button variant="contained" size="large">Large</Button>
+            <Button variant="contained" size="small">
+              Small
+            </Button>
+            <Button variant="contained" size="medium">
+              Medium
+            </Button>
+            <Button variant="contained" size="large">
+              Large
+            </Button>
           </Box>
           <Box id="buttons-states" sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 3 }}>
-            <Button variant="contained" disabled>Disabled</Button>
-            <Button variant="contained" loading>Loading</Button>
-            <Button variant="outlined" disabled>Outlined Disabled</Button>
+            <Button variant="contained" disabled>
+              Disabled
+            </Button>
+            <Button variant="contained" loading>
+              Loading
+            </Button>
+            <Button variant="outlined" disabled>
+              Outlined Disabled
+            </Button>
           </Box>
           <Box id="buttons-icon" sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-            <IconButton aria-label="Delete item"><DeleteIcon /></IconButton>
-            <IconButton aria-label="Edit item"><EditIcon /></IconButton>
-            <IconButton aria-label="Add item" color="primary"><AddIcon /></IconButton>
-            <IconButton aria-label="Disabled action" disabled><DeleteIcon /></IconButton>
+            <IconButton aria-label="Delete item">
+              <DeleteIcon />
+            </IconButton>
+            <IconButton aria-label="Edit item">
+              <EditIcon />
+            </IconButton>
+            <IconButton aria-label="Add item" color="primary">
+              <AddIcon />
+            </IconButton>
+            <IconButton aria-label="Disabled action" disabled>
+              <DeleteIcon />
+            </IconButton>
           </Box>
         </Section>
 
         {/* FormFields Section */}
         <Section id="section-formfields" title="Form Fields">
-          <Box id="formfields-textfield" sx={{ display: 'flex', flexDirection: 'column', gap: 3, mb: 4, maxWidth: 400 }}>
+          <Box
+            id="formfields-textfield"
+            sx={{ display: 'flex', flexDirection: 'column', gap: 3, mb: 4, maxWidth: 400 }}
+          >
             <TextField id="tf-default" label="Default" placeholder="Enter text..." />
             <TextField id="tf-filled" label="With value" defaultValue="Hello, World!" />
-            <TextField id="tf-error" label="Error state" error helperText="This field is required" />
+            <TextField
+              id="tf-error"
+              label="Error state"
+              error
+              helperText="This field is required"
+            />
             <TextField id="tf-disabled" label="Disabled" disabled defaultValue="Cannot edit" />
-            <TextField id="tf-multiline" label="Multiline" multiline rows={3} placeholder="Enter description..." />
+            <TextField
+              id="tf-multiline"
+              label="Multiline"
+              multiline
+              rows={3}
+              placeholder="Enter description..."
+            />
           </Box>
-          <Box id="formfields-select" sx={{ display: 'flex', flexDirection: 'column', gap: 3, maxWidth: 400 }}>
+          <Box
+            id="formfields-select"
+            sx={{ display: 'flex', flexDirection: 'column', gap: 3, maxWidth: 400 }}
+          >
             <SelectField
               id="select-default"
               fieldLabel="Role"
               options={selectOptions}
               value={selectValue}
-              onChange={(e) => setSelectValue(e.target.value as string)}
+              onChange={e => setSelectValue(e.target.value as string)}
             />
             <SelectField
               id="select-error"
@@ -180,15 +243,21 @@ export function ComponentShowcase() {
         {/* Skeleton Loaders Section */}
         <Section id="section-skeletons" title="Skeleton Loaders">
           <Box id="skeleton-dashboard" sx={{ mb: 4 }}>
-            <Typography variant="subtitle2" gutterBottom>Dashboard Skeleton</Typography>
+            <Typography variant="subtitle2" gutterBottom>
+              Dashboard Skeleton
+            </Typography>
             <DashboardSkeleton />
           </Box>
           <Box id="skeleton-table" sx={{ mb: 4 }}>
-            <Typography variant="subtitle2" gutterBottom>Table Skeleton</Typography>
+            <Typography variant="subtitle2" gutterBottom>
+              Table Skeleton
+            </Typography>
             <TableSkeleton columns={4} rows={5} />
           </Box>
           <Box id="skeleton-form">
-            <Typography variant="subtitle2" gutterBottom>Form Skeleton</Typography>
+            <Typography variant="subtitle2" gutterBottom>
+              Form Skeleton
+            </Typography>
             <FormSkeleton sections={2} fieldsPerSection={3} />
           </Box>
         </Section>

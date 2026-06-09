@@ -6,14 +6,7 @@
  * for new sessions. Persists preference so it's restored on reload.
  */
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-  type ReactNode,
-} from 'react';
+import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
 import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { darkTheme, lightTheme } from '../design-system';
@@ -63,15 +56,9 @@ export function AppThemeProvider({ children }: { children: ReactNode }) {
     setMode(mode === 'light' ? 'dark' : 'light');
   }, [mode, setMode]);
 
-  const theme = useMemo(
-    () => (mode === 'dark' ? darkTheme : lightTheme),
-    [mode],
-  );
+  const theme = useMemo(() => (mode === 'dark' ? darkTheme : lightTheme), [mode]);
 
-  const value = useMemo(
-    () => ({ mode, toggleTheme, setMode }),
-    [mode, toggleTheme, setMode],
-  );
+  const value = useMemo(() => ({ mode, toggleTheme, setMode }), [mode, toggleTheme, setMode]);
 
   return (
     <ThemeContext.Provider value={value}>

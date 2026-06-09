@@ -1,4 +1,5 @@
 import { io } from 'socket.io-client';
+
 import env from '../config/env';
 
 /**
@@ -114,7 +115,7 @@ class WebRTCService {
         resolve();
       });
 
-      this.socket.once('connect_error', (error) => {
+      this.socket.once('connect_error', error => {
         clearTimeout(timeout);
         reject(error);
       });
@@ -129,7 +130,7 @@ class WebRTCService {
     if (!this.socket) return;
 
     // When we successfully join a PTM room
-    this.socket.on('ptm_joined', (data) => {
+    this.socket.on('ptm_joined', data => {
       const { ptmId, existingPeers } = data;
       this._emit('joined', { ptmId, existingPeers });
 
@@ -141,41 +142,41 @@ class WebRTCService {
     });
 
     // When a new peer joins the PTM room
-    this.socket.on('ptm_peer_joined', (data) => {
+    this.socket.on('ptm_peer_joined', data => {
       this._emit('peer_joined', data);
       // The existing participant waits for the offer from the new joiner
       // (new joiner becomes initiator via ptm_joined handler)
     });
 
     // Receive an SDP offer from the remote peer
-    this.socket.on('ptm_offer', async (data) => {
+    this.socket.on('ptm_offer', async data => {
       const { sdp, fromUserId } = data;
       this._emit('offer_received', { fromUserId });
       await this._handleRemoteOffer(sdp);
     });
 
     // Receive an SDP answer from the remote peer
-    this.socket.on('ptm_answer', async (data) => {
+    this.socket.on('ptm_answer', async data => {
       const { sdp, fromUserId } = data;
       this._emit('answer_received', { fromUserId });
       await this._handleRemoteAnswer(sdp);
     });
 
     // Receive an ICE candidate from the remote peer
-    this.socket.on('ptm_ice_candidate', async (data) => {
+    this.socket.on('ptm_ice_candidate', async data => {
       const { candidate } = data;
       await this._handleRemoteIceCandidate(candidate);
     });
 
     // When a peer leaves the PTM
-    this.socket.on('ptm_peer_left', (data) => {
+    this.socket.on('ptm_peer_left', data => {
       this._emit('peer_left', data);
       // Clean up the peer connection but keep local media for potential reconnect
       this._closePeerConnection();
     });
 
     // Error from the server
-    this.socket.on('ptm_error', (data) => {
+    this.socket.on('ptm_error', data => {
       this._emit('error', {
         type: 'signaling_error',
         message: data.envelope?.message || 'PTM signaling error',
@@ -184,7 +185,7 @@ class WebRTCService {
     });
 
     // Socket disconnect handling for reconnection (Requirement 18.3)
-    this.socket.on('disconnect', (reason) => {
+    this.socket.on('disconnect', reason => {
       if (this.currentPTMId && reason !== 'io client disconnect') {
         this._setConnectionState(ConnectionState.RECONNECTING);
         this._emit('connection_interrupted', { reason });
@@ -295,7 +296,7 @@ class WebRTCService {
    */
   setAudioEnabled(enabled) {
     if (this.localStream) {
-      this.localStream.getAudioTracks().forEach((track) => {
+      this.localStream.getAudioTracks().forEach(track => {
         track.enabled = enabled;
       });
       this._emit('audio_toggled', { enabled });
@@ -308,7 +309,7 @@ class WebRTCService {
    */
   setVideoEnabled(enabled) {
     if (this.localStream) {
-      this.localStream.getVideoTracks().forEach((track) => {
+      this.localStream.getVideoTracks().forEach(track => {
         track.enabled = enabled;
       });
       this._emit('video_toggled', { enabled });
@@ -355,21 +356,21 @@ class WebRTCService {
 
     // Add local tracks to the peer connection (Requirement 18.2)
     if (this.localStream) {
-      this.localStream.getTracks().forEach((track) => {
+      this.localStream.getTracks().forEach(track => {
         this.peerConnection.addTrack(track, this.localStream);
       });
     }
 
     // Handle incoming remote tracks
-    this.peerConnection.ontrack = (event) => {
-      event.streams[0]?.getTracks().forEach((track) => {
+    this.peerConnection.ontrack = event => {
+      event.streams[0]?.getTracks().forEach(track => {
         this.remoteStream.addTrack(track);
       });
       this._emit('remote_stream', { stream: this.remoteStream });
     };
 
     // Handle ICE candidates
-    this.peerConnection.onicecandidate = (event) => {
+    this.peerConnection.onicecandidate = event => {
       if (event.candidate && this.socket && this.currentPTMId) {
         this.socket.emit('ptm_ice_candidate', {
           ptmId: this.currentPTMId,
@@ -641,14 +642,14 @@ class WebRTCService {
    */
   _releaseMedia() {
     if (this.localStream) {
-      this.localStream.getTracks().forEach((track) => {
+      this.localStream.getTracks().forEach(track => {
         track.stop();
       });
       this.localStream = null;
     }
 
     if (this.remoteStream) {
-      this.remoteStream.getTracks().forEach((track) => {
+      this.remoteStream.getTracks().forEach(track => {
         track.stop();
       });
       this.remoteStream = null;
@@ -717,7 +718,7 @@ class WebRTCService {
    */
   _emit(event, data) {
     if (this.eventListeners.has(event)) {
-      this.eventListeners.get(event).forEach((callback) => {
+      this.eventListeners.get(event).forEach(callback => {
         try {
           callback(data);
         } catch (error) {
@@ -752,10 +753,10 @@ class WebRTCService {
       hasLocalStream: !!this.localStream,
       hasRemoteStream: !!this.remoteStream,
       localTracks: this.localStream
-        ? this.localStream.getTracks().map((t) => ({ kind: t.kind, enabled: t.enabled }))
+        ? this.localStream.getTracks().map(t => ({ kind: t.kind, enabled: t.enabled }))
         : [],
       remoteTracks: this.remoteStream
-        ? this.remoteStream.getTracks().map((t) => ({ kind: t.kind, enabled: t.enabled }))
+        ? this.remoteStream.getTracks().map(t => ({ kind: t.kind, enabled: t.enabled }))
         : [],
       reconnectAttempts: this.reconnectAttempts,
       socketConnected: !!this.socket?.connected,

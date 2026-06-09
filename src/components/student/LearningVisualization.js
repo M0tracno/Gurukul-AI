@@ -4,7 +4,7 @@ import makeStyles from '../../utils/makeStylesCompat';
 import { generate3DVisualizationData } from '../../services/advancedAIService';
 
 import { Box, Button, CircularProgress, Paper, Tab, Tabs, Typography } from '@mui/material';
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(3),
     borderRadius: 16,
@@ -144,10 +144,30 @@ const LearningVisualization = ({ studentId, courseId }) => {
   const mockCourseStructure = {
     id: courseId || 'course-1',
     topics: [
-      { id: 'topic-1', name: 'Algebra Fundamentals', importance: 1.2, relatedTopics: ['topic-2', 'topic-3'] },
-      { id: 'topic-2', name: 'Linear Equations', importance: 1.0, relatedTopics: ['topic-1', 'topic-4'] },
-      { id: 'topic-3', name: 'Quadratic Equations', importance: 1.1, relatedTopics: ['topic-1', 'topic-5'] },
-      { id: 'topic-4', name: 'Matrices & Determinants', importance: 0.9, relatedTopics: ['topic-2'] },
+      {
+        id: 'topic-1',
+        name: 'Algebra Fundamentals',
+        importance: 1.2,
+        relatedTopics: ['topic-2', 'topic-3'],
+      },
+      {
+        id: 'topic-2',
+        name: 'Linear Equations',
+        importance: 1.0,
+        relatedTopics: ['topic-1', 'topic-4'],
+      },
+      {
+        id: 'topic-3',
+        name: 'Quadratic Equations',
+        importance: 1.1,
+        relatedTopics: ['topic-1', 'topic-5'],
+      },
+      {
+        id: 'topic-4',
+        name: 'Matrices & Determinants',
+        importance: 0.9,
+        relatedTopics: ['topic-2'],
+      },
       { id: 'topic-5', name: 'Complex Numbers', importance: 0.8, relatedTopics: ['topic-3'] },
     ],
   };
@@ -178,7 +198,7 @@ const LearningVisualization = ({ studentId, courseId }) => {
   };
 
   const toggleRotation = () => {
-  const theme = useTheme();
+    const theme = useTheme();
     setRotationEnabled(!rotationEnabled);
   };
 
@@ -248,8 +268,8 @@ const LearningVisualization = ({ studentId, courseId }) => {
         const y2 = (targetNode.position.y / 100) * canvas.height;
 
         ctx.beginPath();
-        ctx.strokeStyle = conn.type === 'prerequisite' ?
-          'rgba(239, 71, 111, 0.6)' : 'rgba(6, 214, 160, 0.6)';
+        ctx.strokeStyle =
+          conn.type === 'prerequisite' ? 'rgba(239, 71, 111, 0.6)' : 'rgba(6, 214, 160, 0.6)';
         ctx.lineWidth = parseFloat(conn.strength) * 5;
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
@@ -286,28 +306,24 @@ const LearningVisualization = ({ studentId, courseId }) => {
           </Box>
         ) : (
           <>
-            {activeTab === 0 && (
-              <canvas ref={canvasRef} className={classes.canvas} />
-            )}
+            {activeTab === 0 && <canvas ref={canvasRef} className={classes.canvas} />}
 
             {activeTab === 1 && (
               <Box className={classes.placeholder}>
-                <Typography variant="h6">
-                  Learning Pathways Visualization
-                </Typography>
+                <Typography variant="h6">Learning Pathways Visualization</Typography>
                 <Typography variant="body2">
-                  This view shows optimal learning paths based on your current knowledge state and learning goals.
+                  This view shows optimal learning paths based on your current knowledge state and
+                  learning goals.
                 </Typography>
               </Box>
             )}
 
             {activeTab === 2 && (
               <Box className={classes.placeholder}>
-                <Typography variant="h6">
-                  Mastery Analysis Visualization
-                </Typography>
+                <Typography variant="h6">Mastery Analysis Visualization</Typography>
                 <Typography variant="body2">
-                  This view provides detailed analysis of your concept mastery across different knowledge domains.
+                  This view provides detailed analysis of your concept mastery across different
+                  knowledge domains.
                 </Typography>
               </Box>
             )}
@@ -358,4 +374,4 @@ const LearningVisualization = ({ studentId, courseId }) => {
   );
 };
 
-export default LearningVisualization;
+export default LearningVisualization;

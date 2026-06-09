@@ -38,7 +38,7 @@ export interface ModalProps extends Omit<MuiDialogProps, 'title'> {
 
 export const Modal = forwardRef<HTMLDivElement, ModalProps>(function Modal(
   { title, onClose, showCloseButton = true, actions, children, sx, ...props },
-  ref,
+  ref
 ) {
   return (
     <Dialog
@@ -91,7 +91,9 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(function Modal(
         {children}
       </DialogContent>
       {actions && (
-        <DialogActions sx={{ px: `${spacing.lg}px`, py: `${spacing.md}px`, gap: `${spacing.sm}px` }}>
+        <DialogActions
+          sx={{ px: `${spacing.lg}px`, py: `${spacing.md}px`, gap: `${spacing.sm}px` }}
+        >
           {actions}
         </DialogActions>
       )}

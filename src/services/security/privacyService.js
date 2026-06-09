@@ -7,7 +7,6 @@ import validator from 'validator';
  * Provides comprehensive data privacy and compliance features for GDPR, FERPA, and other regulations
  */
 
-
 class PrivacyService {
   constructor() {
     this.consentRecords = new Map();
@@ -40,13 +39,27 @@ class PrivacyService {
         name: 'General Data Protection Regulation',
         jurisdiction: 'EU',
         requirements: {
-          lawfulBasis: ['consent', 'contract', 'legal_obligation', 'vital_interests', 'public_task', 'legitimate_interests'],
-          dataSubjectRights: ['access', 'rectification', 'erasure', 'portability', 'restriction', 'objection'],
+          lawfulBasis: [
+            'consent',
+            'contract',
+            'legal_obligation',
+            'vital_interests',
+            'public_task',
+            'legitimate_interests',
+          ],
+          dataSubjectRights: [
+            'access',
+            'rectification',
+            'erasure',
+            'portability',
+            'restriction',
+            'objection',
+          ],
           dataRetention: 'purpose_limitation',
           dataMinimization: true,
           privacy_by_design: true,
-          dpo_required: true
-        }
+          dpo_required: true,
+        },
       },
       ferpa: {
         name: 'Family Educational Rights and Privacy Act',
@@ -56,18 +69,18 @@ class PrivacyService {
           educationalRecords: ['grades', 'transcripts', 'disciplinary_records'],
           parentalConsent: 'under_18_required',
           disclosure_limitations: true,
-          access_rights: 'student_parent'
-        }
+          access_rights: 'student_parent',
+        },
       },
       coppa: {
-        name: 'Children\'s Online Privacy Protection Act',
+        name: "Children's Online Privacy Protection Act",
         jurisdiction: 'US',
         requirements: {
           ageVerification: 'under_13_protection',
           parentalConsent: 'verifiable_required',
           dataCollection: 'limited_necessary',
-          disclosure: 'parent_notification'
-        }
+          disclosure: 'parent_notification',
+        },
       },
       ccpa: {
         name: 'California Consumer Privacy Act',
@@ -75,9 +88,9 @@ class PrivacyService {
         requirements: {
           consumer_rights: ['know', 'delete', 'opt_out', 'non_discrimination'],
           notice_requirements: 'collection_disclosure',
-          data_sales: 'opt_out_required'
-        }
-      }
+          data_sales: 'opt_out_required',
+        },
+      },
     };
   }
 
@@ -90,7 +103,7 @@ class PrivacyService {
 
   setupFrameworkCompliance(framework) {
     const config = this.complianceFrameworks[framework];
-    
+
     switch (framework) {
       case 'gdpr':
         this.setupGDPRCompliance(config);
@@ -116,8 +129,8 @@ class PrivacyService {
       breachNotification: {
         timeLimit: 72 * 60 * 60 * 1000, // 72 hours
         authorities: ['supervisory_authority'],
-        subjects: ['affected_individuals']
-      }
+        subjects: ['affected_individuals'],
+      },
     };
   }
 
@@ -127,7 +140,7 @@ class PrivacyService {
       educationalRecords: new Map(),
       directoryInformation: new Map(),
       parentalRights: new Map(),
-      disclosureLog: []
+      disclosureLog: [],
     };
   }
 
@@ -136,7 +149,7 @@ class PrivacyService {
     this.coppaCompliance = {
       ageVerification: new Map(),
       parentalConsent: new Map(),
-      dataMinimization: true
+      dataMinimization: true,
     };
   }
 
@@ -145,81 +158,114 @@ class PrivacyService {
     this.ccpaCompliance = {
       consumerRights: new Map(),
       dataSales: new Map(),
-      noticeRequirements: new Map()
+      noticeRequirements: new Map(),
     };
   }
 
   initializeDataClassification() {
     // Define data classification levels
     this.dataClassifications = new Map([
-      ['public', {
-        level: 0,
-        description: 'Information that can be freely shared',
-        retention: '7_years',
-        encryption: false
-      }],
-      ['internal', {
-        level: 1,
-        description: 'Information for internal use only',
-        retention: '5_years',
-        encryption: true
-      }],
-      ['confidential', {
-        level: 2,
-        description: 'Sensitive information requiring protection',
-        retention: '3_years',
-        encryption: true
-      }],
-      ['restricted', {
-        level: 3,
-        description: 'Highly sensitive information with strict access controls',
-        retention: '1_year',
-        encryption: true
-      }],
-      ['pii', {
-        level: 4,
-        description: 'Personally Identifiable Information',
-        retention: 'purpose_limited',
-        encryption: true,
-        special_handling: true
-      }],
-      ['educational_record', {
-        level: 3,
-        description: 'FERPA-protected educational records',
-        retention: 'student_lifecycle',
-        encryption: true,
-        ferpa_protected: true
-      }]
+      [
+        'public',
+        {
+          level: 0,
+          description: 'Information that can be freely shared',
+          retention: '7_years',
+          encryption: false,
+        },
+      ],
+      [
+        'internal',
+        {
+          level: 1,
+          description: 'Information for internal use only',
+          retention: '5_years',
+          encryption: true,
+        },
+      ],
+      [
+        'confidential',
+        {
+          level: 2,
+          description: 'Sensitive information requiring protection',
+          retention: '3_years',
+          encryption: true,
+        },
+      ],
+      [
+        'restricted',
+        {
+          level: 3,
+          description: 'Highly sensitive information with strict access controls',
+          retention: '1_year',
+          encryption: true,
+        },
+      ],
+      [
+        'pii',
+        {
+          level: 4,
+          description: 'Personally Identifiable Information',
+          retention: 'purpose_limited',
+          encryption: true,
+          special_handling: true,
+        },
+      ],
+      [
+        'educational_record',
+        {
+          level: 3,
+          description: 'FERPA-protected educational records',
+          retention: 'student_lifecycle',
+          encryption: true,
+          ferpa_protected: true,
+        },
+      ],
     ]);
   }
 
   setupRetentionPolicies() {
     this.retentionPolicies = new Map([
-      ['user_account', {
-        retention_period: '7_years',
-        trigger: 'account_closure',
-        compliance: ['gdpr', 'ferpa']
-      }],
-      ['educational_records', {
-        retention_period: 'permanent_with_consent',
-        trigger: 'graduation_plus_5_years',
-        compliance: ['ferpa']
-      }],
-      ['communication_logs', {
-        retention_period: '1_year',
-        trigger: 'creation_date',
-        compliance: ['gdpr']
-      }],
-      ['audit_logs', {
-        retention_period: '7_years',
-        trigger: 'log_creation',
-        compliance: ['gdpr', 'sox']
-      }],
-      ['consent_records', {
-        retention_period: 'consent_plus_7_years',
-        trigger: 'consent_withdrawal',
-        compliance: ['gdpr']
-      }]
+      [
+        'user_account',
+        {
+          retention_period: '7_years',
+          trigger: 'account_closure',
+          compliance: ['gdpr', 'ferpa'],
+        },
+      ],
+      [
+        'educational_records',
+        {
+          retention_period: 'permanent_with_consent',
+          trigger: 'graduation_plus_5_years',
+          compliance: ['ferpa'],
+        },
+      ],
+      [
+        'communication_logs',
+        {
+          retention_period: '1_year',
+          trigger: 'creation_date',
+          compliance: ['gdpr'],
+        },
+      ],
+      [
+        'audit_logs',
+        {
+          retention_period: '7_years',
+          trigger: 'log_creation',
+          compliance: ['gdpr', 'sox'],
+        },
+      ],
+      [
+        'consent_records',
+        {
+          retention_period: 'consent_plus_7_years',
+          trigger: 'consent_withdrawal',
+          compliance: ['gdpr'],
+        },
+      ],
     ]);
   }
 
@@ -242,11 +288,11 @@ class PrivacyService {
         metadata,
         framework: this.determineApplicableFramework(purpose),
         expires: this.calculateConsentExpiry(purpose),
-        version: '1.0'
+        version: '1.0',
       };
 
       this.consentRecords.set(consentId, consentRecord);
-      
+
       // Update user's consent profile
       if (!this.dataSubjects.has(userId)) {
         this.dataSubjects.set(userId, {
@@ -254,7 +300,7 @@ class PrivacyService {
           consents: new Map(),
           preferences: {},
           rights_exercised: [],
-          created: new Date().toISOString()
+          created: new Date().toISOString(),
         });
       }
 
@@ -265,7 +311,7 @@ class PrivacyService {
         userId,
         purpose,
         consentType,
-        consentId
+        consentId,
       });
 
       return consentRecord;
@@ -287,20 +333,20 @@ class PrivacyService {
         ...originalConsent,
         granted: false,
         withdrawnAt: new Date().toISOString(),
-        withdrawnBy: userId
+        withdrawnBy: userId,
       };
 
       userProfile.consents.set(purpose, withdrawalRecord);
       userProfile.rights_exercised.push({
         right: 'withdraw_consent',
         purpose,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
 
       await this.logDataProcessing('consent_withdrawn', {
         userId,
         purpose,
-        originalConsentId: originalConsent.consentId
+        originalConsentId: originalConsent.consentId,
       });
 
       // Trigger data processing halt for this purpose
@@ -324,7 +370,7 @@ class PrivacyService {
         status: 'pending',
         received: new Date().toISOString(),
         deadline: this.calculateResponseDeadline(requestType),
-        framework: 'gdpr'
+        framework: 'gdpr',
       };
 
       this.privacyRequests.set(requestId, request);
@@ -332,7 +378,7 @@ class PrivacyService {
       await this.logDataProcessing('data_subject_request', {
         userId,
         requestType,
-        requestId
+        requestId,
       });
 
       // Process the request based on type
@@ -362,7 +408,7 @@ class PrivacyService {
     try {
       const userId = request.userId;
       const userData = await this.collectUserData(userId);
-      
+
       const response = {
         requestId: request.requestId,
         userData,
@@ -370,7 +416,7 @@ class PrivacyService {
         processingActivities: this.getProcessingActivities(userId),
         dataRetention: this.getRetentionInfo(userId),
         thirdPartySharing: this.getThirdPartySharing(userId),
-        generatedAt: new Date().toISOString()
+        generatedAt: new Date().toISOString(),
       };
 
       request.status = 'completed';
@@ -387,7 +433,7 @@ class PrivacyService {
   async processErasureRequest(request) {
     try {
       const userId = request.userId;
-      
+
       // Check if erasure is possible (no legal obligations)
       const legalHolds = await this.checkLegalHolds(userId);
       if (legalHolds.length > 0) {
@@ -398,7 +444,7 @@ class PrivacyService {
 
       // Anonymize or delete user data
       await this.anonymizeUserData(userId);
-      
+
       request.status = 'completed';
       return { status: 'completed', message: 'Data successfully erased' };
     } catch (error) {
@@ -412,12 +458,12 @@ class PrivacyService {
     try {
       const userId = request.userId;
       const portableData = await this.extractPortableData(userId);
-      
+
       const response = {
         requestId: request.requestId,
         data: portableData,
         format: 'json',
-        generatedAt: new Date().toISOString()
+        generatedAt: new Date().toISOString(),
       };
 
       request.status = 'completed';
@@ -458,7 +504,7 @@ class PrivacyService {
       score,
       identifiedPatterns: this.identifyDataPatterns(content),
       complianceRequirements: this.getComplianceRequirements(classification),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     await this.logDataProcessing('data_classified', classificationData);
@@ -470,7 +516,7 @@ class PrivacyService {
       /\b\d{3}-\d{2}-\d{4}\b/, // SSN
       /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/, // Email
       /\b\d{3}-\d{3}-\d{4}\b/, // Phone
-      /\b\d{4}\s?\d{4}\s?\d{4}\s?\d{4}\b/ // Credit card
+      /\b\d{4}\s?\d{4}\s?\d{4}\s?\d{4}\b/, // Credit card
     ];
 
     return piiPatterns.some(pattern => pattern.test(content));
@@ -478,19 +524,36 @@ class PrivacyService {
 
   isEducationalRecord(content, context) {
     const educationalIndicators = [
-      'grade', 'transcript', 'gpa', 'assignment', 'quiz', 'exam',
-      'attendance', 'disciplinary', 'academic', 'enrollment'
+      'grade',
+      'transcript',
+      'gpa',
+      'assignment',
+      'quiz',
+      'exam',
+      'attendance',
+      'disciplinary',
+      'academic',
+      'enrollment',
     ];
 
     const contentLower = content.toLowerCase();
-    return educationalIndicators.some(indicator => contentLower.includes(indicator)) ||
-           context.studentId || context.courseId;
+    return (
+      educationalIndicators.some(indicator => contentLower.includes(indicator)) ||
+      context.studentId ||
+      context.courseId
+    );
   }
 
   containsSensitiveData(content) {
     const sensitivePatterns = [
-      'password', 'secret', 'private', 'confidential',
-      'medical', 'health', 'disability', 'financial'
+      'password',
+      'secret',
+      'private',
+      'confidential',
+      'medical',
+      'health',
+      'disability',
+      'financial',
     ];
 
     const contentLower = content.toLowerCase();
@@ -499,15 +562,15 @@ class PrivacyService {
 
   identifyDataPatterns(content) {
     const patterns = [];
-    
+
     if (/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/.test(content)) {
       patterns.push('email');
     }
-    
+
     if (/\b\d{3}-\d{3}-\d{4}\b/.test(content)) {
       patterns.push('phone');
     }
-    
+
     if (/\b\d{3}-\d{2}-\d{4}\b/.test(content)) {
       patterns.push('ssn');
     }
@@ -517,7 +580,7 @@ class PrivacyService {
 
   getComplianceRequirements(classification) {
     const requirements = [];
-    
+
     switch (classification) {
       case 'pii':
         requirements.push('gdpr', 'ccpa');
@@ -537,11 +600,11 @@ class PrivacyService {
   async anonymizeUserData(userId) {
     // Implement data anonymization
     const anonymizationId = uuidv4();
-    
+
     await this.logDataProcessing('data_anonymized', {
       userId,
       anonymizationId,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     // TODO: Implement actual data anonymization in backend
@@ -555,7 +618,7 @@ class PrivacyService {
       profile: {},
       activities: [],
       communications: [],
-      files: []
+      files: [],
     };
   }
 
@@ -568,7 +631,7 @@ class PrivacyService {
     return Array.from(this.retentionPolicies.entries()).map(([type, policy]) => ({
       dataType: type,
       retentionPeriod: policy.retention_period,
-      trigger: policy.trigger
+      trigger: policy.trigger,
     }));
   }
 
@@ -588,7 +651,7 @@ class PrivacyService {
     return {
       version: '1.0',
       exportDate: new Date().toISOString(),
-      data: userData
+      data: userData,
     };
   }
 
@@ -597,7 +660,7 @@ class PrivacyService {
     await this.logDataProcessing('processing_halted', {
       userId,
       purpose,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -637,11 +700,11 @@ class PrivacyService {
       data,
       timestamp: new Date().toISOString(),
       userAgent: navigator.userAgent,
-      ipAddress: await this.getClientIP()
+      ipAddress: await this.getClientIP(),
     };
 
     this.dataProcessingLog.push(logEntry);
-    
+
     // Keep only last 10000 log entries in memory
     if (this.dataProcessingLog.length > 10000) {
       this.dataProcessingLog = this.dataProcessingLog.slice(-10000);
@@ -652,23 +715,26 @@ class PrivacyService {
 
   startComplianceMonitoring() {
     // Start background compliance monitoring
-    setInterval(() => {
-      this.checkConsentExpiry();
-      this.reviewRetentionPolicies();
-      this.validateDataProcessing();
-    }, 24 * 60 * 60 * 1000); // Run daily
+    setInterval(
+      () => {
+        this.checkConsentExpiry();
+        this.reviewRetentionPolicies();
+        this.validateDataProcessing();
+      },
+      24 * 60 * 60 * 1000
+    ); // Run daily
   }
 
   checkConsentExpiry() {
     const now = new Date();
-    
+
     for (const [userId, userProfile] of this.dataSubjects) {
       for (const [purpose, consent] of userProfile.consents) {
         if (consent.expires && new Date(consent.expires) < now) {
           this.logDataProcessing('consent_expired', {
             userId,
             purpose,
-            consentId: consent.consentId
+            consentId: consent.consentId,
           });
         }
       }
@@ -678,7 +744,7 @@ class PrivacyService {
   reviewRetentionPolicies() {
     // Review and apply retention policies
     const now = new Date();
-    
+
     for (const [type, policy] of this.retentionPolicies) {
       // TODO: Implement retention policy enforcement
       console.log(`Reviewing retention policy for ${type}`);
@@ -701,9 +767,10 @@ class PrivacyService {
     return {
       activeConsents: this.consentRecords.size,
       dataSubjects: this.dataSubjects.size,
-      pendingRequests: Array.from(this.privacyRequests.values()).filter(r => r.status === 'pending').length,
+      pendingRequests: Array.from(this.privacyRequests.values()).filter(r => r.status === 'pending')
+        .length,
       processingActivities: this.dataProcessingLog.length,
-      complianceFrameworks: Object.keys(this.complianceFrameworks).length
+      complianceFrameworks: Object.keys(this.complianceFrameworks).length,
     };
   }
 
@@ -713,7 +780,7 @@ class PrivacyService {
       generatedAt: new Date().toISOString(),
       metrics: this.getPrivacyMetrics(),
       recentActivity: this.dataProcessingLog.slice(-100),
-      complianceStatus: this.checkComplianceStatus()
+      complianceStatus: this.checkComplianceStatus(),
     };
   }
 
@@ -723,7 +790,7 @@ class PrivacyService {
       gdpr: 'compliant',
       ferpa: 'compliant',
       coppa: 'compliant',
-      ccpa: 'compliant'
+      ccpa: 'compliant',
     };
   }
 }
@@ -732,4 +799,3 @@ class PrivacyService {
 const privacyService = new PrivacyService();
 
 export default privacyService;
-

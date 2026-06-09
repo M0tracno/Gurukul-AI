@@ -1,5 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { Alert, Avatar, Box, Button, Card, CardContent, Chip, Container, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControl, Grid, IconButton, InputLabelItem, Paper, Rating, Select, TextField, Typography } from '@mui/material';
+import {
+  Alert,
+  Avatar,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Divider,
+  FormControl,
+  Grid,
+  IconButton,
+  InputLabelItem,
+  Paper,
+  Rating,
+  Select,
+  TextField,
+  Typography,
+} from '@mui/material';
 import {
   Reply as ReplyIcon,
   Add as AddIcon,
@@ -7,7 +30,7 @@ import {
   Person as PersonIcon,
   Edit as EditIcon,
   Today as TodayIcon,
-  Send as SendIcon
+  Send as SendIcon,
 } from '@mui/icons-material';
 
 const ParentFeedback = () => {
@@ -23,7 +46,7 @@ const ParentFeedback = () => {
     rating: 0,
     title: '',
     message: '',
-    anonymous: false
+    anonymous: false,
   });
 
   useEffect(() => {
@@ -37,12 +60,14 @@ const ParentFeedback = () => {
         category: 'teaching-method',
         rating: 5,
         title: 'Excellent Teaching Approach',
-        message: 'Dr. Wilson has been incredibly helpful in explaining complex mathematical concepts. Emma has shown significant improvement since the beginning of the semester.',
+        message:
+          'Dr. Wilson has been incredibly helpful in explaining complex mathematical concepts. Emma has shown significant improvement since the beginning of the semester.',
         date: '2025-06-05',
         status: 'submitted',
-        response: 'Thank you for the positive feedback! I am glad to see Emma\'s progress and will continue to support her learning journey.',
+        response:
+          "Thank you for the positive feedback! I am glad to see Emma's progress and will continue to support her learning journey.",
         responseDate: '2025-06-06',
-        anonymous: false
+        anonymous: false,
       },
       {
         id: 2,
@@ -52,12 +77,14 @@ const ParentFeedback = () => {
         category: 'homework-load',
         rating: 3,
         title: 'Homework Workload Concern',
-        message: 'While I appreciate the comprehensive assignments, I feel the homework load might be a bit heavy for Michael. Could we discuss balancing the workload?',
+        message:
+          'While I appreciate the comprehensive assignments, I feel the homework load might be a bit heavy for Michael. Could we discuss balancing the workload?',
         date: '2025-06-03',
         status: 'responded',
-        response: 'Thank you for bringing this to my attention. I would be happy to discuss Michael\'s homework schedule and find ways to optimize his learning experience.',
+        response:
+          "Thank you for bringing this to my attention. I would be happy to discuss Michael's homework schedule and find ways to optimize his learning experience.",
         responseDate: '2025-06-04',
-        anonymous: false
+        anonymous: false,
       },
       {
         id: 3,
@@ -67,11 +94,12 @@ const ParentFeedback = () => {
         category: 'classroom-environment',
         rating: 4,
         title: 'Great Science Lab Activities',
-        message: 'Emma really enjoys the hands-on science experiments. The interactive approach has sparked her interest in STEM subjects.',
+        message:
+          'Emma really enjoys the hands-on science experiments. The interactive approach has sparked her interest in STEM subjects.',
         date: '2025-06-01',
         status: 'submitted',
-        anonymous: false
-      }
+        anonymous: false,
+      },
     ];
 
     setTimeout(() => {
@@ -91,11 +119,11 @@ const ParentFeedback = () => {
       rating: 0,
       title: '',
       message: '',
-      anonymous: false
+      anonymous: false,
     });
   };
 
-  const handleEditFeedback = (feedback) => {
+  const handleEditFeedback = feedback => {
     setSelectedFeedback(feedback);
     setNewFeedback({
       teacherName: feedback.teacherName,
@@ -105,7 +133,7 @@ const ParentFeedback = () => {
       rating: feedback.rating,
       title: feedback.title,
       message: feedback.message,
-      anonymous: feedback.anonymous
+      anonymous: feedback.anonymous,
     });
     setOpenDialog(true);
   };
@@ -115,34 +143,50 @@ const ParentFeedback = () => {
     setOpenDialog(false);
   };
 
-  const getCategoryColor = (category) => {
+  const getCategoryColor = category => {
     switch (category) {
-      case 'teaching-method': return 'primary';
-      case 'homework-load': return 'warning';
-      case 'classroom-environment': return 'success';
-      case 'communication': return 'info';
-      case 'general': return 'secondary';
-      default: return 'default';
+      case 'teaching-method':
+        return 'primary';
+      case 'homework-load':
+        return 'warning';
+      case 'classroom-environment':
+        return 'success';
+      case 'communication':
+        return 'info';
+      case 'general':
+        return 'secondary';
+      default:
+        return 'default';
     }
   };
 
-  const getStatusColor = (status) => {
+  const getStatusColor = status => {
     switch (status) {
-      case 'submitted': return 'primary';
-      case 'responded': return 'success';
-      case 'draft': return 'warning';
-      default: return 'default';
+      case 'submitted':
+        return 'primary';
+      case 'responded':
+        return 'success';
+      case 'draft':
+        return 'warning';
+      default:
+        return 'default';
     }
   };
 
-  const getCategoryLabel = (category) => {
+  const getCategoryLabel = category => {
     switch (category) {
-      case 'teaching-method': return 'Teaching Method';
-      case 'homework-load': return 'Homework Load';
-      case 'classroom-environment': return 'Classroom Environment';
-      case 'communication': return 'Communication';
-      case 'general': return 'General';
-      default: return category;
+      case 'teaching-method':
+        return 'Teaching Method';
+      case 'homework-load':
+        return 'Homework Load';
+      case 'classroom-environment':
+        return 'Classroom Environment';
+      case 'communication':
+        return 'Communication';
+      case 'general':
+        return 'General';
+      default:
+        return category;
     }
   };
 
@@ -171,21 +215,18 @@ const ParentFeedback = () => {
       </Box>
 
       {/* Feedback Guidelines */}
-      <Alert
-        severity="info"
-        sx={{ mb: 3, borderRadius: 2 }}
-        icon={<FeedbackIcon />}
-      >
-        Your feedback helps us improve the learning experience. All feedback is reviewed by teachers and administration.
+      <Alert severity="info" sx={{ mb: 3, borderRadius: 2 }} icon={<FeedbackIcon />}>
+        Your feedback helps us improve the learning experience. All feedback is reviewed by teachers
+        and administration.
       </Alert>
 
       <Grid container spacing={3}>
-        {feedbacks.map((feedback) => (
-          <Grid size={{xs:12}} key={feedback.id}>
+        {feedbacks.map(feedback => (
+          <Grid size={{ xs: 12 }} key={feedback.id}>
             <Card
               sx={{
                 borderRadius: 3,
-                boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
+                boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
               }}
             >
               <CardContent sx={{ p: 3 }}>
@@ -248,9 +289,7 @@ const ParentFeedback = () => {
 
                 {/* Feedback Message */}
                 <Paper sx={{ p: 2, mb: 2, bgcolor: 'grey.50', borderRadius: 2 }}>
-                  <Typography variant="body1">
-                    {feedback.message}
-                  </Typography>
+                  <Typography variant="body1">{feedback.message}</Typography>
                 </Paper>
 
                 {/* Feedback Meta */}
@@ -283,9 +322,7 @@ const ParentFeedback = () => {
                         </Typography>
                       </Box>
                       <Paper sx={{ p: 2, bgcolor: 'primary.light', borderRadius: 2 }}>
-                        <Typography variant="body2">
-                          {feedback.response}
-                        </Typography>
+                        <Typography variant="body2">{feedback.response}</Typography>
                       </Paper>
                     </Box>
                   </>
@@ -298,17 +335,15 @@ const ParentFeedback = () => {
 
       {/* Submit/Edit Feedback Dialog */}
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="md" fullWidth>
-        <DialogTitle>
-          {selectedFeedback ? 'Edit Feedback' : 'Submit New Feedback'}
-        </DialogTitle>
+        <DialogTitle>{selectedFeedback ? 'Edit Feedback' : 'Submit New Feedback'}</DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid size={{xs:12,md:6}}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <FormControl fullWidth>
                 <InputLabel>Teacher</InputLabel>
                 <Select
                   value={newFeedback.teacherName}
-                  onChange={(e) => setNewFeedback({...newFeedback, teacherName: e.target.value})}
+                  onChange={e => setNewFeedback({ ...newFeedback, teacherName: e.target.value })}
                   label="Teacher"
                 >
                   <MenuItem value="Dr. Sarah Wilson">Dr. Sarah Wilson - Mathematics</MenuItem>
@@ -319,12 +354,12 @@ const ParentFeedback = () => {
               </FormControl>
             </Grid>
 
-            <Grid size={{xs:12,md:6}}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <FormControl fullWidth>
                 <InputLabel>Student</InputLabel>
                 <Select
                   value={newFeedback.studentName}
-                  onChange={(e) => setNewFeedback({...newFeedback, studentName: e.target.value})}
+                  onChange={e => setNewFeedback({ ...newFeedback, studentName: e.target.value })}
                   label="Student"
                 >
                   <MenuItem value="Emma Johnson">Emma Johnson</MenuItem>
@@ -333,12 +368,12 @@ const ParentFeedback = () => {
               </FormControl>
             </Grid>
 
-            <Grid size={{xs:12,md:6}}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <FormControl fullWidth>
                 <InputLabel>Category</InputLabel>
                 <Select
                   value={newFeedback.category}
-                  onChange={(e) => setNewFeedback({...newFeedback, category: e.target.value})}
+                  onChange={e => setNewFeedback({ ...newFeedback, category: e.target.value })}
                   label="Category"
                 >
                   <MenuItem value="teaching-method">Teaching Method</MenuItem>
@@ -350,7 +385,7 @@ const ParentFeedback = () => {
               </FormControl>
             </Grid>
 
-            <Grid size={{xs:12,md:6}}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Box>
                 <Typography component="legend" variant="body2" gutterBottom>
                   Overall Rating
@@ -358,28 +393,28 @@ const ParentFeedback = () => {
                 <Rating
                   value={newFeedback.rating}
                   onChange={(event, newValue) => {
-                    setNewFeedback({...newFeedback, rating: newValue});
+                    setNewFeedback({ ...newFeedback, rating: newValue });
                   }}
                 />
               </Box>
             </Grid>
 
-            <Grid size={{xs:12}}>
+            <Grid size={{ xs: 12 }}>
               <TextField
                 fullWidth
                 label="Feedback Title"
                 value={newFeedback.title}
-                onChange={(e) => setNewFeedback({...newFeedback, title: e.target.value})}
+                onChange={e => setNewFeedback({ ...newFeedback, title: e.target.value })}
                 placeholder="Brief title for your feedback"
               />
             </Grid>
 
-            <Grid size={{xs:12}}>
+            <Grid size={{ xs: 12 }}>
               <TextField
                 fullWidth
                 label="Your Feedback"
                 value={newFeedback.message}
-                onChange={(e) => setNewFeedback({...newFeedback, message: e.target.value})}
+                onChange={e => setNewFeedback({ ...newFeedback, message: e.target.value })}
                 multiline
                 rows={4}
                 placeholder="Please provide detailed feedback about your experience..."
@@ -389,11 +424,7 @@ const ParentFeedback = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
-          <Button
-            onClick={handleSaveFeedback}
-            variant="contained"
-            startIcon={<SendIcon />}
-          >
+          <Button onClick={handleSaveFeedback} variant="contained" startIcon={<SendIcon />}>
             {selectedFeedback ? 'Update' : 'Submit'} Feedback
           </Button>
         </DialogActions>
@@ -403,4 +434,3 @@ const ParentFeedback = () => {
 };
 
 export default ParentFeedback;
-

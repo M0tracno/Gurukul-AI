@@ -1,28 +1,28 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const FileUpload = ({ 
-  endpoint, 
-  onSuccess, 
-  onError, 
+const FileUpload = ({
+  endpoint,
+  onSuccess,
+  onError,
   allowedTypes = 'image/*,application/pdf',
   maxFileSize = 5, // in MB
   buttonText = 'Upload File',
-  additionalFields = {}
+  additionalFields = {},
 }) => {
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState('');
 
-  const handleFileChange = (e) => {
+  const handleFileChange = e => {
     const selectedFile = e.target.files[0];
-    
+
     if (!selectedFile) {
       setFile(null);
       return;
     }
-    
+
     // Check file size
     const fileSizeInMB = selectedFile.size / (1024 * 1024);
     if (fileSizeInMB > maxFileSize) {
@@ -30,7 +30,7 @@ const FileUpload = ({
       setFile(null);
       return;
     }
-    
+
     setError('');
     setFile(selectedFile);
   };
@@ -43,7 +43,7 @@ const FileUpload = ({
 
     const formData = new FormData();
     formData.append('file', file);
-    
+
     // Add any additional fields to the form data
     Object.entries(additionalFields).forEach(([key, value]) => {
       formData.append(key, value);
@@ -57,14 +57,12 @@ const FileUpload = ({
       const response = await axios.post(endpoint, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
-        onUploadProgress: (progressEvent) => {
-          const percentCompleted = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
-          );
+        onUploadProgress: progressEvent => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
           setProgress(percentCompleted);
-        }
+        },
       });
 
       setUploading(false);
@@ -110,11 +108,7 @@ const FileUpload = ({
         </div>
       )}
 
-      <button
-        onClick={handleUpload}
-        disabled={!file || uploading}
-        className="upload-button"
-      >
+      <button onClick={handleUpload} disabled={!file || uploading} className="upload-button">
         {uploading ? 'Uploading...' : buttonText}
       </button>
 
@@ -198,7 +192,4 @@ const FileUpload = ({
   );
 };
 
-export default FileUpload; 
-
-
-
+export default FileUpload;

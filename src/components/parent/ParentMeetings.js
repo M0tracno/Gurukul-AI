@@ -21,7 +21,7 @@ import {
   Paper,
   Select,
   TextField,
-  Typography
+  Typography,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -34,7 +34,7 @@ import {
   Person as PersonIcon,
   Phone as PhoneIcon,
   Schedule as ScheduleIcon,
-  VideoCall as VideoCallIcon
+  VideoCall as VideoCallIcon,
 } from '@mui/icons-material';
 
 const ParentMeetings = () => {
@@ -49,7 +49,7 @@ const ParentMeetings = () => {
     time: '',
     type: 'video',
     reason: '',
-    notes: ''
+    notes: '',
   });
 
   useEffect(() => {
@@ -68,7 +68,7 @@ const ParentMeetings = () => {
         reason: 'Discuss recent test performance',
         location: 'Zoom Meeting',
         meetingLink: 'https://zoom.us/j/123456789',
-        notes: 'Prepare questions about homework strategies'
+        notes: 'Prepare questions about homework strategies',
       },
       {
         id: 2,
@@ -82,7 +82,7 @@ const ParentMeetings = () => {
         status: 'completed',
         reason: 'Review writing assignments',
         location: 'Classroom 201',
-        notes: 'Discussed improvement strategies for essay writing'
+        notes: 'Discussed improvement strategies for essay writing',
       },
       {
         id: 3,
@@ -97,8 +97,8 @@ const ParentMeetings = () => {
         reason: 'Science fair project discussion',
         location: 'Phone Call',
         phone: '+1 (555) 123-4567',
-        notes: 'Discuss project timeline and requirements'
-      }
+        notes: 'Discuss project timeline and requirements',
+      },
     ];
 
     setTimeout(() => {
@@ -117,11 +117,11 @@ const ParentMeetings = () => {
       time: '',
       type: 'video',
       reason: '',
-      notes: ''
+      notes: '',
     });
   };
 
-  const handleEditMeeting = (meeting) => {
+  const handleEditMeeting = meeting => {
     setSelectedMeeting(meeting);
     setNewMeeting({
       teacherName: meeting.teacherName,
@@ -130,7 +130,7 @@ const ParentMeetings = () => {
       time: meeting.time,
       type: meeting.type,
       reason: meeting.reason,
-      notes: meeting.notes
+      notes: meeting.notes,
     });
     setOpenDialog(true);
   };
@@ -140,11 +140,11 @@ const ParentMeetings = () => {
     setOpenDialog(false);
   };
 
-  const handleCancelMeeting = (meetingId) => {
+  const handleCancelMeeting = meetingId => {
     console.log('Canceling meeting:', meetingId);
   };
 
-  const handleJoinMeeting = (meeting) => {
+  const handleJoinMeeting = meeting => {
     if (meeting.type === 'video' && meeting.meetingLink) {
       window.open(meeting.meetingLink, '_blank');
     } else if (meeting.type === 'phone' && meeting.phone) {
@@ -152,22 +152,31 @@ const ParentMeetings = () => {
     }
   };
 
-  const getStatusColor = (status) => {
+  const getStatusColor = status => {
     switch (status) {
-      case 'scheduled': return 'primary';
-      case 'completed': return 'success';
-      case 'cancelled': return 'error';
-      case 'in-progress': return 'warning';
-      default: return 'default';
+      case 'scheduled':
+        return 'primary';
+      case 'completed':
+        return 'success';
+      case 'cancelled':
+        return 'error';
+      case 'in-progress':
+        return 'warning';
+      default:
+        return 'default';
     }
   };
 
-  const getTypeIcon = (type) => {
+  const getTypeIcon = type => {
     switch (type) {
-      case 'video': return <VideoCallIcon />;
-      case 'phone': return <PhoneIcon />;
-      case 'in-person': return <PersonIcon />;
-      default: return <EventIcon />;
+      case 'video':
+        return <VideoCallIcon />;
+      case 'phone':
+        return <PhoneIcon />;
+      case 'in-person':
+        return <PersonIcon />;
+      default:
+        return <EventIcon />;
     }
   };
 
@@ -202,25 +211,24 @@ const ParentMeetings = () => {
 
       {/* Upcoming Meetings Alert */}
       {meetings.filter(m => m.status === 'scheduled' && isUpcoming(m.date, m.time)).length > 0 && (
-        <Alert
-          severity="info"
-          sx={{ mb: 3, borderRadius: 2 }}
-          icon={<EventIcon />}
-        >
-          You have {meetings.filter(m => m.status === 'scheduled' && isUpcoming(m.date, m.time)).length} upcoming meetings scheduled
+        <Alert severity="info" sx={{ mb: 3, borderRadius: 2 }} icon={<EventIcon />}>
+          You have{' '}
+          {meetings.filter(m => m.status === 'scheduled' && isUpcoming(m.date, m.time)).length}{' '}
+          upcoming meetings scheduled
         </Alert>
       )}
 
       <Grid container spacing={3}>
-        {meetings.map((meeting) => (
-          <Grid size={{xs:12,md:6,lg:4}} key={meeting.id}>
+        {meetings.map(meeting => (
+          <Grid size={{ xs: 12, md: 6, lg: 4 }} key={meeting.id}>
             <Card
               sx={{
                 borderRadius: 3,
                 boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
                 height: '100%',
-                border: meeting.status === 'scheduled' && isUpcoming(meeting.date, meeting.time) ? 2 : 0,
-                borderColor: 'primary.main'
+                border:
+                  meeting.status === 'scheduled' && isUpcoming(meeting.date, meeting.time) ? 2 : 0,
+                borderColor: 'primary.main',
               }}
             >
               <CardContent sx={{ p: 3 }}>
@@ -263,7 +271,7 @@ const ParentMeetings = () => {
                         weekday: 'long',
                         year: 'numeric',
                         month: 'long',
-                        day: 'numeric'
+                        day: 'numeric',
                       })}
                     </Typography>
                   </Box>
@@ -275,9 +283,7 @@ const ParentMeetings = () => {
                   </Box>
                   <Box display="flex" alignItems="center">
                     <LocationOnIcon color="primary" sx={{ mr: 1 }} />
-                    <Typography variant="body2">
-                      {meeting.location}
-                    </Typography>
+                    <Typography variant="body2">{meeting.location}</Typography>
                   </Box>
                 </Paper>
 
@@ -310,7 +316,7 @@ const ParentMeetings = () => {
                   {meeting.status === 'scheduled' && isUpcoming(meeting.date, meeting.time) && (
                     <>
                       {(meeting.type === 'video' && meeting.meetingLink) ||
-                       (meeting.type === 'phone' && meeting.phone) ? (
+                      (meeting.type === 'phone' && meeting.phone) ? (
                         <Button
                           variant="contained"
                           size="small"
@@ -355,17 +361,15 @@ const ParentMeetings = () => {
 
       {/* Schedule/Edit Meeting Dialog */}
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>
-          {selectedMeeting ? 'Edit Meeting' : 'Schedule New Meeting'}
-        </DialogTitle>
+        <DialogTitle>{selectedMeeting ? 'Edit Meeting' : 'Schedule New Meeting'}</DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid size={{xs:12}}>
+            <Grid size={{ xs: 12 }}>
               <FormControl fullWidth>
                 <InputLabel>Teacher</InputLabel>
                 <Select
                   value={newMeeting.teacherName}
-                  onChange={(e) => setNewMeeting({...newMeeting, teacherName: e.target.value})}
+                  onChange={e => setNewMeeting({ ...newMeeting, teacherName: e.target.value })}
                   label="Teacher"
                 >
                   <MenuItem value="Dr. Sarah Wilson">Dr. Sarah Wilson - Mathematics</MenuItem>
@@ -376,34 +380,34 @@ const ParentMeetings = () => {
               </FormControl>
             </Grid>
 
-            <Grid size={{xs:6}}>
+            <Grid size={{ xs: 6 }}>
               <TextField
                 fullWidth
                 label="Date"
                 type="date"
                 value={newMeeting.date}
-                onChange={(e) => setNewMeeting({...newMeeting, date: e.target.value})}
+                onChange={e => setNewMeeting({ ...newMeeting, date: e.target.value })}
                 InputLabelProps={{ shrink: true }}
               />
             </Grid>
 
-            <Grid size={{xs:6}}>
+            <Grid size={{ xs: 6 }}>
               <TextField
                 fullWidth
                 label="Time"
                 type="time"
                 value={newMeeting.time}
-                onChange={(e) => setNewMeeting({...newMeeting, time: e.target.value})}
+                onChange={e => setNewMeeting({ ...newMeeting, time: e.target.value })}
                 InputLabelProps={{ shrink: true }}
               />
             </Grid>
 
-            <Grid size={{xs:12}}>
+            <Grid size={{ xs: 12 }}>
               <FormControl fullWidth>
                 <InputLabel>Meeting Type</InputLabel>
                 <Select
                   value={newMeeting.type}
-                  onChange={(e) => setNewMeeting({...newMeeting, type: e.target.value})}
+                  onChange={e => setNewMeeting({ ...newMeeting, type: e.target.value })}
                   label="Meeting Type"
                 >
                   <MenuItem value="video">Video Call</MenuItem>
@@ -413,23 +417,23 @@ const ParentMeetings = () => {
               </FormControl>
             </Grid>
 
-            <Grid size={{xs:12}}>
+            <Grid size={{ xs: 12 }}>
               <TextField
                 fullWidth
                 label="Reason for Meeting"
                 value={newMeeting.reason}
-                onChange={(e) => setNewMeeting({...newMeeting, reason: e.target.value})}
+                onChange={e => setNewMeeting({ ...newMeeting, reason: e.target.value })}
                 multiline
                 rows={2}
               />
             </Grid>
 
-            <Grid size={{xs:12}}>
+            <Grid size={{ xs: 12 }}>
               <TextField
                 fullWidth
                 label="Additional Notes"
                 value={newMeeting.notes}
-                onChange={(e) => setNewMeeting({...newMeeting, notes: e.target.value})}
+                onChange={e => setNewMeeting({ ...newMeeting, notes: e.target.value })}
                 multiline
                 rows={3}
                 placeholder="Any specific topics or questions you'd like to discuss..."
@@ -453,4 +457,3 @@ const ParentMeetings = () => {
 };
 
 export default ParentMeetings;
-

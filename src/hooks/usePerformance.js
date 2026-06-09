@@ -23,15 +23,18 @@ export const useDebounce = (value, delay) => {
 export const useThrottle = (callback, delay) => {
   const throttleRef = useRef(false);
 
-  return useCallback((...args) => {
-    if (!throttleRef.current) {
-      callback(...args);
-      throttleRef.current = true;
-      setTimeout(() => {
-        throttleRef.current = false;
-      }, delay);
-    }
-  }, [callback, delay]);
+  return useCallback(
+    (...args) => {
+      if (!throttleRef.current) {
+        callback(...args);
+        throttleRef.current = true;
+        setTimeout(() => {
+          throttleRef.current = false;
+        }, delay);
+      }
+    },
+    [callback, delay]
+  );
 };
 
 // Virtual scrolling hook for large lists
@@ -45,18 +48,19 @@ export const useVirtualScrolling = (items, containerHeight = 400, itemHeight = 5
     items.length
   );
 
-  const visibleItems = useMemo(() => 
-    items.slice(visibleStart, visibleEnd).map((item, index) => ({
-      ...item,
-      index: visibleStart + index,
-    })),
+  const visibleItems = useMemo(
+    () =>
+      items.slice(visibleStart, visibleEnd).map((item, index) => ({
+        ...item,
+        index: visibleStart + index,
+      })),
     [items, visibleStart, visibleEnd]
   );
 
   const totalHeight = items.length * itemHeight;
   const offsetY = visibleStart * itemHeight;
 
-  const handleScroll = useThrottle((e) => {
+  const handleScroll = useThrottle(e => {
     setScrollTop(e.target.scrollTop);
   }, 16); // ~60fps
 
@@ -70,7 +74,7 @@ export const useVirtualScrolling = (items, containerHeight = 400, itemHeight = 5
 };
 
 // Performance metrics tracking
-export const usePerformanceMetrics = (componentName) => {
+export const usePerformanceMetrics = componentName => {
   const [metrics, setMetrics] = useState({
     renderCount: 0,
     renderTime: 0,
@@ -121,17 +125,19 @@ export const useBundlePerformance = () => {
     const measureBundlePerformance = () => {
       const navigation = performance.getEntriesByType('navigation')[0];
       const resources = performance.getEntriesByType('resource');
-      
-      const jsResources = resources.filter(resource => 
-        resource.name.includes('.js') || resource.name.includes('.chunk')
+
+      const jsResources = resources.filter(
+        resource => resource.name.includes('.js') || resource.name.includes('.chunk')
       );
 
       const totalLoadTime = navigation.loadEventEnd - navigation.fetchStart;
-      const totalTransferSize = jsResources.reduce((acc, resource) => 
-        acc + (resource.transferSize || 0), 0
+      const totalTransferSize = jsResources.reduce(
+        (acc, resource) => acc + (resource.transferSize || 0),
+        0
       );
-      const totalDecodedSize = jsResources.reduce((acc, resource) => 
-        acc + (resource.decodedBodySize || 0), 0
+      const totalDecodedSize = jsResources.reduce(
+        (acc, resource) => acc + (resource.decodedBodySize || 0),
+        0
       );
 
       setBundleMetrics({
@@ -155,7 +161,7 @@ export const useBundlePerformance = () => {
 };
 
 // Memory leak detection
-export const useMemoryLeakDetector = (componentName) => {
+export const useMemoryLeakDetector = componentName => {
   const intervalRef = useRef(null);
   const [memoryTrend, setMemoryTrend] = useState([]);
 
@@ -165,7 +171,7 @@ export const useMemoryLeakDetector = (componentName) => {
     const checkMemory = () => {
       const currentMemory = performance.memory.usedJSHeapSize;
       const timestamp = Date.now();
-      
+
       setMemoryTrend(prev => {
         const newTrend = [...prev, { timestamp, memory: currentMemory }];
         // Keep only last 50 measurements
@@ -185,12 +191,14 @@ export const useMemoryLeakDetector = (componentName) => {
   // Detect potential memory leaks
   const isLeaking = useMemo(() => {
     if (memoryTrend.length < 10) return false;
-    
+
     const recent = memoryTrend.slice(-10);
-    const avgGrowth = recent.reduce((acc, curr, index) => {
-      if (index === 0) return 0;
-      return acc + (curr.memory - recent[index - 1].memory);
-    }, 0) / (recent.length - 1);
+    const avgGrowth =
+      recent.reduce((acc, curr, index) => {
+        if (index === 0) return 0;
+        return acc + (curr.memory - recent[index - 1].memory);
+      }, 0) /
+      (recent.length - 1);
 
     return avgGrowth > 1024 * 1024; // Alert if growing by more than 1MB on average
   }, [memoryTrend]);
@@ -209,7 +217,8 @@ export const useNetworkOptimization = () => {
   useEffect(() => {
     const updateNetworkInfo = () => {
       if ('connection' in navigator) {
-        const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+        const connection =
+          navigator.connection || navigator.mozConnection || navigator.webkitConnection;
         setNetworkInfo({
           effectiveType: connection.effectiveType || '4g',
           downlink: connection.downlink || 10,
@@ -219,9 +228,10 @@ export const useNetworkOptimization = () => {
     };
 
     updateNetworkInfo();
-    
+
     if ('connection' in navigator) {
-      const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+      const connection =
+        navigator.connection || navigator.mozConnection || navigator.webkitConnection;
       connection.addEventListener('change', updateNetworkInfo);
       return () => connection.removeEventListener('change', updateNetworkInfo);
     }
@@ -229,22 +239,24 @@ export const useNetworkOptimization = () => {
 
   // Optimize based on network conditions
   const shouldOptimizeForLowBandwidth = useMemo(() => {
-    return networkInfo.saveData || 
-           networkInfo.effectiveType === 'slow-2g' || 
-           networkInfo.effectiveType === '2g' ||
-           networkInfo.downlink < 1;
+    return (
+      networkInfo.saveData ||
+      networkInfo.effectiveType === 'slow-2g' ||
+      networkInfo.effectiveType === '2g' ||
+      networkInfo.downlink < 1
+    );
   }, [networkInfo]);
 
   return {
     networkInfo,
     shouldOptimizeForLowBandwidth,
-    getOptimizedImageSize: (originalWidth) => {
+    getOptimizedImageSize: originalWidth => {
       if (shouldOptimizeForLowBandwidth) {
         return Math.min(originalWidth, 640);
       }
       return originalWidth;
     },
-    getOptimizedChunkSize: (originalSize) => {
+    getOptimizedChunkSize: originalSize => {
       if (shouldOptimizeForLowBandwidth) {
         return Math.min(originalSize, 20); // Smaller chunks for slow connections
       }
@@ -268,8 +280,10 @@ export const getBundleChunks = () => {
     admin: () => import(/* webpackChunkName: "admin" */ '../pages/AdminDashboard'),
     student: () => import(/* webpackChunkName: "student" */ '../pages/StudentDashboard'),
     faculty: () => import(/* webpackChunkName: "faculty" */ '../pages/FacultyDashboard'),
-    analytics: () => import(/* webpackChunkName: "analytics" */ '../components/analytics/EnhancedAnalytics'),
-    settings: () => import(/* webpackChunkName: "settings" */ '../components/settings/SettingsPanel'),
+    analytics: () =>
+      import(/* webpackChunkName: "analytics" */ '../components/analytics/EnhancedAnalytics'),
+    settings: () =>
+      import(/* webpackChunkName: "settings" */ '../components/settings/SettingsPanel'),
   };
 
   return chunks;
@@ -289,4 +303,3 @@ const PerformanceHooks = {
 };
 
 export default PerformanceHooks;
-

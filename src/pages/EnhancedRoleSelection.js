@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Container, Typography } from '@mui/material';
-import {
-  School,
-  Person,
-  FamilyRestroom,
-  AdminPanelSettings,
-} from '@mui/icons-material';
+import { School, Person, FamilyRestroom, AdminPanelSettings } from '@mui/icons-material';
 
 const roles = [
   {
@@ -28,7 +23,7 @@ const roles = [
   {
     id: 'parent',
     title: 'Parent',
-    description: 'Stay connected with your child\'s academic journey and real-time insights.',
+    description: "Stay connected with your child's academic journey and real-time insights.",
     icon: FamilyRestroom,
     path: '/parent-login',
     color: '#34d399',

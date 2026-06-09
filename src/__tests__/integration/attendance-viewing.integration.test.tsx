@@ -31,7 +31,10 @@ vi.mock('../../features/shared/services/apiClient', () => ({
 }));
 
 import { apiClient } from '../../features/shared/services/apiClient';
-import { useAttendanceByStudent, type AttendanceRecord } from '../../features/shared/hooks/useAttendance';
+import {
+  useAttendanceByStudent,
+  type AttendanceRecord,
+} from '../../features/shared/hooks/useAttendance';
 
 const mockApiClient = vi.mocked(apiClient);
 
@@ -59,7 +62,7 @@ function AttendanceViewer({ studentId }: { studentId: string }) {
 
   const totalRecords = data.length;
   const presentCount = data.filter(
-    (r: AttendanceRecord) => r.status === 'present' || r.status === 'late',
+    (r: AttendanceRecord) => r.status === 'present' || r.status === 'late'
   ).length;
   const percentage = Math.round((presentCount / totalRecords) * 100);
 
@@ -99,9 +102,7 @@ function createWrapper() {
   });
 
   return function Wrapper({ children }: { children: ReactNode }) {
-    return (
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-    );
+    return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
   };
 }
 
@@ -181,9 +182,7 @@ describe('Attendance Viewing Integration Flow', () => {
     });
 
     // Verify summary: 3 present/late out of 4 = 75%
-    expect(screen.getByTestId('attendance-percentage')).toHaveTextContent(
-      'Attendance: 75% (3/4)',
-    );
+    expect(screen.getByTestId('attendance-percentage')).toHaveTextContent('Attendance: 75% (3/4)');
 
     // Verify table rows
     expect(screen.getByTestId('attendance-row-att-1')).toBeInTheDocument();
@@ -200,7 +199,7 @@ describe('Attendance Viewing Integration Flow', () => {
       '/api/v1/attendance/student/student-1',
       expect.objectContaining({
         params: undefined,
-      }),
+      })
     );
   });
 
@@ -223,7 +222,7 @@ describe('Attendance Viewing Integration Flow', () => {
 
     // First call fails
     mockApiClient.mockRejectedValueOnce(
-      new Error('Server error: unable to fetch attendance records'),
+      new Error('Server error: unable to fetch attendance records')
     );
 
     render(<AttendanceViewer studentId="student-1" />, {
@@ -235,9 +234,7 @@ describe('Attendance Viewing Integration Flow', () => {
       expect(screen.getByTestId('attendance-error')).toBeInTheDocument();
     });
 
-    expect(screen.getByRole('alert')).toHaveTextContent(
-      /failed to load attendance/i,
-    );
+    expect(screen.getByRole('alert')).toHaveTextContent(/failed to load attendance/i);
 
     // Retry button should be visible
     const retryBtn = screen.getByRole('button', { name: /retry/i });
@@ -268,8 +265,6 @@ describe('Attendance Viewing Integration Flow', () => {
       expect(screen.getByTestId('attendance-view')).toBeInTheDocument();
     });
 
-    expect(screen.getByTestId('attendance-percentage')).toHaveTextContent(
-      'Attendance: 100% (1/1)',
-    );
+    expect(screen.getByTestId('attendance-percentage')).toHaveTextContent('Attendance: 100% (1/1)');
   });
 });

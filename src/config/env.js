@@ -1,9 +1,9 @@
 /**
  * Environment Variable Compatibility Layer
- * 
+ *
  * Provides a unified interface for environment variables that works
  * with both CRA (process.env.REACT_APP_*) and Vite (import.meta.env.VITE_*).
- * 
+ *
  * During the migration period, this module bridges both patterns.
  * After full migration, all code should use `env.VARIABLE_NAME` from this module.
  */
@@ -27,7 +27,7 @@ function getEnv(name) {
       return import.meta.env[name];
     }
   }
-  
+
   return undefined;
 }
 
@@ -40,20 +40,20 @@ const env = {
   NODE_ENV: import.meta.env.MODE || 'development',
   DEV: import.meta.env.DEV,
   PROD: import.meta.env.PROD,
-  
+
   // API URLs
   API_URL: getEnv('API_URL') || 'http://localhost:5000',
   SOCKET_URL: getEnv('SOCKET_URL') || 'ws://localhost:5000',
-  
+
   // AI Services
   GEMINI_API_KEY: getEnv('GEMINI_API_KEY') || '',
   VERTEX_API_KEY: getEnv('VERTEX_API_KEY') || '',
   GCP_PROJECT_ID: getEnv('GCP_PROJECT_ID') || '',
-  
+
   // Google Cloud Storage
   GOOGLE_CLOUD_STORAGE_BUCKET_MAIN: getEnv('GOOGLE_CLOUD_STORAGE_BUCKET_MAIN') || '',
   GOOGLE_CLOUD_STORAGE_BUCKET_MEDIA: getEnv('GOOGLE_CLOUD_STORAGE_BUCKET_MEDIA') || '',
-  
+
   // Feature flags
   USE_MOCK_SERVICES: getEnv('USE_MOCK_SERVICES') === 'true',
   USE_MOCK_DATA: getEnv('USE_MOCK_DATA') === 'true',
@@ -61,7 +61,7 @@ const env = {
   DEBUG_MODE: getEnv('DEBUG_MODE') === 'true',
   ENABLE_ANALYTICS: getEnv('ENABLE_ANALYTICS') === 'true',
   ENABLE_PERFORMANCE_MONITORING: getEnv('ENABLE_PERFORMANCE_MONITORING') === 'true',
-  
+
   // Error reporting
   SENTRY_DSN: getEnv('SENTRY_DSN') || '',
   ERROR_REPORTING_ENDPOINT: getEnv('ERROR_REPORTING_ENDPOINT') || '',

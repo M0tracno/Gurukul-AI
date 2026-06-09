@@ -5,7 +5,6 @@ import DatabaseService from './databaseService';
  * Handles all API calls specific to faculty functionality
  */
 
-
 class FacultyService {
   constructor() {
     this.databaseService = DatabaseService;
@@ -19,13 +18,13 @@ class FacultyService {
       const response = await this.databaseService.fetchWithAuth(`/api/faculty/${facultyId}`);
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error fetching faculty profile:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -35,17 +34,19 @@ class FacultyService {
    */
   async getCourses(facultyId) {
     try {
-      const response = await this.databaseService.fetchWithAuth(`/api/faculty/${facultyId}/courses`);
+      const response = await this.databaseService.fetchWithAuth(
+        `/api/faculty/${facultyId}/courses`
+      );
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error fetching faculty courses:', error);
       return {
         success: false,
         error: error.message,
-        data: []
+        data: [],
       };
     }
   }
@@ -55,21 +56,21 @@ class FacultyService {
    */
   async getStudents(facultyId, courseId = null) {
     try {
-      const endpoint = courseId 
+      const endpoint = courseId
         ? `/api/faculty/${facultyId}/courses/${courseId}/students`
         : `/api/faculty/${facultyId}/students`;
-      
+
       const response = await this.databaseService.fetchWithAuth(endpoint);
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error fetching students:', error);
       return {
         success: false,
         error: error.message,
-        data: []
+        data: [],
       };
     }
   }
@@ -79,21 +80,21 @@ class FacultyService {
    */
   async getAssignments(facultyId, courseId = null) {
     try {
-      const endpoint = courseId 
+      const endpoint = courseId
         ? `/api/faculty/${facultyId}/courses/${courseId}/assignments`
         : `/api/faculty/${facultyId}/assignments`;
-      
+
       const response = await this.databaseService.fetchWithAuth(endpoint);
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error fetching assignments:', error);
       return {
         success: false,
         error: error.message,
-        data: []
+        data: [],
       };
     }
   }
@@ -107,18 +108,18 @@ class FacultyService {
         `/api/faculty/${facultyId}/courses/${courseId}/assignments`,
         {
           method: 'POST',
-          body: JSON.stringify(assignmentData)
+          body: JSON.stringify(assignmentData),
         }
       );
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error creating assignment:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -128,17 +129,19 @@ class FacultyService {
    */
   async getSubmissions(assignmentId) {
     try {
-      const response = await this.databaseService.fetchWithAuth(`/api/assignments/${assignmentId}/submissions`);
+      const response = await this.databaseService.fetchWithAuth(
+        `/api/assignments/${assignmentId}/submissions`
+      );
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error fetching submissions:', error);
       return {
         success: false,
         error: error.message,
-        data: []
+        data: [],
       };
     }
   }
@@ -152,18 +155,18 @@ class FacultyService {
         `/api/submissions/${submissionId}/grade`,
         {
           method: 'POST',
-          body: JSON.stringify(gradeData)
+          body: JSON.stringify(gradeData),
         }
       );
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error grading submission:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -177,18 +180,18 @@ class FacultyService {
         `/api/faculty/${facultyId}/courses/${courseId}/quizzes`,
         {
           method: 'POST',
-          body: JSON.stringify(quizData)
+          body: JSON.stringify(quizData),
         }
       );
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error creating quiz:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -198,21 +201,21 @@ class FacultyService {
    */
   async getQuizzes(facultyId, courseId = null) {
     try {
-      const endpoint = courseId 
+      const endpoint = courseId
         ? `/api/faculty/${facultyId}/courses/${courseId}/quizzes`
         : `/api/faculty/${facultyId}/quizzes`;
-      
+
       const response = await this.databaseService.fetchWithAuth(endpoint);
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error fetching quizzes:', error);
       return {
         success: false,
         error: error.message,
-        data: []
+        data: [],
       };
     }
   }
@@ -225,13 +228,13 @@ class FacultyService {
       const response = await this.databaseService.markAttendance(courseId, attendanceData);
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error marking attendance:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -244,14 +247,14 @@ class FacultyService {
       const response = await this.databaseService.getAttendance(courseId, date);
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error fetching attendance:', error);
       return {
         success: false,
         error: error.message,
-        data: []
+        data: [],
       };
     }
   }
@@ -265,18 +268,18 @@ class FacultyService {
         `/api/faculty/${facultyId}/students/${studentId}/feedback`,
         {
           method: 'POST',
-          body: JSON.stringify(feedbackData)
+          body: JSON.stringify(feedbackData),
         }
       );
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error sending feedback:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -286,17 +289,19 @@ class FacultyService {
    */
   async getMessages(facultyId) {
     try {
-      const response = await this.databaseService.fetchWithAuth(`/api/faculty/${facultyId}/messages`);
+      const response = await this.databaseService.fetchWithAuth(
+        `/api/faculty/${facultyId}/messages`
+      );
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error fetching messages:', error);
       return {
         success: false,
         error: error.message,
-        data: []
+        data: [],
       };
     }
   }
@@ -313,19 +318,19 @@ class FacultyService {
           body: JSON.stringify({
             ...messageData,
             recipientId: parentId,
-            recipientType: 'parent'
-          })
+            recipientType: 'parent',
+          }),
         }
       );
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error sending message:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -335,10 +340,12 @@ class FacultyService {
    */
   async getDashboardSummary(facultyId) {
     try {
-      const response = await this.databaseService.fetchWithAuth(`/api/faculty/${facultyId}/dashboard`);
+      const response = await this.databaseService.fetchWithAuth(
+        `/api/faculty/${facultyId}/dashboard`
+      );
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error fetching dashboard summary:', error);
@@ -349,8 +356,8 @@ class FacultyService {
           studentCount: 0,
           submissionsPending: 0,
           activeQuizzes: 0,
-          recentMessages: []
-        }
+          recentMessages: [],
+        },
       };
     }
   }
@@ -362,21 +369,21 @@ class FacultyService {
    */
   async getQuizAnalytics(quizId = null, timeRange = 'all') {
     try {
-      const endpoint = quizId 
+      const endpoint = quizId
         ? `/api/quizzes/${quizId}/analytics?timeRange=${timeRange}`
         : `/api/faculty/quiz-analytics?timeRange=${timeRange}`;
-      
+
       const response = await this.databaseService.fetchWithAuth(endpoint);
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error fetching quiz analytics:', error);
       return {
         success: false,
         error: error.message,
-        data: {}
+        data: {},
       };
     }
   }
@@ -389,14 +396,14 @@ class FacultyService {
       const response = await this.databaseService.fetchWithAuth(`/api/quizzes/${quizId}/attempts`);
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error fetching quiz attempts:', error);
       return {
         success: false,
         error: error.message,
-        data: []
+        data: [],
       };
     }
   }
@@ -409,37 +416,35 @@ class FacultyService {
       const response = await this.databaseService.fetchWithAuth(`/api/quizzes/${quizId}`);
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error fetching quiz:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
-    }  }
+    }
+  }
 
   /**
    * Update existing quiz
    */
   async updateQuiz(quizId, quizData) {
     try {
-      const response = await this.databaseService.fetchWithAuth(
-        `/api/quizzes/${quizId}`,
-        {
-          method: 'PUT',
-          body: JSON.stringify(quizData)
-        }
-      );
+      const response = await this.databaseService.fetchWithAuth(`/api/quizzes/${quizId}`, {
+        method: 'PUT',
+        body: JSON.stringify(quizData),
+      });
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error updating quiz:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -449,21 +454,18 @@ class FacultyService {
    */
   async deleteQuiz(quizId) {
     try {
-      const response = await this.databaseService.fetchWithAuth(
-        `/api/quizzes/${quizId}`,
-        {
-          method: 'DELETE'
-        }
-      );
+      const response = await this.databaseService.fetchWithAuth(`/api/quizzes/${quizId}`, {
+        method: 'DELETE',
+      });
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error deleting quiz:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -477,18 +479,18 @@ class FacultyService {
         `/api/quizzes/${quizId}/duplicate`,
         {
           method: 'POST',
-          body: JSON.stringify({ title: newTitle })
+          body: JSON.stringify({ title: newTitle }),
         }
       );
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error duplicating quiz:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -501,10 +503,10 @@ class FacultyService {
       const response = await this.databaseService.fetchWithAuth(
         `/api/quizzes/${quizId}/export?format=${format}`,
         {
-          method: 'GET'
+          method: 'GET',
         }
       );
-      
+
       // Handle file download
       const blob = new Blob([response], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
@@ -518,13 +520,13 @@ class FacultyService {
 
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error exporting quiz results:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -538,18 +540,18 @@ class FacultyService {
     try {
       const queryParams = new URLSearchParams(filters).toString();
       const endpoint = `/api/question-bank${queryParams ? `?${queryParams}` : ''}`;
-      
+
       const response = await this.databaseService.fetchWithAuth(endpoint);
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error fetching question bank:', error);
       return {
         success: false,
         error: error.message,
-        data: []
+        data: [],
       };
     }
   }
@@ -559,22 +561,19 @@ class FacultyService {
    */
   async createQuestion(questionData) {
     try {
-      const response = await this.databaseService.fetchWithAuth(
-        '/api/question-bank',
-        {
-          method: 'POST',
-          body: JSON.stringify(questionData)
-        }
-      );
+      const response = await this.databaseService.fetchWithAuth('/api/question-bank', {
+        method: 'POST',
+        body: JSON.stringify(questionData),
+      });
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error creating question:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -588,18 +587,18 @@ class FacultyService {
         `/api/question-bank/${questionId}`,
         {
           method: 'PUT',
-          body: JSON.stringify(questionData)
+          body: JSON.stringify(questionData),
         }
       );
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error updating question:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -612,18 +611,18 @@ class FacultyService {
       const response = await this.databaseService.fetchWithAuth(
         `/api/question-bank/${questionId}`,
         {
-          method: 'DELETE'
+          method: 'DELETE',
         }
       );
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error deleting question:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -633,22 +632,19 @@ class FacultyService {
    */
   async bulkDeleteQuestions(questionIds) {
     try {
-      const response = await this.databaseService.fetchWithAuth(
-        '/api/question-bank/bulk-delete',
-        {
-          method: 'POST',
-          body: JSON.stringify({ questionIds })
-        }
-      );
+      const response = await this.databaseService.fetchWithAuth('/api/question-bank/bulk-delete', {
+        method: 'POST',
+        body: JSON.stringify({ questionIds }),
+      });
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error bulk deleting questions:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -662,10 +658,10 @@ class FacultyService {
         `/api/question-bank/export?format=${format}`,
         {
           method: 'POST',
-          body: JSON.stringify({ questionIds })
+          body: JSON.stringify({ questionIds }),
         }
       );
-      
+
       // Handle file download
       const blob = new Blob([JSON.stringify(response)], { type: 'application/json' });
       const url = window.URL.createObjectURL(blob);
@@ -679,13 +675,13 @@ class FacultyService {
 
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error exporting questions:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -695,22 +691,19 @@ class FacultyService {
    */
   async importQuestions(questionsData) {
     try {
-      const response = await this.databaseService.fetchWithAuth(
-        '/api/question-bank/import',
-        {
-          method: 'POST',
-          body: JSON.stringify({ questions: questionsData })
-        }
-      );
+      const response = await this.databaseService.fetchWithAuth('/api/question-bank/import', {
+        method: 'POST',
+        body: JSON.stringify({ questions: questionsData }),
+      });
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error importing questions:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -723,14 +716,14 @@ class FacultyService {
       const response = await this.databaseService.fetchWithAuth('/api/question-bank/categories');
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error fetching question categories:', error);
       return {
         success: false,
         error: error.message,
-        data: []
+        data: [],
       };
     }
   }
@@ -740,22 +733,19 @@ class FacultyService {
    */
   async createQuestionCategory(categoryData) {
     try {
-      const response = await this.databaseService.fetchWithAuth(
-        '/api/question-bank/categories',
-        {
-          method: 'POST',
-          body: JSON.stringify(categoryData)
-        }
-      );
+      const response = await this.databaseService.fetchWithAuth('/api/question-bank/categories', {
+        method: 'POST',
+        body: JSON.stringify(categoryData),
+      });
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error creating question category:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -768,21 +758,18 @@ class FacultyService {
       const response = await this.databaseService.fetchWithAuth('/api/subjects');
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error fetching subjects:', error);
       return {
         success: false,
         error: error.message,
-        data: ['Mathematics', 'Science', 'English', 'History', 'Geography'] // fallback
+        data: ['Mathematics', 'Science', 'English', 'History', 'Geography'], // fallback
       };
-    }  }
+    }
+  }
 }
 
 const facultyService = new FacultyService();
 export default facultyService;
-
-
-
-

@@ -1,6 +1,6 @@
 /**
  * Mock Database Service
- * 
+ *
  * This module provides mock implementations of database services for use during development.
  * It provides realistic data for the Gurukul AI platform's dashboards and features.
  */
@@ -10,7 +10,8 @@ export const mockCourses = [
   {
     id: 'course-001',
     title: 'Introduction to Sanskrit Grammar',
-    description: 'Learn the foundational aspects of Sanskrit grammar, including noun declensions and verb conjugations.',
+    description:
+      'Learn the foundational aspects of Sanskrit grammar, including noun declensions and verb conjugations.',
     instructor: 'Dronacharya',
     enrollmentCount: 156,
     rating: 4.8,
@@ -20,12 +21,13 @@ export const mockCourses = [
     topics: ['Noun Cases', 'Verb Forms', 'Sentence Structure'],
     progress: 35,
     category: 'Languages',
-    featured: true
+    featured: true,
   },
   {
     id: 'course-002',
     title: 'Vedic Mathematics',
-    description: 'Explore the ancient techniques of mathematical calculations as documented in the Vedic texts.',
+    description:
+      'Explore the ancient techniques of mathematical calculations as documented in the Vedic texts.',
     instructor: 'Aryabhata',
     enrollmentCount: 203,
     rating: 4.9,
@@ -35,12 +37,13 @@ export const mockCourses = [
     topics: ['Mental Calculation', 'Number Properties', 'Geometric Applications'],
     progress: 65,
     category: 'Mathematics',
-    featured: true
+    featured: true,
   },
   {
     id: 'course-003',
     title: 'Ayurvedic Science Fundamentals',
-    description: 'Understand the core principles of Ayurveda and its approach to holistic health and wellness.',
+    description:
+      'Understand the core principles of Ayurveda and its approach to holistic health and wellness.',
     instructor: 'Charaka',
     enrollmentCount: 189,
     rating: 4.7,
@@ -50,12 +53,13 @@ export const mockCourses = [
     topics: ['Doshas', 'Herbs & Remedies', 'Lifestyle Practices'],
     progress: 22,
     category: 'Health Sciences',
-    featured: true
+    featured: true,
   },
   {
     id: 'course-004',
     title: 'Classical Indian Philosophy',
-    description: 'A comprehensive overview of the six classical schools of Indian philosophical thought.',
+    description:
+      'A comprehensive overview of the six classical schools of Indian philosophical thought.',
     instructor: 'Kanada',
     enrollmentCount: 124,
     rating: 4.6,
@@ -65,8 +69,8 @@ export const mockCourses = [
     topics: ['Nyaya', 'Vaisheshika', 'Samkhya', 'Yoga', 'Mimamsa', 'Vedanta'],
     progress: 45,
     category: 'Philosophy',
-    featured: false
-  }
+    featured: false,
+  },
 ];
 
 // Mock students data
@@ -80,10 +84,10 @@ export const mockStudents = [
     overallProgress: 42,
     achievements: [
       { id: 'ach-001', title: 'First Assignment', date: '2025-02-01' },
-      { id: 'ach-002', title: 'Knowledge Seeker', date: '2025-03-10' }
+      { id: 'ach-002', title: 'Knowledge Seeker', date: '2025-03-10' },
     ],
     profileImage: '/assets/images/students/arjuna.jpg',
-    attendance: 92
+    attendance: 92,
   },
   {
     id: 'student-002',
@@ -92,11 +96,9 @@ export const mockStudents = [
     enrollmentDate: '2025-01-20',
     courses: ['course-001', 'course-003'],
     overallProgress: 38,
-    achievements: [
-      { id: 'ach-001', title: 'First Assignment', date: '2025-02-05' }
-    ],
+    achievements: [{ id: 'ach-001', title: 'First Assignment', date: '2025-02-05' }],
     profileImage: '/assets/images/students/bhima.jpg',
-    attendance: 87
+    attendance: 87,
   },
   {
     id: 'student-003',
@@ -108,11 +110,11 @@ export const mockStudents = [
     achievements: [
       { id: 'ach-001', title: 'First Assignment', date: '2025-02-10' },
       { id: 'ach-003', title: 'Perfect Score', date: '2025-03-15' },
-      { id: 'ach-004', title: 'Consistent Learner', date: '2025-04-01' }
+      { id: 'ach-004', title: 'Consistent Learner', date: '2025-04-01' },
     ],
     profileImage: '/assets/images/students/draupadi.jpg',
-    attendance: 98
-  }
+    attendance: 98,
+  },
 ];
 
 // Mock analytics data
@@ -123,13 +125,13 @@ export const mockAnalytics = {
     { month: 'Mar', value: 68 },
     { month: 'Apr', value: 79 },
     { month: 'May', value: 85 },
-    { month: 'Jun', value: 82 }
+    { month: 'Jun', value: 82 },
   ],
   courseCompletion: [
     { course: 'Sanskrit Grammar', completion: 62 },
     { course: 'Vedic Mathematics', completion: 75 },
     { course: 'Ayurvedic Science', completion: 48 },
-    { course: 'Indian Philosophy', completion: 55 }
+    { course: 'Indian Philosophy', completion: 55 },
   ],
   assessmentScores: [
     { assessment: 'Quiz 1', averageScore: 78 },
@@ -137,14 +139,14 @@ export const mockAnalytics = {
     { assessment: 'Midterm', averageScore: 75 },
     { assessment: 'Quiz 2', averageScore: 80 },
     { assessment: 'Assignment 2', averageScore: 85 },
-    { assessment: 'Final Exam', averageScore: 79 }
+    { assessment: 'Final Exam', averageScore: 79 },
   ],
   studentActivity: {
     totalActiveStudents: 487,
     averageSessionDuration: 45, // minutes
     completedAssignments: 1653,
-    submissionsLastWeek: 312
-  }
+    submissionsLastWeek: 312,
+  },
 };
 
 // Mock assessment data
@@ -158,7 +160,7 @@ export const mockAssessments = [
     averageScore: 21.4,
     submissionRate: 92,
     status: 'open',
-    type: 'quiz'
+    type: 'quiz',
   },
   {
     id: 'assessment-002',
@@ -169,7 +171,7 @@ export const mockAssessments = [
     averageScore: 42.8,
     submissionRate: 78,
     status: 'open',
-    type: 'assignment'
+    type: 'assignment',
   },
   {
     id: 'assessment-003',
@@ -180,7 +182,7 @@ export const mockAssessments = [
     averageScore: 0,
     submissionRate: 0,
     status: 'upcoming',
-    type: 'exam'
+    type: 'exam',
   },
   {
     id: 'assessment-004',
@@ -191,8 +193,8 @@ export const mockAssessments = [
     averageScore: 25.6,
     submissionRate: 95,
     status: 'closed',
-    type: 'discussion'
-  }
+    type: 'discussion',
+  },
 ];
 
 // Mock notifications data
@@ -204,7 +206,7 @@ export const mockNotifications = [
     timestamp: new Date(Date.now() - 3600000).toISOString(),
     read: false,
     type: 'assignment',
-    courseId: 'course-001'
+    courseId: 'course-001',
   },
   {
     id: 'notif-002',
@@ -213,7 +215,7 @@ export const mockNotifications = [
     timestamp: new Date(Date.now() - 86400000).toISOString(),
     read: true,
     type: 'grade',
-    courseId: 'course-002'
+    courseId: 'course-002',
   },
   {
     id: 'notif-003',
@@ -222,8 +224,8 @@ export const mockNotifications = [
     timestamp: new Date(Date.now() - 172800000).toISOString(),
     read: false,
     type: 'reminder',
-    courseId: 'course-003'
-  }
+    courseId: 'course-003',
+  },
 ];
 
 /**
@@ -231,8 +233,8 @@ export const mockNotifications = [
  * @param {string} dataType - Type of data to retrieve
  * @returns {Array|Object} Mock data
  */
-export const getMockData = (dataType) => {
-  switch(dataType) {
+export const getMockData = dataType => {
+  switch (dataType) {
     case 'courses':
       return mockCourses;
     case 'students':
@@ -259,7 +261,7 @@ class MockDatabaseService {
       students: mockStudents,
       analytics: mockAnalytics,
       assessments: mockAssessments,
-      notifications: mockNotifications
+      notifications: mockNotifications,
     };
   }
 
@@ -271,11 +273,11 @@ class MockDatabaseService {
   async getData(dataType) {
     // Simulate network delay
     await new Promise(resolve => setTimeout(resolve, 500));
-    
+
     if (!this.data[dataType]) {
       throw new Error(`Unknown data type: ${dataType}`);
     }
-    
+
     return this.data[dataType];
   }
 
@@ -288,16 +290,16 @@ class MockDatabaseService {
   async getItemById(dataType, id) {
     // Simulate network delay
     await new Promise(resolve => setTimeout(resolve, 300));
-    
+
     if (!this.data[dataType]) {
       throw new Error(`Unknown data type: ${dataType}`);
     }
-    
+
     const item = this.data[dataType].find(item => item.id === id);
     if (!item) {
       throw new Error(`Item with ID ${id} not found in ${dataType}`);
     }
-    
+
     return item;
   }
 
@@ -310,17 +312,17 @@ class MockDatabaseService {
   async addItem(dataType, item) {
     // Simulate network delay
     await new Promise(resolve => setTimeout(resolve, 800));
-    
+
     if (!this.data[dataType]) {
       throw new Error(`Unknown data type: ${dataType}`);
     }
-    
+
     // Generate a new ID if not provided
     const newItem = {
       ...item,
-      id: item.id || `${dataType}-${Date.now()}`
+      id: item.id || `${dataType}-${Date.now()}`,
     };
-    
+
     this.data[dataType].push(newItem);
     return newItem;
   }
@@ -335,21 +337,21 @@ class MockDatabaseService {
   async updateItem(dataType, id, updates) {
     // Simulate network delay
     await new Promise(resolve => setTimeout(resolve, 600));
-    
+
     if (!this.data[dataType]) {
       throw new Error(`Unknown data type: ${dataType}`);
     }
-    
+
     const index = this.data[dataType].findIndex(item => item.id === id);
     if (index === -1) {
       throw new Error(`Item with ID ${id} not found in ${dataType}`);
     }
-    
+
     const updatedItem = {
       ...this.data[dataType][index],
-      ...updates
+      ...updates,
     };
-    
+
     this.data[dataType][index] = updatedItem;
     return updatedItem;
   }
@@ -363,20 +365,19 @@ class MockDatabaseService {
   async deleteItem(dataType, id) {
     // Simulate network delay
     await new Promise(resolve => setTimeout(resolve, 700));
-    
+
     if (!this.data[dataType]) {
       throw new Error(`Unknown data type: ${dataType}`);
     }
-    
+
     const index = this.data[dataType].findIndex(item => item.id === id);
     if (index === -1) {
       throw new Error(`Item with ID ${id} not found in ${dataType}`);
     }
-    
+
     this.data[dataType].splice(index, 1);
     return true;
   }
 }
 
 export default MockDatabaseService;
-

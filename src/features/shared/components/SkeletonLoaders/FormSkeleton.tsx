@@ -21,12 +21,7 @@ interface FormSkeletonProps {
 
 export function FormSkeleton({ sections = 3, fieldsPerSection = 3 }: FormSkeletonProps) {
   return (
-    <Box
-      role="status"
-      aria-label="Loading form..."
-      aria-busy="true"
-      sx={{ p: 3, maxWidth: 720 }}
-    >
+    <Box role="status" aria-label="Loading form..." aria-busy="true" sx={{ p: 3, maxWidth: 720 }}>
       {/* Form title */}
       <Skeleton variant="text" width={280} height={36} sx={{ mb: 1 }} />
       {/* Subtitle / description */}

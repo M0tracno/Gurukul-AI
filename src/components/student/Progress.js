@@ -1,8 +1,54 @@
-import React, {  useEffect } from 'react';
-import { Assignment as AssignmentIcon, CheckCircle as CheckCircleIcon, Download, Quiz as QuizIcon, Refresh, School as SchoolIcon, Star as StarIcon, TrendingDown as TrendingDownIcon, TrendingUp as TrendingUpIcon } from '@mui/icons-material';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
+import React, { useEffect } from 'react';
+import {
+  Assignment as AssignmentIcon,
+  CheckCircle as CheckCircleIcon,
+  Download,
+  Quiz as QuizIcon,
+  Refresh,
+  School as SchoolIcon,
+  Star as StarIcon,
+  TrendingDown as TrendingDownIcon,
+  TrendingUp as TrendingUpIcon,
+} from '@mui/icons-material';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip as RechartsTooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  Radar,
+} from 'recharts';
 
-import { Alert, Avatar, Box, Button, Card, CardContent, Chip, Container, Grid, IconButton, LinearProgress, List, ListItem, ListItemIcon, ListItemText, Paper, Tab, Tabs, Tooltip, Typography } from '@mui/material';
+import {
+  Alert,
+  Avatar,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  Container,
+  Grid,
+  IconButton,
+  LinearProgress,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Paper,
+  Tab,
+  Tabs,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 const Progress = () => {
   const [tabValue, setTabValue] = useState(0);
   const [progressData, setProgressData] = useState(null);
@@ -19,7 +65,7 @@ const Progress = () => {
         overallGrade: 85,
         rank: 12,
         totalStudents: 45,
-        trend: 'up'
+        trend: 'up',
       },
       subjects: [
         {
@@ -31,7 +77,7 @@ const Progress = () => {
           assignments: { completed: 8, total: 10, pending: 2, overdue: 0 },
           quizzes: { completed: 4, total: 5, upcoming: 1 },
           attendance: 95,
-          teacherFeedback: 'Excellent problem-solving skills. Keep up the good work!'
+          teacherFeedback: 'Excellent problem-solving skills. Keep up the good work!',
         },
         {
           name: 'English Literature',
@@ -42,7 +88,7 @@ const Progress = () => {
           assignments: { completed: 9, total: 10, pending: 1, overdue: 0 },
           quizzes: { completed: 5, total: 5, upcoming: 0 },
           attendance: 92,
-          teacherFeedback: 'Good analytical skills. Focus more on essay structure.'
+          teacherFeedback: 'Good analytical skills. Focus more on essay structure.',
         },
         {
           name: 'Physics',
@@ -53,7 +99,7 @@ const Progress = () => {
           assignments: { completed: 10, total: 12, pending: 2, overdue: 0 },
           quizzes: { completed: 3, total: 4, upcoming: 1 },
           attendance: 98,
-          teacherFeedback: 'Outstanding performance in lab work and theory.'
+          teacherFeedback: 'Outstanding performance in lab work and theory.',
         },
         {
           name: 'Chemistry',
@@ -64,7 +110,7 @@ const Progress = () => {
           assignments: { completed: 7, total: 9, pending: 1, overdue: 1 },
           quizzes: { completed: 4, total: 4, upcoming: 0 },
           attendance: 90,
-          teacherFeedback: 'Need to improve lab report quality and theory understanding.'
+          teacherFeedback: 'Need to improve lab report quality and theory understanding.',
         },
         {
           name: 'History',
@@ -75,16 +121,64 @@ const Progress = () => {
           assignments: { completed: 9, total: 10, pending: 1, overdue: 0 },
           quizzes: { completed: 5, total: 5, upcoming: 0 },
           attendance: 94,
-          teacherFeedback: 'Great research skills and historical analysis.'
-        }
+          teacherFeedback: 'Great research skills and historical analysis.',
+        },
       ],
       progressChart: [
-        { month: 'Jan', overall: 75, math: 70, english: 80, physics: 78, chemistry: 72, history: 76 },
-        { month: 'Feb', overall: 78, math: 75, english: 82, physics: 80, chemistry: 74, history: 78 },
-        { month: 'Mar', overall: 80, math: 78, english: 83, physics: 85, chemistry: 76, history: 80 },
-        { month: 'Apr', overall: 82, math: 82, english: 84, physics: 87, chemistry: 78, history: 82 },
-        { month: 'May', overall: 84, math: 85, english: 84, physics: 89, chemistry: 79, history: 84 },
-        { month: 'Jun', overall: 85, math: 88, english: 82, physics: 90, chemistry: 78, history: 86 }
+        {
+          month: 'Jan',
+          overall: 75,
+          math: 70,
+          english: 80,
+          physics: 78,
+          chemistry: 72,
+          history: 76,
+        },
+        {
+          month: 'Feb',
+          overall: 78,
+          math: 75,
+          english: 82,
+          physics: 80,
+          chemistry: 74,
+          history: 78,
+        },
+        {
+          month: 'Mar',
+          overall: 80,
+          math: 78,
+          english: 83,
+          physics: 85,
+          chemistry: 76,
+          history: 80,
+        },
+        {
+          month: 'Apr',
+          overall: 82,
+          math: 82,
+          english: 84,
+          physics: 87,
+          chemistry: 78,
+          history: 82,
+        },
+        {
+          month: 'May',
+          overall: 84,
+          math: 85,
+          english: 84,
+          physics: 89,
+          chemistry: 79,
+          history: 84,
+        },
+        {
+          month: 'Jun',
+          overall: 85,
+          math: 88,
+          english: 82,
+          physics: 90,
+          chemistry: 78,
+          history: 86,
+        },
       ],
       skillsRadar: [
         { skill: 'Problem Solving', score: 85 },
@@ -92,25 +186,58 @@ const Progress = () => {
         { skill: 'Communication', score: 82 },
         { skill: 'Collaboration', score: 88 },
         { skill: 'Creativity', score: 75 },
-        { skill: 'Time Management', score: 70 }
+        { skill: 'Time Management', score: 70 },
       ],
       achievements: [
         { title: 'Math Quiz Champion', date: '2025-06-01', icon: 'trophy', type: 'academic' },
         { title: 'Perfect Attendance', date: '2025-05-30', icon: 'star', type: 'attendance' },
         { title: 'Science Fair Winner', date: '2025-05-15', icon: 'trophy', type: 'competition' },
-        { title: 'Assignment Streak', date: '2025-05-10', icon: 'target', type: 'assignment' }
+        { title: 'Assignment Streak', date: '2025-05-10', icon: 'target', type: 'assignment' },
       ],
       goals: [
         { title: 'Achieve 90+ in Mathematics', progress: 88, target: 90, deadline: '2025-07-01' },
         { title: 'Improve Chemistry Grade', progress: 78, target: 85, deadline: '2025-06-30' },
-        { title: 'Complete All Pending Assignments', progress: 70, target: 100, deadline: '2025-06-15' }
+        {
+          title: 'Complete All Pending Assignments',
+          progress: 70,
+          target: 100,
+          deadline: '2025-06-15',
+        },
       ],
       recentActivities: [
-        { type: 'assignment', subject: 'Mathematics', title: 'Calculus Problems', score: 92, date: '2025-06-06', status: 'completed' },
-        { type: 'quiz', subject: 'Physics', title: 'Mechanics Test', score: 88, date: '2025-06-05', status: 'completed' },
-        { type: 'assignment', subject: 'English', title: 'Literary Analysis', score: 85, date: '2025-06-04', status: 'completed' },
-        { type: 'assignment', subject: 'Chemistry', title: 'Lab Report', score: null, date: '2025-06-07', status: 'pending' }
-      ]
+        {
+          type: 'assignment',
+          subject: 'Mathematics',
+          title: 'Calculus Problems',
+          score: 92,
+          date: '2025-06-06',
+          status: 'completed',
+        },
+        {
+          type: 'quiz',
+          subject: 'Physics',
+          title: 'Mechanics Test',
+          score: 88,
+          date: '2025-06-05',
+          status: 'completed',
+        },
+        {
+          type: 'assignment',
+          subject: 'English',
+          title: 'Literary Analysis',
+          score: 85,
+          date: '2025-06-04',
+          status: 'completed',
+        },
+        {
+          type: 'assignment',
+          subject: 'Chemistry',
+          title: 'Lab Report',
+          score: null,
+          date: '2025-06-07',
+          status: 'pending',
+        },
+      ],
     };
 
     setTimeout(() => {
@@ -123,30 +250,34 @@ const Progress = () => {
     setTabValue(newValue);
   };
 
-  const getGradeColor = (grade) => {
+  const getGradeColor = grade => {
     if (grade >= 85) return 'success';
     if (grade >= 70) return 'warning';
     return 'error';
   };
 
-  const getTrendIcon = (trend) => {
+  const getTrendIcon = trend => {
     return trend === 'up' ? <TrendingUpIcon color="success" /> : <TrendingDownIcon color="error" />;
   };
 
-  const getTrendColor = (trend) => {
+  const getTrendColor = trend => {
     return trend === 'up' ? 'success' : 'error';
   };
 
-  const getActivityIcon = (type) => {
+  const getActivityIcon = type => {
     return type === 'assignment' ? <AssignmentIcon /> : <QuizIcon />;
   };
 
-  const getAchievementIcon = (iconType) => {
+  const getAchievementIcon = iconType => {
     switch (iconType) {
-      case 'trophy': return <TrophyIcon />;
-      case 'star': return <StarIcon />;
-      case 'target': return <TargetIcon />;
-      default: return <CheckCircleIcon />;
+      case 'trophy':
+        return <TrophyIcon />;
+      case 'star':
+        return <StarIcon />;
+      case 'target':
+        return <TargetIcon />;
+      default:
+        return <CheckCircleIcon />;
     }
   };
 
@@ -170,11 +301,7 @@ const Progress = () => {
               <Refresh />
             </IconButton>
           </Tooltip>
-          <Button
-            variant="outlined"
-            startIcon={<Download />}
-            sx={{ borderRadius: 2 }}
-          >
+          <Button variant="outlined" startIcon={<Download />} sx={{ borderRadius: 2 }}>
             Download Report
           </Button>
         </Box>
@@ -184,7 +311,7 @@ const Progress = () => {
       <Card sx={{ mb: 3, borderRadius: 3, boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
         <CardContent sx={{ p: 3 }}>
           <Grid container spacing={3} alignItems="center">
-            <Grid size={{xs:12,md:3}}>
+            <Grid size={{ xs: 12, md: 3 }}>
               <Box textAlign="center">
                 <Typography variant="h2" color="primary" fontWeight="bold">
                   {progressData.student.overallGrade}%
@@ -194,14 +321,18 @@ const Progress = () => {
                 </Typography>
                 <Box display="flex" alignItems="center" justifyContent="center">
                   {getTrendIcon(progressData.student.trend)}
-                  <Typography variant="body2" color={getTrendColor(progressData.student.trend)} sx={{ ml: 0.5 }}>
+                  <Typography
+                    variant="body2"
+                    color={getTrendColor(progressData.student.trend)}
+                    sx={{ ml: 0.5 }}
+                  >
                     Trending {progressData.student.trend}
                   </Typography>
                 </Box>
               </Box>
             </Grid>
 
-            <Grid size={{xs:12,md:3}}>
+            <Grid size={{ xs: 12, md: 3 }}>
               <Box textAlign="center">
                 <Typography variant="h3" color="secondary" fontWeight="bold">
                   #{progressData.student.rank}
@@ -212,7 +343,7 @@ const Progress = () => {
               </Box>
             </Grid>
 
-            <Grid size={{xs:12,md:6}}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
                 Progress Trend (Last 6 Months)
               </Typography>
@@ -222,7 +353,13 @@ const Progress = () => {
                   <XAxis dataKey="month" />
                   <YAxis domain={['dataMin - 5', 'dataMax + 5']} />
                   <RechartsTooltip />
-                  <Line type="monotone" dataKey="overall" stroke="#8884d8" strokeWidth={3} name="Overall" />
+                  <Line
+                    type="monotone"
+                    dataKey="overall"
+                    stroke="#8884d8"
+                    strokeWidth={3}
+                    name="Overall"
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </Grid>
@@ -249,7 +386,7 @@ const Progress = () => {
           <Box sx={{ p: 3 }}>
             <Grid container spacing={3}>
               {progressData.subjects.map((subject, index) => (
-                <Grid size={{xs:12,lg:6}} key={subject.name}>
+                <Grid size={{ xs: 12, lg: 6 }} key={subject.name}>
                   <Card sx={{ borderRadius: 2, height: '100%' }}>
                     <CardContent>
                       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
@@ -257,7 +394,11 @@ const Progress = () => {
                           {subject.name}
                         </Typography>
                         <Box display="flex" alignItems="center" gap={1}>
-                          <Typography variant="h5" color={getGradeColor(subject.currentGrade)} fontWeight="bold">
+                          <Typography
+                            variant="h5"
+                            color={getGradeColor(subject.currentGrade)}
+                            fontWeight="bold"
+                          >
                             {subject.currentGrade}%
                           </Typography>
                           {getTrendIcon(subject.trend)}
@@ -266,7 +407,12 @@ const Progress = () => {
 
                       {/* Progress Bar */}
                       <Box mb={2}>
-                        <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+                        <Box
+                          display="flex"
+                          justifyContent="space-between"
+                          alignItems="center"
+                          mb={1}
+                        >
                           <Typography variant="body2" color="text.secondary">
                             Current: {subject.currentGrade}%
                           </Typography>
@@ -284,25 +430,31 @@ const Progress = () => {
 
                       {/* Stats Grid */}
                       <Grid container spacing={1} mb={2}>
-                        <Grid size={{xs:4}}>
+                        <Grid size={{ xs: 4 }}>
                           <Paper sx={{ p: 1, textAlign: 'center', bgcolor: 'primary.light' }}>
-                            <Typography variant="caption" display="block">Assignments</Typography>
+                            <Typography variant="caption" display="block">
+                              Assignments
+                            </Typography>
                             <Typography variant="body2" fontWeight="bold">
                               {subject.assignments.completed}/{subject.assignments.total}
                             </Typography>
                           </Paper>
                         </Grid>
-                        <Grid size={{xs:4}}>
+                        <Grid size={{ xs: 4 }}>
                           <Paper sx={{ p: 1, textAlign: 'center', bgcolor: 'secondary.light' }}>
-                            <Typography variant="caption" display="block">Quizzes</Typography>
+                            <Typography variant="caption" display="block">
+                              Quizzes
+                            </Typography>
                             <Typography variant="body2" fontWeight="bold">
                               {subject.quizzes.completed}/{subject.quizzes.total}
                             </Typography>
                           </Paper>
                         </Grid>
-                        <Grid size={{xs:4}}>
+                        <Grid size={{ xs: 4 }}>
                           <Paper sx={{ p: 1, textAlign: 'center', bgcolor: 'success.light' }}>
-                            <Typography variant="caption" display="block">Attendance</Typography>
+                            <Typography variant="caption" display="block">
+                              Attendance
+                            </Typography>
                             <Typography variant="body2" fontWeight="bold">
                               {subject.attendance}%
                             </Typography>
@@ -311,11 +463,7 @@ const Progress = () => {
                       </Grid>
 
                       {/* Teacher Feedback */}
-                      <Alert
-                        severity="info"
-                        sx={{ borderRadius: 2 }}
-                        icon={<SchoolIcon />}
-                      >
+                      <Alert severity="info" sx={{ borderRadius: 2 }} icon={<SchoolIcon />}>
                         <Typography variant="body2">
                           <strong>Teacher's Note:</strong> {subject.teacherFeedback}
                         </Typography>
@@ -331,7 +479,7 @@ const Progress = () => {
         {tabValue === 1 && (
           <Box sx={{ p: 3 }}>
             <Grid container spacing={3}>
-              <Grid size={{xs:12,md:6}}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <Card sx={{ borderRadius: 2, height: '100%' }}>
                   <CardContent>
                     <Typography variant="h6" fontWeight="bold" gutterBottom>
@@ -355,7 +503,7 @@ const Progress = () => {
                 </Card>
               </Grid>
 
-              <Grid size={{xs:12,md:6}}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <Card sx={{ borderRadius: 2, height: '100%' }}>
                   <CardContent>
                     <Typography variant="h6" fontWeight="bold" gutterBottom>
@@ -381,7 +529,7 @@ const Progress = () => {
         {tabValue === 2 && (
           <Box sx={{ p: 3 }}>
             <Grid container spacing={3}>
-              <Grid size={{xs:12,md:6}}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <Card sx={{ borderRadius: 2, height: '100%' }}>
                   <CardContent>
                     <Typography variant="h6" fontWeight="bold" gutterBottom>
@@ -399,7 +547,12 @@ const Progress = () => {
                             primary={achievement.title}
                             secondary={new Date(achievement.date).toLocaleDateString()}
                           />
-                          <Chip label={achievement.type} size="small" color="primary" variant="outlined" />
+                          <Chip
+                            label={achievement.type}
+                            size="small"
+                            color="primary"
+                            variant="outlined"
+                          />
                         </ListItem>
                       ))}
                     </List>
@@ -407,7 +560,7 @@ const Progress = () => {
                 </Card>
               </Grid>
 
-              <Grid size={{xs:12,md:6}}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <Card sx={{ borderRadius: 2, height: '100%' }}>
                   <CardContent>
                     <Typography variant="h6" fontWeight="bold" gutterBottom>
@@ -423,7 +576,12 @@ const Progress = () => {
                             primary={goal.title}
                             secondary={
                               <Box>
-                                <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+                                <Box
+                                  display="flex"
+                                  justifyContent="space-between"
+                                  alignItems="center"
+                                  mb={1}
+                                >
                                   <Typography variant="caption">
                                     Progress: {goal.progress}/{goal.target}
                                   </Typography>
@@ -458,9 +616,14 @@ const Progress = () => {
               {progressData.recentActivities.map((activity, index) => (
                 <ListItem key={index} sx={{ bgcolor: 'grey.50', borderRadius: 2, mb: 1 }}>
                   <ListItemIcon>
-                    <Avatar sx={{
-                      bgcolor: activity.status === 'completed' ? getGradeColor(activity.score || 0) : 'warning.main'
-                    }}>
+                    <Avatar
+                      sx={{
+                        bgcolor:
+                          activity.status === 'completed'
+                            ? getGradeColor(activity.score || 0)
+                            : 'warning.main',
+                      }}
+                    >
                       {getActivityIcon(activity.type)}
                     </Avatar>
                   </ListItemIcon>
@@ -477,11 +640,7 @@ const Progress = () => {
                             size="small"
                           />
                         ) : (
-                          <Chip
-                            label={activity.status}
-                            color="warning"
-                            size="small"
-                          />
+                          <Chip label={activity.status} color="warning" size="small" />
                         )}
                       </Box>
                     }
@@ -507,4 +666,3 @@ const Progress = () => {
 };
 
 export default Progress;
-

@@ -19,9 +19,7 @@ import { Button } from './Button';
 import { IconButton } from './IconButton';
 
 function renderWithTheme(ui: React.ReactElement) {
-  return render(
-    <ThemeProvider theme={lightTheme}>{ui}</ThemeProvider>,
-  );
+  return render(<ThemeProvider theme={lightTheme}>{ui}</ThemeProvider>);
 }
 
 describe('Button', () => {
@@ -77,7 +75,11 @@ describe('Button', () => {
 
   it('does not fire click when disabled', () => {
     const onClick = vi.fn();
-    renderWithTheme(<Button disabled onClick={onClick}>Submit</Button>);
+    renderWithTheme(
+      <Button disabled onClick={onClick}>
+        Submit
+      </Button>
+    );
 
     const button = screen.getByRole('button');
     // Disabled buttons block pointer events — verified by the disabled attribute
@@ -88,7 +90,11 @@ describe('Button', () => {
 
   it('does not fire click when loading', () => {
     const onClick = vi.fn();
-    renderWithTheme(<Button loading onClick={onClick}>Submit</Button>);
+    renderWithTheme(
+      <Button loading onClick={onClick}>
+        Submit
+      </Button>
+    );
 
     const button = screen.getByRole('button');
     expect(button).toBeDisabled();
@@ -103,14 +109,14 @@ describe('Button', () => {
     rerender(
       <ThemeProvider theme={lightTheme}>
         <Button variant="outlined">Outlined</Button>
-      </ThemeProvider>,
+      </ThemeProvider>
     );
     expect(screen.getByRole('button')).toBeInTheDocument();
 
     rerender(
       <ThemeProvider theme={lightTheme}>
         <Button variant="text">Text</Button>
-      </ThemeProvider>,
+      </ThemeProvider>
     );
     expect(screen.getByRole('button')).toBeInTheDocument();
   });
@@ -121,7 +127,7 @@ describe('IconButton', () => {
     renderWithTheme(
       <IconButton aria-label="Delete item">
         <DeleteIcon />
-      </IconButton>,
+      </IconButton>
     );
     expect(screen.getByRole('button', { name: 'Delete item' })).toBeInTheDocument();
   });
@@ -131,7 +137,7 @@ describe('IconButton', () => {
     renderWithTheme(
       <IconButton aria-label="Delete item" tooltip="Delete this record">
         <DeleteIcon />
-      </IconButton>,
+      </IconButton>
     );
 
     await user.hover(screen.getByRole('button'));
@@ -145,7 +151,7 @@ describe('IconButton', () => {
     renderWithTheme(
       <IconButton aria-label="Delete" onClick={onClick}>
         <DeleteIcon />
-      </IconButton>,
+      </IconButton>
     );
 
     await user.click(screen.getByRole('button'));
@@ -158,7 +164,7 @@ describe('IconButton', () => {
     renderWithTheme(
       <IconButton aria-label="Delete" onClick={onClick}>
         <DeleteIcon />
-      </IconButton>,
+      </IconButton>
     );
 
     const button = screen.getByRole('button');
@@ -172,7 +178,7 @@ describe('IconButton', () => {
     renderWithTheme(
       <IconButton aria-label="Delete" loading>
         <DeleteIcon />
-      </IconButton>,
+      </IconButton>
     );
     const button = screen.getByRole('button');
     expect(button).toHaveAttribute('aria-busy', 'true');
@@ -183,7 +189,7 @@ describe('IconButton', () => {
     renderWithTheme(
       <IconButton aria-label="Delete" disabled>
         <DeleteIcon />
-      </IconButton>,
+      </IconButton>
     );
     expect(screen.getByRole('button')).toBeDisabled();
   });

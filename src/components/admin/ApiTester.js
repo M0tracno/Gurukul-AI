@@ -1,6 +1,28 @@
 import React, { useState } from 'react';
-import { Refresh, Warning as WarningIcon, CheckCircle as SuccessIcon, Error as ErrorIcon, ExpandLess as ExpandLessIcon, ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
-import { Box, Button, Card, CardContent, Chip, Collapse, Grid, IconButton, LinearProgress, List, ListItem, ListItemIcon, ListItemText, Typography } from '@mui/material';
+import {
+  Refresh,
+  Warning as WarningIcon,
+  CheckCircle as SuccessIcon,
+  Error as ErrorIcon,
+  ExpandLess as ExpandLessIcon,
+  ExpandMore as ExpandMoreIcon,
+} from '@mui/icons-material';
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  Collapse,
+  Grid,
+  IconButton,
+  LinearProgress,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Typography,
+} from '@mui/material';
 import env from '../../config/env';
 
 const API_BASE_URL = `${env.API_URL}/api`;
@@ -12,13 +34,13 @@ const ApiTester = () => {
 
   // Define all API endpoints to test
   const apiEndpoints = {
-    'Authentication': [
+    Authentication: [
       { method: 'POST', endpoint: '/auth/login', description: 'User login' },
       { method: 'POST', endpoint: '/auth/register', description: 'User registration' },
       { method: 'POST', endpoint: '/auth/logout', description: 'User logout' },
       { method: 'GET', endpoint: '/auth/verify', description: 'Token verification' },
     ],
-    'Admin': [
+    Admin: [
       { method: 'GET', endpoint: '/admin/users', description: 'Get all users' },
       { method: 'GET', endpoint: '/admin/users/stats', description: 'Get user statistics' },
       { method: 'GET', endpoint: '/admin/system/stats', description: 'Get system statistics' },
@@ -26,24 +48,24 @@ const ApiTester = () => {
       { method: 'PUT', endpoint: '/admin/users/:id', description: 'Update user' },
       { method: 'DELETE', endpoint: '/admin/users/:id', description: 'Delete user' },
     ],
-    'Faculty': [
+    Faculty: [
       { method: 'GET', endpoint: '/faculty/courses', description: 'Get faculty courses' },
       { method: 'GET', endpoint: '/faculty/students', description: 'Get faculty students' },
       { method: 'POST', endpoint: '/faculty/assignments', description: 'Create assignment' },
       { method: 'GET', endpoint: '/faculty/assignments', description: 'Get assignments' },
       { method: 'POST', endpoint: '/faculty/grades', description: 'Submit grades' },
     ],
-    'Student': [
+    Student: [
       { method: 'GET', endpoint: '/student/courses', description: 'Get student courses' },
       { method: 'GET', endpoint: '/student/assignments', description: 'Get assignments' },
       { method: 'GET', endpoint: '/student/grades', description: 'Get grades' },
       { method: 'POST', endpoint: '/student/submissions', description: 'Submit assignment' },
     ],
-    'Parent': [
+    Parent: [
       { method: 'GET', endpoint: '/parent/children', description: 'Get children data' },
       { method: 'GET', endpoint: '/parent/grades', description: 'Get children grades' },
       { method: 'POST', endpoint: '/parent/communication', description: 'Send message to teacher' },
-    ]
+    ],
   };
 
   // Test individual endpoint
@@ -54,7 +76,7 @@ const ApiTester = () => {
         method,
         headers: {
           'Content-Type': 'application/json',
-          ...(token && { 'Authorization': `Bearer ${token}` }),
+          ...(token && { Authorization: `Bearer ${token}` }),
         },
       };
 
@@ -114,12 +136,12 @@ const ApiTester = () => {
   };
 
   // Toggle section expansion
-  const toggleSection = (section) => {
+  const toggleSection = section => {
     setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
   };
 
   // Get status color and icon
-  const getStatusInfo = (result) => {
+  const getStatusInfo = result => {
     if (result.testing) {
       return { color: 'info', icon: <LinearProgress size={20} /> };
     }
@@ -180,16 +202,16 @@ const ApiTester = () => {
           {/* Summary Stats */}
           {stats.total > 0 && (
             <Grid container spacing={2}>
-              <Grid size={{xs:3}}>
+              <Grid size={{ xs: 3 }}>
                 <Chip label={`Total: ${stats.total}`} color="default" variant="outlined" />
               </Grid>
-              <Grid size={{xs:3}}>
+              <Grid size={{ xs: 3 }}>
                 <Chip label={`Success: ${stats.success}`} color="success" variant="outlined" />
               </Grid>
-              <Grid size={{xs:3}}>
+              <Grid size={{ xs: 3 }}>
                 <Chip label={`Warning: ${stats.warning}`} color="warning" variant="outlined" />
               </Grid>
-              <Grid size={{xs:3}}>
+              <Grid size={{ xs: 3 }}>
                 <Chip label={`Error: ${stats.error}`} color="error" variant="outlined" />
               </Grid>
             </Grid>
@@ -220,28 +242,23 @@ const ApiTester = () => {
 
                   return (
                     <ListItem key={testKey}>
-                      <ListItemIcon>
-                        {icon}
-                      </ListItemIcon>
+                      <ListItemIcon>{icon}</ListItemIcon>
                       <ListItemText
                         primary={testKey}
                         secondary={
                           <Box>
-                            <Typography variant="body2">
-                              {result.description}
-                            </Typography>
+                            <Typography variant="body2">{result.description}</Typography>
                             {!result.testing && (
                               <Typography variant="caption" color="textSecondary">
                                 Status: {result.status} {result.statusText}
-                                {result.timestamp && ` • ${new Date(result.timestamp).toLocaleTimeString()}`}
+                                {result.timestamp &&
+                                  ` • ${new Date(result.timestamp).toLocaleTimeString()}`}
                               </Typography>
                             )}
                           </Box>
                         }
                       />
-                      {!result.testing && (
-                        <Chip label={result.status} color={color} size="small" />
-                      )}
+                      {!result.testing && <Chip label={result.status} color={color} size="small" />}
                     </ListItem>
                   );
                 })}

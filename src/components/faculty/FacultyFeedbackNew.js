@@ -37,7 +37,7 @@ import {
   ListItemAvatar,
   Divider,
   IconButton,
-  Tooltip
+  Tooltip,
 } from '@mui/material';
 import {
   Feedback as FeedbackIcon,
@@ -51,7 +51,7 @@ import {
   School as SchoolIcon,
   Assignment as AssignmentIcon,
   BarChart as BarChartIcon,
-  Refresh as RefreshIcon
+  Refresh as RefreshIcon,
 } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 import EnhancedFacultyService from '../../services/enhancedFacultyService';
@@ -95,7 +95,7 @@ const FacultyFeedback = () => {
     courseId: '',
     subject: '',
     message: '',
-    anonymous: false
+    anonymous: false,
   });
 
   useEffect(() => {
@@ -130,7 +130,7 @@ const FacultyFeedback = () => {
     setCurrentTab(newValue);
   };
 
-  const handleReply = (feedback) => {
+  const handleReply = feedback => {
     setSelectedFeedback(feedback);
     setReplyDialog(true);
   };
@@ -175,7 +175,7 @@ const FacultyFeedback = () => {
           courseId: '',
           subject: '',
           message: '',
-          anonymous: false
+          anonymous: false,
         });
       }
     } catch (error) {
@@ -199,9 +199,8 @@ const FacultyFeedback = () => {
     const positive = feedbacks.filter(f => f.rating >= 4).length;
     const negative = feedbacks.filter(f => f.rating <= 2).length;
     const pending = feedbacks.filter(f => !f.replied).length;
-    const averageRating = feedbacks.length > 0 
-      ? feedbacks.reduce((sum, f) => sum + f.rating, 0) / feedbacks.length 
-      : 0;
+    const averageRating =
+      feedbacks.length > 0 ? feedbacks.reduce((sum, f) => sum + f.rating, 0) / feedbacks.length : 0;
 
     return { total, positive, negative, pending, averageRating };
   };
@@ -213,7 +212,7 @@ const FacultyFeedback = () => {
     <Box>
       {/* Stats Cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid size={{xs:12,sm:6,md:3}}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <StatCard color="#667eea">
             <CardContent>
               <Box display="flex" alignItems="center" justifyContent="space-between">
@@ -232,7 +231,7 @@ const FacultyFeedback = () => {
             </CardContent>
           </StatCard>
         </Grid>
-        <Grid size={{xs:12,sm:6,md:3}}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <StatCard color="#4CAF50">
             <CardContent>
               <Box display="flex" alignItems="center" justifyContent="space-between">
@@ -251,7 +250,7 @@ const FacultyFeedback = () => {
             </CardContent>
           </StatCard>
         </Grid>
-        <Grid size={{xs:12,sm:6,md:3}}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <StatCard color="#F44336">
             <CardContent>
               <Box display="flex" alignItems="center" justifyContent="space-between">
@@ -270,7 +269,7 @@ const FacultyFeedback = () => {
             </CardContent>
           </StatCard>
         </Grid>
-        <Grid size={{xs:12,sm:6,md:3}}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <StatCard color="#FF9800">
             <CardContent>
               <Box display="flex" alignItems="center" justifyContent="space-between">
@@ -336,8 +335,8 @@ const FacultyFeedback = () => {
                             {feedback.anonymous ? 'Anonymous Student' : feedback.studentName}
                           </Typography>
                           <Rating value={feedback.rating} readOnly size="small" />
-                          <Chip 
-                            label={courses.find(c => c.id === feedback.courseId)?.code || 'Unknown'} 
+                          <Chip
+                            label={courses.find(c => c.id === feedback.courseId)?.code || 'Unknown'}
                             size="small"
                             color="primary"
                             variant="outlined"
@@ -353,20 +352,15 @@ const FacultyFeedback = () => {
                             {feedback.timestamp}
                           </Typography>
                           {feedback.replied && (
-                            <Chip 
-                              label="Replied" 
-                              size="small" 
-                              color="success" 
-                              sx={{ ml: 1 }}
-                            />
+                            <Chip label="Replied" size="small" color="success" sx={{ ml: 1 }} />
                           )}
                         </Box>
                       }
                     />
                     <Box>
                       <Tooltip title="Reply to feedback">
-                        <IconButton 
-                          color="primary" 
+                        <IconButton
+                          color="primary"
                           onClick={() => handleReply(feedback)}
                           disabled={feedback.replied}
                         >
@@ -398,7 +392,7 @@ const FacultyFeedback = () => {
   // Analytics Tab
   const AnalyticsTab = () => (
     <Grid container spacing={3}>
-      <Grid size={{xs:12,md:6}}>
+      <Grid size={{ xs: 12, md: 6 }}>
         <StyledCard>
           <CardContent>
             <Typography variant="h6" gutterBottom>
@@ -410,7 +404,7 @@ const FacultyFeedback = () => {
           </CardContent>
         </StyledCard>
       </Grid>
-      <Grid size={{xs:12,md:6}}>
+      <Grid size={{ xs: 12, md: 6 }}>
         <StyledCard>
           <CardContent>
             <Typography variant="h6" gutterBottom>
@@ -426,11 +420,13 @@ const FacultyFeedback = () => {
   );
 
   return (
-    <Box sx={{ 
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-      py: 3
-    }}>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+        py: 3,
+      }}
+    >
       <Container maxWidth="xl">
         {/* Header */}
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
@@ -458,12 +454,7 @@ const FacultyFeedback = () => {
         {currentTab === 1 && <AnalyticsTab />}
 
         {/* Reply Dialog */}
-        <Dialog
-          open={replyDialog}
-          onClose={() => setReplyDialog(false)}
-          maxWidth="md"
-          fullWidth
-        >
+        <Dialog open={replyDialog} onClose={() => setReplyDialog(false)} maxWidth="md" fullWidth>
           <DialogTitle>Reply to Feedback</DialogTitle>
           <DialogContent>
             {selectedFeedback && (
@@ -472,9 +463,7 @@ const FacultyFeedback = () => {
                   Original Feedback:
                 </Typography>
                 <Paper sx={{ p: 2, mb: 2, bgcolor: 'grey.50' }}>
-                  <Typography variant="body2">
-                    {selectedFeedback.message}
-                  </Typography>
+                  <Typography variant="body2">{selectedFeedback.message}</Typography>
                   <Box display="flex" alignItems="center" mt={1}>
                     <Rating value={selectedFeedback.rating} readOnly size="small" />
                     <Typography variant="caption" sx={{ ml: 1 }}>
@@ -485,7 +474,7 @@ const FacultyFeedback = () => {
                 <TextField
                   label="Your Reply"
                   value={replyText}
-                  onChange={(e) => setReplyText(e.target.value)}
+                  onChange={e => setReplyText(e.target.value)}
                   fullWidth
                   multiline
                   rows={4}
@@ -495,14 +484,8 @@ const FacultyFeedback = () => {
             )}
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setReplyDialog(false)}>
-              Cancel
-            </Button>
-            <Button
-              onClick={sendReply}
-              variant="contained"
-              disabled={loading || !replyText.trim()}
-            >
+            <Button onClick={() => setReplyDialog(false)}>Cancel</Button>
+            <Button onClick={sendReply} variant="contained" disabled={loading || !replyText.trim()}>
               Send Reply
             </Button>
           </DialogActions>
@@ -518,15 +501,17 @@ const FacultyFeedback = () => {
           <DialogTitle>Request Student Feedback</DialogTitle>
           <DialogContent>
             <Grid container spacing={2} sx={{ mt: 1 }}>
-              <Grid size={{xs:12}}>
+              <Grid size={{ xs: 12 }}>
                 <FormControl fullWidth required>
                   <InputLabel>Course</InputLabel>
                   <Select
                     value={feedbackRequest.courseId}
-                    onChange={(e) => setFeedbackRequest({ ...feedbackRequest, courseId: e.target.value })}
+                    onChange={e =>
+                      setFeedbackRequest({ ...feedbackRequest, courseId: e.target.value })
+                    }
                     label="Course"
                   >
-                    {courses.map((course) => (
+                    {courses.map(course => (
                       <MenuItem key={course.id} value={course.id}>
                         {course.code} - {course.name}
                       </MenuItem>
@@ -534,21 +519,25 @@ const FacultyFeedback = () => {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid size={{xs:12}}>
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   label="Subject"
                   value={feedbackRequest.subject}
-                  onChange={(e) => setFeedbackRequest({ ...feedbackRequest, subject: e.target.value })}
+                  onChange={e =>
+                    setFeedbackRequest({ ...feedbackRequest, subject: e.target.value })
+                  }
                   fullWidth
                   required
                   placeholder="e.g., Mid-semester Course Feedback"
                 />
               </Grid>
-              <Grid size={{xs:12}}>
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   label="Message to Students"
                   value={feedbackRequest.message}
-                  onChange={(e) => setFeedbackRequest({ ...feedbackRequest, message: e.target.value })}
+                  onChange={e =>
+                    setFeedbackRequest({ ...feedbackRequest, message: e.target.value })
+                  }
                   fullWidth
                   multiline
                   rows={4}
@@ -558,14 +547,8 @@ const FacultyFeedback = () => {
             </Grid>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setRequestFeedbackDialog(false)}>
-              Cancel
-            </Button>
-            <Button
-              onClick={requestFeedback}
-              variant="contained"
-              disabled={loading}
-            >
+            <Button onClick={() => setRequestFeedbackDialog(false)}>Cancel</Button>
+            <Button onClick={requestFeedback} variant="contained" disabled={loading}>
               Send Request
             </Button>
           </DialogActions>
@@ -578,11 +561,7 @@ const FacultyFeedback = () => {
           onClose={handleSnackbarClose}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         >
-          <Alert 
-            onClose={handleSnackbarClose} 
-            severity={snackbar.severity}
-            sx={{ width: '100%' }}
-          >
+          <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: '100%' }}>
             {snackbar.message}
           </Alert>
         </Snackbar>
@@ -591,4 +570,4 @@ const FacultyFeedback = () => {
   );
 };
 
-export default FacultyFeedback;
+export default FacultyFeedback;

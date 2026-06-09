@@ -9,12 +9,7 @@
  * Validates: Requirements 5.2, 5.7
  */
 
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  type UseQueryOptions,
-} from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, type UseQueryOptions } from '@tanstack/react-query';
 import { apiClient } from '../services/apiClient';
 import { queryKeys } from './queryKeys';
 import type { PaginationParams, PaginatedResponse } from '../types';
@@ -83,10 +78,7 @@ export function useCourses(
 }
 
 /** Fetch a single course by ID */
-export function useCourse(
-  id: string,
-  options?: Partial<UseQueryOptions<Course>>
-) {
+export function useCourse(id: string, options?: Partial<UseQueryOptions<Course>>) {
   return useQuery({
     queryKey: queryKeys.courses.detail(id),
     queryFn: () => apiClient<Course>(`/api/v1/courses/${id}`),
@@ -119,7 +111,7 @@ export function useUpdateCourse(id: string) {
   return useMutation({
     mutationFn: (data: UpdateCourseInput) =>
       apiClient<Course>(`/api/v1/courses/${id}`, { method: 'PUT', body: data }),
-    onSuccess: (updatedCourse) => {
+    onSuccess: updatedCourse => {
       queryClient.invalidateQueries({ queryKey: queryKeys.courses.lists() });
       queryClient.setQueryData(queryKeys.courses.detail(id), updatedCourse);
     },
@@ -131,8 +123,7 @@ export function useDeleteCourse() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) =>
-      apiClient<void>(`/api/v1/courses/${id}`, { method: 'DELETE' }),
+    mutationFn: (id: string) => apiClient<void>(`/api/v1/courses/${id}`, { method: 'DELETE' }),
     onSuccess: (_data, id) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.courses.lists() });
       queryClient.removeQueries({ queryKey: queryKeys.courses.detail(id) });

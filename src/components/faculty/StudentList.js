@@ -27,7 +27,7 @@ import {
   Menu,
   MenuItem,
   LinearProgress,
-  Divider
+  Divider,
 } from '@mui/material';
 import {
   Delete as DeleteIcon,
@@ -42,7 +42,7 @@ import {
   MoreVert as MoreIcon,
   Visibility as ViewIcon,
   Add as AddIcon,
-  Group as GroupIcon
+  Group as GroupIcon,
 } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 import { useTheme } from '@mui/material/styles';
@@ -71,7 +71,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
     right: 0,
     height: 4,
     background: 'linear-gradient(90deg, #667eea 0%, #764ba2 50%, #667eea 100%)',
-  }
+  },
 }));
 
 const StudentAvatar = styled(Avatar)(({ theme, performance }) => {
@@ -81,7 +81,7 @@ const StudentAvatar = styled(Avatar)(({ theme, performance }) => {
     if (performance === 'Average') return '#FF9800';
     return '#f44336';
   };
-  
+
   return {
     width: 56,
     height: 56,
@@ -105,7 +105,7 @@ const PerformanceChip = styled(Chip)(({ theme, performance }) => {
         return { bg: '#f44336', color: 'white' };
     }
   };
-  
+
   const colors = getColors();
   return {
     backgroundColor: colors.bg,
@@ -149,14 +149,14 @@ const HeaderSection = styled(Box)(({ theme }) => ({
     height: 150,
     background: 'rgba(255, 255, 255, 0.05)',
     borderRadius: '50%',
-  }
+  },
 }));
 
 const StatsContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   gap: theme.spacing(2),
   marginBottom: theme.spacing(3),
-  flexWrap: 'wrap'
+  flexWrap: 'wrap',
 }));
 
 const StatCard = styled(Card)(({ theme }) => ({
@@ -168,7 +168,7 @@ const StatCard = styled(Card)(({ theme }) => ({
   '&:hover': {
     transform: 'translateY(-2px)',
     boxShadow: '0 8px 30px rgba(0, 0, 0, 0.1)',
-  }
+  },
 }));
 
 const StudentCard = styled(StyledCard)(({ theme }) => ({
@@ -180,7 +180,7 @@ const StudentCard = styled(StyledCard)(({ theme }) => ({
     display: 'flex',
     flexDirection: 'column',
     padding: theme.spacing(3),
-  }
+  },
 }));
 
 const ActionButton = styled(IconButton)(({ theme }) => ({
@@ -190,15 +190,15 @@ const ActionButton = styled(IconButton)(({ theme }) => ({
   '&:hover': {
     backgroundColor: 'rgba(102, 126, 234, 0.1)',
     transform: 'scale(1.1)',
-  }
+  },
 }));
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
     minHeight: '100vh',
     background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-    padding: theme.spacing(3)
+    padding: theme.spacing(3),
   },
   searchContainer: {
     marginBottom: theme.spacing(3),
@@ -207,28 +207,28 @@ const useStyles = makeStyles((theme) => ({
       background: 'rgba(255, 255, 255, 0.9)',
       backdropFilter: 'blur(10px)',
       '& fieldset': {
-        borderColor: 'rgba(102, 126, 234, 0.3)'
+        borderColor: 'rgba(102, 126, 234, 0.3)',
       },
       '&:hover fieldset': {
-        borderColor: 'rgba(102, 126, 234, 0.6)'
+        borderColor: 'rgba(102, 126, 234, 0.6)',
       },
       '&.Mui-focused fieldset': {
-        borderColor: '#667eea'
-      }
-    }
+        borderColor: '#667eea',
+      },
+    },
   },
   filterButton: {
     borderRadius: 12,
     background: 'rgba(255, 255, 255, 0.9)',
     backdropFilter: 'blur(10px)',
     '&:hover': {
-      background: 'rgba(255, 255, 255, 1)'
-    }
+      background: 'rgba(255, 255, 255, 1)',
+    },
   },
   studentGrid: {
     '& .MuiGrid-item': {
       transition: 'all 0.3s ease',
-    }
+    },
   },
   emptyState: {
     textAlign: 'center',
@@ -237,7 +237,7 @@ const useStyles = makeStyles((theme) => ({
     background: 'rgba(255, 255, 255, 0.7)',
     borderRadius: 20,
     backdropFilter: 'blur(10px)',
-  }
+  },
 }));
 
 const StudentList = () => {
@@ -248,7 +248,7 @@ const StudentList = () => {
   const [loading, setLoading] = useState(true);
   const [filterAnchor, setFilterAnchor] = useState(null);
   const [selectedFilter, setSelectedFilter] = useState('All');
-  const { getAllStudents, error } = useDatabase();  // Fetch students from enhanced faculty service
+  const { getAllStudents, error } = useDatabase(); // Fetch students from enhanced faculty service
   useEffect(() => {
     const fetchStudents = async () => {
       setLoading(true);
@@ -263,7 +263,7 @@ const StudentList = () => {
             grade: student.grade,
             enrolledCourses: student.courses || [],
             status: student.status,
-            performance: student.performance
+            performance: student.performance,
           }));
           setStudents(formattedStudents);
           setFilteredStudents(formattedStudents);
@@ -275,17 +275,19 @@ const StudentList = () => {
               id: student.rollNumber || student.id,
               name: `${student.firstName} ${student.lastName}`,
               email: student.email,
-              grade: student.classId ? `${student.classId}${student.section ? student.section : ''}` : '10th',
+              grade: student.classId
+                ? `${student.classId}${student.section ? student.section : ''}`
+                : '10th',
               enrolledCourses: student.enrolledCourses || ['Mathematics', 'Science'],
               status: 'Active',
-              performance: 'Good'
+              performance: 'Good',
             }));
             setStudents(formattedStudents);
             setFilteredStudents(formattedStudents);
           }
         }
       } catch (error) {
-        console.error("Error fetching students:", error);
+        console.error('Error fetching students:', error);
       } finally {
         setLoading(false);
       }
@@ -296,49 +298,53 @@ const StudentList = () => {
   // Handle search and filter
   useEffect(() => {
     let filtered = students;
-    
+
     // Apply filter
     if (selectedFilter !== 'All') {
-      filtered = filtered.filter(student => 
-        student.performance === selectedFilter || student.status === selectedFilter
+      filtered = filtered.filter(
+        student => student.performance === selectedFilter || student.status === selectedFilter
       );
     }
-    
+
     // Apply search
     if (searchQuery.trim() !== '') {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(student =>
-        student.name.toLowerCase().includes(query) ||
-        student.email.toLowerCase().includes(query) ||
-        student.id.toLowerCase().includes(query) ||
-        (student.grade && student.grade.toLowerCase().includes(query))
+      filtered = filtered.filter(
+        student =>
+          student.name.toLowerCase().includes(query) ||
+          student.email.toLowerCase().includes(query) ||
+          student.id.toLowerCase().includes(query) ||
+          (student.grade && student.grade.toLowerCase().includes(query))
       );
     }
-    
+
     setFilteredStudents(filtered);
   }, [searchQuery, students, selectedFilter]);
 
-  const handleSearchChange = (event) => {
+  const handleSearchChange = event => {
     setSearchQuery(event.target.value);
   };
-  const handleEditStudent = (studentId) => {
+  const handleEditStudent = studentId => {
     // In a real app, this would navigate to edit page or open a modal
     console.log('Edit student with ID:', studentId);
   };
 
-  const handleDeleteStudent = (studentId) => {
+  const handleDeleteStudent = studentId => {
     // In a real app, this would show a confirmation dialog
     console.log('Delete student with ID:', studentId);
 
     // For demo, just filter out the student
     const updatedStudents = students.filter(student => student.id !== studentId);
     setStudents(updatedStudents);
-    setFilteredStudents(updatedStudents.filter(student => 
-      searchQuery === '' || 
-      student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      student.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      student.id.toLowerCase().includes(searchQuery.toLowerCase())
-    ));
+    setFilteredStudents(
+      updatedStudents.filter(
+        student =>
+          searchQuery === '' ||
+          student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          student.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          student.id.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    );
   };
   const getStudentStats = () => {
     const total = students.length;
@@ -347,13 +353,13 @@ const StudentList = () => {
     const average = students.filter(s => s.performance === 'Average').length;
     const poor = students.filter(s => s.performance === 'Poor').length;
     const active = students.filter(s => s.status === 'Active').length;
-    
+
     return { total, excellent, good, average, poor, active };
   };
 
   const stats = getStudentStats();
 
-  const handleFilterClick = (event) => {
+  const handleFilterClick = event => {
     setFilterAnchor(event.currentTarget);
   };
 
@@ -361,21 +367,21 @@ const StudentList = () => {
     setFilterAnchor(null);
   };
 
-  const handleFilterSelect = (filter) => {
+  const handleFilterSelect = filter => {
     setSelectedFilter(filter);
     setFilterAnchor(null);
-    
+
     if (filter === 'All') {
       setFilteredStudents(students);
     } else {
-      const filtered = students.filter(student => 
-        student.performance === filter || student.status === filter
+      const filtered = students.filter(
+        student => student.performance === filter || student.status === filter
       );
       setFilteredStudents(filtered);
     }
   };
 
-  const handleViewStudent = (studentId) => {
+  const handleViewStudent = studentId => {
     console.log('View student with ID:', studentId);
   };
 
@@ -473,12 +479,8 @@ const StudentList = () => {
         >
           {selectedFilter}
         </Button>
-        <Menu
-          anchorEl={filterAnchor}
-          open={Boolean(filterAnchor)}
-          onClose={handleFilterClose}
-        >
-          {['All', 'Excellent', 'Good', 'Average', 'Poor', 'Active'].map((filter) => (
+        <Menu anchorEl={filterAnchor} open={Boolean(filterAnchor)} onClose={handleFilterClose}>
+          {['All', 'Excellent', 'Good', 'Average', 'Poor', 'Active'].map(filter => (
             <MenuItem key={filter} onClick={() => handleFilterSelect(filter)}>
               {filter}
             </MenuItem>
@@ -492,7 +494,7 @@ const StudentList = () => {
             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
             '&:hover': {
               background: 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)',
-            }
+            },
           }}
         >
           Add Student
@@ -514,13 +516,15 @@ const StudentList = () => {
                 No students found
               </Typography>
               <Typography variant="body2">
-                {searchQuery ? 'Try adjusting your search criteria' : 'Start by adding your first student'}
+                {searchQuery
+                  ? 'Try adjusting your search criteria'
+                  : 'Start by adding your first student'}
               </Typography>
             </Box>
           ) : (
             <Grid container spacing={3} className={classes.studentGrid}>
-              {filteredStudents.map((student) => (
-                <Grid size={{xs:12,sm:6,md:4,lg:3}} key={student.id}>
+              {filteredStudents.map(student => (
+                <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={student.id}>
                   <StudentCard>
                     <CardContent>
                       {/* Student Header */}
@@ -539,7 +543,7 @@ const StudentList = () => {
                         <Box>
                           <ActionButton
                             size="small"
-                            onClick={(e) => {
+                            onClick={e => {
                               e.stopPropagation();
                               // Show more options
                             }}
@@ -572,11 +576,7 @@ const StudentList = () => {
                           label={student.performance}
                           size="small"
                         />
-                        <StatusChip
-                          status={student.status}
-                          label={student.status}
-                          size="small"
-                        />
+                        <StatusChip status={student.status} label={student.status} size="small" />
                       </Box>
 
                       {/* Enrolled Courses */}
@@ -651,4 +651,3 @@ const StudentList = () => {
 };
 
 export default StudentList;
-

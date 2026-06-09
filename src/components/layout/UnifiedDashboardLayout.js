@@ -7,14 +7,33 @@ import {
   Menu as MenuIcon,
   Close as CloseIcon,
   Notifications as NotificationsIcon,
-  Settings as SettingsIcon
+  Settings as SettingsIcon,
 } from '@mui/icons-material';
 import { CssBaseline } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useAuth } from '../../auth/AuthContext';
 
-import { AppBar, Avatar, Badge, Box, Container, Divider, Drawer, Grid, IconButton, List, ListItem, ListItemIcon, ListItemText, Menu, MenuItem, Paper, Toolbar, Typography } from '@mui/material';
+import {
+  AppBar,
+  Avatar,
+  Badge,
+  Box,
+  Container,
+  Divider,
+  Drawer,
+  Grid,
+  IconButton,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Paper,
+  Toolbar,
+  Typography,
+} from '@mui/material';
 const drawerWidth = 240;
 
 /**
@@ -30,7 +49,7 @@ const UnifiedDashboardLayout = ({
   currentView = 'dashboard',
   onViewChange,
   userStats = {},
-  notifications = 0
+  notifications = 0,
 }) => {
   const navigate = useNavigate();
   const { currentUser, userRole, logout } = useAuth();
@@ -44,7 +63,7 @@ const UnifiedDashboardLayout = ({
     setMobileOpen(!mobileOpen);
   };
 
-  const handleMenuOpen = (event) => {
+  const handleMenuOpen = event => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -62,28 +81,32 @@ const UnifiedDashboardLayout = ({
     handleMenuClose();
   };
 
-  const handleMenuItemClick = (item) => {
+  const handleMenuItemClick = item => {
     if (onViewChange) {
       onViewChange(item.key);
     }
     setMobileOpen(false);
-  };  const drawerContent = (
-    <Box sx={{ 
-      height: '100%', 
-      display: 'flex', 
-      flexDirection: 'column',
-      background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 100%)',
-      color: 'rgba(255, 255, 255, 0.95)'
-    }}>
+  };
+  const drawerContent = (
+    <Box
+      sx={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 100%)',
+        color: 'rgba(255, 255, 255, 0.95)',
+      }}
+    >
       <Box sx={{ height: 64 }} />
-
       {/* User Info Section */}
-      <Box sx={{ 
-        p: 3, 
-        textAlign: 'center', 
-        borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
-        background: 'rgba(167, 139, 250, 0.08)'
-      }}>
+      <Box
+        sx={{
+          p: 3,
+          textAlign: 'center',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+          background: 'rgba(167, 139, 250, 0.08)',
+        }}
+      >
         <Avatar
           sx={{
             width: 64,
@@ -92,24 +115,31 @@ const UnifiedDashboardLayout = ({
             bgcolor: '#3b82f6',
             fontSize: '1.5rem',
             boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
-            color: 'white'
+            color: 'white',
           }}
         >
           {currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : 'U'}
         </Avatar>
-        <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5, color: 'rgba(255, 255, 255, 0.95)' }}>
+        <Typography
+          variant="h6"
+          sx={{ fontWeight: 600, mb: 0.5, color: 'rgba(255, 255, 255, 0.95)' }}
+        >
           {currentUser?.name || 'User'}
         </Typography>
-        <Typography variant="body2" sx={{ 
-          textTransform: 'capitalize',
-          color: 'rgba(255, 255, 255, 0.6)',
-          fontSize: '0.875rem'
-        }}>
+        <Typography
+          variant="body2"
+          sx={{
+            textTransform: 'capitalize',
+            color: 'rgba(255, 255, 255, 0.6)',
+            fontSize: '0.875rem',
+          }}
+        >
           {userRole || 'User'}
         </Typography>
-      </Box>      {/* Navigation Menu */}
+      </Box>{' '}
+      {/* Navigation Menu */}
       <List sx={{ p: 2, flexGrow: 1 }}>
-        {menuItems.map((item) => (
+        {menuItems.map(item => (
           <ListItem
             key={item.key}
             onClick={() => handleMenuItemClick(item)}
@@ -124,7 +154,7 @@ const UnifiedDashboardLayout = ({
                 backgroundColor: 'rgba(167, 139, 250, 0.1)',
                 transform: 'translateX(4px)',
                 boxShadow: '0 4px 12px rgba(167, 139, 250, 0.15)',
-                color: '#a78bfa'
+                color: '#a78bfa',
               },
               ...(currentView === item.key && {
                 backgroundColor: 'rgba(167, 139, 250, 0.15)',
@@ -132,30 +162,26 @@ const UnifiedDashboardLayout = ({
                 border: '1px solid rgba(167, 139, 250, 0.3)',
                 boxShadow: '0 4px 12px rgba(167, 139, 250, 0.2)',
                 '& .MuiListItemIcon-root': {
-                  color: '#a78bfa'
-                }
-              })
+                  color: '#a78bfa',
+                },
+              }),
             }}
           >
-            <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
-              {item.icon}
-            </ListItemIcon>
+            <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>{item.icon}</ListItemIcon>
             <ListItemText
               primary={item.label}
               sx={{
                 '& .MuiListItemText-primary': {
                   fontWeight: currentView === item.key ? 600 : 500,
                   color: 'inherit',
-                  fontSize: '0.95rem'
-                }
+                  fontSize: '0.95rem',
+                },
               }}
             />
           </ListItem>
         ))}
       </List>
-
       <Divider sx={{ backgroundColor: 'rgba(255, 255, 255, 0.06)' }} />
-
       {/* Settings Menu */}
       <List sx={{ p: 2 }}>
         <ListItem
@@ -170,21 +196,21 @@ const UnifiedDashboardLayout = ({
               backgroundColor: 'rgba(167, 139, 250, 0.1)',
               transform: 'translateX(4px)',
               boxShadow: '0 4px 12px rgba(167, 139, 250, 0.15)',
-              color: '#a78bfa'
-            }
+              color: '#a78bfa',
+            },
           }}
         >
           <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
             <SettingsIcon />
           </ListItemIcon>
-          <ListItemText 
+          <ListItemText
             primary="Settings"
             sx={{
               '& .MuiListItemText-primary': {
                 color: 'inherit',
                 fontSize: '0.95rem',
-                fontWeight: 500
-              }
+                fontWeight: 500,
+              },
             }}
           />
         </ListItem>
@@ -193,13 +219,15 @@ const UnifiedDashboardLayout = ({
   );
 
   return (
-    <Box sx={{
-      display: 'flex',
-      // Prevent horizontal scroll across all viewports 320–2560px (Requirement 8.1)
-      overflowX: 'hidden',
-      maxWidth: '100vw',
-      minHeight: '100vh',
-    }}>
+    <Box
+      sx={{
+        display: 'flex',
+        // Prevent horizontal scroll across all viewports 320–2560px (Requirement 8.1)
+        overflowX: 'hidden',
+        maxWidth: '100vw',
+        minHeight: '100vh',
+      }}
+    >
       <CssBaseline />
 
       {/* App Bar */}
@@ -208,21 +236,23 @@ const UnifiedDashboardLayout = ({
         sx={{
           width: { xs: '100%', [MOBILE_BREAKPOINT]: `calc(100% - ${drawerWidth}px)` },
           ml: { xs: 0, [MOBILE_BREAKPOINT]: `${drawerWidth}px` },
-          zIndex: (theme) => theme.zIndex.drawer + 1,
+          zIndex: theme => theme.zIndex.drawer + 1,
           background: 'rgba(10, 10, 15, 0.85)',
           backdropFilter: 'blur(20px)',
           borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
-          boxShadow: '0 2px 4px -1px rgba(0,0,0,0.2), 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12)'}}
+          boxShadow:
+            '0 2px 4px -1px rgba(0,0,0,0.2), 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12)',
+        }}
       >
         <Toolbar>
           <IconButton
             color="inherit"
-            aria-label={mobileOpen ? "close navigation menu" : "open navigation menu"}
+            aria-label={mobileOpen ? 'close navigation menu' : 'open navigation menu'}
             edge="start"
             onClick={handleDrawerToggle}
             sx={{
               mr: 2,
-              display: { [MOBILE_BREAKPOINT]: 'none' }
+              display: { [MOBILE_BREAKPOINT]: 'none' },
             }}
           >
             {mobileOpen ? <CloseIcon /> : <MenuIcon />}
@@ -232,13 +262,21 @@ const UnifiedDashboardLayout = ({
             sx={{
               flexGrow: 1,
               fontWeight: 600,
-              fontSize: '1.25rem'
+              fontSize: '1.25rem',
             }}
           >
             {title}
           </Typography>
 
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, marginLeft: 'auto', paddingRight: 1 }}>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              marginLeft: 'auto',
+              paddingRight: 1,
+            }}
+          >
             <IconButton color="inherit">
               <Badge badgeContent={notifications} color="error">
                 <NotificationsIcon />
@@ -256,7 +294,9 @@ const UnifiedDashboardLayout = ({
                 transition: 'all 0.2s ease',
                 '&:hover': {
                   backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                  transform: 'scale(1.05)'}}}
+                  transform: 'scale(1.05)',
+                },
+              }}
             >
               <AccountCircle />
             </IconButton>
@@ -269,7 +309,9 @@ const UnifiedDashboardLayout = ({
         component="nav"
         sx={{ width: { [MOBILE_BREAKPOINT]: drawerWidth }, flexShrink: { [MOBILE_BREAKPOINT]: 0 } }}
         aria-label="Sidebar navigation"
-      >        {/* Mobile drawer — collapsible at ≤768px (Requirement 8.3) */}
+      >
+        {' '}
+        {/* Mobile drawer — collapsible at ≤768px (Requirement 8.3) */}
         <Drawer
           variant="temporary"
           open={mobileOpen}
@@ -282,12 +324,12 @@ const UnifiedDashboardLayout = ({
               width: drawerWidth,
               background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 100%)',
               border: 'none',
-              boxShadow: '4px 0 20px rgba(0, 0, 0, 0.8)'
-            }
+              boxShadow: '4px 0 20px rgba(0, 0, 0, 0.8)',
+            },
           }}
-        >{drawerContent}
+        >
+          {drawerContent}
         </Drawer>
-
         {/* Desktop drawer — permanent, visible above 768px */}
         <Drawer
           variant="permanent"
@@ -298,8 +340,8 @@ const UnifiedDashboardLayout = ({
               width: drawerWidth,
               background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 100%)',
               border: 'none',
-              boxShadow: '4px 0 20px rgba(0, 0, 0, 0.5)'
-            }
+              boxShadow: '4px 0 20px rgba(0, 0, 0, 0.5)',
+            },
           }}
           open
         >
@@ -316,10 +358,12 @@ const UnifiedDashboardLayout = ({
         onClose={handleMenuClose}
         anchorOrigin={{
           vertical: 'bottom',
-          horizontal: 'right'}}
+          horizontal: 'right',
+        }}
         transformOrigin={{
           vertical: 'top',
-          horizontal: 'right'}}
+          horizontal: 'right',
+        }}
         sx={{
           mt: 1,
           '& .MuiPaper-root': {
@@ -328,7 +372,8 @@ const UnifiedDashboardLayout = ({
             border: '1px solid rgba(0, 0, 0, 0.08)',
             minWidth: 200,
             overflow: 'visible',
-            mt: 0.5},
+            mt: 0.5,
+          },
           '& .MuiMenuItem-root': {
             p: '12px 16px',
             minHeight: 48,
@@ -339,13 +384,19 @@ const UnifiedDashboardLayout = ({
             transition: 'all 0.2s ease',
             '&:hover': {
               backgroundColor: 'rgba(58, 134, 255, 0.08)',
-              transform: 'translateX(4px)'},
+              transform: 'translateX(4px)',
+            },
             '&:first-of-type': {
-              mt: 0.5},
+              mt: 0.5,
+            },
             '&:last-of-type': {
-              mb: 0.5}},
+              mb: 0.5,
+            },
+          },
           '& .MuiDivider-root': {
-            m: '4px 8px'}}}
+            m: '4px 8px',
+          },
+        }}
         PaperProps={{
           elevation: 3,
           sx: {
@@ -362,14 +413,18 @@ const UnifiedDashboardLayout = ({
               height: 10,
               bgcolor: 'background.paper',
               transform: 'translateY(-50%) rotate(45deg)',
-              zIndex: 0}}}}
+              zIndex: 0,
+            },
+          },
+        }}
       >
         <MenuItem
           onClick={handleMenuClose}
           sx={{
             display: 'flex',
             alignItems: 'center',
-            gap: 1.5}}
+            gap: 1.5,
+          }}
         >
           <Avatar sx={{ width: 24, height: 24 }} />
           <Typography variant="body2">Profile</Typography>
@@ -378,8 +433,10 @@ const UnifiedDashboardLayout = ({
           onClick={handleLogout}
           sx={{
             display: 'flex',
-            alignItems: 'center',        gap: 1.5,
-            color: 'error.main'}}
+            alignItems: 'center',
+            gap: 1.5,
+            color: 'error.main',
+          }}
         >
           <LogoutIcon sx={{ fontSize: 20 }} />
           <Typography variant="body2">Logout</Typography>
@@ -422,4 +479,3 @@ const UnifiedDashboardLayout = ({
 };
 
 export default UnifiedDashboardLayout;
-

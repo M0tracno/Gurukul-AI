@@ -8,7 +8,7 @@
  * Requirements: 11.2, 11.3, 11.4
  */
 
-import React, { useState } from 'react';
+import { Edit as EditIcon, CheckCircle as CheckIcon } from '@mui/icons-material';
 import {
   Box,
   Typography,
@@ -19,8 +19,10 @@ import {
   Divider,
   Chip,
 } from '@mui/material';
-import { Edit as EditIcon, CheckCircle as CheckIcon } from '@mui/icons-material';
+import React, { useState } from 'react';
+
 import { colors } from '@/styles/designTokens';
+
 import {
   submitGradeOverride,
   ApiClientError,
@@ -131,11 +133,7 @@ export const OverrideControls: React.FC<OverrideControlsProps> = ({
 
       {/* Updated record display on success (Requirement 11.3) */}
       {updatedRecord && (
-        <Alert
-          severity="success"
-          icon={<CheckIcon />}
-          sx={{ mb: 2 }}
-        >
+        <Alert severity="success" icon={<CheckIcon />} sx={{ mb: 2 }}>
           <Typography variant="body2" sx={{ fontWeight: 600 }}>
             Override applied successfully
           </Typography>
@@ -157,7 +155,7 @@ export const OverrideControls: React.FC<OverrideControlsProps> = ({
           label="Score"
           type="number"
           value={score}
-          onChange={(e) => setScore(e.target.value)}
+          onChange={e => setScore(e.target.value)}
           size="small"
           inputProps={{ min: 0, max: maxScore, step: 0.5 }}
           helperText={`Max: ${maxScore}`}
@@ -177,7 +175,7 @@ export const OverrideControls: React.FC<OverrideControlsProps> = ({
         <TextField
           label="Feedback"
           value={feedback}
-          onChange={(e) => setFeedback(e.target.value)}
+          onChange={e => setFeedback(e.target.value)}
           size="small"
           multiline
           minRows={1}

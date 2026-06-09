@@ -1,8 +1,51 @@
-import React, {  useEffect } from 'react';
-import { Assignment as AssignmentIcon, CheckCircle, Download, EventNote as EventNoteIcon, Grade, Quiz as QuizIcon, Refresh, Star as StarIcon, TrendingDown as TrendingDownIcon, TrendingUp as TrendingUpIcon, Warning, AccessTime as AccessTimeIcon } from '@mui/icons-material';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
+import React, { useEffect } from 'react';
+import {
+  Assignment as AssignmentIcon,
+  CheckCircle,
+  Download,
+  EventNote as EventNoteIcon,
+  Grade,
+  Quiz as QuizIcon,
+  Refresh,
+  Star as StarIcon,
+  TrendingDown as TrendingDownIcon,
+  TrendingUp as TrendingUpIcon,
+  Warning,
+  AccessTime as AccessTimeIcon,
+} from '@mui/icons-material';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip as RechartsTooltip,
+  ResponsiveContainer,
+} from 'recharts';
 
-import { Alert, Avatar, Box, Button, Card, CardContent, Chip, Container, Divider, Grid, IconButton, LinearProgress, List, ListItem, ListItemIcon, ListItemText, Paper, Tab, Tabs, Tooltip, Typography } from '@mui/material';
+import {
+  Alert,
+  Avatar,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  Container,
+  Divider,
+  Grid,
+  IconButton,
+  LinearProgress,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Paper,
+  Tab,
+  Tabs,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 const ChildProgress = () => {
   const [selectedChild, setSelectedChild] = useState(0);
   const [tabValue, setTabValue] = useState(0);
@@ -28,7 +71,7 @@ const ChildProgress = () => {
             trend: 'up',
             assignments: { completed: 8, total: 10, pending: 2 },
             quizzes: { completed: 4, total: 5, upcoming: 1 },
-            attendance: 95
+            attendance: 95,
           },
           {
             name: 'English',
@@ -37,7 +80,7 @@ const ChildProgress = () => {
             trend: 'down',
             assignments: { completed: 9, total: 10, pending: 1 },
             quizzes: { completed: 5, total: 5, upcoming: 0 },
-            attendance: 92
+            attendance: 92,
           },
           {
             name: 'Science',
@@ -46,7 +89,7 @@ const ChildProgress = () => {
             trend: 'up',
             assignments: { completed: 10, total: 12, pending: 2 },
             quizzes: { completed: 3, total: 4, upcoming: 1 },
-            attendance: 98
+            attendance: 98,
           },
           {
             name: 'History',
@@ -55,8 +98,8 @@ const ChildProgress = () => {
             trend: 'down',
             assignments: { completed: 7, total: 9, pending: 2 },
             quizzes: { completed: 4, total: 4, upcoming: 0 },
-            attendance: 90
-          }
+            attendance: 90,
+          },
         ],
         progressChart: [
           { month: 'Jan', grade: 75 },
@@ -64,15 +107,33 @@ const ChildProgress = () => {
           { month: 'Mar', grade: 80 },
           { month: 'Apr', grade: 82 },
           { month: 'May', grade: 85 },
-          { month: 'Jun', grade: 85 }
+          { month: 'Jun', grade: 85 },
         ],
         recentActivities: [
-          { type: 'assignment', subject: 'Mathematics', title: 'Algebra Quiz', score: 92, date: '2025-06-06' },
-          { type: 'quiz', subject: 'Science', title: 'Chemistry Test', score: 88, date: '2025-06-05' },
-          { type: 'assignment', subject: 'English', title: 'Essay Writing', score: 85, date: '2025-06-04' }
+          {
+            type: 'assignment',
+            subject: 'Mathematics',
+            title: 'Algebra Quiz',
+            score: 92,
+            date: '2025-06-06',
+          },
+          {
+            type: 'quiz',
+            subject: 'Science',
+            title: 'Chemistry Test',
+            score: 88,
+            date: '2025-06-05',
+          },
+          {
+            type: 'assignment',
+            subject: 'English',
+            title: 'Essay Writing',
+            score: 85,
+            date: '2025-06-04',
+          },
         ],
         strengths: ['Problem Solving', 'Critical Thinking', 'Science Experiments'],
-        improvements: ['Time Management', 'Reading Comprehension']
+        improvements: ['Time Management', 'Reading Comprehension'],
       },
       {
         id: 2,
@@ -90,7 +151,7 @@ const ChildProgress = () => {
             trend: 'up',
             assignments: { completed: 6, total: 10, pending: 4 },
             quizzes: { completed: 3, total: 5, upcoming: 2 },
-            attendance: 88
+            attendance: 88,
           },
           {
             name: 'English',
@@ -99,7 +160,7 @@ const ChildProgress = () => {
             trend: 'up',
             assignments: { completed: 8, total: 9, pending: 1 },
             quizzes: { completed: 4, total: 4, upcoming: 0 },
-            attendance: 95
+            attendance: 95,
           },
           {
             name: 'Science',
@@ -108,7 +169,7 @@ const ChildProgress = () => {
             trend: 'up',
             assignments: { completed: 9, total: 10, pending: 1 },
             quizzes: { completed: 4, total: 5, upcoming: 1 },
-            attendance: 92
+            attendance: 92,
           },
           {
             name: 'Geography',
@@ -117,8 +178,8 @@ const ChildProgress = () => {
             trend: 'up',
             assignments: { completed: 7, total: 8, pending: 1 },
             quizzes: { completed: 3, total: 3, upcoming: 0 },
-            attendance: 90
-          }
+            attendance: 90,
+          },
         ],
         progressChart: [
           { month: 'Jan', grade: 70 },
@@ -126,16 +187,34 @@ const ChildProgress = () => {
           { month: 'Mar', grade: 74 },
           { month: 'Apr', grade: 76 },
           { month: 'May', grade: 77 },
-          { month: 'Jun', grade: 78 }
+          { month: 'Jun', grade: 78 },
         ],
         recentActivities: [
-          { type: 'quiz', subject: 'Science', title: 'Biology Test', score: 82, date: '2025-06-06' },
-          { type: 'assignment', subject: 'English', title: 'Book Report', score: 78, date: '2025-06-05' },
-          { type: 'assignment', subject: 'Mathematics', title: 'Geometry Problems', score: 70, date: '2025-06-04' }
+          {
+            type: 'quiz',
+            subject: 'Science',
+            title: 'Biology Test',
+            score: 82,
+            date: '2025-06-06',
+          },
+          {
+            type: 'assignment',
+            subject: 'English',
+            title: 'Book Report',
+            score: 78,
+            date: '2025-06-05',
+          },
+          {
+            type: 'assignment',
+            subject: 'Mathematics',
+            title: 'Geometry Problems',
+            score: 70,
+            date: '2025-06-04',
+          },
         ],
         strengths: ['Creative Writing', 'Science Projects', 'Class Participation'],
-        improvements: ['Mathematics Skills', 'Assignment Completion', 'Study Habits']
-      }
+        improvements: ['Mathematics Skills', 'Assignment Completion', 'Study Habits'],
+      },
     ];
 
     setTimeout(() => {
@@ -148,21 +227,21 @@ const ChildProgress = () => {
     setTabValue(newValue);
   };
 
-  const getGradeColor = (grade) => {
+  const getGradeColor = grade => {
     if (grade >= 85) return 'success';
     if (grade >= 70) return 'warning';
     return 'error';
   };
 
-  const getTrendIcon = (trend) => {
+  const getTrendIcon = trend => {
     return trend === 'up' ? <TrendingUpIcon color="success" /> : <TrendingDownIcon color="error" />;
   };
 
-  const getTrendColor = (trend) => {
+  const getTrendColor = trend => {
     return trend === 'up' ? 'success' : 'error';
   };
 
-  const getActivityIcon = (type) => {
+  const getActivityIcon = type => {
     return type === 'assignment' ? <AssignmentIcon /> : <QuizIcon />;
   };
   if (loading) {
@@ -187,11 +266,7 @@ const ChildProgress = () => {
               <Refresh />
             </IconButton>
           </Tooltip>
-          <Button
-            variant="outlined"
-            startIcon={<Download />}
-            sx={{ borderRadius: 2 }}
-          >
+          <Button variant="outlined" startIcon={<Download />} sx={{ borderRadius: 2 }}>
             Download Report
           </Button>
         </Box>
@@ -224,7 +299,7 @@ const ChildProgress = () => {
       <Card sx={{ mb: 3, borderRadius: 3, boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
         <CardContent sx={{ p: 3 }}>
           <Grid container spacing={3} alignItems="center">
-            <Grid size={{xs:12,md:3}}>
+            <Grid size={{ xs: 12, md: 3 }}>
               <Box display="flex" alignItems="center">
                 <Avatar
                   sx={{
@@ -232,7 +307,7 @@ const ChildProgress = () => {
                     height: 64,
                     bgcolor: 'primary.main',
                     mr: 2,
-                    fontSize: '1.5rem'
+                    fontSize: '1.5rem',
                   }}
                 >
                   {currentChild.name.charAt(0)}
@@ -248,21 +323,29 @@ const ChildProgress = () => {
               </Box>
             </Grid>
 
-            <Grid size={{xs:12,md:3}}>
+            <Grid size={{ xs: 12, md: 3 }}>
               <Paper sx={{ p: 2, textAlign: 'center', borderRadius: 2 }}>
-                <Typography variant="h3" color={getGradeColor(currentChild.overallGrade)} fontWeight="bold">
+                <Typography
+                  variant="h3"
+                  color={getGradeColor(currentChild.overallGrade)}
+                  fontWeight="bold"
+                >
                   {currentChild.overallGrade}%
                 </Typography>
                 <Box display="flex" alignItems="center" justifyContent="center" mt={1}>
                   {getTrendIcon(currentChild.trend)}
-                  <Typography variant="caption" color={getTrendColor(currentChild.trend)} sx={{ ml: 0.5 }}>
+                  <Typography
+                    variant="caption"
+                    color={getTrendColor(currentChild.trend)}
+                    sx={{ ml: 0.5 }}
+                  >
                     Overall Grade
                   </Typography>
                 </Box>
               </Paper>
             </Grid>
 
-            <Grid size={{xs:12,md:6}}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
                 Progress Trend (Last 6 Months)
               </Typography>
@@ -302,7 +385,7 @@ const ChildProgress = () => {
           <Box sx={{ p: 3 }}>
             <Grid container spacing={3}>
               {currentChild.subjects.map((subject, index) => (
-                <Grid size={{xs:12,md:6}} key={subject.name}>
+                <Grid size={{ xs: 12, md: 6 }} key={subject.name}>
                   <Card sx={{ borderRadius: 2, height: '100%' }}>
                     <CardContent>
                       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
@@ -310,7 +393,11 @@ const ChildProgress = () => {
                           {subject.name}
                         </Typography>
                         <Box display="flex" alignItems="center">
-                          <Typography variant="h5" color={getGradeColor(subject.currentGrade)} fontWeight="bold">
+                          <Typography
+                            variant="h5"
+                            color={getGradeColor(subject.currentGrade)}
+                            fontWeight="bold"
+                          >
                             {subject.currentGrade}%
                           </Typography>
                           {getTrendIcon(subject.trend)}
@@ -330,25 +417,31 @@ const ChildProgress = () => {
                       </Box>
 
                       <Grid container spacing={2}>
-                        <Grid size={{xs:4}}>
+                        <Grid size={{ xs: 4 }}>
                           <Paper sx={{ p: 1, textAlign: 'center', bgcolor: 'primary.light' }}>
-                            <Typography variant="caption" display="block">Assignments</Typography>
+                            <Typography variant="caption" display="block">
+                              Assignments
+                            </Typography>
                             <Typography variant="body2" fontWeight="bold">
                               {subject.assignments.completed}/{subject.assignments.total}
                             </Typography>
                           </Paper>
                         </Grid>
-                        <Grid size={{xs:4}}>
+                        <Grid size={{ xs: 4 }}>
                           <Paper sx={{ p: 1, textAlign: 'center', bgcolor: 'secondary.light' }}>
-                            <Typography variant="caption" display="block">Quizzes</Typography>
+                            <Typography variant="caption" display="block">
+                              Quizzes
+                            </Typography>
                             <Typography variant="body2" fontWeight="bold">
                               {subject.quizzes.completed}/{subject.quizzes.total}
                             </Typography>
                           </Paper>
                         </Grid>
-                        <Grid size={{xs:4}}>
+                        <Grid size={{ xs: 4 }}>
                           <Paper sx={{ p: 1, textAlign: 'center', bgcolor: 'success.light' }}>
-                            <Typography variant="caption" display="block">Attendance</Typography>
+                            <Typography variant="caption" display="block">
+                              Attendance
+                            </Typography>
                             <Typography variant="body2" fontWeight="bold">
                               {subject.attendance}%
                             </Typography>
@@ -412,7 +505,7 @@ const ChildProgress = () => {
         {tabValue === 2 && (
           <Box sx={{ p: 3 }}>
             <Grid container spacing={3}>
-              <Grid size={{xs:12,md:6}}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <Card sx={{ borderRadius: 2, height: '100%' }}>
                   <CardContent>
                     <Box display="flex" alignItems="center" mb={2}>
@@ -435,7 +528,7 @@ const ChildProgress = () => {
                 </Card>
               </Grid>
 
-              <Grid size={{xs:12,md:6}}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <Card sx={{ borderRadius: 2, height: '100%' }}>
                   <CardContent>
                     <Box display="flex" alignItems="center" mb={2}>
@@ -459,12 +552,9 @@ const ChildProgress = () => {
               </Grid>
             </Grid>
 
-            <Alert
-              severity="info"
-              sx={{ mt: 3, borderRadius: 2 }}
-              icon={<EventNoteIcon />}
-            >
-              Consider scheduling a parent-teacher meeting to discuss specific strategies for improvement areas.
+            <Alert severity="info" sx={{ mt: 3, borderRadius: 2 }} icon={<EventNoteIcon />}>
+              Consider scheduling a parent-teacher meeting to discuss specific strategies for
+              improvement areas.
             </Alert>
           </Box>
         )}
@@ -474,4 +564,3 @@ const ChildProgress = () => {
 };
 
 export default ChildProgress;
-

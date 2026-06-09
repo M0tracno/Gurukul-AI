@@ -11,11 +11,7 @@ import {
   CircularProgress,
   Fade,
 } from '@mui/material';
-import {
-  Visibility,
-  VisibilityOff,
-  School as SchoolIcon,
-} from '@mui/icons-material';
+import { Visibility, VisibilityOff, School as SchoolIcon } from '@mui/icons-material';
 import { useAuth } from '../auth/AuthContext';
 import { navigateToDashboard } from '../utils/navigationHelpers';
 import LoginLayout from '../components/auth/LoginLayout';
@@ -36,7 +32,7 @@ function StudentLogin() {
     }
   }, [navigate, currentUser, userRole]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     if (loading) return;
 
@@ -96,13 +92,17 @@ function StudentLogin() {
         </Fade>
       )}
 
-      <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+      <Box
+        component="form"
+        onSubmit={handleSubmit}
+        sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}
+      >
         <TextField
           fullWidth
           label="Email Address"
           type="email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={e => setEmail(e.target.value)}
           required
           autoComplete="email"
           variant="outlined"
@@ -128,7 +128,7 @@ function StudentLogin() {
           label="Password"
           type={showPassword ? 'text' : 'password'}
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={e => setPassword(e.target.value)}
           required
           autoComplete="current-password"
           variant="outlined"
@@ -205,7 +205,10 @@ function StudentLogin() {
         <Typography
           component="a"
           href="/forgot-password"
-          onClick={(e) => { e.preventDefault(); navigate('/forgot-password'); }}
+          onClick={e => {
+            e.preventDefault();
+            navigate('/forgot-password');
+          }}
           variant="body2"
           sx={{
             color: 'rgba(255, 255, 255, 0.4)',

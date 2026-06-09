@@ -33,7 +33,7 @@ import {
   Tooltip,
   Divider,
   FormControlLabel,
-  Checkbox
+  Checkbox,
 } from '@mui/material';
 import {
   Email as EmailIcon,
@@ -42,14 +42,15 @@ import {
   Drafts as DraftsIcon,
   Reply as ReplyIcon,
   Forward as ForwardIcon,
-  Delete as DeleteIcon,  Star as StarIcon,
+  Delete as DeleteIcon,
+  Star as StarIcon,
   StarBorder as StarBorderIcon,
   Attach as AttachIcon,
   Group as GroupIcon,
   Person as PersonIcon,
   Schedule as ScheduleIcon,
   Notifications as NotificationIcon,
-  Refresh as RefreshIcon
+  Refresh as RefreshIcon,
 } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 import EnhancedFacultyService from '../../services/enhancedFacultyService';
@@ -95,7 +96,7 @@ const FacultyCommunication = () => {
     courseId: '',
     recipientType: 'individual', // individual, course, all
     priority: 'normal',
-    sendCopy: false
+    sendCopy: false,
   });
 
   useEffect(() => {
@@ -165,7 +166,7 @@ const FacultyCommunication = () => {
           courseId: '',
           recipientType: 'individual',
           priority: 'normal',
-          sendCopy: false
+          sendCopy: false,
         });
         await loadData();
       }
@@ -177,7 +178,7 @@ const FacultyCommunication = () => {
     }
   };
 
-  const handleViewMessage = (message) => {
+  const handleViewMessage = message => {
     setSelectedMessage(message);
     setViewMessageDialog(true);
     // Mark as read if it's unread
@@ -186,18 +187,16 @@ const FacultyCommunication = () => {
     }
   };
 
-  const markAsRead = async (messageId) => {
+  const markAsRead = async messageId => {
     try {
       await EnhancedFacultyService.markMessageAsRead(messageId);
-      setMessages(prev => prev.map(msg => 
-        msg.id === messageId ? { ...msg, read: true } : msg
-      ));
+      setMessages(prev => prev.map(msg => (msg.id === messageId ? { ...msg, read: true } : msg)));
     } catch (error) {
       console.error('Error marking message as read:', error);
     }
   };
 
-  const handleDeleteMessage = async (messageId) => {
+  const handleDeleteMessage = async messageId => {
     if (!window.confirm('Are you sure you want to delete this message?')) return;
 
     try {
@@ -223,12 +222,12 @@ const FacultyCommunication = () => {
       case 'individual':
         return students.map(student => ({
           value: student.id,
-          label: `${student.name} (${student.studentId})`
+          label: `${student.name} (${student.studentId})`,
         }));
       case 'course':
         return courses.map(course => ({
           value: course.id,
-          label: `${course.code} - ${course.name}`
+          label: `${course.code} - ${course.name}`,
         }));
       default:
         return [];
@@ -277,42 +276,46 @@ const FacultyCommunication = () => {
 
         <List>
           {messages.length > 0 ? (
-            messages.map((message) => (
-              <MessageItem 
-                key={message.id} 
+            messages.map(message => (
+              <MessageItem
+                key={message.id}
                 read={message.read}
                 button
                 onClick={() => handleViewMessage(message)}
               >
                 <ListItemAvatar>
-                  <Badge 
-                    color="primary" 
-                    variant="dot" 
-                    invisible={message.read}
-                  >
-                    <Avatar sx={{ 
-                      bgcolor: message.from === 'student' ? '#4CAF50' : 
-                               message.from === 'admin' ? '#FF9800' : '#2196F3' 
-                    }}>
-                      {message.from === 'student' ? <PersonIcon /> :
-                       message.from === 'admin' ? <NotificationIcon /> : <EmailIcon />}
+                  <Badge color="primary" variant="dot" invisible={message.read}>
+                    <Avatar
+                      sx={{
+                        bgcolor:
+                          message.from === 'student'
+                            ? '#4CAF50'
+                            : message.from === 'admin'
+                              ? '#FF9800'
+                              : '#2196F3',
+                      }}
+                    >
+                      {message.from === 'student' ? (
+                        <PersonIcon />
+                      ) : message.from === 'admin' ? (
+                        <NotificationIcon />
+                      ) : (
+                        <EmailIcon />
+                      )}
                     </Avatar>
                   </Badge>
                 </ListItemAvatar>
                 <ListItemText
                   primary={
                     <Box display="flex" alignItems="center" justifyContent="space-between">
-                      <Typography 
-                        variant="subtitle1" 
-                        fontWeight={message.read ? 'normal' : 'bold'}
-                      >
+                      <Typography variant="subtitle1" fontWeight={message.read ? 'normal' : 'bold'}>
                         {message.sender}
                       </Typography>
                       <Box display="flex" alignItems="center" gap={1}>
-                        <Chip 
-                          label={message.course || 'General'} 
-                          size="small" 
-                          color="primary" 
+                        <Chip
+                          label={message.course || 'General'}
+                          size="small"
+                          color="primary"
                           variant="outlined"
                         />
                         <Typography variant="caption" color="textSecondary">
@@ -323,20 +326,20 @@ const FacultyCommunication = () => {
                   }
                   secondary={
                     <Box>
-                      <Typography 
-                        variant="body2" 
+                      <Typography
+                        variant="body2"
                         fontWeight={message.read ? 'normal' : 'bold'}
                         sx={{ mb: 0.5 }}
                       >
                         {message.subject}
                       </Typography>
-                      <Typography 
-                        variant="body2" 
+                      <Typography
+                        variant="body2"
                         color="textSecondary"
-                        sx={{ 
+                        sx={{
                           overflow: 'hidden',
                           textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap'
+                          whiteSpace: 'nowrap',
                         }}
                       >
                         {message.message}
@@ -346,9 +349,9 @@ const FacultyCommunication = () => {
                 />
                 <Box>
                   <Tooltip title="Delete message">
-                    <IconButton 
-                      color="error" 
-                      onClick={(e) => {
+                    <IconButton
+                      color="error"
+                      onClick={e => {
                         e.stopPropagation();
                         handleDeleteMessage(message.id);
                       }}
@@ -390,7 +393,7 @@ const FacultyCommunication = () => {
               setNewMessage({
                 ...newMessage,
                 recipientType: 'course',
-                subject: 'Course Announcement: '
+                subject: 'Course Announcement: ',
               });
               setComposeDialog(true);
             }}
@@ -408,7 +411,7 @@ const FacultyCommunication = () => {
   // Statistics Tab
   const StatisticsTab = () => (
     <Grid container spacing={3}>
-      <Grid size={{xs:12,md:3}}>
+      <Grid size={{ xs: 12, md: 3 }}>
         <StyledCard>
           <CardContent sx={{ textAlign: 'center' }}>
             <Avatar sx={{ mx: 'auto', mb: 2, bgcolor: '#667eea' }}>
@@ -423,7 +426,7 @@ const FacultyCommunication = () => {
           </CardContent>
         </StyledCard>
       </Grid>
-      <Grid size={{xs:12,md:3}}>
+      <Grid size={{ xs: 12, md: 3 }}>
         <StyledCard>
           <CardContent sx={{ textAlign: 'center' }}>
             <Avatar sx={{ mx: 'auto', mb: 2, bgcolor: '#F44336' }}>
@@ -438,7 +441,7 @@ const FacultyCommunication = () => {
           </CardContent>
         </StyledCard>
       </Grid>
-      <Grid size={{xs:12,md:3}}>
+      <Grid size={{ xs: 12, md: 3 }}>
         <StyledCard>
           <CardContent sx={{ textAlign: 'center' }}>
             <Avatar sx={{ mx: 'auto', mb: 2, bgcolor: '#4CAF50' }}>
@@ -453,7 +456,7 @@ const FacultyCommunication = () => {
           </CardContent>
         </StyledCard>
       </Grid>
-      <Grid size={{xs:12,md:3}}>
+      <Grid size={{ xs: 12, md: 3 }}>
         <StyledCard>
           <CardContent sx={{ textAlign: 'center' }}>
             <Avatar sx={{ mx: 'auto', mb: 2, bgcolor: '#FF9800' }}>
@@ -472,11 +475,13 @@ const FacultyCommunication = () => {
   );
 
   return (
-    <Box sx={{ 
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-      py: 3
-    }}>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+        py: 3,
+      }}
+    >
       <Container maxWidth="xl">
         {/* Header */}
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
@@ -494,13 +499,13 @@ const FacultyCommunication = () => {
             textColor="primary"
             variant="fullWidth"
           >
-            <Tab 
+            <Tab
               label={
                 <Badge badgeContent={stats.unread} color="error">
                   Inbox
                 </Badge>
-              } 
-              icon={<InboxIcon />} 
+              }
+              icon={<InboxIcon />}
             />
             <Tab label="Announcements" icon={<NotificationIcon />} />
             <Tab label="Statistics" icon={<EmailIcon />} />
@@ -522,17 +527,19 @@ const FacultyCommunication = () => {
           <DialogTitle>Compose Message</DialogTitle>
           <DialogContent>
             <Grid container spacing={2} sx={{ mt: 1 }}>
-              <Grid size={{xs:12,md:6}}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <FormControl fullWidth>
                   <InputLabel>Recipient Type</InputLabel>
                   <Select
                     value={newMessage.recipientType}
-                    onChange={(e) => setNewMessage({ 
-                      ...newMessage, 
-                      recipientType: e.target.value,
-                      to: '',
-                      courseId: ''
-                    })}
+                    onChange={e =>
+                      setNewMessage({
+                        ...newMessage,
+                        recipientType: e.target.value,
+                        to: '',
+                        courseId: '',
+                      })
+                    }
                     label="Recipient Type"
                   >
                     <MenuItem value="individual">Individual Student</MenuItem>
@@ -541,12 +548,12 @@ const FacultyCommunication = () => {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid size={{xs:12,md:6}}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <FormControl fullWidth>
                   <InputLabel>Priority</InputLabel>
                   <Select
                     value={newMessage.priority}
-                    onChange={(e) => setNewMessage({ ...newMessage, priority: e.target.value })}
+                    onChange={e => setNewMessage({ ...newMessage, priority: e.target.value })}
                     label="Priority"
                   >
                     <MenuItem value="low">Low</MenuItem>
@@ -557,20 +564,27 @@ const FacultyCommunication = () => {
                 </FormControl>
               </Grid>
               {newMessage.recipientType !== 'all' && (
-                <Grid size={{xs:12}}>
+                <Grid size={{ xs: 12 }}>
                   <FormControl fullWidth required>
                     <InputLabel>
                       {newMessage.recipientType === 'individual' ? 'Student' : 'Course'}
                     </InputLabel>
                     <Select
-                      value={newMessage.recipientType === 'individual' ? newMessage.to : newMessage.courseId}
-                      onChange={(e) => setNewMessage({ 
-                        ...newMessage, 
-                        [newMessage.recipientType === 'individual' ? 'to' : 'courseId']: e.target.value 
-                      })}
+                      value={
+                        newMessage.recipientType === 'individual'
+                          ? newMessage.to
+                          : newMessage.courseId
+                      }
+                      onChange={e =>
+                        setNewMessage({
+                          ...newMessage,
+                          [newMessage.recipientType === 'individual' ? 'to' : 'courseId']:
+                            e.target.value,
+                        })
+                      }
                       label={newMessage.recipientType === 'individual' ? 'Student' : 'Course'}
                     >
-                      {getRecipientOptions().map((option) => (
+                      {getRecipientOptions().map(option => (
                         <MenuItem key={option.value} value={option.value}>
                           {option.label}
                         </MenuItem>
@@ -579,32 +593,32 @@ const FacultyCommunication = () => {
                   </FormControl>
                 </Grid>
               )}
-              <Grid size={{xs:12}}>
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   label="Subject"
                   value={newMessage.subject}
-                  onChange={(e) => setNewMessage({ ...newMessage, subject: e.target.value })}
+                  onChange={e => setNewMessage({ ...newMessage, subject: e.target.value })}
                   fullWidth
                   required
                 />
               </Grid>
-              <Grid size={{xs:12}}>
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   label="Message"
                   value={newMessage.message}
-                  onChange={(e) => setNewMessage({ ...newMessage, message: e.target.value })}
+                  onChange={e => setNewMessage({ ...newMessage, message: e.target.value })}
                   fullWidth
                   multiline
                   rows={6}
                   required
                 />
               </Grid>
-              <Grid size={{xs:12}}>
+              <Grid size={{ xs: 12 }}>
                 <FormControlLabel
                   control={
                     <Checkbox
                       checked={newMessage.sendCopy}
-                      onChange={(e) => setNewMessage({ ...newMessage, sendCopy: e.target.checked })}
+                      onChange={e => setNewMessage({ ...newMessage, sendCopy: e.target.checked })}
                     />
                   }
                   label="Send a copy to my email"
@@ -613,9 +627,7 @@ const FacultyCommunication = () => {
             </Grid>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setComposeDialog(false)}>
-              Cancel
-            </Button>
+            <Button onClick={() => setComposeDialog(false)}>Cancel</Button>
             <Button
               onClick={handleSendMessage}
               variant="contained"
@@ -634,16 +646,12 @@ const FacultyCommunication = () => {
           maxWidth="md"
           fullWidth
         >
-          <DialogTitle>
-            {selectedMessage?.subject}
-          </DialogTitle>
+          <DialogTitle>{selectedMessage?.subject}</DialogTitle>
           <DialogContent>
             {selectedMessage && (
               <Box>
                 <Box display="flex" alignItems="center" mb={2}>
-                  <Avatar sx={{ mr: 2 }}>
-                    {selectedMessage.sender?.charAt(0)}
-                  </Avatar>
+                  <Avatar sx={{ mr: 2 }}>{selectedMessage.sender?.charAt(0)}</Avatar>
                   <Box>
                     <Typography variant="subtitle1" fontWeight="bold">
                       {selectedMessage.sender}
@@ -661,7 +669,7 @@ const FacultyCommunication = () => {
             )}
           </DialogContent>
           <DialogActions>
-            <Button 
+            <Button
               startIcon={<ReplyIcon />}
               onClick={() => {
                 setViewMessageDialog(false);
@@ -669,16 +677,14 @@ const FacultyCommunication = () => {
                   ...newMessage,
                   to: selectedMessage?.from === 'student' ? selectedMessage.sender : '',
                   subject: `Re: ${selectedMessage?.subject}`,
-                  recipientType: 'individual'
+                  recipientType: 'individual',
                 });
                 setComposeDialog(true);
               }}
             >
               Reply
             </Button>
-            <Button onClick={() => setViewMessageDialog(false)}>
-              Close
-            </Button>
+            <Button onClick={() => setViewMessageDialog(false)}>Close</Button>
           </DialogActions>
         </Dialog>
 
@@ -689,11 +695,7 @@ const FacultyCommunication = () => {
           onClose={handleSnackbarClose}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         >
-          <Alert 
-            onClose={handleSnackbarClose} 
-            severity={snackbar.severity}
-            sx={{ width: '100%' }}
-          >
+          <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: '100%' }}>
             {snackbar.message}
           </Alert>
         </Snackbar>
@@ -702,4 +704,4 @@ const FacultyCommunication = () => {
   );
 };
 
-export default FacultyCommunication;
+export default FacultyCommunication;

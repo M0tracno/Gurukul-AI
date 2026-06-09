@@ -25,13 +25,13 @@ export class BundleAnalyzer {
   // Initialize bundle analysis
   async initialize() {
     console.log('🔍 Starting bundle analysis...');
-    
+
     await this.analyzeNetworkResources();
     await this.analyzeScriptTags();
     await this.analyzeLazyLoading();
     await this.analyzeCodeSplitting();
     await this.generateOptimizationReport();
-    
+
     console.log('✅ Bundle analysis completed');
     return this.getAnalysisReport();
   }
@@ -42,13 +42,13 @@ export class BundleAnalyzer {
 
     try {
       const entries = performance.getEntriesByType('resource');
-      
+
       entries.forEach(entry => {
         if (entry.name.includes('.js') || entry.name.includes('.css')) {
           const size = entry.transferSize || entry.encodedBodySize || 0;
           const parsed = new URL(entry.name);
           const filename = parsed.pathname.split('/').pop();
-          
+
           this.resourceMap.set(filename, {
             name: filename,
             url: entry.name,
@@ -59,7 +59,7 @@ export class BundleAnalyzer {
             isVendor: filename.includes('vendor') || filename.includes('chunk'),
             isLazy: entry.name.includes('chunk') && !entry.name.includes('main'),
           });
-          
+
           this.analysis.totalSize += size;
         }
       });
@@ -73,11 +73,11 @@ export class BundleAnalyzer {
   // Analyze script tags in the document
   async analyzeScriptTags() {
     const scripts = document.querySelectorAll('script[src]');
-    
+
     scripts.forEach(script => {
       const src = script.src;
       const filename = src.split('/').pop();
-      
+
       if (!this.resourceMap.has(filename)) {
         // Estimate size for scripts not captured by Performance API
         this.resourceMap.set(filename, {
@@ -142,10 +142,11 @@ export class BundleAnalyzer {
   // Check if a component is lazy loaded
   checkIfComponentIsLazy(componentName) {
     // Check if component is loaded as a separate chunk
-    const hasLazyChunk = Array.from(this.resourceMap.values()).some(resource => 
-      resource.isLazy && resource.name.toLowerCase().includes(componentName.toLowerCase())
+    const hasLazyChunk = Array.from(this.resourceMap.values()).some(
+      resource =>
+        resource.isLazy && resource.name.toLowerCase().includes(componentName.toLowerCase())
     );
-    
+
     return hasLazyChunk;
   }
 
@@ -153,7 +154,7 @@ export class BundleAnalyzer {
   getComponentPriority(componentName) {
     const highPriorityComponents = ['AdminDashboard'];
     const mediumPriorityComponents = ['SystemMonitor', 'EnhancedAnalytics'];
-    
+
     if (highPriorityComponents.includes(componentName)) return 'high';
     if (mediumPriorityComponents.includes(componentName)) return 'medium';
     return 'low';
@@ -163,10 +164,10 @@ export class BundleAnalyzer {
   async analyzeCodeSplitting() {
     const resources = Array.from(this.resourceMap.values());
     const jsResources = resources.filter(r => r.type === 'javascript');
-    
+
     // Check for large bundles that could be split
     const largeBundles = jsResources.filter(r => r.size > 250 * 1024); // > 250KB
-    
+
     largeBundles.forEach(bundle => {
       this.analysis.optimizationOpportunities.push({
         type: 'code_splitting',
@@ -181,7 +182,7 @@ export class BundleAnalyzer {
     // Check for vendor vs app code separation
     const hasVendorBundle = jsResources.some(r => r.isVendor);
     const mainBundles = jsResources.filter(r => r.isMainBundle);
-    
+
     if (!hasVendorBundle && mainBundles.length > 0) {
       this.analysis.optimizationOpportunities.push({
         type: 'vendor_splitting',
@@ -231,7 +232,7 @@ export class BundleAnalyzer {
     this.performanceEntries.forEach(entry => {
       if (entry.name.includes('.js') || entry.name.includes('.css')) {
         impact.loadTime += entry.duration;
-        
+
         // Estimate parse time (rough approximation)
         if (entry.name.includes('.js')) {
           const size = entry.transferSize || entry.encodedBodySize || 0;
@@ -241,8 +242,8 @@ export class BundleAnalyzer {
     });
 
     // Calculate cache efficiency
-    const cachedResources = this.performanceEntries.filter(entry => 
-      entry.transferSize === 0 && entry.decodedBodySize > 0
+    const cachedResources = this.performanceEntries.filter(
+      entry => entry.transferSize === 0 && entry.decodedBodySize > 0
     );
     impact.cacheEfficiency = (cachedResources.length / this.performanceEntries.length) * 100;
 
@@ -254,7 +255,8 @@ export class BundleAnalyzer {
     const recommendations = [];
 
     // Bundle size recommendations
-    if (bundleAnalysis.total > 1024 * 1024) { // > 1MB
+    if (bundleAnalysis.total > 1024 * 1024) {
+      // > 1MB
       recommendations.push({
         type: 'bundle_size',
         priority: 'high',
@@ -271,7 +273,9 @@ export class BundleAnalyzer {
     }
 
     // Lazy loading recommendations
-    const nonLazyComponents = this.analysis.lazyComponents.filter(c => !c.isLazy && c.priority !== 'high');
+    const nonLazyComponents = this.analysis.lazyComponents.filter(
+      c => !c.isLazy && c.priority !== 'high'
+    );
     if (nonLazyComponents.length > 0) {
       recommendations.push({
         type: 'lazy_loading',
@@ -360,7 +364,7 @@ export const useBundleAnalysis = (autoAnalyze = false) => {
   const runAnalysis = useCallback(async () => {
     setIsAnalyzing(true);
     setError(null);
-    
+
     try {
       const analyzer = new BundleAnalyzer();
       const result = await analyzer.initialize();
@@ -414,12 +418,13 @@ export const useBundleMonitoring = () => {
 
         // Monitor resource loading
         const resourceEntries = performance.getEntriesByType('resource');
-        const bundleResources = resourceEntries.filter(entry => 
-          entry.name.includes('.js') || entry.name.includes('.css')
+        const bundleResources = resourceEntries.filter(
+          entry => entry.name.includes('.js') || entry.name.includes('.css')
         );
 
-        const totalSize = bundleResources.reduce((sum, entry) => 
-          sum + (entry.transferSize || entry.encodedBodySize || 0), 0
+        const totalSize = bundleResources.reduce(
+          (sum, entry) => sum + (entry.transferSize || entry.encodedBodySize || 0),
+          0
         );
 
         setMetrics(prev => ({
@@ -438,7 +443,6 @@ export const useBundleMonitoring = () => {
           ...prev,
           performanceScore,
         }));
-
       } catch (error) {
         console.warn('Bundle monitoring failed:', error);
       }
@@ -464,13 +468,17 @@ function calculatePerformanceScore({ loadTime, bundleSize, resourceCount }) {
   let score = 100;
 
   // Penalize slow load times
-  if (loadTime > 3000) score -= 30; // > 3s
-  else if (loadTime > 2000) score -= 20; // > 2s
+  if (loadTime > 3000)
+    score -= 30; // > 3s
+  else if (loadTime > 2000)
+    score -= 20; // > 2s
   else if (loadTime > 1000) score -= 10; // > 1s
 
   // Penalize large bundle sizes
-  if (bundleSize > 2 * 1024 * 1024) score -= 25; // > 2MB
-  else if (bundleSize > 1024 * 1024) score -= 15; // > 1MB
+  if (bundleSize > 2 * 1024 * 1024)
+    score -= 25; // > 2MB
+  else if (bundleSize > 1024 * 1024)
+    score -= 15; // > 1MB
   else if (bundleSize > 512 * 1024) score -= 10; // > 512KB
 
   // Penalize too many resources
@@ -489,10 +497,10 @@ export const bundleOptimizationUtils = {
   shouldLazyLoad: (moduleName, priority = 'low') => {
     const highPriorityModules = ['AdminDashboard'];
     const mediumPriorityModules = ['SystemMonitor', 'EnhancedAnalytics'];
-    
+
     if (highPriorityModules.includes(moduleName)) return false;
     if (mediumPriorityModules.includes(moduleName) && priority === 'high') return false;
-    
+
     return true;
   },
 
@@ -531,4 +539,3 @@ export const bundleOptimizationUtils = {
 };
 
 export default BundleAnalyzer;
-

@@ -18,12 +18,7 @@ const STAT_CARD_COUNT = 4;
 
 export function DashboardSkeleton() {
   return (
-    <Box
-      role="status"
-      aria-label="Loading dashboard..."
-      aria-busy="true"
-      sx={{ p: 3 }}
-    >
+    <Box role="status" aria-label="Loading dashboard..." aria-busy="true" sx={{ p: 3 }}>
       {/* Page title */}
       <Skeleton variant="text" width={240} height={40} sx={{ mb: 3 }} />
 
@@ -51,19 +46,13 @@ export function DashboardSkeleton() {
       {/* Chart area */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
         <Grid size={{ xs: 12, md: 8 }}>
-          <Paper
-            elevation={0}
-            sx={{ p: 3, border: 1, borderColor: 'divider', borderRadius: 2 }}
-          >
+          <Paper elevation={0} sx={{ p: 3, border: 1, borderColor: 'divider', borderRadius: 2 }}>
             <Skeleton variant="text" width={160} height={24} sx={{ mb: 2 }} />
             <Skeleton variant="rectangular" width="100%" height={240} sx={{ borderRadius: 1 }} />
           </Paper>
         </Grid>
         <Grid size={{ xs: 12, md: 4 }}>
-          <Paper
-            elevation={0}
-            sx={{ p: 3, border: 1, borderColor: 'divider', borderRadius: 2 }}
-          >
+          <Paper elevation={0} sx={{ p: 3, border: 1, borderColor: 'divider', borderRadius: 2 }}>
             <Skeleton variant="text" width={120} height={24} sx={{ mb: 2 }} />
             <Skeleton variant="circular" width={160} height={160} sx={{ mx: 'auto', mb: 2 }} />
             <Skeleton variant="text" width="80%" sx={{ mx: 'auto' }} />
@@ -73,10 +62,7 @@ export function DashboardSkeleton() {
       </Grid>
 
       {/* Recent activity section */}
-      <Paper
-        elevation={0}
-        sx={{ p: 3, border: 1, borderColor: 'divider', borderRadius: 2 }}
-      >
+      <Paper elevation={0} sx={{ p: 3, border: 1, borderColor: 'divider', borderRadius: 2 }}>
         <Skeleton variant="text" width={180} height={24} sx={{ mb: 2 }} />
         {Array.from({ length: 3 }).map((_, idx) => (
           <Box

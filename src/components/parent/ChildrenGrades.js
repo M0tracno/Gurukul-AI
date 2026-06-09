@@ -17,52 +17,52 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Typography
+  Typography,
 } from '@mui/material';
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
-    padding: theme.spacing(3)
+    padding: theme.spacing(3),
   },
   title: {
-    marginBottom: theme.spacing(3)
+    marginBottom: theme.spacing(3),
   },
   tableContainer: {
-    marginBottom: theme.spacing(4)
+    marginBottom: theme.spacing(4),
   },
   gradeChip: {
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   excellentGrade: {
     backgroundColor: '#4caf50',
-    color: 'white'
+    color: 'white',
   },
   goodGrade: {
     backgroundColor: '#8bc34a',
-    color: 'white'
+    color: 'white',
   },
   averageGrade: {
-    backgroundColor: '#ffeb3b'
+    backgroundColor: '#ffeb3b',
   },
   belowAverageGrade: {
     backgroundColor: '#ff9800',
-    color: 'white'
+    color: 'white',
   },
   failingGrade: {
     backgroundColor: '#f44336',
-    color: 'white'
+    color: 'white',
   },
   childCard: {
-    marginBottom: theme.spacing(3)
+    marginBottom: theme.spacing(3),
   },
   childTitle: {
     display: 'flex',
     alignItems: 'center',
-    marginBottom: theme.spacing(2)
+    marginBottom: theme.spacing(2),
   },
   childIcon: {
     marginRight: theme.spacing(1),
-    color: theme.palette.primary.main
-  }
+    color: theme.palette.primary.main,
+  },
 }));
 
 function ChildrenGrades() {
@@ -94,7 +94,7 @@ function ChildrenGrades() {
   }, [currentUser, getCollection]);
 
   // Helper function to get grade color class
-  const getGradeColorClass = (grade) => {
+  const getGradeColorClass = grade => {
     if (grade >= 90) return classes.excellentGrade;
     if (grade >= 80) return classes.goodGrade;
     if (grade >= 70) return classes.averageGrade;
@@ -103,7 +103,7 @@ function ChildrenGrades() {
   };
 
   // Calculate average grade for a subject
-  const calculateAverage = (grades) => {
+  const calculateAverage = grades => {
     if (!grades || grades.length === 0) return 0;
     const sum = grades.reduce((total, grade) => total + grade.score, 0);
     return Math.round(sum / grades.length);
@@ -126,7 +126,7 @@ function ChildrenGrades() {
           </Typography>
         </Paper>
       ) : (
-        gradesData.map((child) => (
+        gradesData.map(child => (
           <Card key={child.childId} className={classes.childCard}>
             <CardContent>
               <div className={classes.childTitle}>
@@ -139,8 +139,8 @@ function ChildrenGrades() {
               <Divider style={{ marginBottom: '20px' }} />
 
               <Grid container spacing={3}>
-                {child.subjects.map((subject) => (
-                  <Grid size={{xs:12,md:4}} key={subject.name}>
+                {child.subjects.map(subject => (
+                  <Grid size={{ xs: 12, md: 4 }} key={subject.name}>
                     <Typography variant="h6" gutterBottom>
                       {subject.name}
                       <Chip
@@ -155,9 +155,11 @@ function ChildrenGrades() {
                     <TableContainer component={Paper} className={classes.tableContainer}>
                       <Table size="small">
                         <TableHead>
-                          <TableRow><TableCell>Assessment</TableCell>
+                          <TableRow>
+                            <TableCell>Assessment</TableCell>
                             <TableCell align="right">Score</TableCell>
-                            <TableCell align="right">Date</TableCell></TableRow>
+                            <TableCell align="right">Date</TableCell>
+                          </TableRow>
                         </TableHead>
                         <TableBody>
                           {subject.grades.map((grade, index) => (
@@ -176,7 +178,8 @@ function ChildrenGrades() {
                               </TableCell>
                               <TableCell align="right">
                                 {new Date(grade.date).toLocaleDateString()}
-                              </TableCell></TableRow>
+                              </TableCell>
+                            </TableRow>
                           ))}
                         </TableBody>
                       </Table>
@@ -193,4 +196,3 @@ function ChildrenGrades() {
 }
 
 export default ChildrenGrades;
-

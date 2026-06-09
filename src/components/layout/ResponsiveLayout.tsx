@@ -9,7 +9,14 @@
  *               8.3 (collapsible mobile nav at ≤768px).
  */
 
-import React, { useState, useCallback } from 'react';
+import {
+  Menu as MenuIcon,
+  Close as CloseIcon,
+  Notifications as NotificationsIcon,
+  AccountCircle,
+  Logout as LogoutIcon,
+  Settings as SettingsIcon,
+} from '@mui/icons-material';
 import {
   AppBar,
   Avatar,
@@ -26,14 +33,7 @@ import {
   useMediaQuery,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import {
-  Menu as MenuIcon,
-  Close as CloseIcon,
-  Notifications as NotificationsIcon,
-  AccountCircle,
-  Logout as LogoutIcon,
-  Settings as SettingsIcon,
-} from '@mui/icons-material';
+import React, { useState, useCallback } from 'react';
 
 import { Navigation, type NavigationItem } from '../../design-system/components/Navigation';
 import { spacing } from '../../design-system/tokens/spacing';
@@ -94,7 +94,7 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleDrawerToggle = useCallback(() => {
-    setMobileOpen((prev) => !prev);
+    setMobileOpen(prev => !prev);
   }, []);
 
   const handleDrawerClose = useCallback(() => {
@@ -108,7 +108,7 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({
         setMobileOpen(false);
       }
     },
-    [onNavigationSelect, isMobile],
+    [onNavigationSelect, isMobile]
   );
 
   const handleMenuOpen = useCallback((event: React.MouseEvent<HTMLElement>) => {
@@ -256,7 +256,7 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({
           // On desktop, offset by the drawer width
           width: { xs: '100%', [MOBILE_BREAKPOINT]: `calc(100% - ${DRAWER_WIDTH}px)` },
           ml: { xs: 0, [MOBILE_BREAKPOINT]: `${DRAWER_WIDTH}px` },
-          zIndex: (t) => t.zIndex.drawer + 1,
+          zIndex: t => t.zIndex.drawer + 1,
           background: 'rgba(10, 10, 15, 0.85)',
           backdropFilter: 'blur(20px)',
           borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
@@ -385,8 +385,7 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({
           minWidth: 0,
           width: { xs: '100%', [MOBILE_BREAKPOINT]: `calc(100% - ${DRAWER_WIDTH}px)` },
           minHeight: '100vh',
-          background:
-            'linear-gradient(135deg, #0a0a0f 0%, #111118 50%, #0a0a1a 100%)',
+          background: 'linear-gradient(135deg, #0a0a0f 0%, #111118 50%, #0a0a1a 100%)',
         }}
       >
         {/* Toolbar spacer */}
@@ -398,10 +397,10 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({
           sx={{
             flexGrow: 1,
             px: {
-              xs: `${spacing.sm}px`,   // 8px padding on smallest screens
-              sm: `${spacing.md}px`,   // 16px on small+
-              lg: `${spacing.lg}px`,   // 24px on large
-              xl: `${spacing.xl}px`,   // 32px on extra-large
+              xs: `${spacing.sm}px`, // 8px padding on smallest screens
+              sm: `${spacing.md}px`, // 16px on small+
+              lg: `${spacing.lg}px`, // 24px on large
+              xl: `${spacing.xl}px`, // 32px on extra-large
             },
             py: `${spacing.lg}px`,
             maxWidth: '2560px',

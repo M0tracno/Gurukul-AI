@@ -24,121 +24,142 @@ import {
   TableHead,
   TableRow,
   Tabs,
-  Typography
+  Typography,
 } from '@mui/material';
 import {
   Warning as WarningIcon,
   CheckCircle as PresentIcon,
   Cancel as AbsentIcon,
-  AccessTime as LateIcon
+  AccessTime as LateIcon,
 } from '@mui/icons-material';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
-    padding: theme.spacing(3)
+    padding: theme.spacing(3),
   },
   title: {
-    marginBottom: theme.spacing(3)
+    marginBottom: theme.spacing(3),
   },
   paper: {
     padding: theme.spacing(3),
-    marginBottom: theme.spacing(3)},
+    marginBottom: theme.spacing(3),
+  },
   formControl: {
     marginBottom: theme.spacing(3),
-    minWidth: 200},
+    minWidth: 200,
+  },
   childSelect: {
     marginRight: theme.spacing(2),
-    minWidth: 200},
+    minWidth: 200,
+  },
   courseSelect: {
-    minWidth: 200},
+    minWidth: 200,
+  },
   statsCard: {
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: theme.spacing(2)},
+    padding: theme.spacing(2),
+  },
   statValue: {
     fontSize: '2rem',
     fontWeight: 'bold',
-    marginBottom: theme.spacing(1)},
+    marginBottom: theme.spacing(1),
+  },
   goodAttendance: {
-    color: theme.palette.success.main},
+    color: theme.palette.success.main,
+  },
   warningAttendance: {
-    color: theme.palette.warning.main},
+    color: theme.palette.warning.main,
+  },
   poorAttendance: {
-    color: theme.palette.error.main},
+    color: theme.palette.error.main,
+  },
   tableHeader: {
     backgroundColor: theme.palette.primary.light,
     '& .MuiTableCell-head': {
       color: 'white',
-      fontWeight: 'bold'}},
+      fontWeight: 'bold',
+    },
+  },
   chip: {
-    margin: theme.spacing(0.5)},
+    margin: theme.spacing(0.5),
+  },
   present: {
     backgroundColor: theme.palette.success.light,
-    color: theme.palette.success.dark},
+    color: theme.palette.success.dark,
+  },
   absent: {
     backgroundColor: theme.palette.error.light,
-    color: theme.palette.error.dark},
+    color: theme.palette.error.dark,
+  },
   late: {
     backgroundColor: theme.palette.warning.light,
-    color: theme.palette.warning.dark},
+    color: theme.palette.warning.dark,
+  },
   warningAlert: {
-    marginBottom: theme.spacing(3)},
+    marginBottom: theme.spacing(3),
+  },
   tabPanel: {
-    padding: theme.spacing(2, 0)},
+    padding: theme.spacing(2, 0),
+  },
   childSelector: {
     marginBottom: theme.spacing(3),
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   chipPresent: {
     backgroundColor: theme.palette.success.light,
     fontWeight: 'bold',
-    color: theme.palette.success.contrastText},
+    color: theme.palette.success.contrastText,
+  },
   chipAbsent: {
     backgroundColor: theme.palette.error.light,
     fontWeight: 'bold',
-    color: theme.palette.error.contrastText},
+    color: theme.palette.error.contrastText,
+  },
   chipExcused: {
     backgroundColor: theme.palette.warning.light,
     fontWeight: 'bold',
-    color: theme.palette.warning.contrastText},
+    color: theme.palette.warning.contrastText,
+  },
   statusIcon: {
-    marginRight: theme.spacing(1)},
+    marginRight: theme.spacing(1),
+  },
   attendanceSummary: {
-    marginBottom: theme.spacing(3)
+    marginBottom: theme.spacing(3),
   },
   summaryItem: {
     padding: theme.spacing(2),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   summaryValue: {
     fontSize: '2rem',
     fontWeight: 'bold',
-    color: theme.palette.primary.main
+    color: theme.palette.primary.main,
   },
   summaryLabel: {
-    color: theme.palette.text.secondary
+    color: theme.palette.text.secondary,
   },
   courseName: {
     fontWeight: 'bold',
-    marginBottom: theme.spacing(1)
+    marginBottom: theme.spacing(1),
   },
   attendanceSubtitle: {
     marginTop: theme.spacing(4),
     marginBottom: theme.spacing(2),
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   noData: {
     padding: theme.spacing(4),
-    textAlign: 'center'
-  }
+    textAlign: 'center',
+  },
 }));
 
 // Tab Panel component
@@ -153,11 +174,7 @@ function TabPanel(props) {
       aria-labelledby={`attendance-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box className={props.className}>
-          {children}
-        </Box>
-      )}
+      {value === index && <Box className={props.className}>{children}</Box>}
     </div>
   );
 }
@@ -166,8 +183,12 @@ const ChildAttendance = () => {
   const theme = useTheme();
   const classes = useStyles();
   const {
-    loading, error,
-    getAllStudents, getStudentCourses, getStudentAttendance, getStudentAttendancePercentage
+    loading,
+    error,
+    getAllStudents,
+    getStudentCourses,
+    getStudentAttendance,
+    getStudentAttendancePercentage,
   } = useDatabase();
   const { currentUser } = useAuth();
 
@@ -260,13 +281,13 @@ const ChildAttendance = () => {
     fetchAttendance();
   }, [selectedChild, selectedCourse, getStudentAttendance, getStudentAttendancePercentage]);
 
-  const handleChildChange = (event) => {
+  const handleChildChange = event => {
     setSelectedChild(event.target.value);
     setSelectedCourse('');
     setAttendanceRecords([]);
   };
 
-  const handleCourseChange = (event) => {
+  const handleCourseChange = event => {
     setSelectedCourse(event.target.value);
   };
 
@@ -274,32 +295,41 @@ const ChildAttendance = () => {
     setTabValue(newValue);
   };
 
-  const getAttendanceColor = (percentage) => {
+  const getAttendanceColor = percentage => {
     if (percentage >= 75) return classes.goodAttendance;
     if (percentage >= 60) return classes.warningAttendance;
     return classes.poorAttendance;
   };
 
-  const getStatusChipClass = (status) => {
+  const getStatusChipClass = status => {
     switch (status) {
-      case 'present': return classes.present;
-      case 'absent': return classes.absent;
-      case 'late': return classes.late;
-      default: return '';
+      case 'present':
+        return classes.present;
+      case 'absent':
+        return classes.absent;
+      case 'late':
+        return classes.late;
+      default:
+        return '';
     }
   };
 
-  const getStatusIcon = (status) => {
+  const getStatusIcon = status => {
     switch (status) {
-      case 'present': return <PresentIcon />;
-      case 'absent': return <AbsentIcon />;
-      case 'late': return <LateIcon />;
-      default: return null;
+      case 'present':
+        return <PresentIcon />;
+      case 'absent':
+        return <AbsentIcon />;
+      case 'late':
+        return <LateIcon />;
+      default:
+        return null;
     }
   };
 
   const selectedChildName = selectedChild
-    ? children.find(child => child.id === selectedChild)?.firstName + ' ' +
+    ? children.find(child => child.id === selectedChild)?.firstName +
+      ' ' +
       children.find(child => child.id === selectedChild)?.lastName
     : '';
 
@@ -308,7 +338,7 @@ const ChildAttendance = () => {
     : '';
 
   // Calculate attendance summary statistics
-  const calculateAttendanceSummary = (attendanceData) => {
+  const calculateAttendanceSummary = attendanceData => {
     const present = attendanceData.filter(record => record.status === 'present').length;
     const absent = attendanceData.filter(record => record.status === 'absent').length;
     const excused = attendanceData.filter(record => record.status === 'excused').length;
@@ -320,7 +350,7 @@ const ChildAttendance = () => {
       absent,
       excused,
       total,
-      percentage
+      percentage,
     });
   };
 
@@ -371,21 +401,22 @@ const ChildAttendance = () => {
           <CircularProgress />
         </Box>
       ) : error ? (
-        <Typography sx={{ color: "error.main" }} align="center">
+        <Typography sx={{ color: 'error.main' }} align="center">
           Error loading attendance data: {error}
         </Typography>
       ) : selectedChild && selectedCourse && attendanceStats ? (
         <>
           {attendanceStats.percentage < 75 && (
             <Alert
-              severity={attendanceStats.percentage < 60 ? "error" : "warning"}
+              severity={attendanceStats.percentage < 60 ? 'error' : 'warning'}
               icon={<WarningIcon />}
               className={classes.warningAlert}
             >
-              {selectedChildName}'s attendance in {selectedCourseName} is below the recommended level ({attendanceStats.percentage}%).
+              {selectedChildName}'s attendance in {selectedCourseName} is below the recommended
+              level ({attendanceStats.percentage}%).
               {attendanceStats.percentage < 60
-                ? " This may affect academic performance and course completion. Please contact the faculty."
-                : " Regular attendance is important for academic success."}
+                ? ' This may affect academic performance and course completion. Please contact the faculty.'
+                : ' Regular attendance is important for academic success.'}
             </Alert>
           )}
 
@@ -407,7 +438,7 @@ const ChildAttendance = () => {
               </Typography>
 
               <Grid container spacing={3}>
-                <Grid size={{xs:12,sm:6,md:4}}>
+                <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                   <Card className={classes.statsCard}>
                     <Typography variant="subtitle1">Attendance Rate</Typography>
                     <Typography
@@ -417,13 +448,14 @@ const ChildAttendance = () => {
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
                       {attendanceStats.percentage >= 75
-                        ? "Good standing"
+                        ? 'Good standing'
                         : attendanceStats.percentage >= 60
-                          ? "Needs improvement"
-                          : "Critical - action required"}
+                          ? 'Needs improvement'
+                          : 'Critical - action required'}
                     </Typography>
                   </Card>
-                </Grid>                <Grid size={{xs:12,sm:6,md:8}}>
+                </Grid>{' '}
+                <Grid size={{ xs: 12, sm: 6, md: 8 }}>
                   <Card>
                     <CardContent>
                       <Typography variant="subtitle1" gutterBottom>
@@ -431,25 +463,20 @@ const ChildAttendance = () => {
                       </Typography>
 
                       <Grid container spacing={2}>
-                        <Grid size={{xs:4}}>
+                        <Grid size={{ xs: 4 }}>
                           <Box display="flex" flexDirection="column" alignItems="center">
-                            <Typography
-                              className={classes.statValue}
-                              style={{ color: '#4caf50' }}
-                            >
+                            <Typography className={classes.statValue} style={{ color: '#4caf50' }}>
                               {attendanceStats.present}
                             </Typography>
                             <Typography variant="body2" color="textSecondary">
                               Present
                             </Typography>
-                          </Box>                        </Grid>
+                          </Box>{' '}
+                        </Grid>
 
-                        <Grid size={{xs:4}}>
+                        <Grid size={{ xs: 4 }}>
                           <Box display="flex" flexDirection="column" alignItems="center">
-                            <Typography
-                              className={classes.statValue}
-                              style={{ color: '#f44336' }}
-                            >
+                            <Typography className={classes.statValue} style={{ color: '#f44336' }}>
                               {attendanceStats.absent}
                             </Typography>
                             <Typography variant="body2" color="textSecondary">
@@ -458,12 +485,9 @@ const ChildAttendance = () => {
                           </Box>
                         </Grid>
 
-                        <Grid size={{xs:4}}>
+                        <Grid size={{ xs: 4 }}>
                           <Box display="flex" flexDirection="column" alignItems="center">
-                            <Typography
-                              className={classes.statValue}
-                              style={{ color: '#ff9800' }}
-                            >
+                            <Typography className={classes.statValue} style={{ color: '#ff9800' }}>
                               {attendanceStats.late}
                             </Typography>
                             <Typography variant="body2" color="textSecondary">
@@ -493,11 +517,13 @@ const ChildAttendance = () => {
                 <TableContainer>
                   <Table>
                     <TableHead className={classes.tableHeader}>
-                      <TableRow><TableCell>Date</TableCell>
-                        <TableCell>Status</TableCell></TableRow>
+                      <TableRow>
+                        <TableCell>Date</TableCell>
+                        <TableCell>Status</TableCell>
+                      </TableRow>
                     </TableHead>
                     <TableBody>
-                      {attendanceRecords.map((record) => (
+                      {attendanceRecords.map(record => (
                         <TableRow key={record.id}>
                           <TableCell>{record.date}</TableCell>
                           <TableCell>
@@ -506,7 +532,8 @@ const ChildAttendance = () => {
                               label={record.status.charAt(0).toUpperCase() + record.status.slice(1)}
                               className={`${classes.chip} ${getStatusChipClass(record.status)}`}
                             />
-                          </TableCell></TableRow>
+                          </TableCell>
+                        </TableRow>
                       ))}
                     </TableBody>
                   </Table>
@@ -529,4 +556,3 @@ const ChildAttendance = () => {
 };
 
 export default ChildAttendance;
-

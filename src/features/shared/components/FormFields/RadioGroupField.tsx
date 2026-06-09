@@ -29,8 +29,7 @@ export interface RadioOption {
   disabled?: boolean;
 }
 
-export interface RadioGroupFieldProps
-  extends Omit<MuiRadioGroupProps, 'children'> {
+export interface RadioGroupFieldProps extends Omit<MuiRadioGroupProps, 'children'> {
   /** Options for the radio group */
   options: RadioOption[];
   /** Group label */
@@ -48,7 +47,7 @@ export interface RadioGroupFieldProps
 export const RadioGroupField = forwardRef<HTMLDivElement, RadioGroupFieldProps>(
   function RadioGroupField(
     { options, fieldLabel, id, helperText, error, direction = 'column', ...props },
-    ref,
+    ref
   ) {
     const theme = useTheme();
     const helperId = helperText ? `${id}-helper-text` : undefined;
@@ -76,7 +75,7 @@ export const RadioGroupField = forwardRef<HTMLDivElement, RadioGroupFieldProps>(
           row={direction === 'row'}
           {...props}
         >
-          {options.map((option) => (
+          {options.map(option => (
             <FormControlLabel
               key={option.value}
               value={option.value}
@@ -119,5 +118,5 @@ export const RadioGroupField = forwardRef<HTMLDivElement, RadioGroupFieldProps>(
         {helperText && <FormHelperText id={helperId}>{helperText}</FormHelperText>}
       </FormControl>
     );
-  },
+  }
 );

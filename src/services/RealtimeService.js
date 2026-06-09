@@ -7,7 +7,6 @@ import env from '../config/env';
  * Part of the Educational Management System - Phase 2 Enhancement
  */
 
-
 class RealtimeService {
   constructor() {
     this.socket = null;
@@ -19,21 +18,21 @@ class RealtimeService {
     this.rooms = new Set();
     this.userInfo = null;
     this.connectionState = 'disconnected'; // disconnected, connecting, connected, error
-    
+
     this.initialize();
   }
 
   async initialize() {
     try {
       const socketUrl = env.SOCKET_URL;
-      
+
       this.socket = io(socketUrl, {
         transports: ['websocket', 'polling'],
         timeout: 20000,
         reconnection: true,
         reconnectionAttempts: this.maxReconnectAttempts,
         reconnectionDelay: this.reconnectDelay,
-        autoConnect: false
+        autoConnect: false,
       });
 
       this.setupSocketListeners();
@@ -53,7 +52,7 @@ class RealtimeService {
       this.connectionState = 'connected';
       this.reconnectAttempts = 0;
       console.log('Connected to real-time server');
-      
+
       // Re-join rooms after reconnection
       this.rooms.forEach(room => {
         this.socket.emit('join_room', { room, userInfo: this.userInfo });
@@ -62,44 +61,44 @@ class RealtimeService {
       this.emit('connection_status', { status: 'connected' });
     });
 
-    this.socket.on('disconnect', (reason) => {
+    this.socket.on('disconnect', reason => {
       this.isConnected = false;
       this.connectionState = 'disconnected';
       console.log('Disconnected from real-time server:', reason);
       this.emit('connection_status', { status: 'disconnected', reason });
     });
 
-    this.socket.on('connect_error', (error) => {
+    this.socket.on('connect_error', error => {
       this.isConnected = false;
       this.connectionState = 'error';
       console.error('Connection error:', error);
       this.emit('connection_status', { status: 'error', error: error.message });
     });
 
-    this.socket.on('reconnect', (attemptNumber) => {
+    this.socket.on('reconnect', attemptNumber => {
       console.log('Reconnected after', attemptNumber, 'attempts');
       this.emit('connection_status', { status: 'reconnected', attempt: attemptNumber });
     });
 
-    this.socket.on('reconnect_error', (error) => {
+    this.socket.on('reconnect_error', error => {
       this.reconnectAttempts++;
       console.error('Reconnection failed:', error);
-      this.emit('connection_status', { 
-        status: 'reconnect_failed', 
+      this.emit('connection_status', {
+        status: 'reconnect_failed',
         attempt: this.reconnectAttempts,
-        error: error.message 
+        error: error.message,
       });
     });
 
     // Message and event handlers
-    this.socket.on('message', (data) => this.handleMessage(data));
-    this.socket.on('notification', (data) => this.handleNotification(data));
-    this.socket.on('user_joined', (data) => this.handleUserJoined(data));
-    this.socket.on('user_left', (data) => this.handleUserLeft(data));
-    this.socket.on('typing_start', (data) => this.handleTypingStart(data));
-    this.socket.on('typing_stop', (data) => this.handleTypingStop(data));
-    this.socket.on('collaboration_update', (data) => this.handleCollaborationUpdate(data));
-    this.socket.on('room_update', (data) => this.handleRoomUpdate(data));
+    this.socket.on('message', data => this.handleMessage(data));
+    this.socket.on('notification', data => this.handleNotification(data));
+    this.socket.on('user_joined', data => this.handleUserJoined(data));
+    this.socket.on('user_left', data => this.handleUserLeft(data));
+    this.socket.on('typing_start', data => this.handleTypingStart(data));
+    this.socket.on('typing_stop', data => this.handleTypingStop(data));
+    this.socket.on('collaboration_update', data => this.handleCollaborationUpdate(data));
+    this.socket.on('room_update', data => this.handleRoomUpdate(data));
   }
 
   // ==================== CONNECTION MANAGEMENT ====================
@@ -108,13 +107,13 @@ class RealtimeService {
     try {
       this.userInfo = userInfo;
       this.connectionState = 'connecting';
-      
+
       if (!this.socket) {
         await this.initialize();
       }
 
       this.socket.connect();
-      
+
       // Wait for connection with timeout
       return new Promise((resolve, reject) => {
         const timeout = setTimeout(() => {
@@ -127,7 +126,7 @@ class RealtimeService {
           resolve({ status: 'connected', userInfo });
         });
 
-        this.socket.once('connect_error', (error) => {
+        this.socket.once('connect_error', error => {
           clearTimeout(timeout);
           reject(error);
         });
@@ -153,7 +152,7 @@ class RealtimeService {
       isConnected: this.isConnected,
       state: this.connectionState,
       rooms: Array.from(this.rooms),
-      userInfo: this.userInfo
+      userInfo: this.userInfo,
     };
   }
 
@@ -168,15 +167,15 @@ class RealtimeService {
       this.socket.emit('join_room', {
         room: roomId,
         type: roomType,
-        userInfo: this.userInfo
+        userInfo: this.userInfo,
       });
 
-      this.socket.once(`joined_${roomId}`, (data) => {
+      this.socket.once(`joined_${roomId}`, data => {
         this.rooms.add(roomId);
         resolve(data);
       });
 
-      this.socket.once(`join_error_${roomId}`, (error) => {
+      this.socket.once(`join_error_${roomId}`, error => {
         reject(new Error(error.message));
       });
 
@@ -214,8 +213,8 @@ class RealtimeService {
       timestamp: new Date().toISOString(),
       metadata: {
         platform: 'web',
-        version: '2.0'
-      }
+        version: '2.0',
+      },
     };
 
     this.socket.emit('send_message', messageData);
@@ -234,7 +233,7 @@ class RealtimeService {
       content: message,
       sender: this.userInfo,
       timestamp: new Date().toISOString(),
-      private: true
+      private: true,
     };
 
     this.socket.emit('private_message', messageData);
@@ -246,7 +245,7 @@ class RealtimeService {
 
     this.socket.emit(isTyping ? 'typing_start' : 'typing_stop', {
       room: roomId,
-      user: this.userInfo
+      user: this.userInfo,
     });
   }
 
@@ -262,7 +261,7 @@ class RealtimeService {
       documentType,
       documentData,
       user: this.userInfo,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     this.socket.emit('start_collaboration', collaborationData);
@@ -278,7 +277,7 @@ class RealtimeService {
       data,
       user: this.userInfo,
       timestamp: new Date().toISOString(),
-      operationId: this.generateOperationId()
+      operationId: this.generateOperationId(),
     };
 
     this.socket.emit('collaboration_update', updateData);
@@ -291,7 +290,7 @@ class RealtimeService {
     this.socket.emit('end_collaboration', {
       sessionId,
       user: this.userInfo,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -309,7 +308,7 @@ class RealtimeService {
       priority: notification.priority || 'medium',
       sender: this.userInfo,
       timestamp: new Date().toISOString(),
-      metadata: notification.metadata || {}
+      metadata: notification.metadata || {},
     };
 
     this.socket.emit('send_notification', notificationData);
@@ -328,7 +327,7 @@ class RealtimeService {
       priority: notification.priority || 'medium',
       sender: this.userInfo,
       timestamp: new Date().toISOString(),
-      broadcast: true
+      broadcast: true,
     };
 
     this.socket.emit('broadcast_notification', notificationData);
@@ -420,18 +419,18 @@ class RealtimeService {
       userInfo: this.userInfo,
       reconnectAttempts: this.reconnectAttempts,
       eventListeners: Array.from(this.eventListeners.keys()),
-      lastPing: this.socket?.connected ? Date.now() : null
+      lastPing: this.socket?.connected ? Date.now() : null,
     };
   }
 
   ping() {
     if (!this.isConnected) return Promise.reject(new Error('Not connected'));
 
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       const startTime = Date.now();
       this.socket.emit('ping', startTime);
-      
-      this.socket.once('pong', (timestamp) => {
+
+      this.socket.once('pong', timestamp => {
         const latency = Date.now() - timestamp;
         resolve({ latency, timestamp });
       });
@@ -457,4 +456,3 @@ class RealtimeService {
 const realtimeService = new RealtimeService();
 
 export default realtimeService;
-

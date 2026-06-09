@@ -1,17 +1,17 @@
 import React from 'react';
 import { keyframes } from '@emotion/react';
-import {  styled } from '@mui/material/styles';
-import { 
-  Box, 
-  CircularProgress, 
-  Skeleton, 
-  Fade, 
-  Typography, 
-  Card, 
-  CardContent, 
-  Grid, 
-  LinearProgress, 
-  Grow 
+import { styled } from '@mui/material/styles';
+import {
+  Box,
+  CircularProgress,
+  Skeleton,
+  Fade,
+  Typography,
+  Card,
+  CardContent,
+  Grid,
+  LinearProgress,
+  Grow,
 } from '@mui/material';
 
 // Enhanced Loading Components for Phase 1
@@ -87,11 +87,11 @@ const WaveDot = styled(Box)(({ theme, delay = 0 }) => ({
 }));
 
 // Loading Spinner Component
-export const LoadingSpinner = ({ 
-  size = 40, 
-  message = 'Loading...', 
+export const LoadingSpinner = ({
+  size = 40,
+  message = 'Loading...',
   showMessage = true,
-  variant = 'circular'
+  variant = 'circular',
 }) => {
   return (
     <LoadingContainer>
@@ -107,11 +107,7 @@ export const LoadingSpinner = ({
             </Box>
           )}
           {showMessage && (
-            <Typography 
-              variant="body2" 
-              color="text.secondary" 
-              sx={{ mt: 2, opacity: 0.8 }}
-            >
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 2, opacity: 0.8 }}>
               {message}
             </Typography>
           )}
@@ -144,7 +140,8 @@ export const PageLoading = ({ message = 'Loading page...' }) => {
           p: 4,
           minWidth: 300,
           textAlign: 'center',
-          background: (theme) => theme.custom?.glassmorphism?.background || 'rgba(255, 255, 255, 0.9)',
+          background: theme =>
+            theme.custom?.glassmorphism?.background || 'rgba(255, 255, 255, 0.9)',
           backdropFilter: 'blur(10px)',
         }}
       >
@@ -166,8 +163,8 @@ export const DashboardSkeleton = () => {
 
       {/* Stats Cards Skeleton */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        {[1, 2, 3, 4].map((item) => (
-          <Grid size={{xs:12,sm:6,md:3}} key={item}>
+        {[1, 2, 3, 4].map(item => (
+          <Grid size={{ xs: 12, sm: 6, md: 3 }} key={item}>
             <Card>
               <CardContent>
                 <Box display="flex" alignItems="center" justifyContent="space-between">
@@ -185,7 +182,7 @@ export const DashboardSkeleton = () => {
 
       {/* Chart Skeleton */}
       <Grid container spacing={3}>
-        <Grid size={{xs:12,md:8}}>
+        <Grid size={{ xs: 12, md: 8 }}>
           <Card>
             <CardContent>
               <ShimmerSkeleton variant="text" width="30%" height={28} sx={{ mb: 2 }} />
@@ -193,11 +190,11 @@ export const DashboardSkeleton = () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid size={{xs:12,md:4}}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Card>
             <CardContent>
               <ShimmerSkeleton variant="text" width="40%" height={28} sx={{ mb: 2 }} />
-              {[1, 2, 3, 4, 5].map((item) => (
+              {[1, 2, 3, 4, 5].map(item => (
                 <Box key={item} display="flex" alignItems="center" sx={{ mb: 2 }}>
                   <ShimmerSkeleton variant="circular" width={32} height={32} sx={{ mr: 2 }} />
                   <Box flex={1}>
@@ -233,11 +230,7 @@ export const TableSkeleton = ({ rows = 5, columns = 4 }) => {
           <Box key={rowIndex} display="flex" sx={{ mb: 1.5 }}>
             {Array.from({ length: columns }, (_, colIndex) => (
               <Box key={colIndex} flex={1} sx={{ mr: colIndex < columns - 1 ? 2 : 0 }}>
-                <ShimmerSkeleton 
-                  variant="text" 
-                  width={`${60 + Math.random() * 30}%`} 
-                  height={20} 
-                />
+                <ShimmerSkeleton variant="text" width={`${60 + Math.random() * 30}%`} height={20} />
               </Box>
             ))}
           </Box>
@@ -253,7 +246,7 @@ export const FormSkeleton = ({ fields = 4 }) => {
     <Card>
       <CardContent>
         <ShimmerSkeleton variant="text" width="40%" height={32} sx={{ mb: 3 }} />
-        
+
         {Array.from({ length: fields }, (_, index) => (
           <Box key={index} sx={{ mb: 3 }}>
             <ShimmerSkeleton variant="text" width="25%" height={20} sx={{ mb: 1 }} />
@@ -271,11 +264,11 @@ export const FormSkeleton = ({ fields = 4 }) => {
 };
 
 // Progressive Loading Component
-export const ProgressiveLoader = ({ 
-  steps, 
-  currentStep, 
-  message = 'Loading...', 
-  showProgress = true 
+export const ProgressiveLoader = ({
+  steps,
+  currentStep,
+  message = 'Loading...',
+  showProgress = true,
 }) => {
   const progress = (currentStep / steps) * 100;
 
@@ -292,20 +285,20 @@ export const ProgressiveLoader = ({
                 {Math.round(progress)}%
               </Typography>
             </Box>
-            <LinearProgress 
-              variant="determinate" 
-              value={progress} 
-              sx={{ 
-                height: 8, 
+            <LinearProgress
+              variant="determinate"
+              value={progress}
+              sx={{
+                height: 8,
                 borderRadius: 4,
                 '& .MuiLinearProgress-bar': {
                   borderRadius: 4,
-                }
-              }} 
+                },
+              }}
             />
           </Box>
         )}
-        
+
         <Box display="flex" justifyContent="center" sx={{ mt: 2 }}>
           <Box display="flex" alignItems="center">
             <WaveDot delay={0} />
@@ -319,17 +312,15 @@ export const ProgressiveLoader = ({
 };
 
 // Lazy Loading Wrapper
-export const LazyLoadWrapper = ({ 
-  children, 
-  fallback = <LoadingSpinner />, 
-  delay = 200 
-}) => {
+export const LazyLoadWrapper = ({ children, fallback = <LoadingSpinner />, delay = 200 }) => {
   return (
-    <React.Suspense fallback={
-      <Grow in timeout={delay}>
-        <div>{fallback}</div>
-      </Grow>
-    }>
+    <React.Suspense
+      fallback={
+        <Grow in timeout={delay}>
+          <div>{fallback}</div>
+        </Grow>
+      }
+    >
       {children}
     </React.Suspense>
   );
@@ -346,4 +337,3 @@ const LoadingComponents = {
 };
 
 export default LoadingComponents;
-

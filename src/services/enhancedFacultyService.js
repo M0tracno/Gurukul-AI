@@ -20,9 +20,9 @@ class EnhancedFacultyService {
       const response = await fetch(`${this.baseUrl}/api/faculty/profile`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       });
 
       if (!response.ok) {
@@ -52,8 +52,8 @@ class EnhancedFacultyService {
           courses: ['CS101', 'CS201', 'CS301'],
           totalStudents: 145,
           activeAssignments: 8,
-          pendingGrades: 23
-        }
+          pendingGrades: 23,
+        },
       };
     }
   }
@@ -67,9 +67,9 @@ class EnhancedFacultyService {
       const response = await fetch(`${this.baseUrl}/api/faculty/students`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       });
 
       if (!response.ok) {
@@ -99,7 +99,7 @@ class EnhancedFacultyService {
             status: 'Active',
             performance: 'Good',
             lastActivity: new Date().toISOString(),
-            profilePicture: null
+            profilePicture: null,
           },
           {
             id: 'S1002',
@@ -117,9 +117,9 @@ class EnhancedFacultyService {
             status: 'Active',
             performance: 'Outstanding',
             lastActivity: new Date().toISOString(),
-            profilePicture: null
-          }
-        ]
+            profilePicture: null,
+          },
+        ],
       };
     }
   }
@@ -133,9 +133,9 @@ class EnhancedFacultyService {
       const response = await fetch(`${this.baseUrl}/api/faculty/assignments`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       });
 
       if (!response.ok) {
@@ -156,9 +156,9 @@ class EnhancedFacultyService {
             dueDate: '2024-07-15',
             submissionsCount: 25,
             pending: 5,
-            status: 'Active'
-          }
-        ]
+            status: 'Active',
+          },
+        ],
       };
     }
   }
@@ -172,9 +172,9 @@ class EnhancedFacultyService {
       const response = await fetch(`${this.baseUrl}/api/faculty/courses`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       });
 
       if (!response.ok) {
@@ -194,9 +194,9 @@ class EnhancedFacultyService {
             code: 'CS101',
             enrolledStudents: 35,
             averageGrade: 85.2,
-            schedule: 'Mon, Wed, Fri - 10:00 AM'
-          }
-        ]
+            schedule: 'Mon, Wed, Fri - 10:00 AM',
+          },
+        ],
       };
     }
   }
@@ -209,7 +209,7 @@ class EnhancedFacultyService {
       const [coursesResponse, studentsResponse, assignmentsResponse] = await Promise.all([
         this.getCourses(),
         this.getStudents(),
-        this.getAssignments()
+        this.getAssignments(),
       ]);
 
       const courses = coursesResponse.data || [];
@@ -221,15 +221,26 @@ class EnhancedFacultyService {
         totalStudents: students.length,
         totalAssignments: assignments.length,
         pendingGrades: assignments.reduce((sum, assignment) => sum + (assignment.pending || 0), 0),
-        averageClassSize: courses.length > 0 ? Math.round(courses.reduce((sum, course) => sum + course.enrolledStudents, 0) / courses.length) : 0,
-        averageGrade: courses.length > 0 ? Math.round(courses.reduce((sum, course) => sum + course.averageGrade, 0) / courses.length * 10) / 10 : 0,
+        averageClassSize:
+          courses.length > 0
+            ? Math.round(
+                courses.reduce((sum, course) => sum + course.enrolledStudents, 0) / courses.length
+              )
+            : 0,
+        averageGrade:
+          courses.length > 0
+            ? Math.round(
+                (courses.reduce((sum, course) => sum + course.averageGrade, 0) / courses.length) *
+                  10
+              ) / 10
+            : 0,
         attendanceRate: 92.5,
-        activeQuizzes: 3
+        activeQuizzes: 3,
       };
 
       return {
         success: true,
-        data: stats
+        data: stats,
       };
     } catch (error) {
       console.error('Error getting dashboard stats:', error);
@@ -243,8 +254,8 @@ class EnhancedFacultyService {
           averageClassSize: 36,
           averageGrade: 86.9,
           attendanceRate: 92.5,
-          activeQuizzes: 3
-        }
+          activeQuizzes: 3,
+        },
       };
     }
   }
@@ -258,9 +269,9 @@ class EnhancedFacultyService {
       const response = await fetch(`${this.baseUrl}/api/faculty/quiz-analytics`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       });
 
       if (!response.ok) {
@@ -285,8 +296,8 @@ class EnhancedFacultyService {
               attempts: 45,
               averageScore: 78,
               duration: 60,
-              passingScore: 60
-            }
+              passingScore: 60,
+            },
           ],
           analytics: {
             averageScore: 78,
@@ -297,14 +308,14 @@ class EnhancedFacultyService {
             scoreDistribution: [2, 5, 8, 15, 15],
             attemptsTrend: {
               data: [8, 12, 15, 10],
-              change: 15
+              change: 15,
             },
             completedAttempts: 39,
             inProgressAttempts: 4,
             notAttemptedCount: 2,
-            scoreTrend: { change: 8 }
-          }
-        }
+            scoreTrend: { change: 8 },
+          },
+        },
       };
     }
   }
@@ -318,9 +329,9 @@ class EnhancedFacultyService {
       const response = await fetch(`${this.baseUrl}/api/faculty/communication`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       });
 
       if (!response.ok) {
@@ -343,10 +354,10 @@ class EnhancedFacultyService {
               subject: 'Question about Assignment',
               preview: 'Could you please clarify...',
               timestamp: new Date().toISOString(),
-              isRead: false
-            }
-          ]
-        }
+              isRead: false,
+            },
+          ],
+        },
       };
     }
   }
@@ -360,9 +371,9 @@ class EnhancedFacultyService {
       const response = await fetch(`${this.baseUrl}/api/faculty/feedback`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       });
 
       if (!response.ok) {
@@ -380,8 +391,8 @@ class EnhancedFacultyService {
           averageRating: 4.2,
           positiveFeeback: 75,
           improvementNeeded: 25,
-          recentFeedback: []
-        }
+          recentFeedback: [],
+        },
       };
     }
   }
@@ -403,9 +414,9 @@ class EnhancedFacultyService {
       const response = await fetch(url, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       });
 
       if (!response.ok) {
@@ -420,8 +431,8 @@ class EnhancedFacultyService {
         success: true,
         data: {
           attendanceRate: 92.5,
-          records: []
-        }
+          records: [],
+        },
       };
     }
   }
@@ -440,9 +451,9 @@ class EnhancedFacultyService {
       const response = await fetch(url, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       });
 
       if (!response.ok) {
@@ -455,10 +466,10 @@ class EnhancedFacultyService {
       console.error('Error fetching submissions:', error);
       return {
         success: true,
-        data: []
+        data: [],
       };
     }
   }
 }
 
-export default new EnhancedFacultyService();
+export default new EnhancedFacultyService();

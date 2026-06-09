@@ -118,10 +118,13 @@ export async function fetchDashboardMetrics(): Promise<DashboardMetrics> {
     ),
   ]);
 
-  const extractTotal = (result: PromiseSettledResult<any>): number => {
+  const extractTotal = (result: PromiseSettledResult<unknown>): number => {
     if (result.status !== 'fulfilled') return 0;
-    const val = result.value;
-    return val?.meta?.total ?? val?.pagination?.total ?? val?.data?.pagination?.total ?? val?.total ?? 0;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const val = result.value as any;
+    return (
+      val?.meta?.total ?? val?.pagination?.total ?? val?.data?.pagination?.total ?? val?.total ?? 0
+    );
   };
 
   return {
@@ -137,9 +140,7 @@ export async function fetchDashboardMetrics(): Promise<DashboardMetrics> {
  * PUT /api/v1/grading/submissions/:submissionId/answers/:questionId/override
  * Requirement 11.2, 11.3: Override controls calling override Endpoints, display updated record.
  */
-export async function submitGradeOverride(
-  override: OverrideRequest
-): Promise<OverrideResult> {
+export async function submitGradeOverride(override: OverrideRequest): Promise<OverrideResult> {
   const { submissionId, questionId, score, feedback } = override;
   const envelope = await apiClient<{ success: boolean; data: OverrideResult }>(
     `/api/v1/grading/submissions/${submissionId}/answers/${questionId}/override`,

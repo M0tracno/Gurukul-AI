@@ -32,7 +32,7 @@ import {
   List,
   ListItem,
   ListItemIcon,
-  ListItemText
+  ListItemText,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -43,7 +43,7 @@ import {
   CheckCircle,
   Cancel,
   Warning,
-  Refresh
+  Refresh,
 } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 import EnhancedFacultyService from '../../services/enhancedFacultyService';
@@ -64,8 +64,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
 
 const AttendanceCheckbox = styled(Checkbox)(({ theme, status }) => ({
   '&.Mui-checked': {
-    color: status === 'present' ? '#4CAF50' : 
-          status === 'absent' ? '#F44336' : '#FF9800',
+    color: status === 'present' ? '#4CAF50' : status === 'absent' ? '#F44336' : '#FF9800',
   },
 }));
 
@@ -84,7 +83,8 @@ const CourseAttendance = () => {
     name: '',
     code: '',
     semester: '',
-    academicYear: new Date().getFullYear().toString() + '-' + (new Date().getFullYear() + 1).toString()
+    academicYear:
+      new Date().getFullYear().toString() + '-' + (new Date().getFullYear() + 1).toString(),
   });
 
   useEffect(() => {
@@ -120,8 +120,8 @@ const CourseAttendance = () => {
       const result = await EnhancedFacultyService.getStudents();
       if (result.success) {
         // Filter students for the selected course
-        const courseStudents = result.data.filter(student => 
-          student.courses && student.courses.includes(selectedCourse)
+        const courseStudents = result.data.filter(
+          student => student.courses && student.courses.includes(selectedCourse)
         );
         setStudents(courseStudents);
       }
@@ -136,7 +136,10 @@ const CourseAttendance = () => {
   const loadAttendance = async () => {
     setLoading(true);
     try {
-      const result = await EnhancedFacultyService.getAttendanceRecords(selectedCourse, selectedDate);
+      const result = await EnhancedFacultyService.getAttendanceRecords(
+        selectedCourse,
+        selectedDate
+      );
       if (result.success) {
         setAttendance(result.data);
       }
@@ -148,12 +151,12 @@ const CourseAttendance = () => {
     }
   };
 
-  const handleCourseChange = (event) => {
+  const handleCourseChange = event => {
     setSelectedCourse(event.target.value);
     setViewingHistory(false);
   };
 
-  const handleDateChange = (event) => {
+  const handleDateChange = event => {
     setSelectedDate(event.target.value);
     setViewingHistory(false);
   };
@@ -161,12 +164,12 @@ const CourseAttendance = () => {
   const handleAttendanceChange = (studentId, status) => {
     setAttendance(prevAttendance => {
       const existingIndex = prevAttendance.findIndex(record => record.studentId === studentId);
-      
+
       if (existingIndex >= 0) {
         const updatedAttendance = [...prevAttendance];
         updatedAttendance[existingIndex] = {
           ...updatedAttendance[existingIndex],
-          status
+          status,
         };
         return updatedAttendance;
       } else {
@@ -178,8 +181,8 @@ const CourseAttendance = () => {
             studentId,
             date: selectedDate,
             status,
-            timestamp: new Date().toISOString()
-          }
+            timestamp: new Date().toISOString(),
+          },
         ];
       }
     });
@@ -201,9 +204,9 @@ const CourseAttendance = () => {
       const result = await EnhancedFacultyService.recordAttendance({
         courseId: selectedCourse,
         date: selectedDate,
-        records: attendance
+        records: attendance,
       });
-      
+
       if (result.success) {
         showSnackbar('Attendance saved successfully', 'success');
       }
@@ -236,12 +239,12 @@ const CourseAttendance = () => {
     }
   };
 
-  const getAttendanceStatus = (studentId) => {
+  const getAttendanceStatus = studentId => {
     const record = attendance.find(a => a.studentId === studentId);
     return record ? record.status : 'absent';
   };
 
-  const getStudentName = (studentId) => {
+  const getStudentName = studentId => {
     const student = students.find(s => s.id === studentId);
     return student ? student.name : 'Unknown Student';
   };
@@ -269,7 +272,8 @@ const CourseAttendance = () => {
         name: '',
         code: '',
         semester: '',
-        academicYear: new Date().getFullYear().toString() + '-' + (new Date().getFullYear() + 1).toString()
+        academicYear:
+          new Date().getFullYear().toString() + '-' + (new Date().getFullYear() + 1).toString(),
       });
       await loadCourses();
     } catch (error) {
@@ -282,23 +286,25 @@ const CourseAttendance = () => {
 
   const getAttendanceStats = () => {
     if (attendance.length === 0) return null;
-    
+
     const present = attendance.filter(a => a.status === 'present').length;
     const absent = attendance.filter(a => a.status === 'absent').length;
     const excused = attendance.filter(a => a.status === 'excused').length;
     const total = students.length;
-    
+
     return { present, absent, excused, total };
   };
 
   const stats = getAttendanceStats();
 
   return (
-    <Box sx={{ 
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-      py: 3
-    }}>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+        py: 3,
+      }}
+    >
       <Container maxWidth="xl">
         {/* Header */}
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
@@ -319,7 +325,7 @@ const CourseAttendance = () => {
         <StyledCard sx={{ mb: 3 }}>
           <CardContent>
             <Grid container spacing={3} alignItems="center">
-              <Grid size={{xs:12,md:4}}>
+              <Grid size={{ xs: 12, md: 4 }}>
                 <FormControl fullWidth>
                   <InputLabel>Select Course</InputLabel>
                   <Select
@@ -330,7 +336,7 @@ const CourseAttendance = () => {
                     <MenuItem value="">
                       <em>Choose a course</em>
                     </MenuItem>
-                    {courses.map((course) => (
+                    {courses.map(course => (
                       <MenuItem key={course.id} value={course.id}>
                         {course.code} - {course.name}
                       </MenuItem>
@@ -340,7 +346,7 @@ const CourseAttendance = () => {
               </Grid>
 
               {selectedCourse && !viewingHistory && (
-                <Grid size={{xs:12,md:3}}>
+                <Grid size={{ xs: 12, md: 3 }}>
                   <TextField
                     label="Select Date"
                     type="date"
@@ -353,7 +359,7 @@ const CourseAttendance = () => {
               )}
 
               {selectedCourse && (
-                <Grid size={{xs:12,md:5}}>
+                <Grid size={{ xs: 12, md: 5 }}>
                   <Box display="flex" gap={2}>
                     {viewingHistory ? (
                       <Button
@@ -402,27 +408,35 @@ const CourseAttendance = () => {
             {stats && !viewingHistory && (
               <Box mt={3}>
                 <Grid container spacing={2}>
-                  <Grid size={{xs:3}}>
+                  <Grid size={{ xs: 3 }}>
                     <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#E8F5E8' }}>
-                      <Typography variant="h6" color="#4CAF50">{stats.present}</Typography>
+                      <Typography variant="h6" color="#4CAF50">
+                        {stats.present}
+                      </Typography>
                       <Typography variant="body2">Present</Typography>
                     </Paper>
                   </Grid>
-                  <Grid size={{xs:3}}>
+                  <Grid size={{ xs: 3 }}>
                     <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#FFEBEE' }}>
-                      <Typography variant="h6" color="#F44336">{stats.absent}</Typography>
+                      <Typography variant="h6" color="#F44336">
+                        {stats.absent}
+                      </Typography>
                       <Typography variant="body2">Absent</Typography>
                     </Paper>
                   </Grid>
-                  <Grid size={{xs:3}}>
+                  <Grid size={{ xs: 3 }}>
                     <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#FFF3E0' }}>
-                      <Typography variant="h6" color="#FF9800">{stats.excused}</Typography>
+                      <Typography variant="h6" color="#FF9800">
+                        {stats.excused}
+                      </Typography>
                       <Typography variant="body2">Excused</Typography>
                     </Paper>
                   </Grid>
-                  <Grid size={{xs:3}}>
+                  <Grid size={{ xs: 3 }}>
                     <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#E3F2FD' }}>
-                      <Typography variant="h6" color="#2196F3">{stats.total}</Typography>
+                      <Typography variant="h6" color="#2196F3">
+                        {stats.total}
+                      </Typography>
                       <Typography variant="body2">Total</Typography>
                     </Paper>
                   </Grid>
@@ -444,37 +458,50 @@ const CourseAttendance = () => {
                 <TableContainer>
                   <Table>
                     <TableHead>
-                      <TableRow><TableCell>Date</TableCell>
+                      <TableRow>
+                        <TableCell>Date</TableCell>
                         <TableCell>Student</TableCell>
-                        <TableCell>Status</TableCell></TableRow>
+                        <TableCell>Status</TableCell>
+                      </TableRow>
                     </TableHead>
                     <TableBody>
                       {attendanceHistory.length > 0 ? (
-                        attendanceHistory.map((record) => (
+                        attendanceHistory.map(record => (
                           <TableRow key={record.id}>
                             <TableCell>{record.date}</TableCell>
                             <TableCell>{getStudentName(record.studentId)}</TableCell>
                             <TableCell>
                               <Chip
                                 icon={
-                                  record.status === 'present' ? <CheckCircle /> :
-                                  record.status === 'excused' ? <Warning /> : <Cancel />
+                                  record.status === 'present' ? (
+                                    <CheckCircle />
+                                  ) : record.status === 'excused' ? (
+                                    <Warning />
+                                  ) : (
+                                    <Cancel />
+                                  )
                                 }
                                 label={record.status.toUpperCase()}
                                 color={
-                                  record.status === 'present' ? 'success' :
-                                  record.status === 'excused' ? 'warning' : 'error'
+                                  record.status === 'present'
+                                    ? 'success'
+                                    : record.status === 'excused'
+                                      ? 'warning'
+                                      : 'error'
                                 }
                                 size="small"
                               />
-                            </TableCell></TableRow>
+                            </TableCell>
+                          </TableRow>
                         ))
                       ) : (
-                        <TableRow><TableCell colSpan={3} align="center">
+                        <TableRow>
+                          <TableCell colSpan={3} align="center">
                             <Typography color="textSecondary">
                               No attendance history found
                             </Typography>
-                          </TableCell></TableRow>
+                          </TableCell>
+                        </TableRow>
                       )}
                     </TableBody>
                   </Table>
@@ -492,28 +519,26 @@ const CourseAttendance = () => {
                   <TableContainer>
                     <Table>
                       <TableHead>
-                        <TableRow><TableCell>Student ID</TableCell>
+                        <TableRow>
+                          <TableCell>Student ID</TableCell>
                           <TableCell>Name</TableCell>
                           <TableCell align="center">Present</TableCell>
                           <TableCell align="center">Absent</TableCell>
-                          <TableCell align="center">Excused</TableCell></TableRow>
+                          <TableCell align="center">Excused</TableCell>
+                        </TableRow>
                       </TableHead>
                       <TableBody>
-                        {students.map((student) => (
+                        {students.map(student => (
                           <TableRow key={student.id}>
                             <TableCell>
-                              <Typography variant="subtitle2">
-                                {student.studentId}
-                              </Typography>
+                              <Typography variant="subtitle2">{student.studentId}</Typography>
                             </TableCell>
                             <TableCell>
                               <Box display="flex" alignItems="center">
                                 <Avatar sx={{ mr: 2, bgcolor: 'primary.main' }}>
                                   {student.name.charAt(0)}
                                 </Avatar>
-                                <Typography variant="body1">
-                                  {student.name}
-                                </Typography>
+                                <Typography variant="body1">{student.name}</Typography>
                               </Box>
                             </TableCell>
                             <TableCell align="center">
@@ -536,7 +561,8 @@ const CourseAttendance = () => {
                                 onChange={() => handleAttendanceChange(student.id, 'excused')}
                                 status="excused"
                               />
-                            </TableCell></TableRow>
+                            </TableCell>
+                          </TableRow>
                         ))}
                       </TableBody>
                     </Table>
@@ -579,30 +605,30 @@ const CourseAttendance = () => {
           <DialogTitle>Add New Course</DialogTitle>
           <DialogContent>
             <Grid container spacing={2} sx={{ mt: 1 }}>
-              <Grid size={{xs:12}}>
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   label="Course Name"
                   value={newCourse.name}
-                  onChange={(e) => setNewCourse({ ...newCourse, name: e.target.value })}
+                  onChange={e => setNewCourse({ ...newCourse, name: e.target.value })}
                   fullWidth
                   required
                 />
               </Grid>
-              <Grid size={{xs:12}}>
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   label="Course Code"
                   value={newCourse.code}
-                  onChange={(e) => setNewCourse({ ...newCourse, code: e.target.value })}
+                  onChange={e => setNewCourse({ ...newCourse, code: e.target.value })}
                   fullWidth
                   required
                 />
               </Grid>
-              <Grid size={{xs:6}}>
+              <Grid size={{ xs: 6 }}>
                 <FormControl fullWidth>
                   <InputLabel>Semester</InputLabel>
                   <Select
                     value={newCourse.semester}
-                    onChange={(e) => setNewCourse({ ...newCourse, semester: e.target.value })}
+                    onChange={e => setNewCourse({ ...newCourse, semester: e.target.value })}
                     label="Semester"
                   >
                     <MenuItem value="Fall">Fall</MenuItem>
@@ -612,25 +638,19 @@ const CourseAttendance = () => {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid size={{xs:6}}>
+              <Grid size={{ xs: 6 }}>
                 <TextField
                   label="Academic Year"
                   value={newCourse.academicYear}
-                  onChange={(e) => setNewCourse({ ...newCourse, academicYear: e.target.value })}
+                  onChange={e => setNewCourse({ ...newCourse, academicYear: e.target.value })}
                   fullWidth
                 />
               </Grid>
             </Grid>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setAddCourseDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button
-              onClick={handleAddCourse}
-              variant="contained"
-              disabled={loading}
-            >
+            <Button onClick={() => setAddCourseDialogOpen(false)}>Cancel</Button>
+            <Button onClick={handleAddCourse} variant="contained" disabled={loading}>
               Add Course
             </Button>
           </DialogActions>
@@ -643,11 +663,7 @@ const CourseAttendance = () => {
           onClose={handleSnackbarClose}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         >
-          <Alert 
-            onClose={handleSnackbarClose} 
-            severity={snackbar.severity}
-            sx={{ width: '100%' }}
-          >
+          <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: '100%' }}>
             {snackbar.message}
           </Alert>
         </Snackbar>
@@ -656,4 +672,4 @@ const CourseAttendance = () => {
   );
 };
 
-export default CourseAttendance;
+export default CourseAttendance;

@@ -21,8 +21,7 @@ import {
   useTheme,
 } from '@mui/material';
 
-export interface SwitchFieldProps
-  extends Omit<MuiSwitchProps, 'id'> {
+export interface SwitchFieldProps extends Omit<MuiSwitchProps, 'id'> {
   /** Label text */
   label: string;
   /** Unique ID for accessibility */
@@ -33,65 +32,63 @@ export interface SwitchFieldProps
   error?: boolean;
 }
 
-export const SwitchField = forwardRef<HTMLButtonElement, SwitchFieldProps>(
-  function SwitchField(
-    { label, id, helperText, error, sx, ...props },
-    ref,
-  ) {
-    const theme = useTheme();
-    const helperId = helperText ? `${id}-helper-text` : undefined;
+export const SwitchField = forwardRef<HTMLButtonElement, SwitchFieldProps>(function SwitchField(
+  { label, id, helperText, error, sx, ...props },
+  ref
+) {
+  const theme = useTheme();
+  const helperId = helperText ? `${id}-helper-text` : undefined;
 
-    return (
-      <FormControl error={error}>
-        <FormControlLabel
-          label={label}
-          htmlFor={id}
-          sx={{
-            '& .MuiTypography-root': {
-              color: theme.palette.text.primary,
-            },
-          }}
-          control={
-            <Switch
-              ref={ref}
-              id={id}
-              inputProps={{
-                'aria-describedby': helperId,
-                role: 'switch',
-              }}
-              sx={{
-                // Micro-animation for the thumb sliding
-                '& .MuiSwitch-thumb': {
-                  transition: 'transform 150ms ease-in-out, background-color 150ms ease-in-out',
+  return (
+    <FormControl error={error}>
+      <FormControlLabel
+        label={label}
+        htmlFor={id}
+        sx={{
+          '& .MuiTypography-root': {
+            color: theme.palette.text.primary,
+          },
+        }}
+        control={
+          <Switch
+            ref={ref}
+            id={id}
+            inputProps={{
+              'aria-describedby': helperId,
+              role: 'switch',
+            }}
+            sx={{
+              // Micro-animation for the thumb sliding
+              '& .MuiSwitch-thumb': {
+                transition: 'transform 150ms ease-in-out, background-color 150ms ease-in-out',
+              },
+              '& .MuiSwitch-track': {
+                transition: 'background-color 150ms ease-in-out',
+              },
+              // Visible focus indicator
+              '& .MuiSwitch-switchBase.Mui-focusVisible + .MuiSwitch-track': {
+                outline: `3px solid ${theme.palette.primary.main}`,
+                outlineOffset: '2px',
+                borderRadius: '20px',
+              },
+              // Checked color
+              '& .MuiSwitch-switchBase.Mui-checked': {
+                color: theme.palette.primary.main,
+                '& + .MuiSwitch-track': {
+                  backgroundColor: theme.palette.primary.main,
                 },
-                '& .MuiSwitch-track': {
-                  transition: 'background-color 150ms ease-in-out',
-                },
-                // Visible focus indicator
-                '& .MuiSwitch-switchBase.Mui-focusVisible + .MuiSwitch-track': {
-                  outline: `3px solid ${theme.palette.primary.main}`,
-                  outlineOffset: '2px',
-                  borderRadius: '20px',
-                },
-                // Checked color
-                '& .MuiSwitch-switchBase.Mui-checked': {
-                  color: theme.palette.primary.main,
-                  '& + .MuiSwitch-track': {
-                    backgroundColor: theme.palette.primary.main,
-                  },
-                },
-                ...sx,
-              }}
-              {...props}
-            />
-          }
-        />
-        {helperText && (
-          <FormHelperText id={helperId} sx={{ ml: '48px' }}>
-            {helperText}
-          </FormHelperText>
-        )}
-      </FormControl>
-    );
-  },
-);
+              },
+              ...sx,
+            }}
+            {...props}
+          />
+        }
+      />
+      {helperText && (
+        <FormHelperText id={helperId} sx={{ ml: '48px' }}>
+          {helperText}
+        </FormHelperText>
+      )}
+    </FormControl>
+  );
+});

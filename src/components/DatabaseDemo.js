@@ -1,10 +1,18 @@
 import React, { useState } from 'react';
 import { useDatabase } from '../hooks/useDatabase';
-import { Box, Button, CircularProgress, Paper, Table,
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Paper,
+  Table,
   TableBody,
   TableCell,
-  TableContainer, TableHead, TableRow, Typography } from '@mui/material';
-
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+} from '@mui/material';
 
 /**
  * A demo component for testing database operations
@@ -33,9 +41,9 @@ const DatabaseDemo = () => {
       const testUser = {
         name: `Test User ${Date.now()}`,
         email: `test${Date.now()}@example.com`,
-        role: 'student'
+        role: 'student',
       };
-      
+
       const result = await createUser(testUser);
       if (result.success) {
         handleLoadUsers(); // Refresh the list
@@ -62,19 +70,14 @@ const DatabaseDemo = () => {
         >
           Load Users
         </Button>
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={handleCreateUser}
-          disabled={loading}
-        >
+        <Button variant="contained" color="secondary" onClick={handleCreateUser} disabled={loading}>
           Create Test User
         </Button>
       </Box>
 
       {error && (
         <Box mb={2} p={2} bgcolor="#ffebee" borderRadius={4}>
-          <Typography sx={{ color: "error.main" }}>{error}</Typography>
+          <Typography sx={{ color: 'error.main' }}>{error}</Typography>
         </Box>
       )}
 
@@ -86,13 +89,15 @@ const DatabaseDemo = () => {
         <TableContainer>
           <Table>
             <TableHead>
-              <TableRow><TableCell>Name</TableCell>
+              <TableRow>
+                <TableCell>Name</TableCell>
                 <TableCell>Email</TableCell>
                 <TableCell>Role</TableCell>
-                <TableCell>Actions</TableCell></TableRow>
+                <TableCell>Actions</TableCell>
+              </TableRow>
             </TableHead>
             <TableBody>
-              {users.map((user) => (
+              {users.map(user => (
                 <TableRow key={user.id}>
                   <TableCell>{user.name}</TableCell>
                   <TableCell>{user.email}</TableCell>
@@ -107,12 +112,15 @@ const DatabaseDemo = () => {
                     >
                       Delete
                     </Button>
-                  </TableCell></TableRow>
+                  </TableCell>
+                </TableRow>
               ))}
               {users.length === 0 && (
-                <TableRow><TableCell colSpan={4} align="center">
+                <TableRow>
+                  <TableCell colSpan={4} align="center">
                     No users found
-                  </TableCell></TableRow>
+                  </TableCell>
+                </TableRow>
               )}
             </TableBody>
           </Table>
@@ -123,7 +131,3 @@ const DatabaseDemo = () => {
 };
 
 export default DatabaseDemo;
-
-
-
-

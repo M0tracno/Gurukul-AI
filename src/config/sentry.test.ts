@@ -91,15 +91,11 @@ describe('Sentry Configuration', () => {
       const processedEvent = result as Sentry.ErrorEvent;
       expect(processedEvent.contexts!.route).toBeDefined();
       expect((processedEvent.contexts!.route as Record<string, string>).pathname).toBe(
-        window.location.pathname,
+        window.location.pathname
       );
-      expect((processedEvent.tags as Record<string, string>).route).toBe(
-        window.location.pathname,
-      );
+      expect((processedEvent.tags as Record<string, string>).route).toBe(window.location.pathname);
       expect((processedEvent.tags as Record<string, string>).os).toBeDefined();
-      expect((processedEvent.tags as Record<string, string>).userAgent).toBe(
-        navigator.userAgent,
-      );
+      expect((processedEvent.tags as Record<string, string>).userAgent).toBe(navigator.userAgent);
 
       vi.unstubAllEnvs();
     });

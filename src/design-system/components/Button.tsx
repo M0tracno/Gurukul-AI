@@ -38,7 +38,7 @@ const sizePadding: Record<NonNullable<MuiButtonProps['size']>, { x: number; y: n
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
   { loading = false, children, disabled, size = 'medium', sx, ...props },
-  ref,
+  ref
 ) {
   const isDisabled = disabled || loading;
   const pad = sizePadding[size];
@@ -81,9 +81,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       }}
       {...props}
     >
-      {loading ? (
-        <CircularProgress size={16} color="inherit" aria-hidden="true" />
-      ) : null}
+      {loading ? <CircularProgress size={16} color="inherit" aria-hidden="true" /> : null}
       {children}
     </MuiButton>
   );

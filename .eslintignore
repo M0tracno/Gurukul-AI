@@ -1,0 +1,20 @@
+# Legacy files with syntax/parsing errors that cannot be linted
+# These are pre-existing broken JS files not modified in this PR
+src/__tests__/security.test.js
+src/components/assessment/AdvancedAssessmentCreator.js
+src/components/assessment/PersonalizedAssessmentDashboard.js
+src/components/assessment/RealTimeFeedbackInterface.js
+src/components/auth/LoginFormEnhanced.js
+src/components/auth/UnifiedEmailLogin.js
+src/components/common/LazyLoader.js
+src/components/EnhancedLoginForm.js
+src/components/ErrorFallback.js
+src/components/monitoring/SystemMonitor.js
+src/components/parent/StudentQuizzes.js
+src/components/student/Assignments.js
+src/components/student/Feedback.js
+src/config/bundleOptimization.js
+src/pages/Login.js
+src/pages/UnifiedRegistration.js
+src/services/vertexai.js
+src/styles/EnhancedLoginStyles.js

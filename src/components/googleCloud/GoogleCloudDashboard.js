@@ -3,8 +3,34 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { CheckCircle, Refresh, VolumeUp, Warning } from '@mui/icons-material';
 import googleCloudService from '../../services/googleCloudService';
 
-
-import { Box, Button, Card, CardContent, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControl, Grid, IconButton, InputLabel, LinearProgress, List, ListItem, ListItemIcon, ListItemTextItem, Paper, Select, Tab, Tabs, TextField, Typography, toLocaleString } from '@mui/material';
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Divider,
+  FormControl,
+  Grid,
+  IconButton,
+  InputLabel,
+  LinearProgress,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemTextItem,
+  Paper,
+  Select,
+  Tab,
+  Tabs,
+  TextField,
+  Typography,
+  toLocaleString,
+} from '@mui/material';
 const GoogleCloudDashboard = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [serviceStatus, setServiceStatus] = useState({});
@@ -29,13 +55,13 @@ const GoogleCloudDashboard = () => {
       await googleCloudService.initialize();
       const serviceInfo = await googleCloudService.getServiceInfo();
       setServiceStatus(serviceInfo);
-      
+
       const health = await googleCloudService.healthCheck();
       setHealthCheck(health);
-      
+
       await googleCloudService.logEvent('INFO', 'Google Cloud Dashboard accessed', {
         userId: 'current-user', // Replace with actual user ID
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     } catch (error) {
       console.error('Failed to initialize Google Cloud:', error);
@@ -52,32 +78,32 @@ const GoogleCloudDashboard = () => {
         type: 'upload',
         description: 'Document uploaded to Cloud Storage',
         timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
-        status: 'success'
+        status: 'success',
       },
       {
         id: 2,
         type: 'translation',
         description: 'Text translated from English to Spanish',
         timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
-        status: 'success'
+        status: 'success',
       },
       {
         id: 3,
         type: 'analysis',
         description: 'Image analysis completed',
         timestamp: new Date(Date.now() - 1000 * 60 * 60 * 4).toISOString(),
-        status: 'success'
-      }
+        status: 'success',
+      },
     ]);
   };
 
-  const handleFileUpload = useCallback(async (event) => {
+  const handleFileUpload = useCallback(async event => {
     const file = event.target.files[0];
     if (!file) return;
 
     setSelectedFile(file);
     setUploadProgress(0);
-    
+
     try {
       // Simulate upload progress
       const progressInterval = setInterval(() => {
@@ -92,7 +118,7 @@ const GoogleCloudDashboard = () => {
 
       const arrayBuffer = await file.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
-      
+
       const result = await googleCloudService.uploadFile(
         env.GOOGLE_CLOUD_STORAGE_BUCKET_MAIN || 'main-bucket',
         `uploads/${Date.now()}-${file.name}`,
@@ -104,38 +130,43 @@ const GoogleCloudDashboard = () => {
           metadata: {
             uploadedFrom: 'dashboard',
             fileType: file.type,
-            fileSize: file.size
-          }
+            fileSize: file.size,
+          },
         }
       );
 
       clearInterval(progressInterval);
       setUploadProgress(100);
-      
-      setRecentActivities(prev => [{
-        id: Date.now(),
-        type: 'upload',
-        description: `File "${file.name}" uploaded successfully`,
-        timestamp: new Date().toISOString(),
-        status: 'success',
-        details: result
-      }, ...prev.slice(0, 9)]);
+
+      setRecentActivities(prev => [
+        {
+          id: Date.now(),
+          type: 'upload',
+          description: `File "${file.name}" uploaded successfully`,
+          timestamp: new Date().toISOString(),
+          status: 'success',
+          details: result,
+        },
+        ...prev.slice(0, 9),
+      ]);
 
       setTimeout(() => {
         setUploadDialog(false);
         setSelectedFile(null);
         setUploadProgress(0);
       }, 1500);
-
     } catch (error) {
       console.error('Upload failed:', error);
-      setRecentActivities(prev => [{
-        id: Date.now(),
-        type: 'upload',
-        description: `Upload failed: ${error.message}`,
-        timestamp: new Date().toISOString(),
-        status: 'error'
-      }, ...prev.slice(0, 9)]);
+      setRecentActivities(prev => [
+        {
+          id: Date.now(),
+          type: 'upload',
+          description: `Upload failed: ${error.message}`,
+          timestamp: new Date().toISOString(),
+          status: 'error',
+        },
+        ...prev.slice(0, 9),
+      ]);
     }
   }, []);
 
@@ -144,19 +175,19 @@ const GoogleCloudDashboard = () => {
 
     try {
       setLoading(true);
-      const result = await googleCloudService.translateText(
-        translationText,
-        targetLanguage
-      );
+      const result = await googleCloudService.translateText(translationText, targetLanguage);
 
-      setRecentActivities(prev => [{
-        id: Date.now(),
-        type: 'translation',
-        description: `Text translated to ${targetLanguage.toUpperCase()}`,
-        timestamp: new Date().toISOString(),
-        status: 'success',
-        details: result
-      }, ...prev.slice(0, 9)]);
+      setRecentActivities(prev => [
+        {
+          id: Date.now(),
+          type: 'translation',
+          description: `Text translated to ${targetLanguage.toUpperCase()}`,
+          timestamp: new Date().toISOString(),
+          status: 'success',
+          details: result,
+        },
+        ...prev.slice(0, 9),
+      ]);
 
       setTranslationDialog(false);
       setTranslationText('');
@@ -179,7 +210,7 @@ const GoogleCloudDashboard = () => {
     }
   };
 
-  const getStatusIcon = (status) => {
+  const getStatusIcon = status => {
     switch (status) {
       case 'healthy':
         return <CheckCircle sx={{ color: 'success.main' }} />;
@@ -192,7 +223,7 @@ const GoogleCloudDashboard = () => {
     }
   };
 
-  const getStatusColor = (status) => {
+  const getStatusColor = status => {
     switch (status) {
       case 'healthy':
         return 'success';
@@ -219,15 +250,19 @@ const GoogleCloudDashboard = () => {
 
   return (
     <Box sx={{ width: '100%', p: 3 }}>
-      <Typography variant="h4" gutterBottom sx={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        gap: 2,
-        background: 'linear-gradient(45deg, #4285f4, #34a853)',
-        WebkitBackgroundClip: 'text',
-        WebkitTextFillColor: 'transparent',
-        fontWeight: 'bold'
-      }}>
+      <Typography
+        variant="h4"
+        gutterBottom
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 2,
+          background: 'linear-gradient(45deg, #4285f4, #34a853)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          fontWeight: 'bold',
+        }}
+      >
         <CloudQueue sx={{ fontSize: 40, color: '#4285f4' }} />
         Google Cloud Services Dashboard
       </Typography>
@@ -237,36 +272,38 @@ const GoogleCloudDashboard = () => {
       {/* Service Status Overview */}
       <Card sx={{ mb: 3 }}>
         <CardContent>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Box
+            sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}
+          >
             <Typography variant="h6">Service Status</Typography>
             <IconButton onClick={refreshHealthCheck} disabled={loading}>
               <Refresh />
             </IconButton>
           </Box>
-          
+
           {healthCheck && (
             <Grid container spacing={2}>
-              <Grid size={{xs:12,md:6}}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   {getStatusIcon(healthCheck.overall)}
                   <Typography variant="h6">
-                    Overall Status: 
-                    <Chip 
-                      label={healthCheck.overall.toUpperCase()} 
+                    Overall Status:
+                    <Chip
+                      label={healthCheck.overall.toUpperCase()}
                       color={getStatusColor(healthCheck.overall)}
                       sx={{ ml: 1 }}
                     />
                   </Typography>
                 </Box>
               </Grid>
-              <Grid size={{xs:12,md:6}}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <Typography variant="body2" color="text.secondary">
                   Last Updated: {new Date(healthCheck.timestamp).toLocaleString()}
                 </Typography>
               </Grid>
-              
+
               {healthCheck.services && (
-                <Grid size={{xs:12}}>
+                <Grid size={{ xs: 12 }}>
                   <Grid container spacing={1}>
                     {Object.entries(healthCheck.services).map(([service, status]) => (
                       <Grid key={service}>
@@ -303,7 +340,7 @@ const GoogleCloudDashboard = () => {
         {/* Cloud Storage Tab */}
         <TabPanel value={activeTab} index={0}>
           <Grid container spacing={3}>
-            <Grid size={{xs:12,md:6}}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Card>
                 <CardContent>
                   <Typography variant="h6" gutterBottom>
@@ -321,8 +358,8 @@ const GoogleCloudDashboard = () => {
                 </CardContent>
               </Card>
             </Grid>
-            
-            <Grid size={{xs:12,md:6}}>
+
+            <Grid size={{ xs: 12, md: 6 }}>
               <Card>
                 <CardContent>
                   <Typography variant="h6" gutterBottom>
@@ -344,7 +381,7 @@ const GoogleCloudDashboard = () => {
         {/* AI Services Tab */}
         <TabPanel value={activeTab} index={1}>
           <Grid container spacing={3}>
-            <Grid size={{xs:12,md:4}}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <Card>
                 <CardContent>
                   <Typography variant="h6" gutterBottom>
@@ -354,18 +391,14 @@ const GoogleCloudDashboard = () => {
                   <Typography variant="body2" color="text.secondary" gutterBottom>
                     Translate text using Google Cloud Translation API
                   </Typography>
-                  <Button
-                    variant="contained"
-                    onClick={() => setTranslationDialog(true)}
-                    fullWidth
-                  >
+                  <Button variant="contained" onClick={() => setTranslationDialog(true)} fullWidth>
                     Translate Text
                   </Button>
                 </CardContent>
               </Card>
             </Grid>
-            
-            <Grid size={{xs:12,md:4}}>
+
+            <Grid size={{ xs: 12, md: 4 }}>
               <Card>
                 <CardContent>
                   <Typography variant="h6" gutterBottom>
@@ -381,8 +414,8 @@ const GoogleCloudDashboard = () => {
                 </CardContent>
               </Card>
             </Grid>
-            
-            <Grid size={{xs:12,md:4}}>
+
+            <Grid size={{ xs: 12, md: 4 }}>
               <Card>
                 <CardContent>
                   <Typography variant="h6" gutterBottom>
@@ -405,16 +438,19 @@ const GoogleCloudDashboard = () => {
       {/* Recent Activities */}
       <Card sx={{ mt: 3 }}>
         <CardContent>
-          <Typography variant="h6" gutterBottom>Recent Activities</Typography>
+          <Typography variant="h6" gutterBottom>
+            Recent Activities
+          </Typography>
           <List>
             {recentActivities.map((activity, index) => (
               <React.Fragment key={activity.id}>
                 <ListItem>
                   <ListItemIcon>
-                    {activity.status === 'success' ? 
-                      <CheckCircle color="success" /> : 
+                    {activity.status === 'success' ? (
+                      <CheckCircle color="success" />
+                    ) : (
                       <Error color="error" />
-                    }
+                    )}
                   </ListItemIcon>
                   <ListItemText
                     primary={activity.description}
@@ -432,11 +468,7 @@ const GoogleCloudDashboard = () => {
       <Dialog open={uploadDialog} onClose={() => setUploadDialog(false)} maxWidth="sm" fullWidth>
         <DialogTitle>Upload File to Cloud Storage</DialogTitle>
         <DialogContent>
-          <input
-            type="file"
-            onChange={handleFileUpload}
-            style={{ margin: '20px 0' }}
-          />
+          <input type="file" onChange={handleFileUpload} style={{ margin: '20px 0' }} />
           {uploadProgress > 0 && (
             <Box sx={{ mt: 2 }}>
               <Typography variant="body2" gutterBottom>
@@ -452,7 +484,12 @@ const GoogleCloudDashboard = () => {
       </Dialog>
 
       {/* Translation Dialog */}
-      <Dialog open={translationDialog} onClose={() => setTranslationDialog(false)} maxWidth="sm" fullWidth>
+      <Dialog
+        open={translationDialog}
+        onClose={() => setTranslationDialog(false)}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>Translate Text</DialogTitle>
         <DialogContent>
           <TextField
@@ -461,14 +498,14 @@ const GoogleCloudDashboard = () => {
             rows={4}
             label="Text to translate"
             value={translationText}
-            onChange={(e) => setTranslationText(e.target.value)}
+            onChange={e => setTranslationText(e.target.value)}
             sx={{ mb: 2, mt: 1 }}
           />
           <FormControl fullWidth>
             <InputLabel>Target Language</InputLabel>
             <Select
               value={targetLanguage}
-              onChange={(e) => setTargetLanguage(e.target.value)}
+              onChange={e => setTargetLanguage(e.target.value)}
               label="Target Language"
             >
               <MenuItem value="es">Spanish</MenuItem>
@@ -484,7 +521,11 @@ const GoogleCloudDashboard = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setTranslationDialog(false)}>Cancel</Button>
-          <Button onClick={handleTranslation} variant="contained" disabled={!translationText.trim()}>
+          <Button
+            onClick={handleTranslation}
+            variant="contained"
+            disabled={!translationText.trim()}
+          >
             Translate
           </Button>
         </DialogActions>
@@ -494,4 +535,3 @@ const GoogleCloudDashboard = () => {
 };
 
 export default GoogleCloudDashboard;
-

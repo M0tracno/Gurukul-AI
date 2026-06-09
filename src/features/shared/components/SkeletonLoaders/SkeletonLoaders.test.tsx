@@ -99,7 +99,7 @@ describe('TimeoutError', () => {
   it('displays the default timeout message', () => {
     renderWithTheme(<TimeoutError onRetry={vi.fn()} />);
     expect(
-      screen.getByText('The request timed out. The server may be slow or unreachable.'),
+      screen.getByText('The request timed out. The server may be slow or unreachable.')
     ).toBeInTheDocument();
   });
 
@@ -130,16 +130,12 @@ describe('useLoadingTimeout', () => {
   });
 
   it('returns isTimedOut = false initially while loading', () => {
-    const { result } = renderHook(() =>
-      useLoadingTimeout({ isLoading: true, timeoutMs: 10_000 }),
-    );
+    const { result } = renderHook(() => useLoadingTimeout({ isLoading: true, timeoutMs: 10_000 }));
     expect(result.current.isTimedOut).toBe(false);
   });
 
   it('sets isTimedOut = true after timeout elapses', () => {
-    const { result } = renderHook(() =>
-      useLoadingTimeout({ isLoading: true, timeoutMs: 10_000 }),
-    );
+    const { result } = renderHook(() => useLoadingTimeout({ isLoading: true, timeoutMs: 10_000 }));
 
     act(() => {
       vi.advanceTimersByTime(10_000);
@@ -151,7 +147,7 @@ describe('useLoadingTimeout', () => {
   it('does not time out if loading completes before timeout', () => {
     const { result, rerender } = renderHook(
       ({ isLoading }) => useLoadingTimeout({ isLoading, timeoutMs: 10_000 }),
-      { initialProps: { isLoading: true } },
+      { initialProps: { isLoading: true } }
     );
 
     act(() => {
@@ -170,7 +166,7 @@ describe('useLoadingTimeout', () => {
   it('resets when isLoading transitions to false', () => {
     const { result, rerender } = renderHook(
       ({ isLoading }) => useLoadingTimeout({ isLoading, timeoutMs: 10_000 }),
-      { initialProps: { isLoading: true } },
+      { initialProps: { isLoading: true } }
     );
 
     act(() => {
@@ -185,9 +181,7 @@ describe('useLoadingTimeout', () => {
   });
 
   it('reset() clears timed out state', () => {
-    const { result } = renderHook(() =>
-      useLoadingTimeout({ isLoading: true, timeoutMs: 10_000 }),
-    );
+    const { result } = renderHook(() => useLoadingTimeout({ isLoading: true, timeoutMs: 10_000 }));
 
     act(() => {
       vi.advanceTimersByTime(10_000);
@@ -224,7 +218,7 @@ describe('DataLoadingContainer', () => {
         onRetry={vi.fn()}
       >
         <div data-testid="content">Content</div>
-      </DataLoadingContainer>,
+      </DataLoadingContainer>
     );
 
     expect(screen.getByTestId('skeleton')).toBeInTheDocument();
@@ -239,7 +233,7 @@ describe('DataLoadingContainer', () => {
         onRetry={vi.fn()}
       >
         <div data-testid="content">Content</div>
-      </DataLoadingContainer>,
+      </DataLoadingContainer>
     );
 
     expect(screen.queryByTestId('skeleton')).not.toBeInTheDocument();
@@ -254,7 +248,7 @@ describe('DataLoadingContainer', () => {
         onRetry={vi.fn()}
       >
         <div data-testid="content">Content</div>
-      </DataLoadingContainer>,
+      </DataLoadingContainer>
     );
 
     act(() => {
@@ -275,7 +269,7 @@ describe('DataLoadingContainer', () => {
         onRetry={onRetry}
       >
         <div data-testid="content">Content</div>
-      </DataLoadingContainer>,
+      </DataLoadingContainer>
     );
 
     act(() => {

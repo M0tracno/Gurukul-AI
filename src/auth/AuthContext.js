@@ -33,11 +33,11 @@ export function AuthProvider({ children }) {
             const response = await fetch(`${apiBaseUrl}/api/auth/me`, {
               method: 'GET',
               headers: {
-                'Authorization': `Bearer ${token}`,
+                Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
-                'Accept': 'application/json'
+                Accept: 'application/json',
               },
-              credentials: 'include'
+              credentials: 'include',
             });
 
             if (response.ok) {
@@ -75,7 +75,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   // Helper function to process successful login
-  const processSuccessfulLogin = (data) => {
+  const processSuccessfulLogin = data => {
     localStorage.setItem('authToken', data.token);
     localStorage.setItem('userData', JSON.stringify(data.user));
 
@@ -98,7 +98,7 @@ export function AuthProvider({ children }) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
+          Accept: 'application/json',
         },
         credentials: 'include',
         body: JSON.stringify({ email, password, role }),
@@ -133,7 +133,8 @@ export function AuthProvider({ children }) {
   // Signup function
   const signup = async (email, password, role, displayName) => {
     try {
-      const endpoint = role === 'faculty' ? '/api/auth/register/faculty' : '/api/auth/register/student';
+      const endpoint =
+        role === 'faculty' ? '/api/auth/register/faculty' : '/api/auth/register/student';
 
       const response = await fetch(`${env.API_URL}${endpoint}`, {
         method: 'POST',
@@ -147,12 +148,12 @@ export function AuthProvider({ children }) {
           lastName: displayName?.split(' ')[1] || '',
           ...(role === 'faculty' && {
             employeeId: `EMP${Date.now()}`,
-            department: 'General'
+            department: 'General',
           }),
           ...(role === 'student' && {
             studentId: `STU${Date.now()}`,
-            grade: 'General'
-          })
+            grade: 'General',
+          }),
         }),
       });
 
@@ -180,7 +181,7 @@ export function AuthProvider({ children }) {
   };
 
   // Reset password function
-  const resetPassword = async (email) => {
+  const resetPassword = async email => {
     try {
       const response = await fetch(`${env.API_URL}/api/auth/reset-password`, {
         method: 'POST',
@@ -396,18 +397,20 @@ export function AuthProvider({ children }) {
     sendMSG91OTP,
     verifyMSG91OTP,
     verifyMSG91Token,
-    isAuthenticated: !!currentUser
+    isAuthenticated: !!currentUser,
   };
 
   if (loading) {
     return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        fontFamily: 'Arial, sans-serif'
-      }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+          fontFamily: 'Arial, sans-serif',
+        }}
+      >
         <p>Loading application...</p>
       </div>
     );
@@ -415,16 +418,18 @@ export function AuthProvider({ children }) {
 
   if (initFailed) {
     return (
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        fontFamily: 'Arial, sans-serif',
-        padding: '20px',
-        textAlign: 'center'
-      }}>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+          fontFamily: 'Arial, sans-serif',
+          padding: '20px',
+          textAlign: 'center',
+        }}
+      >
         <h2 style={{ color: 'red' }}>Initialization Error</h2>
         <p>Failed to initialize the application. Please try refreshing the page.</p>
         <button
@@ -432,7 +437,7 @@ export function AuthProvider({ children }) {
           style={{
             padding: '10px 20px',
             marginTop: '20px',
-            cursor: 'pointer'
+            cursor: 'pointer',
           }}
         >
           Refresh Page
@@ -441,9 +446,5 @@ export function AuthProvider({ children }) {
     );
   }
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

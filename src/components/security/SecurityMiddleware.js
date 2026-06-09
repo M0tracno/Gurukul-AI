@@ -1,10 +1,25 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { Security, Shield as SecurityIcon, Warning, Warning as WarningIcon } from '@mui/icons-material';
+import {
+  Security,
+  Shield as SecurityIcon,
+  Warning,
+  Warning as WarningIcon,
+} from '@mui/icons-material';
 import { useAuth } from '../../auth/AuthContext';
 import { useSecurity } from '../../contexts/SecurityContext';
 
-import { Alert, Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material';
+import {
+  Alert,
+  Box,
+  Button,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Typography,
+} from '@mui/material';
 /**
  * Security Middleware - Phase 5 Security Enhancement
  * Provides route protection and security checks for the application
@@ -13,12 +28,12 @@ import { Alert, Box, Button, CircularProgress, Dialog, DialogActions, DialogCont
 /**
  * Enhanced Private Route with security checks
  */
-export const SecureRoute = ({ 
-  children, 
-  allowedRoles, 
+export const SecureRoute = ({
+  children,
+  allowedRoles,
   requiredSecurityLevel = 'low',
   requireMFA = false,
-  requireCompliance = false
+  requireCompliance = false,
 }) => {
   const { currentUser, userRole } = useAuth();
   const {
@@ -27,28 +42,28 @@ export const SecureRoute = ({
     threatLevel,
     hasSecurityClearance,
     isCompliant,
-    isSecurityLoading
+    isSecurityLoading,
   } = useSecurity();
   const location = useLocation();
-  
+
   // Check if user is authenticated
   if (!currentUser) {
     const roleLoginPaths = {
       faculty: '/faculty-login',
       student: '/student-login',
       parent: '/parent-login',
-      admin: '/admin-login'
+      admin: '/admin-login',
     };
-    
+
     const redirectPath = roleLoginPaths[allowedRoles[0]] || '/faculty-login';
     return <Navigate to={redirectPath} state={{ from: location }} replace />;
   }
-  
+
   // Check if user has required role
   if (!allowedRoles.includes(userRole)) {
     return <Navigate to="/unauthorized" replace />;
   }
-  
+
   // Show loading while security is initializing
   if (!securityInitialized || isSecurityLoading) {
     return (
@@ -60,27 +75,27 @@ export const SecureRoute = ({
       </Box>
     );
   }
-  
+
   // Check security clearance
   if (!hasSecurityClearance(requiredSecurityLevel)) {
     return <SecurityClearanceBlock requiredLevel={requiredSecurityLevel} />;
   }
-  
+
   // Check MFA requirement
   if (requireMFA && !securityStatus?.mfaEnabled) {
     return <MFARequiredBlock />;
   }
-  
+
   // Check compliance requirement
   if (requireCompliance && !isCompliant) {
     return <ComplianceRequiredBlock />;
   }
-  
+
   // Check threat level
   if (threatLevel === 'critical') {
     return <HighRiskSecurityBlock />;
   }
-  
+
   // All checks passed
   return children;
 };
@@ -96,9 +111,7 @@ export const AdminRoute = ({ children, requiredPermissions = [] }) => {
       requireMFA={true}
       requireCompliance={true}
     >
-      <PermissionCheck requiredPermissions={requiredPermissions}>
-        {children}
-      </PermissionCheck>
+      <PermissionCheck requiredPermissions={requiredPermissions}>{children}</PermissionCheck>
     </SecureRoute>
   );
 };
@@ -124,11 +137,7 @@ export const FacultyRoute = ({ children, requireMFA = false }) => {
  */
 export const StudentRoute = ({ children }) => {
   return (
-    <SecureRoute
-      allowedRoles={['student']}
-      requiredSecurityLevel="low"
-      requireCompliance={true}
-    >
+    <SecureRoute allowedRoles={['student']} requiredSecurityLevel="low" requireCompliance={true}>
       {children}
     </SecureRoute>
   );
@@ -139,11 +148,7 @@ export const StudentRoute = ({ children }) => {
  */
 export const ParentRoute = ({ children }) => {
   return (
-    <SecureRoute
-      allowedRoles={['parent']}
-      requiredSecurityLevel="low"
-      requireCompliance={true}
-    >
+    <SecureRoute allowedRoles={['parent']} requiredSecurityLevel="low" requireCompliance={true}>
       {children}
     </SecureRoute>
   );
@@ -155,16 +160,16 @@ export const ParentRoute = ({ children }) => {
 const PermissionCheck = ({ children, requiredPermissions = [] }) => {
   const { currentUser } = useAuth();
   const { securityStatus } = useSecurity();
-  
+
   if (requiredPermissions.length === 0) {
     return children;
   }
-  
+
   const userPermissions = securityStatus?.permissions || [];
-  const hasAllPermissions = requiredPermissions.every(permission => 
+  const hasAllPermissions = requiredPermissions.every(permission =>
     userPermissions.includes(permission)
   );
-  
+
   if (!hasAllPermissions) {
     return (
       <Box textAlign="center" p={4}>
@@ -181,7 +186,7 @@ const PermissionCheck = ({ children, requiredPermissions = [] }) => {
       </Box>
     );
   }
-  
+
   return children;
 };
 
@@ -210,7 +215,7 @@ const SecurityClearanceBlock = ({ requiredLevel }) => {
  */
 const MFARequiredBlock = () => {
   const [dialogOpen, setDialogOpen] = React.useState(false);
-  
+
   return (
     <>
       <Box textAlign="center" p={4}>
@@ -221,9 +226,9 @@ const MFARequiredBlock = () => {
         <Typography variant="body1" color="textSecondary" paragraph>
           This area requires additional security verification.
         </Typography>
-        <Button 
-          variant="contained" 
-          color="primary" 
+        <Button
+          variant="contained"
+          color="primary"
           onClick={() => setDialogOpen(true)}
           sx={{ mr: 2 }}
         >
@@ -233,21 +238,18 @@ const MFARequiredBlock = () => {
           Go Back
         </Button>
       </Box>
-      
+
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle>Setup Multi-Factor Authentication</DialogTitle>
         <DialogContent>
           <Typography variant="body1" paragraph>
-            For security reasons, this area requires multi-factor authentication.
-            Would you like to set it up now?
+            For security reasons, this area requires multi-factor authentication. Would you like to
+            set it up now?
           </Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
-          <Button 
-            variant="contained" 
-            onClick={() => window.location.href = '/security-settings'}
-          >
+          <Button variant="contained" onClick={() => (window.location.href = '/security-settings')}>
             Setup Now
           </Button>
         </DialogActions>
@@ -281,11 +283,11 @@ const ComplianceRequiredBlock = () => {
  */
 const HighRiskSecurityBlock = () => {
   const [acknowledged, setAcknowledged] = React.useState(false);
-  
+
   if (acknowledged) {
     return null; // Allow access after acknowledgment
   }
-  
+
   return (
     <Box textAlign="center" p={4}>
       <Alert severity="error" sx={{ mb: 3 }}>
@@ -293,14 +295,14 @@ const HighRiskSecurityBlock = () => {
           High Risk Activity Detected
         </Typography>
         <Typography variant="body2">
-          Your account shows signs of suspicious activity. Please review your security settings
-          and recent activity before proceeding.
+          Your account shows signs of suspicious activity. Please review your security settings and
+          recent activity before proceeding.
         </Typography>
       </Alert>
-      
-      <Button 
-        variant="contained" 
-        color="error" 
+
+      <Button
+        variant="contained"
+        color="error"
         onClick={() => setAcknowledged(true)}
         sx={{ mr: 2 }}
       >
@@ -318,9 +320,9 @@ const HighRiskSecurityBlock = () => {
  */
 export const SecurityStatusMonitor = ({ children }) => {
   const { securityAlerts, threatLevel, dismissAlert } = useSecurity();
-  
+
   const criticalAlerts = securityAlerts.filter(alert => alert.priority === 'high');
-  
+
   return (
     <>
       {criticalAlerts.map(alert => (
@@ -341,7 +343,7 @@ export const SecurityStatusMonitor = ({ children }) => {
           <Typography variant="body2">{alert.message}</Typography>
         </Alert>
       ))}
-      
+
       {threatLevel === 'critical' && (
         <Alert severity="error" sx={{ mb: 2 }}>
           <Typography variant="subtitle2">Critical Security Alert</Typography>
@@ -350,7 +352,7 @@ export const SecurityStatusMonitor = ({ children }) => {
           </Typography>
         </Alert>
       )}
-      
+
       {children}
     </>
   );
@@ -362,7 +364,5 @@ export default {
   FacultyRoute,
   StudentRoute,
   ParentRoute,
-  SecurityStatusMonitor
+  SecurityStatusMonitor,
 };
-
-

@@ -8,17 +8,15 @@ export const consoleUtils = {
 
     console.warn = (...args) => {
       const message = args.join(' ');
-      
+
       // Suppress known warnings that are not actionable
       const suppressedWarnings = [
         'findDOMNode is deprecated',
         'Download the React DevTools',
-        'A listener indicated an asynchronous response by returning true'
+        'A listener indicated an asynchronous response by returning true',
       ];
 
-      const shouldSuppress = suppressedWarnings.some(warning => 
-        message.includes(warning)
-      );
+      const shouldSuppress = suppressedWarnings.some(warning => message.includes(warning));
 
       if (!shouldSuppress) {
         originalWarn.apply(console, args);
@@ -27,16 +25,14 @@ export const consoleUtils = {
 
     console.error = (...args) => {
       const message = args.join(' ');
-      
+
       // Suppress known errors that are not critical
       const suppressedErrors = [
         'A listener indicated an asynchronous response by returning true',
-        'message channel closed before a response was received'
+        'message channel closed before a response was received',
       ];
 
-      const shouldSuppress = suppressedErrors.some(error => 
-        message.includes(error)
-      );
+      const shouldSuppress = suppressedErrors.some(error => message.includes(error));
 
       if (!shouldSuppress) {
         originalError.apply(console, args);
@@ -55,7 +51,7 @@ export const consoleUtils = {
     if (process.env.NODE_ENV === 'development') {
       const timestamp = new Date().toISOString();
       const prefix = `[${timestamp}] [${type.toUpperCase()}]`;
-      
+
       switch (type) {
         case 'error':
           console.error(`${prefix} ${message}`, data || '');
@@ -70,8 +66,7 @@ export const consoleUtils = {
           console.log(`${prefix} ${message}`, data || '');
       }
     }
-  }
+  },
 };
 
 export default consoleUtils;
-

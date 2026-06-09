@@ -1,11 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { Alert, Avatar, Box, Button, Card, CardContent, Chip, Container, Grid, IconButton, LinearProgress, List, ListItem, ListItemAvatar, ListItemText, Paper, Typography } from '@mui/material';
-import { 
+import {
+  Alert,
+  Avatar,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  Container,
+  Grid,
+  IconButton,
+  LinearProgress,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Paper,
+  Typography,
+} from '@mui/material';
+import {
   Visibility as VisibilityIcon,
   Assignment as AssignmentIcon,
   Quiz as QuizIcon,
   Event as EventIcon,
-  Grade as GradeIcon
+  Grade as GradeIcon,
 } from '@mui/icons-material';
 
 const ChildrenOverview = () => {
@@ -28,14 +46,14 @@ const ChildrenOverview = () => {
         recentQuizzes: 1,
         alerts: [
           { type: 'warning', message: 'Assignment due tomorrow' },
-          { type: 'info', message: 'Parent-teacher meeting scheduled' }
+          { type: 'info', message: 'Parent-teacher meeting scheduled' },
         ],
         subjects: [
           { name: 'Mathematics', grade: 88, status: 'excellent' },
           { name: 'English', grade: 82, status: 'good' },
           { name: 'Science', grade: 90, status: 'excellent' },
-          { name: 'History', grade: 78, status: 'average' }
-        ]
+          { name: 'History', grade: 78, status: 'average' },
+        ],
       },
       {
         id: 2,
@@ -50,15 +68,15 @@ const ChildrenOverview = () => {
         recentQuizzes: 2,
         alerts: [
           { type: 'error', message: 'Low grade in Mathematics' },
-          { type: 'warning', message: '3 assignments overdue' }
+          { type: 'warning', message: '3 assignments overdue' },
         ],
         subjects: [
           { name: 'Mathematics', grade: 65, status: 'needs-improvement' },
           { name: 'English', grade: 80, status: 'good' },
           { name: 'Science', grade: 85, status: 'excellent' },
-          { name: 'Geography', grade: 82, status: 'good' }
-        ]
-      }
+          { name: 'Geography', grade: 82, status: 'good' },
+        ],
+      },
     ];
 
     setTimeout(() => {
@@ -67,23 +85,28 @@ const ChildrenOverview = () => {
     }, 1000);
   }, []);
 
-  const getGradeColor = (grade) => {
+  const getGradeColor = grade => {
     if (grade >= 85) return 'success';
     if (grade >= 70) return 'warning';
     return 'error';
   };
 
-  const getStatusColor = (status) => {
+  const getStatusColor = status => {
     switch (status) {
-      case 'excellent': return 'success';
-      case 'good': return 'primary';
-      case 'average': return 'warning';
-      case 'needs-improvement': return 'error';
-      default: return 'default';
+      case 'excellent':
+        return 'success';
+      case 'good':
+        return 'primary';
+      case 'average':
+        return 'warning';
+      case 'needs-improvement':
+        return 'error';
+      default:
+        return 'default';
     }
   };
 
-  const handleViewDetails = (childId) => {
+  const handleViewDetails = childId => {
     console.log('View details for child:', childId);
   };
 
@@ -102,13 +125,13 @@ const ChildrenOverview = () => {
       </Typography>
 
       <Grid container spacing={3}>
-        {children.map((child) => (
-          <Grid size={{xs:12,lg:6}} key={child.id}>
+        {children.map(child => (
+          <Grid size={{ xs: 12, lg: 6 }} key={child.id}>
             <Card
               sx={{
                 borderRadius: 3,
                 boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-                height: '100%'
+                height: '100%',
               }}
             >
               <CardContent sx={{ p: 3 }}>
@@ -121,7 +144,7 @@ const ChildrenOverview = () => {
                         height: 56,
                         bgcolor: 'primary.main',
                         mr: 2,
-                        fontSize: '1.5rem'
+                        fontSize: '1.5rem',
                       }}
                     >
                       {child.avatar || child.name.charAt(0)}
@@ -135,10 +158,7 @@ const ChildrenOverview = () => {
                       </Typography>
                     </Box>
                   </Box>
-                  <IconButton
-                    color="primary"
-                    onClick={() => handleViewDetails(child.id)}
-                  >
+                  <IconButton color="primary" onClick={() => handleViewDetails(child.id)}>
                     <VisibilityIcon />
                   </IconButton>
                 </Box>
@@ -161,9 +181,13 @@ const ChildrenOverview = () => {
 
                 {/* Quick Stats */}
                 <Grid container spacing={2} mb={3}>
-                  <Grid size={{xs:6}}>
+                  <Grid size={{ xs: 6 }}>
                     <Paper sx={{ p: 2, textAlign: 'center', borderRadius: 2 }}>
-                      <Typography variant="h4" color={getGradeColor(child.overallGrade)} fontWeight="bold">
+                      <Typography
+                        variant="h4"
+                        color={getGradeColor(child.overallGrade)}
+                        fontWeight="bold"
+                      >
                         {child.overallGrade}%
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
@@ -171,9 +195,13 @@ const ChildrenOverview = () => {
                       </Typography>
                     </Paper>
                   </Grid>
-                  <Grid size={{xs:6}}>
+                  <Grid size={{ xs: 6 }}>
                     <Paper sx={{ p: 2, textAlign: 'center', borderRadius: 2 }}>
-                      <Typography variant="h4" color={getGradeColor(child.attendance)} fontWeight="bold">
+                      <Typography
+                        variant="h4"
+                        color={getGradeColor(child.attendance)}
+                        fontWeight="bold"
+                      >
                         {child.attendance}%
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
@@ -189,29 +217,35 @@ const ChildrenOverview = () => {
                     Recent Activity
                   </Typography>
                   <Grid container spacing={1}>
-                    <Grid size={{xs:4}}>
+                    <Grid size={{ xs: 4 }}>
                       <Box display="flex" alignItems="center" justifyContent="center" p={1}>
                         <AssignmentIcon color="primary" sx={{ mr: 1 }} />
                         <Box>
-                          <Typography variant="body2" fontWeight="bold">{child.pendingAssignments}</Typography>
+                          <Typography variant="body2" fontWeight="bold">
+                            {child.pendingAssignments}
+                          </Typography>
                           <Typography variant="caption">Pending</Typography>
                         </Box>
                       </Box>
                     </Grid>
-                    <Grid size={{xs:4}}>
+                    <Grid size={{ xs: 4 }}>
                       <Box display="flex" alignItems="center" justifyContent="center" p={1}>
                         <QuizIcon color="secondary" sx={{ mr: 1 }} />
                         <Box>
-                          <Typography variant="body2" fontWeight="bold">{child.recentQuizzes}</Typography>
+                          <Typography variant="body2" fontWeight="bold">
+                            {child.recentQuizzes}
+                          </Typography>
                           <Typography variant="caption">Quizzes</Typography>
                         </Box>
                       </Box>
                     </Grid>
-                    <Grid size={{xs:4}}>
+                    <Grid size={{ xs: 4 }}>
                       <Box display="flex" alignItems="center" justifyContent="center" p={1}>
                         <EventIcon color="warning" sx={{ mr: 1 }} />
                         <Box>
-                          <Typography variant="body2" fontWeight="bold">{child.upcomingEvents}</Typography>
+                          <Typography variant="body2" fontWeight="bold">
+                            {child.upcomingEvents}
+                          </Typography>
                           <Typography variant="caption">Events</Typography>
                         </Box>
                       </Box>
@@ -228,7 +262,13 @@ const ChildrenOverview = () => {
                     {child.subjects.map((subject, index) => (
                       <ListItem key={index} disablePadding sx={{ mb: 1 }}>
                         <ListItemAvatar>
-                          <Avatar sx={{ width: 32, height: 32, bgcolor: `${getStatusColor(subject.status)}.main` }}>
+                          <Avatar
+                            sx={{
+                              width: 32,
+                              height: 32,
+                              bgcolor: `${getStatusColor(subject.status)}.main`,
+                            }}
+                          >
                             <GradeIcon fontSize="small" />
                           </Avatar>
                         </ListItemAvatar>
@@ -279,4 +319,3 @@ const ChildrenOverview = () => {
 };
 
 export default ChildrenOverview;
-

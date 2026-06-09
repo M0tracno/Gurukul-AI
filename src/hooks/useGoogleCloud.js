@@ -23,21 +23,16 @@ export const useCloudStorage = () => {
 
       const arrayBuffer = await file.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
-      
+
       const fileName = `${Date.now()}-${file.name}`;
-      const result = await googleCloudService.uploadFile(
-        bucketName,
-        fileName,
-        buffer,
-        {
-          originalName: file.name,
-          ...options
-        }
-      );
+      const result = await googleCloudService.uploadFile(bucketName, fileName, buffer, {
+        originalName: file.name,
+        ...options,
+      });
 
       clearInterval(progressInterval);
       setUploadProgress(100);
-      
+
       return result;
     } catch (err) {
       setError(err.message);
@@ -103,7 +98,7 @@ export const useCloudStorage = () => {
     uploadFile,
     downloadFile,
     deleteFile,
-    listFiles
+    listFiles,
   };
 };
 
@@ -161,7 +156,7 @@ export const useCloudAI = () => {
     }
   }, []);
 
-  const analyzeImage = useCallback(async (imageBuffer) => {
+  const analyzeImage = useCallback(async imageBuffer => {
     setProcessing(true);
     setError(null);
 
@@ -177,7 +172,7 @@ export const useCloudAI = () => {
     }
   }, []);
 
-  const analyzeText = useCallback(async (text) => {
+  const analyzeText = useCallback(async text => {
     setProcessing(true);
     setError(null);
 
@@ -201,7 +196,7 @@ export const useCloudAI = () => {
     synthesizeSpeech,
     transcribeAudio,
     analyzeImage,
-    analyzeText
+    analyzeText,
   };
 };
 
@@ -234,17 +229,17 @@ export const useCloudMessaging = () => {
       const subscription = await googleCloudService.createSubscription(topicName, subscriptionName);
       subscriptionRef.current = subscription;
 
-      subscription.on('message', (message) => {
+      subscription.on('message', message => {
         const messageData = {
           id: message.id,
           data: JSON.parse(message.data.toString()),
           attributes: message.attributes,
           publishTime: message.publishTime,
-          received: new Date()
+          received: new Date(),
         };
 
         setMessages(prev => [messageData, ...prev.slice(0, 99)]); // Keep last 100 messages
-        
+
         if (messageHandler) {
           messageHandler(messageData);
         }
@@ -252,7 +247,7 @@ export const useCloudMessaging = () => {
         message.ack();
       });
 
-      subscription.on('error', (err) => {
+      subscription.on('error', err => {
         setError(err.message);
         console.error('Subscription error:', err);
       });
@@ -283,7 +278,7 @@ export const useCloudMessaging = () => {
     messages,
     publishMessage,
     subscribeToTopic,
-    unsubscribe
+    unsubscribe,
   };
 };
 
@@ -351,18 +346,21 @@ export const useCloudMonitoring = () => {
     }
   }, []);
 
-  const startAutoHealthCheck = useCallback((intervalMs = 30000) => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
+  const startAutoHealthCheck = useCallback(
+    (intervalMs = 30000) => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
 
-    intervalRef.current = setInterval(() => {
+      intervalRef.current = setInterval(() => {
+        performHealthCheck();
+      }, intervalMs);
+
+      // Perform initial check
       performHealthCheck();
-    }, intervalMs);
-
-    // Perform initial check
-    performHealthCheck();
-  }, [performHealthCheck]);
+    },
+    [performHealthCheck]
+  );
 
   const stopAutoHealthCheck = useCallback(() => {
     if (intervalRef.current) {
@@ -373,7 +371,7 @@ export const useCloudMonitoring = () => {
 
   useEffect(() => {
     getServiceInfo();
-    
+
     return () => {
       stopAutoHealthCheck();
     };
@@ -389,7 +387,7 @@ export const useCloudMonitoring = () => {
     logEvent,
     createCustomMetric,
     startAutoHealthCheck,
-    stopAutoHealthCheck
+    stopAutoHealthCheck,
   };
 };
 
@@ -401,120 +399,125 @@ export const useEducationalCloudFeatures = () => {
   const cloudMonitoring = useCloudMonitoring();
 
   // Assignment submission with auto-analysis
-  const submitAssignment = useCallback(async (file, studentId, assignmentId, courseId) => {
-    try {
-      // Upload to appropriate bucket
-      const bucketName = env.GOOGLE_CLOUD_STORAGE_BUCKET_MAIN;
-      const uploadResult = await cloudStorage.uploadFile(file, bucketName, {
-        metadata: {
-          studentId,
-          assignmentId,
-          courseId,
-          submissionType: 'assignment',
-          submittedAt: new Date().toISOString()
+  const submitAssignment = useCallback(
+    async (file, studentId, assignmentId, courseId) => {
+      try {
+        // Upload to appropriate bucket
+        const bucketName = env.GOOGLE_CLOUD_STORAGE_BUCKET_MAIN;
+        const uploadResult = await cloudStorage.uploadFile(file, bucketName, {
+          metadata: {
+            studentId,
+            assignmentId,
+            courseId,
+            submissionType: 'assignment',
+            submittedAt: new Date().toISOString(),
+          },
+        });
+
+        // If it's a text document, analyze it
+        if (file.type.includes('text') || file.type.includes('document')) {
+          const downloadResult = await cloudStorage.downloadFile(bucketName, uploadResult.fileName);
+          const textContent = downloadResult.contents.toString();
+
+          const textAnalysis = await cloudAI.analyzeText(textContent);
+
+          // Log the submission event
+          await cloudMonitoring.logEvent('INFO', 'Assignment submitted and analyzed', {
+            studentId,
+            assignmentId,
+            courseId,
+            analysisResults: textAnalysis,
+          });
+
+          // Publish notification
+          await cloudMessaging.publishMessage('assignment-submissions', {
+            type: 'ASSIGNMENT_SUBMITTED',
+            studentId,
+            assignmentId,
+            courseId,
+            analysisResults: textAnalysis,
+            uploadResult,
+          });
+
+          return { uploadResult, textAnalysis };
         }
-      });
 
-      // If it's a text document, analyze it
-      if (file.type.includes('text') || file.type.includes('document')) {
-        const downloadResult = await cloudStorage.downloadFile(bucketName, uploadResult.fileName);
-        const textContent = downloadResult.contents.toString();
-        
-        const textAnalysis = await cloudAI.analyzeText(textContent);
-        
-        // Log the submission event
-        await cloudMonitoring.logEvent('INFO', 'Assignment submitted and analyzed', {
+        return { uploadResult };
+      } catch (error) {
+        await cloudMonitoring.logEvent('ERROR', 'Assignment submission failed', {
           studentId,
           assignmentId,
-          courseId,
-          analysisResults: textAnalysis
+          error: error.message,
         });
-
-        // Publish notification
-        await cloudMessaging.publishMessage('assignment-submissions', {
-          type: 'ASSIGNMENT_SUBMITTED',
-          studentId,
-          assignmentId,
-          courseId,
-          analysisResults: textAnalysis,
-          uploadResult
-        });
-
-        return { uploadResult, textAnalysis };
+        throw error;
       }
-
-      return { uploadResult };
-    } catch (error) {
-      await cloudMonitoring.logEvent('ERROR', 'Assignment submission failed', {
-        studentId,
-        assignmentId,
-        error: error.message
-      });
-      throw error;
-    }
-  }, [cloudStorage, cloudAI, cloudMessaging, cloudMonitoring]);
+    },
+    [cloudStorage, cloudAI, cloudMessaging, cloudMonitoring]
+  );
 
   // Multi-language content translation for accessibility
-  const translateContent = useCallback(async (content, targetLanguages = ['es', 'fr', 'de']) => {
-    try {
-      const translations = {};
-      
-      for (const language of targetLanguages) {
-        const result = await cloudAI.translateText(content, language);
-        translations[language] = result;
+  const translateContent = useCallback(
+    async (content, targetLanguages = ['es', 'fr', 'de']) => {
+      try {
+        const translations = {};
+
+        for (const language of targetLanguages) {
+          const result = await cloudAI.translateText(content, language);
+          translations[language] = result;
+        }
+
+        await cloudMonitoring.logEvent('INFO', 'Content translated for accessibility', {
+          originalLanguage: 'en',
+          targetLanguages,
+          contentLength: content.length,
+        });
+
+        return translations;
+      } catch (error) {
+        await cloudMonitoring.logEvent('ERROR', 'Content translation failed', {
+          error: error.message,
+        });
+        throw error;
       }
-
-      await cloudMonitoring.logEvent('INFO', 'Content translated for accessibility', {
-        originalLanguage: 'en',
-        targetLanguages,
-        contentLength: content.length
-      });
-
-      return translations;
-    } catch (error) {
-      await cloudMonitoring.logEvent('ERROR', 'Content translation failed', {
-        error: error.message
-      });
-      throw error;
-    }
-  }, [cloudAI, cloudMonitoring]);
+    },
+    [cloudAI, cloudMonitoring]
+  );
 
   // Generate audio content for accessibility
-  const generateAudioContent = useCallback(async (text, languageCode = 'en-US') => {
-    try {
-      const audioResult = await cloudAI.synthesizeSpeech(text, languageCode);
-      
-      // Upload audio to storage
-      const bucketName = env.GOOGLE_CLOUD_STORAGE_BUCKET_MEDIA;
-      const audioFileName = `audio/${Date.now()}-speech.mp3`;
-      
-      const uploadResult = await cloudStorage.uploadFile(
-        { name: audioFileName },
-        bucketName,
-        {
+  const generateAudioContent = useCallback(
+    async (text, languageCode = 'en-US') => {
+      try {
+        const audioResult = await cloudAI.synthesizeSpeech(text, languageCode);
+
+        // Upload audio to storage
+        const bucketName = env.GOOGLE_CLOUD_STORAGE_BUCKET_MEDIA;
+        const audioFileName = `audio/${Date.now()}-speech.mp3`;
+
+        const uploadResult = await cloudStorage.uploadFile({ name: audioFileName }, bucketName, {
           metadata: {
             contentType: 'audio/mp3',
             generatedFrom: 'text-to-speech',
             languageCode,
-            textLength: text.length
-          }
-        }
-      );
+            textLength: text.length,
+          },
+        });
 
-      await cloudMonitoring.logEvent('INFO', 'Audio content generated', {
-        languageCode,
-        textLength: text.length,
-        audioFile: audioFileName
-      });
+        await cloudMonitoring.logEvent('INFO', 'Audio content generated', {
+          languageCode,
+          textLength: text.length,
+          audioFile: audioFileName,
+        });
 
-      return { audioResult, uploadResult };
-    } catch (error) {
-      await cloudMonitoring.logEvent('ERROR', 'Audio generation failed', {
-        error: error.message
-      });
-      throw error;
-    }
-  }, [cloudAI, cloudStorage, cloudMonitoring]);
+        return { audioResult, uploadResult };
+      } catch (error) {
+        await cloudMonitoring.logEvent('ERROR', 'Audio generation failed', {
+          error: error.message,
+        });
+        throw error;
+      }
+    },
+    [cloudAI, cloudStorage, cloudMonitoring]
+  );
 
   return {
     ...cloudStorage,
@@ -523,7 +526,7 @@ export const useEducationalCloudFeatures = () => {
     ...cloudMonitoring,
     submitAssignment,
     translateContent,
-    generateAudioContent
+    generateAudioContent,
   };
 };
 
@@ -532,6 +535,5 @@ export default {
   useCloudAI,
   useCloudMessaging,
   useCloudMonitoring,
-  useEducationalCloudFeatures
+  useEducationalCloudFeatures,
 };
-

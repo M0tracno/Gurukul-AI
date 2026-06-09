@@ -37,11 +37,9 @@ const AdminDashboard = React.lazy(() => import('../pages/AdminDashboard'));
 
 // Feature routes
 const SmartFeaturesRoutes = React.lazy(
-  () => import('../components/navigation/SmartFeaturesRoutes'),
+  () => import('../components/navigation/SmartFeaturesRoutes')
 );
-const SecurityRoutes = React.lazy(
-  () => import('../components/security/SecurityRoutes'),
-);
+const SecurityRoutes = React.lazy(() => import('../components/security/SecurityRoutes'));
 
 // ---------------------------------------------------------------------------
 // PrivateRoute — redirects unauthenticated/unauthorized users to login
@@ -89,9 +87,7 @@ interface LazyRouteProps {
 function LazyRoute({ children, label }: LazyRouteProps) {
   return (
     <PageErrorBoundary>
-      <Suspense fallback={<RouteLoadingSkeleton label={label} />}>
-        {children}
-      </Suspense>
+      <Suspense fallback={<RouteLoadingSkeleton label={label} />}>{children}</Suspense>
     </PageErrorBoundary>
   );
 }
@@ -233,4 +229,3 @@ export function AppRoutes() {
     </Routes>
   );
 }
-

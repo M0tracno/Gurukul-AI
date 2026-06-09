@@ -48,7 +48,7 @@ function ParentLogin() {
     }
   }, [resendCooldown]);
 
-  const handleSendOTP = async (e) => {
+  const handleSendOTP = async e => {
     e.preventDefault();
     if (loading) return;
 
@@ -72,7 +72,7 @@ function ParentLogin() {
     }
   };
 
-  const handleVerifyOTP = async (e) => {
+  const handleVerifyOTP = async e => {
     e.preventDefault();
     if (loading) return;
 
@@ -165,7 +165,7 @@ function ParentLogin() {
       </Typography>
       <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.4)', mb: 3 }}>
         {step === 1
-          ? 'OTP will be sent to the phone number linked to your ward\'s account'
+          ? "OTP will be sent to the phone number linked to your ward's account"
           : `Enter the 6-digit code sent to ${phone}`}
       </Typography>
 
@@ -189,13 +189,17 @@ function ParentLogin() {
 
       {/* Step 1: Phone + Student ID */}
       {step === 1 && (
-        <Box component="form" onSubmit={handleSendOTP} sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+        <Box
+          component="form"
+          onSubmit={handleSendOTP}
+          sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}
+        >
           <TextField
             fullWidth
             label="Phone Number"
             type="tel"
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            onChange={e => setPhone(e.target.value)}
             required
             placeholder="e.g. 9876543210"
             autoComplete="tel"
@@ -213,19 +217,14 @@ function ParentLogin() {
             label="Student ID"
             type="text"
             value={studentId}
-            onChange={(e) => setStudentId(e.target.value)}
+            onChange={e => setStudentId(e.target.value)}
             required
             placeholder="e.g. STU001"
             variant="outlined"
             sx={inputSx}
           />
 
-          <Button
-            type="submit"
-            fullWidth
-            disabled={loading || !phone || !studentId}
-            sx={buttonSx}
-          >
+          <Button type="submit" fullWidth disabled={loading || !phone || !studentId} sx={buttonSx}>
             {loading ? (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <CircularProgress size={18} sx={{ color: 'white' }} />
@@ -240,13 +239,17 @@ function ParentLogin() {
 
       {/* Step 2: OTP Verification */}
       {step === 2 && (
-        <Box component="form" onSubmit={handleVerifyOTP} sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+        <Box
+          component="form"
+          onSubmit={handleVerifyOTP}
+          sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}
+        >
           <TextField
             fullWidth
             label="Enter OTP"
             type="text"
             value={otp}
-            onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+            onChange={e => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
             required
             placeholder="6-digit OTP"
             autoComplete="one-time-code"
@@ -260,12 +263,7 @@ function ParentLogin() {
             sx={inputSx}
           />
 
-          <Button
-            type="submit"
-            fullWidth
-            disabled={loading || otp.length !== 6}
-            sx={buttonSx}
-          >
+          <Button type="submit" fullWidth disabled={loading || otp.length !== 6} sx={buttonSx}>
             {loading ? (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <CircularProgress size={18} sx={{ color: 'white' }} />

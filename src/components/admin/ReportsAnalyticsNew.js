@@ -127,7 +127,7 @@ const ReportsAnalyticsNew = () => {
       const totalCourses = courses.length;
       const students = users.filter(user => user.role === 'student');
       const faculty = users.filter(user => user.role === 'faculty');
-      
+
       // Mock enrollment data
       const totalEnrollments = students.length * 2; // Assume each student is enrolled in 2 courses
       const activeUsers = Math.floor(totalUsers * 0.8); // 80% active users
@@ -142,9 +142,21 @@ const ReportsAnalyticsNew = () => {
           completionRate,
         },
         userStats: [
-          { role: 'Students', count: students.length, percentage: (students.length / totalUsers) * 100 },
-          { role: 'Faculty', count: faculty.length, percentage: (faculty.length / totalUsers) * 100 },
-          { role: 'Parents', count: users.filter(u => u.role === 'parent').length, percentage: (users.filter(u => u.role === 'parent').length / totalUsers) * 100 },
+          {
+            role: 'Students',
+            count: students.length,
+            percentage: (students.length / totalUsers) * 100,
+          },
+          {
+            role: 'Faculty',
+            count: faculty.length,
+            percentage: (faculty.length / totalUsers) * 100,
+          },
+          {
+            role: 'Parents',
+            count: users.filter(u => u.role === 'parent').length,
+            percentage: (users.filter(u => u.role === 'parent').length / totalUsers) * 100,
+          },
         ],
         courseStats: courses.slice(0, 10).map(course => ({
           name: course.name || course.title || 'Unnamed Course',
@@ -181,10 +193,10 @@ const ReportsAnalyticsNew = () => {
   const handleExportReport = () => {
     // Mock export functionality
     const dataStr = JSON.stringify(analyticsData, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    
+    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+
     const exportFileDefaultName = `analytics-report-${new Date().toISOString().split('T')[0]}.json`;
-    
+
     const linkElement = document.createElement('a');
     linkElement.setAttribute('href', dataUri);
     linkElement.setAttribute('download', exportFileDefaultName);
@@ -212,7 +224,7 @@ const ReportsAnalyticsNew = () => {
             <Select
               value={dateRange}
               label="Date Range"
-              onChange={(e) => setDateRange(e.target.value)}
+              onChange={e => setDateRange(e.target.value)}
             >
               <MenuItem value="7">Last 7 Days</MenuItem>
               <MenuItem value="30">Last 30 Days</MenuItem>
@@ -220,11 +232,7 @@ const ReportsAnalyticsNew = () => {
               <MenuItem value="365">Last Year</MenuItem>
             </Select>
           </FormControl>
-          <Button
-            variant="outlined"
-            startIcon={<RefreshIcon />}
-            onClick={fetchAnalyticsData}
-          >
+          <Button variant="outlined" startIcon={<RefreshIcon />} onClick={fetchAnalyticsData}>
             Refresh
           </Button>
           <Button
@@ -238,9 +246,10 @@ const ReportsAnalyticsNew = () => {
             Export Report
           </Button>
         </Box>
-      </Box>      {/* Overview Cards */}
+      </Box>{' '}
+      {/* Overview Cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid size={{xs:12,sm:6,md:2.4}}>
+        <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
           <MetricCard>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1 }}>
@@ -252,7 +261,8 @@ const ReportsAnalyticsNew = () => {
               <Typography variant="body2">Total Users</Typography>
             </CardContent>
           </MetricCard>
-        </Grid>        <Grid size={{xs:12,sm:6,md:2.4}}>
+        </Grid>{' '}
+        <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
           <MetricCard>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1 }}>
@@ -265,7 +275,7 @@ const ReportsAnalyticsNew = () => {
             </CardContent>
           </MetricCard>
         </Grid>
-        <Grid size={{xs:12,sm:6,md:2.4}}>
+        <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
           <MetricCard>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1 }}>
@@ -278,7 +288,7 @@ const ReportsAnalyticsNew = () => {
             </CardContent>
           </MetricCard>
         </Grid>
-        <Grid size={{xs:12,sm:6,md:2.4}}>
+        <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
           <MetricCard>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1 }}>
@@ -291,7 +301,7 @@ const ReportsAnalyticsNew = () => {
             </CardContent>
           </MetricCard>
         </Grid>
-        <Grid size={{xs:12,sm:6,md:2.4}}>
+        <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
           <MetricCard>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1 }}>
@@ -305,7 +315,6 @@ const ReportsAnalyticsNew = () => {
           </MetricCard>
         </Grid>
       </Grid>
-
       {/* Detailed Reports */}
       <Paper sx={{ width: '100%', mb: 4 }}>
         <Tabs value={tabValue} onChange={handleTabChange} centered>
@@ -317,7 +326,7 @@ const ReportsAnalyticsNew = () => {
 
         <TabPanel value={tabValue} index={0}>
           <Grid container spacing={3}>
-            <Grid size={{xs:12,md:6}}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <ChartCard>
                 <CardHeader title="User Distribution" />
                 <CardContent>
@@ -344,11 +353,13 @@ const ReportsAnalyticsNew = () => {
                 </CardContent>
               </ChartCard>
             </Grid>
-            <Grid size={{xs:12,md:6}}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <StyledCard>
                 <CardHeader title="User Activity Summary" />
                 <CardContent>
-                  <Typography variant="h6" sx={{ mb: 2 }}>Recent Activity</Typography>
+                  <Typography variant="h6" sx={{ mb: 2 }}>
+                    Recent Activity
+                  </Typography>
                   <Box sx={{ mb: 2 }}>
                     <Typography variant="body2">Daily Active Users: 85%</Typography>
                     <LinearProgress
@@ -383,11 +394,13 @@ const ReportsAnalyticsNew = () => {
           <TableContainer component={Paper}>
             <Table>
               <TableHead>
-                <TableRow><TableCell>Course Name</TableCell>
+                <TableRow>
+                  <TableCell>Course Name</TableCell>
                   <TableCell align="right">Enrollments</TableCell>
                   <TableCell align="right">Completions</TableCell>
                   <TableCell align="right">Completion Rate</TableCell>
-                  <TableCell align="right">Rating</TableCell></TableRow>
+                  <TableCell align="right">Rating</TableCell>
+                </TableRow>
               </TableHead>
               <TableBody>
                 {analyticsData.courseStats.map((course, index) => (
@@ -400,12 +413,18 @@ const ReportsAnalyticsNew = () => {
                     <TableCell align="right">
                       <Chip
                         label={`${Math.round((course.completions / course.enrollments) * 100)}%`}
-                        color={Math.round((course.completions / course.enrollments) * 100) > 70 ? 'success' : 'warning'}
+                        color={
+                          Math.round((course.completions / course.enrollments) * 100) > 70
+                            ? 'success'
+                            : 'warning'
+                        }
                         size="small"
                       />
                     </TableCell>
                     <TableCell align="right">
-                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+                      <Box
+                        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}
+                      >
                         <Typography variant="body2" sx={{ mr: 1 }}>
                           {course.rating}
                         </Typography>
@@ -413,7 +432,8 @@ const ReportsAnalyticsNew = () => {
                           ★
                         </Typography>
                       </Box>
-                    </TableCell></TableRow>
+                    </TableCell>
+                  </TableRow>
                 ))}
               </TableBody>
             </Table>
@@ -426,7 +446,7 @@ const ReportsAnalyticsNew = () => {
             <CardContent>
               <Grid container spacing={2}>
                 {analyticsData.enrollmentTrends.map((trend, index) => (
-                  <Grid size={{xs:12,sm:6,md:2}} key={index}>
+                  <Grid size={{ xs: 12, sm: 6, md: 2 }} key={index}>
                     <Box sx={{ textAlign: 'center', p: 2 }}>
                       <Typography variant="h6" sx={{ mb: 1 }}>
                         {trend.month}
@@ -450,7 +470,7 @@ const ReportsAnalyticsNew = () => {
 
         <TabPanel value={tabValue} index={3}>
           <Grid container spacing={3}>
-            <Grid size={{xs:12,md:6}}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <StyledCard>
                 <CardHeader title="System Performance" />
                 <CardContent>
@@ -487,7 +507,7 @@ const ReportsAnalyticsNew = () => {
                 </CardContent>
               </StyledCard>
             </Grid>
-            <Grid size={{xs:12,md:6}}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <ChartCard>
                 <CardHeader title="Storage & Resources" />
                 <CardContent>
@@ -516,9 +536,7 @@ const ReportsAnalyticsNew = () => {
                     <Typography variant="body2" sx={{ mb: 1 }}>
                       Backup Files: 5GB
                     </Typography>
-                    <Typography variant="body2">
-                      System Files: 55MB
-                    </Typography>
+                    <Typography variant="body2">System Files: 55MB</Typography>
                   </Box>
                 </CardContent>
               </ChartCard>
@@ -530,4 +548,4 @@ const ReportsAnalyticsNew = () => {
   );
 };
 
-export default ReportsAnalyticsNew;
+export default ReportsAnalyticsNew;

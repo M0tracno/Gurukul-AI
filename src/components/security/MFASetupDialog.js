@@ -29,7 +29,7 @@ import {
   ListItemIcon,
   ListItemText,
   ListItemSecondaryAction,
-  Switch
+  Switch,
 } from '@mui/material';
 import {
   Shield as SecurityIcon,
@@ -43,7 +43,7 @@ import {
   Warning as WarningIcon,
   ContentCopy as CopyIcon,
   Refresh as RefreshIcon,
-  Delete as DeleteIcon
+  Delete as DeleteIcon,
 } from '@mui/icons-material';
 
 /**
@@ -53,7 +53,7 @@ import {
  * including TOTP, SMS, Email, Biometric, and Hardware Key authentication
  */
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   dialog: {
     '& .MuiDialog-paper': {
       minWidth: 700,
@@ -263,7 +263,7 @@ const MFASetupDialog = ({ open, onClose, onMFASetup }) => {
     }
   }, []);
 
-  const handleMethodSelect = (method) => {
+  const handleMethodSelect = method => {
     setSelectedMethod(method);
     setActiveStep(1);
   };
@@ -325,18 +325,18 @@ const MFASetupDialog = ({ open, onClose, onMFASetup }) => {
       const credential = await navigator.credentials.create({
         publicKey: {
           challenge: new Uint8Array(32),
-          rp: { name: "GDC Educational System" },
+          rp: { name: 'GDC Educational System' },
           user: {
             id: new Uint8Array(16),
-            name: "user@example.com",
-            displayName: "User"
+            name: 'user@example.com',
+            displayName: 'User',
           },
-          pubKeyCredParams: [{ alg: -7, type: "public-key" }],
+          pubKeyCredParams: [{ alg: -7, type: 'public-key' }],
           authenticatorSelection: {
-            authenticatorAttachment: "platform",
-            userVerification: "required"
-          }
-        }
+            authenticatorAttachment: 'platform',
+            userVerification: 'required',
+          },
+        },
       });
 
       if (credential) {
@@ -350,54 +350,60 @@ const MFASetupDialog = ({ open, onClose, onMFASetup }) => {
     }
   };
 
-  const copyToClipboard = (text) => {
+  const copyToClipboard = text => {
     navigator.clipboard.writeText(text);
   };
 
-  const getSecurityLevelColor = (level) => {
+  const getSecurityLevelColor = level => {
     switch (level) {
-      case 'high': return classes.highSecurity;
-      case 'medium': return classes.mediumSecurity;
-      case 'low': return classes.lowSecurity;
-      default: return '';
+      case 'high':
+        return classes.highSecurity;
+      case 'medium':
+        return classes.mediumSecurity;
+      case 'low':
+        return classes.lowSecurity;
+      default:
+        return '';
     }
   };
 
   const renderMethodSelection = () => (
     <Grid container spacing={3}>
-      {mfaMethods.filter(method => method.supported).map((method) => (
-        <Grid size={{xs:12,sm:6,md:4}} key={method.id}>
-          <Card
-            className={`${classes.mfaMethodCard} ${
-              selectedMethod?.id === method.id ? classes.selectedMethod : ''
-            }`}
-          >
-            <CardActionArea onClick={() => handleMethodSelect(method)}>
-              <CardContent>
-                <Box display="flex" flexDirection="column" alignItems="center" textAlign="center">
-                  {method.icon}
-                  <Typography variant="h6" className={classes.methodTitle}>
-                    {method.title}
-                  </Typography>
-                  <Typography className={classes.methodDescription}>
-                    {method.description}
-                  </Typography>
-                  <Box className={classes.securityLevel}>
-                    <Chip
-                      label={`${method.securityLevel.toUpperCase()} SECURITY`}
-                      size="small"
-                      className={`${classes.securityChip} ${getSecurityLevelColor(method.securityLevel)}`}
-                    />
+      {mfaMethods
+        .filter(method => method.supported)
+        .map(method => (
+          <Grid size={{ xs: 12, sm: 6, md: 4 }} key={method.id}>
+            <Card
+              className={`${classes.mfaMethodCard} ${
+                selectedMethod?.id === method.id ? classes.selectedMethod : ''
+              }`}
+            >
+              <CardActionArea onClick={() => handleMethodSelect(method)}>
+                <CardContent>
+                  <Box display="flex" flexDirection="column" alignItems="center" textAlign="center">
+                    {method.icon}
+                    <Typography variant="h6" className={classes.methodTitle}>
+                      {method.title}
+                    </Typography>
+                    <Typography className={classes.methodDescription}>
+                      {method.description}
+                    </Typography>
+                    <Box className={classes.securityLevel}>
+                      <Chip
+                        label={`${method.securityLevel.toUpperCase()} SECURITY`}
+                        size="small"
+                        className={`${classes.securityChip} ${getSecurityLevelColor(method.securityLevel)}`}
+                      />
+                    </Box>
+                    {enabledMethods.includes(method.id) && (
+                      <CheckIcon color="success" style={{ marginTop: 8 }} />
+                    )}
                   </Box>
-                  {enabledMethods.includes(method.id) && (
-                    <CheckIcon color="success" style={{ marginTop: 8 }} />
-                  )}
-                </Box>
-              </CardContent>
-            </CardActionArea>
-          </Card>
-        </Grid>
-      ))}
+                </CardContent>
+              </CardActionArea>
+            </Card>
+          </Grid>
+        ))}
     </Grid>
   );
 
@@ -435,7 +441,7 @@ const MFASetupDialog = ({ open, onClose, onMFASetup }) => {
         label="Verification Code"
         placeholder="Enter 6-digit code"
         value={verificationCode}
-        onChange={(e) => setVerificationCode(e.target.value)}
+        onChange={e => setVerificationCode(e.target.value)}
         className={classes.verificationCode}
         inputProps={{ maxLength: 6 }}
         margin="normal"
@@ -465,7 +471,7 @@ const MFASetupDialog = ({ open, onClose, onMFASetup }) => {
         label="Phone Number"
         placeholder="+1 (555) 123-4567"
         value={phoneNumber}
-        onChange={(e) => setPhoneNumber(e.target.value)}
+        onChange={e => setPhoneNumber(e.target.value)}
         margin="normal"
       />
       <TextField
@@ -473,7 +479,7 @@ const MFASetupDialog = ({ open, onClose, onMFASetup }) => {
         label="Verification Code"
         placeholder="Enter code sent to your phone"
         value={verificationCode}
-        onChange={(e) => setVerificationCode(e.target.value)}
+        onChange={e => setVerificationCode(e.target.value)}
         className={classes.verificationCode}
         margin="normal"
       />
@@ -522,7 +528,8 @@ const MFASetupDialog = ({ open, onClose, onMFASetup }) => {
             Save These Backup Codes
           </Typography>
           <Typography variant="body2" color="textSecondary" paragraph>
-            Store these codes safely. You can use them to access your account if you lose your device.
+            Store these codes safely. You can use them to access your account if you lose your
+            device.
           </Typography>
           {backupCodes.map((code, index) => (
             <Typography key={index} className={classes.backupCode}>
@@ -543,7 +550,7 @@ const MFASetupDialog = ({ open, onClose, onMFASetup }) => {
     </Box>
   );
 
-  const renderStepContent = (step) => {
+  const renderStepContent = step => {
     switch (step) {
       case 0:
         return renderMethodSelection();
@@ -576,17 +583,11 @@ const MFASetupDialog = ({ open, onClose, onMFASetup }) => {
       </DialogTitle>
 
       <DialogContent>
-        <Box className={classes.stepperContent}>
-          {renderStepContent(activeStep)}
-        </Box>
+        <Box className={classes.stepperContent}>{renderStepContent(activeStep)}</Box>
       </DialogContent>
 
       <DialogActions>
-        {activeStep > 0 && (
-          <Button onClick={() => setActiveStep(activeStep - 1)}>
-            Back
-          </Button>
-        )}
+        {activeStep > 0 && <Button onClick={() => setActiveStep(activeStep - 1)}>Back</Button>}
         {activeStep === 2 && (
           <Button variant="contained" color="primary" onClick={onClose}>
             Done
@@ -598,4 +599,3 @@ const MFASetupDialog = ({ open, onClose, onMFASetup }) => {
 };
 
 export default MFASetupDialog;
-

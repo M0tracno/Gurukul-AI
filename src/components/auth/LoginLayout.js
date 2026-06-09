@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Box,
-  Container,
-  Typography,
-  IconButton,
-} from '@mui/material';
+import { Box, Container, Typography, IconButton } from '@mui/material';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 
 /**
@@ -19,7 +14,14 @@ import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
  * - children: ReactNode — Login form content
  * - backLink: string — Route to navigate back (defaults to '/')
  */
-const LoginLayout = ({ title, subtitle, icon: Icon, color = '#a78bfa', children, backLink = '/' }) => {
+const LoginLayout = ({
+  title,
+  subtitle,
+  icon: Icon,
+  color = '#a78bfa',
+  children,
+  backLink = '/',
+}) => {
   const navigate = useNavigate();
   const [visible, setVisible] = useState(false);
 

@@ -24,14 +24,12 @@ function InlineErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
         fontFamily: 'system-ui, -apple-system, sans-serif',
       }}
     >
-      <h2
-        style={{ fontSize: '1.25rem', marginBottom: '0.75rem', color: '#d32f2f' }}
-      >
+      <h2 style={{ fontSize: '1.25rem', marginBottom: '0.75rem', color: '#d32f2f' }}>
         This page encountered an error
       </h2>
       <p style={{ marginBottom: '1rem', color: '#555', maxWidth: '400px' }}>
-        Something went wrong loading this page. You can try again or navigate to
-        a different section.
+        Something went wrong loading this page. You can try again or navigate to a different
+        section.
       </p>
       <pre
         style={{

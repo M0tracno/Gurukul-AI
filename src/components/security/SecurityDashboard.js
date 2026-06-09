@@ -28,7 +28,7 @@ import {
   TableHead,
   TableRow,
   Tabs,
-  Typography
+  Typography,
 } from '@mui/material';
 import {
   Shield as SecurityIcon,
@@ -56,10 +56,10 @@ import {
   Speed as SpeedIcon,
   BugReport as BugIcon,
   Search as SearchIcon,
-  MoreVert as MoreIcon
+  MoreVert as MoreIcon,
 } from '@mui/icons-material';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   dashboardContainer: {
     padding: theme.spacing(3),
   },
@@ -69,7 +69,7 @@ const useStyles = makeStyles((theme) => ({
     '&:hover': {
       boxShadow: theme.shadows[8],
       transform: 'translateY(-2px)',
-    }
+    },
   },
   criticalCard: {
     borderLeft: `4px solid ${theme.palette.error.main}`,
@@ -142,7 +142,7 @@ const useStyles = makeStyles((theme) => ({
   incidentRow: {
     '&:hover': {
       backgroundColor: theme.palette.action.hover,
-    }
+    },
   },
   severityChip: {
     fontWeight: 'bold',
@@ -182,7 +182,7 @@ const useStyles = makeStyles((theme) => ({
     position: 'absolute',
     top: theme.spacing(1),
     right: theme.spacing(1),
-  }
+  },
 }));
 
 const SecurityDashboard = () => {
@@ -246,7 +246,7 @@ const SecurityDashboard = () => {
     try {
       const response = await fetch(`/api/security/incidents/${incidentId}/${action}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
       });
       if (response.ok) {
         loadSecurityData(); // Refresh data
@@ -256,57 +256,72 @@ const SecurityDashboard = () => {
     }
   };
 
-  const getSecurityScoreColor = (score) => {
+  const getSecurityScoreColor = score => {
     if (score >= 80) return theme.palette.success.main;
     if (score >= 60) return theme.palette.warning.main;
     return theme.palette.error.main;
   };
 
-  const getSeverityClass = (severity) => {
+  const getSeverityClass = severity => {
     switch (severity?.toLowerCase()) {
-      case 'critical': return classes.criticalSeverity;
-      case 'high': return classes.highSeverity;
-      case 'medium': return classes.mediumSeverity;
-      case 'low': return classes.lowSeverity;
-      default: return '';
+      case 'critical':
+        return classes.criticalSeverity;
+      case 'high':
+        return classes.highSeverity;
+      case 'medium':
+        return classes.mediumSeverity;
+      case 'low':
+        return classes.lowSeverity;
+      default:
+        return '';
     }
   };
 
-  const getThreatLevelClass = (level) => {
+  const getThreatLevelClass = level => {
     switch (level?.toLowerCase()) {
-      case 'high': return classes.highThreat;
-      case 'medium': return classes.mediumThreat;
-      case 'low': return classes.lowThreat;
-      default: return '';
+      case 'high':
+        return classes.highThreat;
+      case 'medium':
+        return classes.mediumThreat;
+      case 'low':
+        return classes.lowThreat;
+      default:
+        return '';
     }
   };
 
-  const getDeviceStatusClass = (status) => {
+  const getDeviceStatusClass = status => {
     switch (status?.toLowerCase()) {
-      case 'trusted': return classes.trustedDevice;
-      case 'suspicious': return classes.suspiciousDevice;
-      case 'blocked': return classes.blockedDevice;
-      default: return '';
+      case 'trusted':
+        return classes.trustedDevice;
+      case 'suspicious':
+        return classes.suspiciousDevice;
+      case 'blocked':
+        return classes.blockedDevice;
+      default:
+        return '';
     }
   };
 
-  const formatTimestamp = (timestamp) => {
+  const formatTimestamp = timestamp => {
     return new Date(timestamp).toLocaleString();
   };
 
   const renderOverviewTab = () => (
     <Grid container spacing={3}>
-      <Grid size={{xs:12,md:3}}>
-        <Card className={`${classes.securityCard} ${securityMetrics.score >= 80 ? classes.healthyCard : securityMetrics.score >= 60 ? classes.warningCard : classes.criticalCard}`}>
+      <Grid size={{ xs: 12, md: 3 }}>
+        <Card
+          className={`${classes.securityCard} ${securityMetrics.score >= 80 ? classes.healthyCard : securityMetrics.score >= 60 ? classes.warningCard : classes.criticalCard}`}
+        >
           <CardContent>
             <Box display="flex" alignItems="center" justifyContent="center" flexDirection="column">
               <ShieldIcon style={{ fontSize: 40, marginBottom: 16 }} />
-              <Typography className={`${classes.metricValue} ${securityMetrics.score >= 80 ? classes.healthyMetric : securityMetrics.score >= 60 ? classes.warningMetric : classes.criticalMetric}`}>
+              <Typography
+                className={`${classes.metricValue} ${securityMetrics.score >= 80 ? classes.healthyMetric : securityMetrics.score >= 60 ? classes.warningMetric : classes.criticalMetric}`}
+              >
                 {securityMetrics.score || 0}
               </Typography>
-              <Typography className={classes.metricLabel}>
-                Security Score
-              </Typography>
+              <Typography className={classes.metricLabel}>Security Score</Typography>
               <LinearProgress
                 variant="determinate"
                 value={securityMetrics.score || 0}
@@ -315,60 +330,66 @@ const SecurityDashboard = () => {
                   width: '100%',
                   backgroundColor: theme.palette.grey[300],
                   '& .MuiLinearProgress-bar': {
-                    backgroundColor: getSecurityScoreColor(securityMetrics.score || 0)
-                  }
+                    backgroundColor: getSecurityScoreColor(securityMetrics.score || 0),
+                  },
                 }}
               />
             </Box>
           </CardContent>
         </Card>
       </Grid>
-      <Grid size={{xs:12,md:3}}>
-        <Card className={`${classes.securityCard} ${threats.filter(t => t.status === 'active').length > 0 ? classes.criticalCard : classes.healthyCard}`}>
+      <Grid size={{ xs: 12, md: 3 }}>
+        <Card
+          className={`${classes.securityCard} ${threats.filter(t => t.status === 'active').length > 0 ? classes.criticalCard : classes.healthyCard}`}
+        >
           <CardContent>
             <Box display="flex" alignItems="center" justifyContent="center" flexDirection="column">
               <WarningIcon style={{ fontSize: 40, marginBottom: 16 }} />
-              <Typography className={`${classes.metricValue} ${threats.filter(t => t.status === 'active').length > 0 ? classes.criticalMetric : classes.healthyMetric}`}>
+              <Typography
+                className={`${classes.metricValue} ${threats.filter(t => t.status === 'active').length > 0 ? classes.criticalMetric : classes.healthyMetric}`}
+              >
                 {threats.filter(t => t.status === 'active').length}
               </Typography>
-              <Typography className={classes.metricLabel}>
-                Active Threats
-              </Typography>
+              <Typography className={classes.metricLabel}>Active Threats</Typography>
             </Box>
           </CardContent>
         </Card>
       </Grid>
-      <Grid size={{xs:12,md:3}}>
-        <Card className={`${classes.securityCard} ${incidents.filter(i => i.status === 'open').length > 0 ? classes.warningCard : classes.healthyCard}`}>
+      <Grid size={{ xs: 12, md: 3 }}>
+        <Card
+          className={`${classes.securityCard} ${incidents.filter(i => i.status === 'open').length > 0 ? classes.warningCard : classes.healthyCard}`}
+        >
           <CardContent>
             <Box display="flex" alignItems="center" justifyContent="center" flexDirection="column">
               <ReportIcon style={{ fontSize: 40, marginBottom: 16 }} />
-              <Typography className={`${classes.metricValue} ${incidents.filter(i => i.status === 'open').length > 0 ? classes.warningMetric : classes.healthyMetric}`}>
+              <Typography
+                className={`${classes.metricValue} ${incidents.filter(i => i.status === 'open').length > 0 ? classes.warningMetric : classes.healthyMetric}`}
+              >
                 {incidents.filter(i => i.status === 'open').length}
               </Typography>
-              <Typography className={classes.metricLabel}>
-                Open Incidents
-              </Typography>
+              <Typography className={classes.metricLabel}>Open Incidents</Typography>
             </Box>
           </CardContent>
         </Card>
       </Grid>
-      <Grid size={{xs:12,md:3}}>
-        <Card className={`${classes.securityCard} ${vulnerabilities.filter(v => v.status === 'open').length > 0 ? classes.warningCard : classes.healthyCard}`}>
+      <Grid size={{ xs: 12, md: 3 }}>
+        <Card
+          className={`${classes.securityCard} ${vulnerabilities.filter(v => v.status === 'open').length > 0 ? classes.warningCard : classes.healthyCard}`}
+        >
           <CardContent>
             <Box display="flex" alignItems="center" justifyContent="center" flexDirection="column">
               <BugIcon style={{ fontSize: 40, marginBottom: 16 }} />
-              <Typography className={`${classes.metricValue} ${vulnerabilities.filter(v => v.status === 'open').length > 0 ? classes.warningMetric : classes.healthyMetric}`}>
+              <Typography
+                className={`${classes.metricValue} ${vulnerabilities.filter(v => v.status === 'open').length > 0 ? classes.warningMetric : classes.healthyMetric}`}
+              >
                 {vulnerabilities.filter(v => v.status === 'open').length}
               </Typography>
-              <Typography className={classes.metricLabel}>
-                Open Vulnerabilities
-              </Typography>
+              <Typography className={classes.metricLabel}>Open Vulnerabilities</Typography>
             </Box>
           </CardContent>
         </Card>
       </Grid>
-      <Grid size={{xs:12,md:6}}>
+      <Grid size={{ xs: 12, md: 6 }}>
         <Card className={classes.securityCard}>
           <CardHeader
             title="Recent Threat Activity"
@@ -380,26 +401,28 @@ const SecurityDashboard = () => {
           />
           <CardContent>
             {threats.slice(0, 5).map((threat, index) => (
-              <Box key={index} className={`${classes.threatIndicator} ${getThreatLevelClass(threat.level)}`}>
+              <Box
+                key={index}
+                className={`${classes.threatIndicator} ${getThreatLevelClass(threat.level)}`}
+              >
                 <Typography variant="body2" style={{ flexGrow: 1 }}>
                   {threat.description}
                 </Typography>
-                <Chip
-                  size="small"
-                  label={threat.level}
-                  className={classes.severityChip}
-                />
+                <Chip size="small" label={threat.level} className={classes.severityChip} />
               </Box>
             ))}
           </CardContent>
         </Card>
       </Grid>
-      <Grid size={{xs:12,md:6}}>
+      <Grid size={{ xs: 12, md: 6 }}>
         <Card className={classes.securityCard}>
           <CardHeader title="Connected Devices" />
           <CardContent>
             {devices.slice(0, 5).map((device, index) => (
-              <Box key={index} className={`${classes.deviceCard} ${getDeviceStatusClass(device.status)}`}>
+              <Box
+                key={index}
+                className={`${classes.deviceCard} ${getDeviceStatusClass(device.status)}`}
+              >
                 <Typography variant="body2">
                   <strong>{device.name}</strong> - {device.type}
                 </Typography>
@@ -407,14 +430,8 @@ const SecurityDashboard = () => {
                   Last seen: {formatTimestamp(device.lastSeen)}
                 </Typography>
                 <Box display="flex" justifyContent="space-between" alignItems="center" mt={1}>
-                  <Chip
-                    size="small"
-                    label={device.status}
-                    className={classes.severityChip}
-                  />
-                  <Typography variant="caption">
-                    IP: {device.ipAddress}
-                  </Typography>
+                  <Chip size="small" label={device.status} className={classes.severityChip} />
+                  <Typography variant="caption">IP: {device.ipAddress}</Typography>
                 </Box>
               </Box>
             ))}
@@ -438,15 +455,17 @@ const SecurityDashboard = () => {
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
-              <TableRow><TableCell>ID</TableCell>
+              <TableRow>
+                <TableCell>ID</TableCell>
                 <TableCell>Description</TableCell>
                 <TableCell>Severity</TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell>Time</TableCell>
-                <TableCell>Actions</TableCell></TableRow>
+                <TableCell>Actions</TableCell>
+              </TableRow>
             </TableHead>
             <TableBody>
-              {incidents.map((incident) => (
+              {incidents.map(incident => (
                 <TableRow key={incident.id} className={classes.incidentRow}>
                   <TableCell>{incident.id}</TableCell>
                   <TableCell>{incident.description}</TableCell>
@@ -462,7 +481,13 @@ const SecurityDashboard = () => {
                       size="small"
                       label={incident.status}
                       className={classes.statusChip}
-                      color={incident.status === 'open' ? 'error' : incident.status === 'investigating' ? 'warning' : 'success'}
+                      color={
+                        incident.status === 'open'
+                          ? 'error'
+                          : incident.status === 'investigating'
+                            ? 'warning'
+                            : 'success'
+                      }
                     />
                   </TableCell>
                   <TableCell>{formatTimestamp(incident.timestamp)}</TableCell>
@@ -478,11 +503,15 @@ const SecurityDashboard = () => {
                       <ViewIcon />
                     </IconButton>
                     {incident.status === 'open' && (
-                      <IconButton size="small" onClick={() => handleIncidentAction(incident.id, 'investigate')}>
+                      <IconButton
+                        size="small"
+                        onClick={() => handleIncidentAction(incident.id, 'investigate')}
+                      >
                         <SearchIcon />
                       </IconButton>
                     )}
-                  </TableCell></TableRow>
+                  </TableCell>
+                </TableRow>
               ))}
             </TableBody>
           </Table>
@@ -493,13 +522,13 @@ const SecurityDashboard = () => {
 
   const renderVulnerabilitiesTab = () => (
     <Grid container spacing={3}>
-      <Grid size={{xs:12}}>
+      <Grid size={{ xs: 12 }}>
         <Card className={classes.securityCard}>
           <CardHeader title="Vulnerability Assessment" />
           <CardContent>
             <Grid container spacing={3}>
               {vulnerabilities.map((vuln, index) => (
-                <Grid size={{xs:12,md:6}} key={index}>
+                <Grid size={{ xs: 12, md: 6 }} key={index}>
                   <Paper elevation={1} style={{ padding: theme.spacing(2) }}>
                     <Box display="flex" justifyContent="space-between" mb={1}>
                       <Typography variant="h6">{vuln.name}</Typography>
@@ -555,11 +584,7 @@ const SecurityDashboard = () => {
           <SecurityIcon style={{ marginRight: 8, verticalAlign: 'middle' }} />
           Security Dashboard
         </Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<SettingsIcon />}
-        >
+        <Button variant="contained" color="primary" startIcon={<SettingsIcon />}>
           Security Settings
         </Button>
       </Box>
@@ -612,20 +637,19 @@ const SecurityDashboard = () => {
               Incident Timeline:
             </Typography>
             <List>
-              {selectedIncident.events && selectedIncident.events.map((event, index) => (
-                <ListItem key={index}>
-                  <ListItemText
-                    primary={event.action}
-                    secondary={`${formatTimestamp(event.timestamp)} - ${event.user || 'System'}`}
-                  />
-                </ListItem>
-              ))}
+              {selectedIncident.events &&
+                selectedIncident.events.map((event, index) => (
+                  <ListItem key={index}>
+                    <ListItemText
+                      primary={event.action}
+                      secondary={`${formatTimestamp(event.timestamp)} - ${event.user || 'System'}`}
+                    />
+                  </ListItem>
+                ))}
             </List>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setIncidentDialogOpen(false)}>
-              Close
-            </Button>
+            <Button onClick={() => setIncidentDialogOpen(false)}>Close</Button>
             {selectedIncident.status === 'open' && (
               <Button
                 variant="contained"
@@ -646,4 +670,3 @@ const SecurityDashboard = () => {
 };
 
 export default SecurityDashboard;
-

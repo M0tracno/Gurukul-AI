@@ -76,7 +76,7 @@ function LoginPage() {
         id="email"
         type="email"
         value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        onChange={e => setEmail(e.target.value)}
         placeholder="Enter email"
       />
       <label htmlFor="password">Password</label>
@@ -84,7 +84,7 @@ function LoginPage() {
         id="password"
         type="password"
         value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        onChange={e => setPassword(e.target.value)}
         placeholder="Enter password"
       />
       <button type="submit" disabled={loading}>
@@ -113,7 +113,7 @@ function renderWithProviders(ui: ReactNode, { initialRoute = '/login' } = {}) {
           </Routes>
         </AuthProvider>
       </MemoryRouter>
-    </QueryClientProvider>,
+    </QueryClientProvider>
   );
 }
 
@@ -152,8 +152,8 @@ describe('Login Integration Flow', () => {
             refreshToken: 'refresh-token-abc',
           },
         }),
-        { status: 200, headers: { 'Content-Type': 'application/json' } },
-      ),
+        { status: 200, headers: { 'Content-Type': 'application/json' } }
+      )
     );
 
     renderWithProviders(<LoginPage />);
@@ -175,7 +175,7 @@ describe('Login Integration Flow', () => {
             email: 'teacher@school.edu',
             password: 'SecurePass123',
           }),
-        }),
+        })
       );
     });
 
@@ -198,8 +198,8 @@ describe('Login Integration Flow', () => {
           error: 'INVALID_CREDENTIALS',
           message: 'Invalid email or password',
         }),
-        { status: 401, headers: { 'Content-Type': 'application/json' } },
-      ),
+        { status: 401, headers: { 'Content-Type': 'application/json' } }
+      )
     );
 
     renderWithProviders(<LoginPage />);

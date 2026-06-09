@@ -118,7 +118,7 @@ function renderWithAuth(initialRoute: string, isAuthenticated: boolean) {
       JSON.stringify({
         accessToken: mockAccessToken,
         refreshToken: 'refresh-token-valid',
-      }),
+      })
     );
   }
 
@@ -172,7 +172,7 @@ function renderWithAuth(initialRoute: string, isAuthenticated: boolean) {
           <LocationDisplay />
         </AuthProvider>
       </MemoryRouter>
-    </QueryClientProvider>,
+    </QueryClientProvider>
   );
 }
 

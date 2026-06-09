@@ -157,8 +157,7 @@ export function getRelativeLuminance(hex) {
   const g = parseInt(clean.slice(2, 4), 16) / 255;
   const b = parseInt(clean.slice(4, 6), 16) / 255;
 
-  const linearize = (c) =>
-    c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  const linearize = c => (c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4));
 
   return 0.2126 * linearize(r) + 0.7152 * linearize(g) + 0.0722 * linearize(b);
 }
@@ -314,7 +313,7 @@ export const CONTRAST_CHECKED_TOKEN_PAIRS = [
     name: 'white-secondary-on-dark-paper',
     foreground: '#999999', // ~rgba(255,255,255,0.60) approximation
     background: '#111118', // darkPalette.background.paper
-    ratio: 6.60,
+    ratio: 6.6,
     wcagAA: true,
     usage: 'Muted secondary text on dark paper (dark theme)',
   },
@@ -330,7 +329,7 @@ export const CONTRAST_CHECKED_TOKEN_PAIRS = [
     name: 'white-on-primary-dark-theme',
     foreground: '#ffffff',
     background: '#7c3aed', // darkPalette.primary.dark
-    ratio: 5.70,
+    ratio: 5.7,
     wcagAA: true,
     usage: 'White text on dark-theme primary dark (contained button)',
   },
@@ -358,7 +357,7 @@ export const CONTRAST_CHECKED_TOKEN_PAIRS = [
     name: 'white-on-primary-token-800',
     foreground: '#ffffff',
     background: '#bf360c', // colors.primary[800] (saffron)
-    ratio: 5.60,
+    ratio: 5.6,
     wcagAA: true,
     usage: 'White on saffron-800 (primary token — accessible dark variant)',
   },
@@ -405,7 +404,7 @@ export const CONTRAST_CHECKED_TOKEN_PAIRS = [
  * @returns {object|undefined}
  */
 export function getTokenPair(name) {
-  return CONTRAST_CHECKED_TOKEN_PAIRS.find((p) => p.name === name);
+  return CONTRAST_CHECKED_TOKEN_PAIRS.find(p => p.name === name);
 }
 
 /**
@@ -418,9 +417,7 @@ export function getTokenPair(name) {
 export function getPairsForColor(hex) {
   const normalized = hex.toLowerCase();
   return CONTRAST_CHECKED_TOKEN_PAIRS.filter(
-    (p) =>
-      p.foreground.toLowerCase() === normalized ||
-      p.background.toLowerCase() === normalized
+    p => p.foreground.toLowerCase() === normalized || p.background.toLowerCase() === normalized
   );
 }
 
@@ -441,7 +438,7 @@ export const ARIA_ROLES = Object.freeze({
   CONTENT_INFO: 'contentinfo',
   REGION: 'region',
   ARTICLE: 'article',
-  SECTION: 'region',   // <section> with a label becomes a landmark region
+  SECTION: 'region', // <section> with a label becomes a landmark region
 
   // Interactive
   BUTTON: 'button',
@@ -538,7 +535,7 @@ export function generateAriaLabel(type, context) {
  * @returns {object}
  */
 export function getAriaAttributes(componentType, props = {}) {
-  const omitUndefined = (obj) =>
+  const omitUndefined = obj =>
     Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined));
 
   const map = {
@@ -732,8 +729,7 @@ export const ALT_TEXT_CONVENTIONS = Object.freeze({
    * @param {string|null} name
    * @returns {string}
    */
-  userAvatar: (name) =>
-    name ? `Profile photo of ${name}` : 'User profile photo',
+  userAvatar: name => (name ? `Profile photo of ${name}` : 'User profile photo'),
 
   /**
    * Returns alt text for a course thumbnail or cover image.
@@ -741,8 +737,7 @@ export const ALT_TEXT_CONVENTIONS = Object.freeze({
    * @param {string} courseName
    * @returns {string}
    */
-  courseThumbnail: (courseName) =>
-    `Thumbnail image for course: ${courseName}`,
+  courseThumbnail: courseName => `Thumbnail image for course: ${courseName}`,
 
   /**
    * Alt text for an icon that triggers an action (functional image).
@@ -751,7 +746,7 @@ export const ALT_TEXT_CONVENTIONS = Object.freeze({
    * @param {string} action  e.g. 'Delete record', 'Download report'
    * @returns {string}
    */
-  actionIcon: (action) => action,
+  actionIcon: action => action,
 
   /**
    * Alt text for a chart or graph (complex image).
@@ -779,7 +774,7 @@ export const ALT_TEXT_CONVENTIONS = Object.freeze({
       info: context ? `Information: ${context}` : 'Information',
       pending: context ? `Pending: ${context}` : 'Pending',
     };
-    return labels[status] ?? (context ?? status);
+    return labels[status] ?? context ?? status;
   },
 
   /**
@@ -788,7 +783,7 @@ export const ALT_TEXT_CONVENTIONS = Object.freeze({
    * @param {string} institutionName
    * @returns {string}
    */
-  institutionLogo: (institutionName) => `${institutionName} logo`,
+  institutionLogo: institutionName => `${institutionName} logo`,
 
   /**
    * Decorative image — must use empty alt text so screen readers skip it.
@@ -864,12 +859,12 @@ export function trapFocus(containerElement) {
     'textarea:not([disabled]), button:not([disabled]), iframe, object, embed, ' +
     '[tabindex]:not([tabindex="-1"]), [contenteditable]';
 
-  return (event) => {
+  return event => {
     if (event.key !== 'Tab') return;
 
-    const focusable = Array.from(
-      containerElement.querySelectorAll(FOCUSABLE_SELECTOR)
-    ).filter((el) => !el.closest('[aria-hidden="true"]'));
+    const focusable = Array.from(containerElement.querySelectorAll(FOCUSABLE_SELECTOR)).filter(
+      el => !el.closest('[aria-hidden="true"]')
+    );
 
     if (focusable.length === 0) return;
 
@@ -953,7 +948,7 @@ export function useAccessibility(componentType, initialProps = {}) {
   );
 
   const updateAriaProps = React.useCallback(
-    (newProps) => {
+    newProps => {
       setAriaProps(getAriaAttributes(componentType, { ...initialProps, ...newProps }));
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -991,8 +986,7 @@ export function useAccessibility(componentType, initialProps = {}) {
  * `accessibilityHelpers.checkColorContrast(...)` etc.
  */
 export const accessibilityHelpers = {
-  generateId: (prefix = 'element') =>
-    `${prefix}-${Math.random().toString(36).slice(2, 11)}`,
+  generateId: (prefix = 'element') => `${prefix}-${Math.random().toString(36).slice(2, 11)}`,
 
   generateAriaLabel,
   getAriaAttributes,
@@ -1001,8 +995,7 @@ export const accessibilityHelpers = {
   announceToScreenReader,
 
   /** @deprecated Use checkContrastCompliance() instead */
-  checkColorContrast: (foreground, background) =>
-    checkContrastCompliance(foreground, background),
+  checkColorContrast: (foreground, background) => checkContrastCompliance(foreground, background),
 };
 
 export default accessibilityHelpers;

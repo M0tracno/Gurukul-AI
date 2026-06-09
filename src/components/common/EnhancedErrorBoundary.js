@@ -11,7 +11,7 @@ import {
   Collapse,
   Divider,
   Stack,
-  Typography
+  Typography,
 } from '@mui/material';
 import {
   BugReport,
@@ -20,7 +20,7 @@ import {
   ExpandLess,
   ExpandMore,
   Home,
-  Refresh
+  Refresh,
 } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 
@@ -32,9 +32,10 @@ const ErrorContainer = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'center',
   padding: theme.spacing(3),
-  background: theme.palette.mode === 'dark'
-    ? 'linear-gradient(135deg, #1a1d3a 0%, #0a0e27 100%)'
-    : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+  background:
+    theme.palette.mode === 'dark'
+      ? 'linear-gradient(135deg, #1a1d3a 0%, #0a0e27 100%)'
+      : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
 }));
 
 const ErrorCard = styled(Card)(({ theme }) => ({
@@ -54,21 +55,21 @@ class EnhancedErrorBoundary extends React.Component {
       errorInfo: null,
       errorId: null,
       showDetails: false,
-      retryCount: 0
+      retryCount: 0,
     };
   }
 
   static getDerivedStateFromError(error) {
     return {
       hasError: true,
-      errorId: `error_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+      errorId: `error_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     };
   }
 
   componentDidCatch(error, errorInfo) {
     this.setState({
       error,
-      errorInfo
+      errorInfo,
     });
 
     // Log error to monitoring service
@@ -85,7 +86,7 @@ class EnhancedErrorBoundary extends React.Component {
       userAgent: navigator.userAgent,
       url: window.location.href,
       userId: this.props.userId || 'anonymous',
-      buildVersion: env.VERSION || 'unknown'
+      buildVersion: env.VERSION || 'unknown',
     };
 
     try {
@@ -96,7 +97,7 @@ class EnhancedErrorBoundary extends React.Component {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(errorData)
+          body: JSON.stringify(errorData),
         });
       }
 
@@ -120,7 +121,7 @@ class EnhancedErrorBoundary extends React.Component {
       errorInfo: null,
       errorId: null,
       showDetails: false,
-      retryCount: prevState.retryCount + 1
+      retryCount: prevState.retryCount + 1,
     }));
   };
 
@@ -130,7 +131,7 @@ class EnhancedErrorBoundary extends React.Component {
 
   handleToggleDetails = () => {
     this.setState(prevState => ({
-      showDetails: !prevState.showDetails
+      showDetails: !prevState.showDetails,
     }));
   };
 
@@ -152,7 +153,7 @@ Timestamp: ${new Date().toISOString()}
       console.error('Failed to copy error details:', err);
     }
   };
-  getErrorCategory = (error) => {
+  getErrorCategory = error => {
     if (!error) return 'Unknown';
     if (error.message?.includes('ChunkLoadError')) return 'Network';
     if (error.message?.includes('Loading chunk')) return 'Loading';
@@ -161,7 +162,7 @@ Timestamp: ${new Date().toISOString()}
     return 'Application';
   };
 
-  getErrorSeverity = (error) => {
+  getErrorSeverity = error => {
     if (!error) return 'error';
     if (error.message?.includes('ChunkLoadError')) return 'warning';
     if (error.message?.includes('Network')) return 'warning';
@@ -181,10 +182,7 @@ Timestamp: ${new Date().toISOString()}
               <Stack spacing={3}>
                 {/* Error Header */}
                 <Box display="flex" alignItems="center" gap={2}>
-                  <ErrorOutline 
-                    color="error" 
-                    sx={{ fontSize: 40 }}
-                  />
+                  <ErrorOutline color="error" sx={{ fontSize: 40 }} />
                   <Box flex={1}>
                     <Typography variant="h5" color="error" gutterBottom>
                       Oops! Something went wrong
@@ -197,21 +195,17 @@ Timestamp: ${new Date().toISOString()}
 
                 {/* Error Metadata */}
                 <Box display="flex" gap={1} flexWrap="wrap">
-                  <Chip 
-                    label={errorCategory} 
-                    size="small" 
+                  <Chip
+                    label={errorCategory}
+                    size="small"
                     color={errorSeverity}
                     variant="outlined"
                   />
-                  <Chip 
-                    label={`Error ID: ${errorId}`} 
-                    size="small" 
-                    variant="outlined"
-                  />
+                  <Chip label={`Error ID: ${errorId}`} size="small" variant="outlined" />
                   {retryCount > 0 && (
-                    <Chip 
-                      label={`Retry #${retryCount}`} 
-                      size="small" 
+                    <Chip
+                      label={`Retry #${retryCount}`}
+                      size="small"
                       color="warning"
                       variant="outlined"
                     />
@@ -220,9 +214,7 @@ Timestamp: ${new Date().toISOString()}
 
                 {/* User-friendly error message */}
                 <Alert severity={errorSeverity} variant="outlined">
-                  <Typography variant="body2">
-                    {this.getUserFriendlyMessage(error)}
-                  </Typography>
+                  <Typography variant="body2">{this.getUserFriendlyMessage(error)}</Typography>
                 </Alert>
 
                 {/* Action Buttons */}
@@ -235,11 +227,7 @@ Timestamp: ${new Date().toISOString()}
                   >
                     Try Again
                   </Button>
-                  <Button
-                    variant="outlined"
-                    startIcon={<Home />}
-                    onClick={this.handleGoHome}
-                  >
+                  <Button variant="outlined" startIcon={<Home />} onClick={this.handleGoHome}>
                     Go Home
                   </Button>
                   <Button
@@ -272,16 +260,16 @@ Timestamp: ${new Date().toISOString()}
                       <Typography variant="subtitle2" gutterBottom>
                         Error Message:
                       </Typography>
-                      <Typography 
-                        variant="body2" 
+                      <Typography
+                        variant="body2"
                         color="error"
-                        sx={{ 
+                        sx={{
                           fontFamily: 'monospace',
                           bgcolor: 'grey.100',
                           p: 1,
                           borderRadius: 1,
                           mb: 2,
-                          wordBreak: 'break-word'
+                          wordBreak: 'break-word',
                         }}
                       >
                         {error?.message}
@@ -290,9 +278,9 @@ Timestamp: ${new Date().toISOString()}
                       <Typography variant="subtitle2" gutterBottom>
                         Stack Trace:
                       </Typography>
-                      <Typography 
+                      <Typography
                         variant="body2"
-                        sx={{ 
+                        sx={{
                           fontFamily: 'monospace',
                           fontSize: '0.75rem',
                           bgcolor: 'grey.100',
@@ -301,7 +289,7 @@ Timestamp: ${new Date().toISOString()}
                           maxHeight: 200,
                           overflow: 'auto',
                           wordBreak: 'break-word',
-                          whiteSpace: 'pre-wrap'
+                          whiteSpace: 'pre-wrap',
                         }}
                       >
                         {error?.stack}
@@ -312,9 +300,9 @@ Timestamp: ${new Date().toISOString()}
                           <Typography variant="subtitle2" gutterBottom sx={{ mt: 2 }}>
                             Component Stack:
                           </Typography>
-                          <Typography 
+                          <Typography
                             variant="body2"
-                            sx={{ 
+                            sx={{
                               fontFamily: 'monospace',
                               fontSize: '0.75rem',
                               bgcolor: 'grey.100',
@@ -323,7 +311,7 @@ Timestamp: ${new Date().toISOString()}
                               maxHeight: 150,
                               overflow: 'auto',
                               wordBreak: 'break-word',
-                              whiteSpace: 'pre-wrap'
+                              whiteSpace: 'pre-wrap',
                             }}
                           >
                             {errorInfo.componentStack}
@@ -352,15 +340,15 @@ Timestamp: ${new Date().toISOString()}
     if (error.message.includes('ChunkLoadError') || error.message.includes('Loading chunk')) {
       return 'There was a problem loading the application. This might be due to a network issue or a recent update. Please try refreshing the page.';
     }
-    
+
     if (error.message.includes('firebase')) {
       return 'There was a problem connecting to our services. Please check your internet connection and try again.';
     }
-    
+
     if (error.message.includes('api') || error.message.includes('fetch')) {
-      return 'We\'re having trouble communicating with our servers. Please try again in a moment.';
+      return "We're having trouble communicating with our servers. Please try again in a moment.";
     }
-    
+
     return 'An unexpected error occurred. Our team has been notified and is working to fix this issue.';
   }
 }
@@ -372,7 +360,7 @@ export const useErrorHandler = () => {
     // This can be used to manually trigger error boundaries
     // or send errors to monitoring services
     console.error('Manual error handling:', { error, errorInfo });
-    
+
     // You could dispatch this to a global error state
     // or send it directly to your error reporting service
   }, []);
@@ -392,4 +380,3 @@ export const withErrorBoundary = (Component, errorBoundaryProps = {}) => {
 };
 
 export default EnhancedErrorBoundary;
-

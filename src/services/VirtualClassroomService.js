@@ -14,7 +14,7 @@ class VirtualClassroomService extends EventEmitter {
     this.mediaDevices = {
       camera: null,
       microphone: null,
-      screen: null
+      screen: null,
     };
     this.arvrSupported = false;
     this.sessionRecorder = null;
@@ -24,22 +24,22 @@ class VirtualClassroomService extends EventEmitter {
   async initialize() {
     try {
       console.log('Initializing Virtual Classroom Service...');
-      
+
       // Check device capabilities
       await this.checkDeviceCapabilities();
-      
+
       // Initialize WebRTC foundation
       await this.initializeWebRTC();
-      
+
       // Check AR/VR support
       this.arvrSupported = await this.checkARVRSupport();
-      
+
       console.log('Virtual Classroom Service initialized successfully');
       this.emit('initialized', {
         capabilities: this.getCapabilities(),
-        arvrSupported: this.arvrSupported
+        arvrSupported: this.arvrSupported,
       });
-      
+
       return true;
     } catch (error) {
       console.error('Virtual classroom initialization failed:', error);
@@ -51,20 +51,20 @@ class VirtualClassroomService extends EventEmitter {
   async initializeVirtualClassroom(classroomId, userRole, options = {}) {
     try {
       console.log(`Joining virtual classroom: ${classroomId} as ${userRole}`);
-      
+
       // Initialize socket connection
       this.socket = io('/virtual-classroom', {
-        query: { 
-          classroomId, 
+        query: {
+          classroomId,
           userRole,
-          capabilities: JSON.stringify(this.getCapabilities())
+          capabilities: JSON.stringify(this.getCapabilities()),
         },
-        timeout: 10000
+        timeout: 10000,
       });
 
       // Setup peer connections for video/audio
       await this.setupMediaDevices(options.mediaSettings);
-      
+
       // Initialize AR/VR if supported and requested
       if (this.arvrSupported && options.enableARVR) {
         await this.initializeARVR();
@@ -75,7 +75,7 @@ class VirtualClassroomService extends EventEmitter {
 
       // Setup event listeners
       this.setupEventListeners();
-      
+
       // Join the virtual room
       await this.joinVirtualRoom(classroomId, userRole);
 
@@ -83,14 +83,14 @@ class VirtualClassroomService extends EventEmitter {
         id: classroomId,
         role: userRole,
         joinedAt: new Date().toISOString(),
-        features: this.getEnabledFeatures()
+        features: this.getEnabledFeatures(),
       };
 
       this.emit('classroom-joined', this.virtualRoom);
-      return { 
-        success: true, 
+      return {
+        success: true,
         features: this.getEnabledFeatures(),
-        participants: Array.from(this.participants.values())
+        participants: Array.from(this.participants.values()),
       };
     } catch (error) {
       console.error('Virtual classroom joining failed:', error);
@@ -105,14 +105,14 @@ class VirtualClassroomService extends EventEmitter {
       microphone: false,
       screen: false,
       webrtc: false,
-      webxr: false
+      webxr: false,
     };
 
     try {
       // Check media devices
       if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         capabilities.webrtc = true;
-        
+
         const devices = await navigator.mediaDevices.enumerateDevices();
         capabilities.camera = devices.some(device => device.kind === 'videoinput');
         capabilities.microphone = devices.some(device => device.kind === 'audioinput');
@@ -142,21 +142,21 @@ class VirtualClassroomService extends EventEmitter {
     this.rtcConfiguration = {
       iceServers: [
         { urls: 'stun:stun.l.google.com:19302' },
-        { urls: 'stun:stun1.l.google.com:19302' }
-      ]
+        { urls: 'stun:stun1.l.google.com:19302' },
+      ],
     };
 
     // Initialize peer connection
     this.peerConnection = new RTCPeerConnection(this.rtcConfiguration);
-    
+
     // Setup peer connection events
-    this.peerConnection.onicecandidate = (event) => {
+    this.peerConnection.onicecandidate = event => {
       if (event.candidate) {
         this.emit('ice-candidate', event.candidate);
       }
     };
 
-    this.peerConnection.ontrack = (event) => {
+    this.peerConnection.ontrack = event => {
       this.emit('remote-stream', event.streams[0]);
     };
 
@@ -171,7 +171,7 @@ class VirtualClassroomService extends EventEmitter {
 
       const vrSupported = await navigator.xr.isSessionSupported('immersive-vr');
       const arSupported = await navigator.xr.isSessionSupported('immersive-ar');
-      
+
       return vrSupported || arSupported;
     } catch (error) {
       console.warn('AR/VR support check failed:', error);
@@ -182,7 +182,7 @@ class VirtualClassroomService extends EventEmitter {
   async setupMediaDevices(settings = {}) {
     const defaultSettings = {
       video: { width: 1280, height: 720, frameRate: 30 },
-      audio: { echoCancellation: true, noiseSuppression: true }
+      audio: { echoCancellation: true, noiseSuppression: true },
     };
 
     const mediaSettings = { ...defaultSettings, ...settings };
@@ -191,7 +191,7 @@ class VirtualClassroomService extends EventEmitter {
       if (this.capabilities.camera || this.capabilities.microphone) {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: this.capabilities.camera ? mediaSettings.video : false,
-          audio: this.capabilities.microphone ? mediaSettings.audio : false
+          audio: this.capabilities.microphone ? mediaSettings.audio : false,
         });
 
         // Add tracks to peer connection
@@ -204,7 +204,7 @@ class VirtualClassroomService extends EventEmitter {
 
         this.emit('media-ready', {
           video: !!this.mediaDevices.camera,
-          audio: !!this.mediaDevices.microphone
+          audio: !!this.mediaDevices.microphone,
         });
       }
     } catch (error) {
@@ -221,16 +221,16 @@ class VirtualClassroomService extends EventEmitter {
 
       const stream = await navigator.mediaDevices.getDisplayMedia({
         video: { mediaSource: 'screen' },
-        audio: true
+        audio: true,
       });
 
       this.mediaDevices.screen = stream.getVideoTracks()[0];
-      
+
       // Replace video track in peer connection
-      const sender = this.peerConnection.getSenders().find(s => 
-        s.track && s.track.kind === 'video'
-      );
-      
+      const sender = this.peerConnection
+        .getSenders()
+        .find(s => s.track && s.track.kind === 'video');
+
       if (sender) {
         await sender.replaceTrack(this.mediaDevices.screen);
       }
@@ -256,13 +256,13 @@ class VirtualClassroomService extends EventEmitter {
       if (this.mediaDevices.screen) {
         this.mediaDevices.screen.stop();
         this.mediaDevices.screen = null;
-        
+
         // Revert to camera if available
         if (this.mediaDevices.camera) {
-          const sender = this.peerConnection.getSenders().find(s => 
-            s.track && s.track.kind === 'video'
-          );
-          
+          const sender = this.peerConnection
+            .getSenders()
+            .find(s => s.track && s.track.kind === 'video');
+
           if (sender) {
             await sender.replaceTrack(this.mediaDevices.camera);
           }
@@ -284,12 +284,12 @@ class VirtualClassroomService extends EventEmitter {
       }
 
       const mediaRecorder = new MediaRecorder(this.getCurrentStream(), {
-        mimeType: 'video/webm;codecs=vp9'
+        mimeType: 'video/webm;codecs=vp9',
       });
 
       const chunks = [];
-      
-      mediaRecorder.ondataavailable = (event) => {
+
+      mediaRecorder.ondataavailable = event => {
         if (event.data.size > 0) {
           chunks.push(event.data);
         }
@@ -301,7 +301,7 @@ class VirtualClassroomService extends EventEmitter {
         this.emit('recording-saved', { blob, duration: this.getRecordingDuration() });
       };
 
-      mediaRecorder.onerror = (error) => {
+      mediaRecorder.onerror = error => {
         console.error('Recording error:', error);
         this.emit('recording-error', error);
       };
@@ -309,7 +309,7 @@ class VirtualClassroomService extends EventEmitter {
       this.sessionRecorder = {
         recorder: mediaRecorder,
         startTime: Date.now(),
-        chunks
+        chunks,
       };
 
       mediaRecorder.start(1000); // Record in 1-second chunks
@@ -339,9 +339,9 @@ class VirtualClassroomService extends EventEmitter {
     try {
       // Initialize WebXR session
       const session = await navigator.xr.requestSession('immersive-vr');
-      
+
       this.xrSession = session;
-      
+
       session.addEventListener('end', () => {
         this.xrSession = null;
         this.emit('arvr-session-ended');
@@ -359,18 +359,18 @@ class VirtualClassroomService extends EventEmitter {
     this.collaborativeTools.set('whiteboard', {
       active: false,
       participants: new Set(),
-      tools: ['pen', 'eraser', 'shapes', 'text']
+      tools: ['pen', 'eraser', 'shapes', 'text'],
     });
 
     this.collaborativeTools.set('quiz', {
       active: false,
       questions: [],
-      responses: new Map()
+      responses: new Map(),
     });
 
     this.collaborativeTools.set('breakout', {
       rooms: new Map(),
-      assignments: new Map()
+      assignments: new Map(),
     });
   }
 
@@ -426,7 +426,7 @@ class VirtualClassroomService extends EventEmitter {
 
   async joinVirtualRoom(classroomId, userRole) {
     return new Promise((resolve, reject) => {
-      this.socket.emit('join-room', { classroomId, userRole }, (response) => {
+      this.socket.emit('join-room', { classroomId, userRole }, response => {
         if (response.success) {
           this.isConnected = true;
           resolve(response);
@@ -441,11 +441,11 @@ class VirtualClassroomService extends EventEmitter {
     if (this.mediaDevices.screen) {
       return new MediaStream([this.mediaDevices.screen]);
     }
-    
+
     const tracks = [];
     if (this.mediaDevices.camera) tracks.push(this.mediaDevices.camera);
     if (this.mediaDevices.microphone) tracks.push(this.mediaDevices.microphone);
-    
+
     return tracks.length > 0 ? new MediaStream(tracks) : null;
   }
 
@@ -460,7 +460,7 @@ class VirtualClassroomService extends EventEmitter {
       screenShare: this.capabilities.screen,
       recording: true,
       arvr: this.arvrSupported,
-      collaborative: true
+      collaborative: true,
     };
   }
 
@@ -533,11 +533,10 @@ class VirtualClassroomService extends EventEmitter {
       this.emit('classroom-joined', {
         id: classroomId,
         role: userRole,
-        features: this.getEnabledFeatures()
+        features: this.getEnabledFeatures(),
       });
     }, 1000);
   }
 }
 
 export default VirtualClassroomService;
-

@@ -11,7 +11,7 @@ import {
   Grid,
   Link,
   Typography,
-  useTheme
+  useTheme,
 } from '@mui/material';
 import makeStyles from '../utils/makeStylesCompat';
 import { useAuth } from '../auth/AuthContext';
@@ -20,11 +20,11 @@ import {
   School as StudentIcon,
   Person as FacultyIcon,
   People as ParentIcon,
-  SupervisorAccount as AdminIcon
+  SupervisorAccount as AdminIcon,
 } from '@mui/icons-material';
 
 // Enhanced styling for the RoleSelection page
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     minHeight: '100vh',
     display: 'flex',
@@ -32,7 +32,10 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     padding: theme.spacing(3),
     backgroundColor: theme.palette.mode === 'dark' ? theme.palette.background.default : '#f5f7fb',
-    backgroundImage: theme.palette.mode === 'dark' ? 'radial-gradient(circle at 50% 14em, #313264 0%, #00023b 60%, #00023b 100%)' : 'radial-gradient(circle at 50% 14em, #f0f4ff 0%, #f5f7fb 60%, #ffffff 100%)',
+    backgroundImage:
+      theme.palette.mode === 'dark'
+        ? 'radial-gradient(circle at 50% 14em, #313264 0%, #00023b 60%, #00023b 100%)'
+        : 'radial-gradient(circle at 50% 14em, #f0f4ff 0%, #f5f7fb 60%, #ffffff 100%)',
   },
   header: {
     textAlign: 'center',
@@ -65,7 +68,8 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(3),
     color: theme.palette.mode === 'dark' ? '#c0c6e8' : '#424242',
     fontWeight: 500,
-  },  cardGrid: {
+  },
+  cardGrid: {
     marginTop: theme.spacing(4),
     maxWidth: '1400px',
     margin: '0 auto',
@@ -78,7 +82,8 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down('sm')]: {
       gridTemplateColumns: '1fr',
     },
-  },card: {
+  },
+  card: {
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
@@ -87,7 +92,8 @@ const useStyles = makeStyles((theme) => ({
       transform: 'translateY(-6px)',
       boxShadow: '0 12px 20px -10px rgba(0, 0, 0, 0.2)',
     },
-  },  cardMediaWrapper: {
+  },
+  cardMediaWrapper: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -117,7 +123,8 @@ const useStyles = makeStyles((theme) => ({
   cardIcon: {
     fontSize: '2.5rem',
     color: '#424242',
-  },  cardContent: {
+  },
+  cardContent: {
     flexGrow: 1,
     padding: theme.spacing(2),
     display: 'flex',
@@ -136,7 +143,8 @@ const useStyles = makeStyles((theme) => ({
     display: '-webkit-box',
     WebkitLineClamp: 3,
     WebkitBoxOrient: 'vertical',
-  },  cardActions: {
+  },
+  cardActions: {
     padding: theme.spacing(1.5, 2),
     borderTop: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'}`,
     display: 'flex',
@@ -194,16 +202,19 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(4),
     marginBottom: theme.spacing(2),
     padding: theme.spacing(2),
-    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
+    backgroundColor:
+      theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
     borderRadius: theme.shape.borderRadius,
   },
 }));
 
 // Enhanced role data with updated descriptions
-const roleData = [  {
+const roleData = [
+  {
     id: ROLES.STUDENT,
     title: ROLES.STUDENT_DISPLAY,
-    description: 'Access courses, track progress, and engage with AI-powered learning materials on your educational journey.',
+    description:
+      'Access courses, track progress, and engage with AI-powered learning materials on your educational journey.',
     icon: StudentIcon,
     path: '/student-login',
     mediaClass: 'studentCardMedia',
@@ -212,7 +223,8 @@ const roleData = [  {
   {
     id: ROLES.FACULTY,
     title: ROLES.FACULTY_DISPLAY,
-    description: 'Create courses, grade assignments, and guide students on their learning journey with advanced teaching tools.',
+    description:
+      'Create courses, grade assignments, and guide students on their learning journey with advanced teaching tools.',
     icon: FacultyIcon,
     path: '/faculty-login',
     mediaClass: 'facultyCardMedia',
@@ -221,7 +233,8 @@ const roleData = [  {
   {
     id: ROLES.PARENT,
     title: ROLES.PARENT_DISPLAY,
-    description: 'Monitor your child\'s academic progress and communicate directly with teachers in a collaborative environment.',
+    description:
+      "Monitor your child's academic progress and communicate directly with teachers in a collaborative environment.",
     icon: ParentIcon,
     path: '/parent-login',
     mediaClass: 'parentCardMedia',
@@ -230,7 +243,8 @@ const roleData = [  {
   {
     id: ROLES.ADMIN,
     title: ROLES.ADMIN_DISPLAY,
-    description: 'Manage users, oversee course creation, and configure system settings with complete administrative control.',
+    description:
+      'Manage users, oversee course creation, and configure system settings with complete administrative control.',
     icon: AdminIcon,
     path: '/admin-login',
     mediaClass: 'adminCardMedia',
@@ -267,10 +281,12 @@ function RoleSelection() {
           </Typography>
           <Typography variant="h6" className={classes.subtitle}>
             Ancient Wisdom • Modern Technology • Personalized Learning
-          </Typography>          {/* Feature Highlights section removed */}
-        </Box>        {/* Role Selection Cards - Vertically Aligned Grid */}
+          </Typography>{' '}
+          {/* Feature Highlights section removed */}
+        </Box>{' '}
+        {/* Role Selection Cards - Vertically Aligned Grid */}
         <Box className={classes.cardGrid}>
-          {roleData.map((role) => (
+          {roleData.map(role => (
             <Card key={role.id} className={classes.card} raised elevation={3}>
               <Box className={`${classes.cardMediaWrapper} ${classes[role.mediaClass]}`}>
                 <Box className={classes.iconWrapper}>
@@ -281,9 +297,7 @@ function RoleSelection() {
                 <Typography variant="h6" className={classes.cardTitle}>
                   {role.title}
                 </Typography>
-                <Typography className={classes.cardDescription}>
-                  {role.description}
-                </Typography>
+                <Typography className={classes.cardDescription}>{role.description}</Typography>
               </CardContent>
               <CardActions className={classes.cardActions}>
                 <Button
@@ -299,16 +313,21 @@ function RoleSelection() {
               </CardActions>
             </Card>
           ))}
-        </Box>        {/* Authors Section */}
+        </Box>{' '}
+        {/* Authors Section */}
         <Box className={classes.authorsSection} sx={{ textAlign: 'center', mt: 4, mb: 2 }}>
           <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
             Developed by:
-            <Link href="https://www.linkedin.com/in/ayushman-nanda-4a1377312/" target="_blank" rel="noopener" sx={{ ml: 1 }}>
+            <Link
+              href="https://www.linkedin.com/in/ayushman-nanda-4a1377312/"
+              target="_blank"
+              rel="noopener"
+              sx={{ ml: 1 }}
+            >
               Ayushman Nanda
             </Link>
           </Typography>
         </Box>
-
         {/* Footer */}
         <Box className={classes.footer}>
           <Typography className={classes.footerText}>
@@ -321,4 +340,3 @@ function RoleSelection() {
 }
 
 export default RoleSelection;
-

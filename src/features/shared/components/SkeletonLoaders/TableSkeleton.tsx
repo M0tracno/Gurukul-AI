@@ -21,12 +21,7 @@ interface TableSkeletonProps {
 
 export function TableSkeleton({ columns = 5, rows = 8 }: TableSkeletonProps) {
   return (
-    <Box
-      role="status"
-      aria-label="Loading table data..."
-      aria-busy="true"
-      sx={{ p: 3 }}
-    >
+    <Box role="status" aria-label="Loading table data..." aria-busy="true" sx={{ p: 3 }}>
       {/* Page title and toolbar */}
       <Box
         sx={{

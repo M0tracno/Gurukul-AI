@@ -1,9 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Container, Typography, Box, Button, Grid, Paper, TextField, List, ListItem,
-  ListItemAvatar, ListItemText, Avatar, Badge, Chip, IconButton, InputAdornment,
-  Alert, Dialog, DialogTitle, DialogContent, DialogActions, FormControl,
-  InputLabel, Select, MenuItem
+  Container,
+  Typography,
+  Box,
+  Button,
+  Grid,
+  Paper,
+  TextField,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Avatar,
+  Badge,
+  Chip,
+  IconButton,
+  InputAdornment,
+  Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -20,7 +41,7 @@ import {
   EmojiEmotions as EmojiIcon,
   FiberManualRecord as OnlineIcon,
   Notifications as NotificationIcon,
-  Schedule as ScheduleIcon
+  Schedule as ScheduleIcon,
 } from '@mui/icons-material';
 
 const Chat = () => {
@@ -44,7 +65,7 @@ const Chat = () => {
         timestamp: '2025-06-07 14:30',
         unreadCount: 0,
         online: true,
-        type: 'teacher'
+        type: 'teacher',
       },
       {
         id: 2,
@@ -56,7 +77,7 @@ const Chat = () => {
         unreadCount: 3,
         online: false,
         type: 'group',
-        members: ['Alice', 'Bob', 'Charlie', 'You']
+        members: ['Alice', 'Bob', 'Charlie', 'You'],
       },
       {
         id: 3,
@@ -67,7 +88,7 @@ const Chat = () => {
         timestamp: '2025-06-07 12:15',
         unreadCount: 1,
         online: false,
-        type: 'teacher'
+        type: 'teacher',
       },
       {
         id: 4,
@@ -79,7 +100,7 @@ const Chat = () => {
         unreadCount: 5,
         online: false,
         type: 'class',
-        members: ['All Class 10A Students']
+        members: ['All Class 10A Students'],
       },
       {
         id: 5,
@@ -90,8 +111,8 @@ const Chat = () => {
         timestamp: '2025-06-06 16:20',
         unreadCount: 0,
         online: true,
-        type: 'counselor'
-      }
+        type: 'counselor',
+      },
     ];
 
     const mockMessages = {
@@ -102,7 +123,7 @@ const Chat = () => {
           senderName: 'Dr. Sarah Wilson',
           message: 'Hello! I reviewed your latest assignment.',
           timestamp: '2025-06-07 14:25',
-          type: 'received'
+          type: 'received',
         },
         {
           id: 2,
@@ -110,16 +131,17 @@ const Chat = () => {
           senderName: 'You',
           message: 'Thank you for the feedback!',
           timestamp: '2025-06-07 14:27',
-          type: 'sent'
+          type: 'sent',
         },
         {
           id: 3,
           senderId: 'teacher_1',
           senderName: 'Dr. Sarah Wilson',
-          message: 'Great work on the algebra assignment! Your problem-solving approach is improving.',
+          message:
+            'Great work on the algebra assignment! Your problem-solving approach is improving.',
           timestamp: '2025-06-07 14:30',
-          type: 'received'
-        }
+          type: 'received',
+        },
       ],
       2: [
         {
@@ -128,7 +150,7 @@ const Chat = () => {
           senderName: 'Alice',
           message: 'Hey everyone! Did you understand the optics chapter?',
           timestamp: '2025-06-07 13:30',
-          type: 'group'
+          type: 'group',
         },
         {
           id: 2,
@@ -136,7 +158,7 @@ const Chat = () => {
           senderName: 'Bob',
           message: 'I found it challenging. Could use some help with lens equations.',
           timestamp: '2025-06-07 13:35',
-          type: 'group'
+          type: 'group',
         },
         {
           id: 3,
@@ -144,9 +166,9 @@ const Chat = () => {
           senderName: 'Charlie',
           message: 'Anyone free for study session tomorrow?',
           timestamp: '2025-06-07 13:45',
-          type: 'group'
-        }
-      ]
+          type: 'group',
+        },
+      ],
     };
 
     setTimeout(() => {
@@ -156,7 +178,7 @@ const Chat = () => {
     }, 1000);
   }, []);
 
-  const handleChatSelect = (chat) => {
+  const handleChatSelect = chat => {
     setSelectedChat(chat);
   };
 
@@ -168,56 +190,67 @@ const Chat = () => {
         senderName: 'You',
         message: message,
         timestamp: new Date().toISOString(),
-        type: 'sent'
+        type: 'sent',
       };
 
       setMessages(prev => ({
         ...prev,
-        [selectedChat.id]: [...(prev[selectedChat.id] || []), newMessage]
+        [selectedChat.id]: [...(prev[selectedChat.id] || []), newMessage],
       }));
 
       setMessage('');
     }
   };
 
-  const handleKeyPress = (e) => {
+  const handleKeyPress = e => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
     }
   };
 
-  const filteredChats = chatList.filter(chat =>
-    chat.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    chat.role.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredChats = chatList.filter(
+    chat =>
+      chat.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      chat.role.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const getTypeIcon = (type) => {
+  const getTypeIcon = type => {
     switch (type) {
-      case 'teacher': return <SchoolIcon />;
-      case 'group': return <GroupIcon />;
-      case 'class': return <GroupIcon />;
-      case 'counselor': return <PersonIcon />;
-      default: return <MessageIcon />;
+      case 'teacher':
+        return <SchoolIcon />;
+      case 'group':
+        return <GroupIcon />;
+      case 'class':
+        return <GroupIcon />;
+      case 'counselor':
+        return <PersonIcon />;
+      default:
+        return <MessageIcon />;
     }
   };
 
-  const getTypeColor = (type) => {
+  const getTypeColor = type => {
     switch (type) {
-      case 'teacher': return 'primary';
-      case 'group': return 'secondary';
-      case 'class': return 'warning';
-      case 'counselor': return 'success';
-      default: return 'default';
+      case 'teacher':
+        return 'primary';
+      case 'group':
+        return 'secondary';
+      case 'class':
+        return 'warning';
+      case 'counselor':
+        return 'success';
+      default:
+        return 'default';
     }
   };
 
-  const formatTimestamp = (timestamp) => {
+  const formatTimestamp = timestamp => {
     const date = new Date(timestamp);
     return date.toLocaleTimeString('en-US', {
       hour: '2-digit',
       minute: '2-digit',
-      hour12: true
+      hour12: true,
     });
   };
 
@@ -247,7 +280,7 @@ const Chat = () => {
 
       <Grid container spacing={2} sx={{ height: '70vh' }}>
         {/* Chat List */}
-        <Grid size={{xs:12,md:4}}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Paper sx={{ height: '100%', borderRadius: 3, overflow: 'hidden' }}>
             {/* Search Bar */}
             <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
@@ -255,21 +288,22 @@ const Chat = () => {
                 fullWidth
                 placeholder="Search conversations..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={e => setSearchTerm(e.target.value)}
                 size="small"
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
                       <SearchIcon />
                     </InputAdornment>
-                  )}}
+                  ),
+                }}
                 sx={{ borderRadius: 2 }}
               />
             </Box>
 
             {/* Chat List */}
             <List sx={{ height: 'calc(100% - 80px)', overflow: 'auto', p: 0 }}>
-              {filteredChats.map((chat) => (
+              {filteredChats.map(chat => (
                 <ListItem
                   key={chat.id}
                   button
@@ -279,7 +313,8 @@ const Chat = () => {
                     borderBottom: 1,
                     borderColor: 'divider',
                     '&.Mui-selected': {
-                      backgroundColor: 'action.selected'}
+                      backgroundColor: 'action.selected',
+                    },
                   }}
                 >
                   <ListItemAvatar>
@@ -329,8 +364,16 @@ const Chat = () => {
         </Grid>
 
         {/* Chat Window */}
-        <Grid size={{xs:12,md:8}}>
-          <Paper sx={{ height: '100%', borderRadius: 3, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+        <Grid size={{ xs: 12, md: 8 }}>
+          <Paper
+            sx={{
+              height: '100%',
+              borderRadius: 3,
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
             {selectedChat ? (
               <>
                 {/* Chat Header */}
@@ -380,13 +423,13 @@ const Chat = () => {
 
                 {/* Messages Area */}
                 <Box sx={{ flexGrow: 1, overflow: 'auto', p: 2 }}>
-                  {messages[selectedChat.id]?.map((msg) => (
+                  {messages[selectedChat.id]?.map(msg => (
                     <Box
                       key={msg.id}
                       sx={{
                         display: 'flex',
                         justifyContent: msg.type === 'sent' ? 'flex-end' : 'flex-start',
-                        mb: 2
+                        mb: 2,
                       }}
                     >
                       <Paper
@@ -395,16 +438,24 @@ const Chat = () => {
                           maxWidth: '70%',
                           bgcolor: msg.type === 'sent' ? 'primary.main' : 'grey.100',
                           color: msg.type === 'sent' ? 'primary.contrastText' : 'text.primary',
-                          borderRadius: 2
+                          borderRadius: 2,
                         }}
                       >
                         {msg.type === 'group' && (
-                          <Typography variant="caption" color="primary" fontWeight="bold" display="block">
+                          <Typography
+                            variant="caption"
+                            color="primary"
+                            fontWeight="bold"
+                            display="block"
+                          >
                             {msg.senderName}
                           </Typography>
                         )}
                         <Typography variant="body1">{msg.message}</Typography>
-                        <Typography variant="caption" sx={{ opacity: 0.7, display: 'block', mt: 0.5 }}>
+                        <Typography
+                          variant="caption"
+                          sx={{ opacity: 0.7, display: 'block', mt: 0.5 }}
+                        >
                           {formatTimestamp(msg.timestamp)}
                         </Typography>
                       </Paper>
@@ -422,7 +473,7 @@ const Chat = () => {
                       fullWidth
                       placeholder="Type a message..."
                       value={message}
-                      onChange={(e) => setMessage(e.target.value)}
+                      onChange={e => setMessage(e.target.value)}
                       onKeyPress={handleKeyPress}
                       multiline
                       maxRows={3}
@@ -450,7 +501,7 @@ const Chat = () => {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  flexDirection: 'column'
+                  flexDirection: 'column',
                 }}
               >
                 <MessageIcon sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
@@ -467,14 +518,10 @@ const Chat = () => {
       </Grid>
 
       {/* Quick Actions Alert */}
-      <Alert
-        severity="info"
-        sx={{ mt: 2, borderRadius: 2 }}
-        icon={<NotificationIcon />}
-      >
+      <Alert severity="info" sx={{ mt: 2, borderRadius: 2 }} icon={<NotificationIcon />}>
         <Typography variant="body2">
-          <strong>Communication Guidelines:</strong> Please maintain respectful communication.
-          For urgent matters, contact your teacher directly or use the emergency contact system.
+          <strong>Communication Guidelines:</strong> Please maintain respectful communication. For
+          urgent matters, contact your teacher directly or use the emergency contact system.
         </Typography>
       </Alert>
 
@@ -512,4 +559,3 @@ const Chat = () => {
 };
 
 export default Chat;
-

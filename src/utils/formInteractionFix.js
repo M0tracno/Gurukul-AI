@@ -2,14 +2,13 @@ import { useEffect } from 'react';
 
 /**
  * Form Interaction Fix Utility
- * 
+ *
  * This utility fixes common form interaction issues including:
  * - Button click problems
  * - Input field focus issues
  * - Form submission problems
  * - Event propagation issues
  */
-
 
 // Hook to ensure proper form interactions
 export const useFormInteractionFix = () => {
@@ -60,15 +59,15 @@ export const useFormInteractionFix = () => {
         z-index: 2 !important;
       }
     `;
-    
+
     document.head.appendChild(style);
-    
+
     // Force repaint to apply styles
     document.body.style.display = 'none';
     setTimeout(() => {
       document.body.style.display = '';
     }, 0);
-    
+
     return () => {
       document.head.removeChild(style);
     };
@@ -76,20 +75,20 @@ export const useFormInteractionFix = () => {
 };
 
 // Function to fix specific form elements
-export const fixFormElement = (element) => {
+export const fixFormElement = element => {
   if (!element) return;
-  
+
   // Remove any blocking styles
   element.style.pointerEvents = 'auto';
   element.style.userSelect = 'auto';
   element.style.webkitUserSelect = 'auto';
   element.style.touchAction = 'manipulation';
-  
+
   // Ensure the element is focusable
   if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
     element.tabIndex = 0;
   }
-  
+
   // For buttons, ensure they're clickable
   if (element.tagName === 'BUTTON' || element.role === 'button') {
     element.style.cursor = 'pointer';
@@ -100,7 +99,7 @@ export const fixFormElement = (element) => {
 // Debug function to test form interactions
 export const debugFormInteractions = () => {
   console.log('=== Form Interaction Debug ===');
-  
+
   // Test all inputs
   const inputs = document.querySelectorAll('input, textarea');
   inputs.forEach((input, index) => {
@@ -114,7 +113,7 @@ export const debugFormInteractions = () => {
       visibility: getComputedStyle(input).visibility,
     });
   });
-  
+
   // Test all buttons
   const buttons = document.querySelectorAll('button, [role="button"]');
   buttons.forEach((button, index) => {
@@ -126,7 +125,7 @@ export const debugFormInteractions = () => {
       zIndex: getComputedStyle(button).zIndex,
     });
   });
-  
+
   // Test form containers
   const forms = document.querySelectorAll('form');
   forms.forEach((form, index) => {
@@ -145,17 +144,16 @@ export const forceFixAllFormElements = () => {
   setTimeout(() => {
     // Fix all inputs
     document.querySelectorAll('input, textarea, select').forEach(fixFormElement);
-    
+
     // Fix all buttons
     document.querySelectorAll('button, [role="button"]').forEach(fixFormElement);
-    
+
     // Fix all form containers
-    document.querySelectorAll('form').forEach((form) => {
+    document.querySelectorAll('form').forEach(form => {
       form.style.position = 'relative';
       form.style.zIndex = '2';
     });
-    
+
     console.log('All form elements fixed for interactions');
   }, 100);
 };
-

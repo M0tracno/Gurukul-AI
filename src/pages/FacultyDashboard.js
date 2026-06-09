@@ -1,12 +1,12 @@
 import React, { Suspense, useState, useEffect } from 'react';
-import { 
-  Box, 
-  CircularProgress, 
-  Container, 
-  Grid, 
-  Card, 
-  CardContent, 
-  Typography, 
+import {
+  Box,
+  CircularProgress,
+  Container,
+  Grid,
+  Card,
+  CardContent,
+  Typography,
   Button,
   Avatar,
   Chip,
@@ -21,7 +21,7 @@ import {
   MenuItem,
   Alert,
   Snackbar,
-  LinearProgress
+  LinearProgress,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import UnifiedDashboardLayout from '../components/layout/UnifiedDashboardLayout';
@@ -50,7 +50,7 @@ import {
   CheckCircle,
   Warning,
   School,
-  Class
+  Class,
 } from '@mui/icons-material';
 
 // Styled components for modern design
@@ -79,7 +79,8 @@ const StatCard = styled(Card)(({ theme, color }) => ({
 }));
 
 const DashboardHeader = styled(Box)(({ theme }) => ({
-  background: 'linear-gradient(135deg, rgba(167, 139, 250, 0.15) 0%, rgba(124, 58, 237, 0.15) 100%)',
+  background:
+    'linear-gradient(135deg, rgba(167, 139, 250, 0.15) 0%, rgba(124, 58, 237, 0.15) 100%)',
   borderRadius: 20,
   padding: theme.spacing(3),
   color: 'white',
@@ -96,7 +97,9 @@ const QuizManagement = React.lazy(() => import('../components/faculty/QuizManage
 const CourseAttendance = React.lazy(() => import('../components/faculty/CourseAttendanceNew'));
 const FacultyFeedback = React.lazy(() => import('../components/faculty/FacultyFeedbackNew'));
 const QuizAnalytics = React.lazy(() => import('../components/faculty/QuizAnalytics'));
-const FacultyCommunication = React.lazy(() => import('../components/faculty/FacultyCommunicationNew'));
+const FacultyCommunication = React.lazy(
+  () => import('../components/faculty/FacultyCommunicationNew')
+);
 
 const LoadingComponent = () => (
   <Box display="flex" justifyContent="center" alignItems="center" minHeight="300px">
@@ -105,15 +108,8 @@ const LoadingComponent = () => (
 );
 
 const FacultyDashboard = () => {
-  const {
-    loading,
-    error,
-    stats,
-    notifications,
-    currentView,
-    handleViewChange,
-    refreshData
-  } = useDashboard('faculty');
+  const { loading, error, stats, notifications, currentView, handleViewChange, refreshData } =
+    useDashboard('faculty');
   // Enhanced state management
   const [facultyProfile, setFacultyProfile] = useState(null);
   const [dashboardStats, setDashboardStats] = useState(null);
@@ -140,7 +136,7 @@ const FacultyDashboard = () => {
           lastName: 'User',
           title: 'Professor',
           department: 'General',
-          experience: '5 years'
+          experience: '5 years',
         });
       }
 
@@ -156,7 +152,7 @@ const FacultyDashboard = () => {
           totalAssignments: 12,
           pendingGrades: 5,
           averageAttendance: 87,
-          activeStudents: 28
+          activeStudents: 28,
         });
       }
 
@@ -167,9 +163,24 @@ const FacultyDashboard = () => {
       } else {
         // Fallback activity
         setRecentActivity([
-          { type: 'submission', title: 'New assignment submitted', description: 'Python Project - CS101', timestamp: 'Just now' },
-          { type: 'grading', title: 'Grades published', description: 'Calculus Quiz - MATH201', timestamp: '2 hours ago' },
-          { type: 'other', title: 'Attendance recorded', description: 'Physics Lab - PHYS101', timestamp: '4 hours ago' }
+          {
+            type: 'submission',
+            title: 'New assignment submitted',
+            description: 'Python Project - CS101',
+            timestamp: 'Just now',
+          },
+          {
+            type: 'grading',
+            title: 'Grades published',
+            description: 'Calculus Quiz - MATH201',
+            timestamp: '2 hours ago',
+          },
+          {
+            type: 'other',
+            title: 'Attendance recorded',
+            description: 'Physics Lab - PHYS101',
+            timestamp: '4 hours ago',
+          },
         ]);
       }
     } catch (error) {
@@ -181,7 +192,7 @@ const FacultyDashboard = () => {
         lastName: 'User',
         title: 'Professor',
         department: 'General',
-        experience: '5 years'
+        experience: '5 years',
       });
       setDashboardStats({
         totalCourses: 4,
@@ -189,12 +200,27 @@ const FacultyDashboard = () => {
         totalAssignments: 12,
         pendingGrades: 5,
         averageAttendance: 87,
-        activeStudents: 28
+        activeStudents: 28,
       });
       setRecentActivity([
-        { type: 'submission', title: 'New assignment submitted', description: 'Python Project - CS101', timestamp: 'Just now' },
-        { type: 'grading', title: 'Grades published', description: 'Calculus Quiz - MATH201', timestamp: '2 hours ago' },
-        { type: 'other', title: 'Attendance recorded', description: 'Physics Lab - PHYS101', timestamp: '4 hours ago' }
+        {
+          type: 'submission',
+          title: 'New assignment submitted',
+          description: 'Python Project - CS101',
+          timestamp: 'Just now',
+        },
+        {
+          type: 'grading',
+          title: 'Grades published',
+          description: 'Calculus Quiz - MATH201',
+          timestamp: '2 hours ago',
+        },
+        {
+          type: 'other',
+          title: 'Attendance recorded',
+          description: 'Physics Lab - PHYS101',
+          timestamp: '4 hours ago',
+        },
       ]);
     } finally {
       setRefreshing(false);
@@ -234,29 +260,29 @@ const FacultyDashboard = () => {
         value: dashboardStats.totalCourses,
         icon: <CoursesIcon />,
         color: '#a78bfa',
-        trend: '+2 this semester'
+        trend: '+2 this semester',
       },
       {
         title: 'Total Students',
         value: dashboardStats.totalStudents,
         icon: <StudentsIcon />,
         color: '#34d399',
-        trend: `${dashboardStats.activeStudents} active`
+        trend: `${dashboardStats.activeStudents} active`,
       },
       {
         title: 'Assignments',
         value: dashboardStats.totalAssignments,
         icon: <AssignmentIcon />,
         color: '#fbbf24',
-        trend: `${dashboardStats.pendingGrades} pending`
+        trend: `${dashboardStats.pendingGrades} pending`,
       },
       {
         title: 'Attendance Rate',
         value: `${dashboardStats.averageAttendance}%`,
         icon: <AttendanceIcon />,
         color: '#60a5fa',
-        trend: '+2.3% this month'
-      }
+        trend: '+2.3% this month',
+      },
     ];
 
     return (
@@ -264,17 +290,18 @@ const FacultyDashboard = () => {
         {/* Header */}
         <DashboardHeader>
           <Grid container spacing={3} alignItems="center">
-            <Grid size={{xs:12,md:8}}>
+            <Grid size={{ xs: 12, md: 8 }}>
               <Box display="flex" alignItems="center" gap={2}>
-                <Avatar 
-                  sx={{ 
-                    width: 64, 
-                    height: 64, 
+                <Avatar
+                  sx={{
+                    width: 64,
+                    height: 64,
                     bgcolor: 'rgba(255, 255, 255, 0.2)',
-                    fontSize: '1.5rem'
+                    fontSize: '1.5rem',
                   }}
                 >
-                  {facultyProfile.firstName?.[0]}{facultyProfile.lastName?.[0]}
+                  {facultyProfile.firstName?.[0]}
+                  {facultyProfile.lastName?.[0]}
                 </Avatar>
                 <Box>
                   <Typography variant="h4" fontWeight="bold">
@@ -283,28 +310,28 @@ const FacultyDashboard = () => {
                   <Typography variant="h6" sx={{ opacity: 0.9 }}>
                     {facultyProfile.title} - {facultyProfile.department}
                   </Typography>
-                  <Chip 
+                  <Chip
                     label={`${facultyProfile.experience} Experience`}
-                    sx={{ 
-                      mt: 1, 
-                      bgcolor: 'rgba(255, 255, 255, 0.2)', 
-                      color: 'white' 
+                    sx={{
+                      mt: 1,
+                      bgcolor: 'rgba(255, 255, 255, 0.2)',
+                      color: 'white',
                     }}
                   />
                 </Box>
               </Box>
             </Grid>
-            <Grid size={{xs:12,md:4}}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <Box display="flex" gap={1} justifyContent="flex-end">
                 <Button
                   variant="contained"
                   startIcon={<Refresh />}
                   onClick={loadDashboardData}
                   disabled={refreshing}
-                  sx={{ 
-                    bgcolor: 'rgba(255, 255, 255, 0.2)', 
+                  sx={{
+                    bgcolor: 'rgba(255, 255, 255, 0.2)',
                     backdropFilter: 'blur(10px)',
-                    '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.3)' }
+                    '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.3)' },
                   }}
                 >
                   {refreshing ? 'Refreshing...' : 'Refresh'}
@@ -324,7 +351,7 @@ const FacultyDashboard = () => {
         {/* Stats Cards */}
         <Grid container spacing={3} sx={{ mb: 4 }}>
           {statItems.map((stat, index) => (
-            <Grid size={{xs:12,sm:6,md:3}} key={index}>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }} key={index}>
               <StatCard color={stat.color}>
                 <CardContent>
                   <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
@@ -333,7 +360,7 @@ const FacultyDashboard = () => {
                         p: 1,
                         borderRadius: 2,
                         bgcolor: `${stat.color}20`,
-                        color: stat.color
+                        color: stat.color,
                       }}
                     >
                       {stat.icon}
@@ -357,15 +384,15 @@ const FacultyDashboard = () => {
         {/* Main Content */}
         <Grid container spacing={3}>
           {/* Quick Actions */}
-          <Grid size={{xs:12,md:4}}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <StyledCard>
               <CardContent>
                 <Typography variant="h6" fontWeight="bold" gutterBottom>
                   Quick Actions
                 </Typography>
                 <List>
-                  <ListItem 
-                    button 
+                  <ListItem
+                    button
                     onClick={() => handleViewChange('assignments')}
                     sx={{ borderRadius: 2, mb: 1 }}
                   >
@@ -374,8 +401,8 @@ const FacultyDashboard = () => {
                     </ListItemIcon>
                     <ListItemText primary="Create Assignment" />
                   </ListItem>
-                  <ListItem 
-                    button 
+                  <ListItem
+                    button
                     onClick={() => handleViewChange('quizzes')}
                     sx={{ borderRadius: 2, mb: 1 }}
                   >
@@ -384,8 +411,8 @@ const FacultyDashboard = () => {
                     </ListItemIcon>
                     <ListItemText primary="Create Quiz" />
                   </ListItem>
-                  <ListItem 
-                    button 
+                  <ListItem
+                    button
                     onClick={() => handleViewChange('attendance')}
                     sx={{ borderRadius: 2, mb: 1 }}
                   >
@@ -394,8 +421,8 @@ const FacultyDashboard = () => {
                     </ListItemIcon>
                     <ListItemText primary="Mark Attendance" />
                   </ListItem>
-                  <ListItem 
-                    button 
+                  <ListItem
+                    button
                     onClick={() => handleViewChange('grading')}
                     sx={{ borderRadius: 2, mb: 1 }}
                   >
@@ -410,7 +437,7 @@ const FacultyDashboard = () => {
           </Grid>
 
           {/* Recent Activity */}
-          <Grid size={{xs:12,md:8}}>
+          <Grid size={{ xs: 12, md: 8 }}>
             <StyledCard>
               <CardContent>
                 <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
@@ -430,14 +457,22 @@ const FacultyDashboard = () => {
                             sx={{
                               p: 1,
                               borderRadius: '50%',
-                              bgcolor: activity.type === 'submission' ? '#34d399' : 
-                                      activity.type === 'grading' ? '#fbbf24' : '#60a5fa',
-                              color: 'white'
+                              bgcolor:
+                                activity.type === 'submission'
+                                  ? '#34d399'
+                                  : activity.type === 'grading'
+                                    ? '#fbbf24'
+                                    : '#60a5fa',
+                              color: 'white',
                             }}
                           >
-                            {activity.type === 'submission' ? <AssignmentIcon fontSize="small" /> :
-                             activity.type === 'grading' ? <GradingIcon fontSize="small" /> :
-                             <CheckCircle fontSize="small" />}
+                            {activity.type === 'submission' ? (
+                              <AssignmentIcon fontSize="small" />
+                            ) : activity.type === 'grading' ? (
+                              <GradingIcon fontSize="small" />
+                            ) : (
+                              <CheckCircle fontSize="small" />
+                            )}
                           </Box>
                         </ListItemIcon>
                         <ListItemText
@@ -544,10 +579,14 @@ const FacultyDashboard = () => {
   };
 
   return (
-    <Box sx={{ 
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #0a0a0f 0%, #111118 50%, #0a0a1a 100%)'
-    }}>      <UnifiedDashboardLayout
+    <Box
+      sx={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #0a0a0f 0%, #111118 50%, #0a0a1a 100%)',
+      }}
+    >
+      {' '}
+      <UnifiedDashboardLayout
         title="Faculty Dashboard"
         menuItems={menuItems}
         currentView={currentView}
@@ -557,7 +596,6 @@ const FacultyDashboard = () => {
       >
         {renderContent()}
       </UnifiedDashboardLayout>
-
       {/* Snackbar for notifications */}
       <Snackbar
         open={snackbar.open}
@@ -565,11 +603,7 @@ const FacultyDashboard = () => {
         onClose={handleSnackbarClose}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       >
-        <Alert 
-          onClose={handleSnackbarClose} 
-          severity={snackbar.severity}
-          sx={{ width: '100%' }}
-        >
+        <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: '100%' }}>
           {snackbar.message}
         </Alert>
       </Snackbar>
@@ -578,4 +612,3 @@ const FacultyDashboard = () => {
 };
 
 export default FacultyDashboard;
-

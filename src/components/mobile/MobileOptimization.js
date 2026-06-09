@@ -36,7 +36,7 @@ export const useTouchGestures = (element, options = {}) => {
     let longPressTimer = null;
     let doubleTapTimer = null;
 
-    const handleTouchStart = (e) => {
+    const handleTouchStart = e => {
       const touch = e.touches[0];
       const time = Date.now();
 
@@ -47,8 +47,7 @@ export const useTouchGestures = (element, options = {}) => {
         currentX: touch.clientX,
         currentY: touch.clientY,
         startTime: time,
-        initialDistance: e.touches.length > 1 ? 
-          getDistance(e.touches[0], e.touches[1]) : 0,
+        initialDistance: e.touches.length > 1 ? getDistance(e.touches[0], e.touches[1]) : 0,
       }));
 
       // Long press detection
@@ -61,9 +60,9 @@ export const useTouchGestures = (element, options = {}) => {
       e.preventDefault();
     };
 
-    const handleTouchMove = (e) => {
+    const handleTouchMove = e => {
       const touch = e.touches[0];
-      
+
       setTouchState(prev => ({
         ...prev,
         currentX: touch.clientX,
@@ -74,7 +73,7 @@ export const useTouchGestures = (element, options = {}) => {
       if (longPressTimer) {
         const deltaX = Math.abs(touch.clientX - touchState.startX);
         const deltaY = Math.abs(touch.clientY - touchState.startY);
-        
+
         if (deltaX > 10 || deltaY > 10) {
           clearTimeout(longPressTimer);
           longPressTimer = null;
@@ -91,7 +90,7 @@ export const useTouchGestures = (element, options = {}) => {
       e.preventDefault();
     };
 
-    const handleTouchEnd = (e) => {
+    const handleTouchEnd = e => {
       if (longPressTimer) {
         clearTimeout(longPressTimer);
         longPressTimer = null;
@@ -169,9 +168,7 @@ export const useResponsiveDesign = () => {
 
   useEffect(() => {
     const handleOrientationChange = () => {
-      setOrientation(
-        window.innerHeight > window.innerWidth ? 'portrait' : 'landscape'
-      );
+      setOrientation(window.innerHeight > window.innerWidth ? 'portrait' : 'landscape');
     };
 
     window.addEventListener('resize', handleOrientationChange);
@@ -198,86 +195,91 @@ export const useResponsiveDesign = () => {
 };
 
 // Touch-friendly component wrapper
-export const TouchFriendlyWrapper = React.forwardRef(({ 
-  children, 
-  onSwipeLeft,
-  onSwipeRight,
-  onSwipeUp,
-  onSwipeDown,
-  onPinch,
-  onTap,
-  onDoubleTap,
-  onLongPress,
-  style,
-  ...props 
-}, ref) => {
-  const elementRef = useRef();
-  const { isMobile } = useResponsiveDesign();
+export const TouchFriendlyWrapper = React.forwardRef(
+  (
+    {
+      children,
+      onSwipeLeft,
+      onSwipeRight,
+      onSwipeUp,
+      onSwipeDown,
+      onPinch,
+      onTap,
+      onDoubleTap,
+      onLongPress,
+      style,
+      ...props
+    },
+    ref
+  ) => {
+    const elementRef = useRef();
+    const { isMobile } = useResponsiveDesign();
 
-  useTouchGestures(elementRef, {
-    onSwipeLeft,
-    onSwipeRight,
-    onSwipeUp,
-    onSwipeDown,
-    onPinch,
-    onTap,
-    onDoubleTap,
-    onLongPress,
-  });
+    useTouchGestures(elementRef, {
+      onSwipeLeft,
+      onSwipeRight,
+      onSwipeUp,
+      onSwipeDown,
+      onPinch,
+      onTap,
+      onDoubleTap,
+      onLongPress,
+    });
 
-  const touchFriendlyStyle = {
-    ...style,
-    touchAction: 'manipulation',
-    userSelect: 'none',
-    WebkitTouchCallout: 'none',
-    WebkitUserSelect: 'none',
-    ...(isMobile && {
-      minHeight: '44px', // iOS accessibility guideline
-      minWidth: '44px',
-    }),
-  };
+    const touchFriendlyStyle = {
+      ...style,
+      touchAction: 'manipulation',
+      userSelect: 'none',
+      WebkitTouchCallout: 'none',
+      WebkitUserSelect: 'none',
+      ...(isMobile && {
+        minHeight: '44px', // iOS accessibility guideline
+        minWidth: '44px',
+      }),
+    };
 
-  return (
-    <div
-      ref={(el) => {
-        elementRef.current = el;
-        if (ref) {
-          if (typeof ref === 'function') ref(el);
-          else ref.current = el;
-        }
-      }}
-      style={touchFriendlyStyle}
-      {...props}
-    >
-      {children}
-    </div>
-  );
-});
+    return (
+      <div
+        ref={el => {
+          elementRef.current = el;
+          if (ref) {
+            if (typeof ref === 'function') ref(el);
+            else ref.current = el;
+          }
+        }}
+        style={touchFriendlyStyle}
+        {...props}
+      >
+        {children}
+      </div>
+    );
+  }
+);
 
 // Pull-to-refresh component
-export const PullToRefresh = ({ 
-  onRefresh, 
-  children, 
+export const PullToRefresh = ({
+  onRefresh,
+  children,
   refreshThreshold = 80,
-  loadingComponent = <div>Refreshing...</div> 
+  loadingComponent = <div>Refreshing...</div>,
 }) => {
   const [pullDistance, setPullDistance] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [startY, setStartY] = useState(0);
   const containerRef = useRef();
 
-  const handleTouchStart = (e) => {
+  const handleTouchStart = e => {
     if (window.scrollY === 0) {
       setStartY(e.touches[0].clientY);
     }
   };
 
-  const handleTouchMove = (e) => {
+  const handleTouchMove = e => {
     if (startY > 0 && window.scrollY === 0) {
       const currentY = e.touches[0].clientY;
       const distance = Math.max(0, currentY - startY);
       setPullDistance(distance);
-      
+
       if (distance > 0) {
         e.preventDefault();
       }
@@ -346,8 +348,9 @@ export const useVirtualKeyboard = () => {
     const handleViewportChange = () => {
       const currentHeight = window.visualViewport?.height || window.innerHeight;
       const heightDifference = initialViewportHeight - currentHeight;
-      
-      if (heightDifference > 150) { // Threshold for keyboard detection
+
+      if (heightDifference > 150) {
+        // Threshold for keyboard detection
         setIsVirtualKeyboardOpen(true);
         setKeyboardHeight(heightDifference);
       } else {
@@ -373,12 +376,7 @@ export const useVirtualKeyboard = () => {
 };
 
 // Mobile-optimized navigation component
-export const MobileNavigation = ({ 
-  items, 
-  onItemSelect, 
-  currentPath,
-  bottomNavigation = true 
-}) => {
+export const MobileNavigation = ({ items, onItemSelect, currentPath, bottomNavigation = true }) => {
   const { isMobile } = useResponsiveDesign();
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -406,7 +404,7 @@ export const MobileNavigation = ({
     boxShadow: '0 -2px 8px rgba(0,0,0,0.1)',
   };
 
-  const itemStyle = (index) => ({
+  const itemStyle = index => ({
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
@@ -429,7 +427,7 @@ export const MobileNavigation = ({
           onClick={() => handleItemSelect(item, index)}
           role="button"
           tabIndex={0}
-          onKeyPress={(e) => {
+          onKeyPress={e => {
             if (e.key === 'Enter' || e.key === ' ') {
               handleItemSelect(item, index);
             }
@@ -464,8 +462,9 @@ export const useDeviceCapabilities = () => {
         hasGeolocation: 'geolocation' in navigator,
         hasDeviceMotion: 'DeviceMotionEvent' in window,
         hasVibration: 'vibrate' in navigator,
-        isStandalone: window.matchMedia('(display-mode: standalone)').matches ||
-                     window.navigator.standalone === true,
+        isStandalone:
+          window.matchMedia('(display-mode: standalone)').matches ||
+          window.navigator.standalone === true,
         connectionType: navigator.connection?.effectiveType || 'unknown',
         deviceMemory: navigator.deviceMemory || 'unknown',
       };
@@ -501,7 +500,7 @@ export const useSafeArea = () => {
   useEffect(() => {
     const updateSafeArea = () => {
       const computedStyle = getComputedStyle(document.documentElement);
-      
+
       setSafeArea({
         top: parseInt(computedStyle.getPropertyValue('--sat') || '0'),
         right: parseInt(computedStyle.getPropertyValue('--sar') || '0'),
@@ -534,4 +533,3 @@ const MobileOptimization = {
 };
 
 export default MobileOptimization;
-

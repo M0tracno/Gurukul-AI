@@ -1,7 +1,7 @@
 /**
  * Shared type definitions for Gurukul AI
  * These types define the data contracts between frontend and backend.
- * 
+ *
  * Convention:
  *   - I* prefix for interfaces that mirror Mongoose documents
  *   - *DTO suffix for data transfer objects (API payloads)
@@ -170,7 +170,12 @@ export interface IGrade extends IBaseDocument {
 
 // ─── Message ─────────────────────────────────────────────────────────────────
 
-export type MessageType = 'text' | 'announcement' | 'notification' | 'academic_update' | 'attendance_alert';
+export type MessageType =
+  | 'text'
+  | 'announcement'
+  | 'notification'
+  | 'academic_update'
+  | 'attendance_alert';
 export type MessagePriority = 'low' | 'normal' | 'high' | 'urgent';
 export type SenderRole = 'faculty' | 'student' | 'parent' | 'admin' | 'system';
 

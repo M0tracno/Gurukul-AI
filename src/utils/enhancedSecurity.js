@@ -3,7 +3,8 @@ import DOMPurify from 'dompurify';
 // Enhanced security validation and protection utilities
 
 // Input sanitization and validation
-export class SecurityValidator {  static patterns = {
+export class SecurityValidator {
+  static patterns = {
     email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
     phone: /^\+?[\d\s\-()]{10,}$/,
     alphanumeric: /^[a-zA-Z0-9]+$/,
@@ -46,34 +47,34 @@ export class SecurityValidator {  static patterns = {
     if (!input) return { isValid: true };
 
     const sanitized = this.sanitizeInput(input, type);
-    
+
     if (sanitized.length < minLength) {
-      return { 
-        isValid: false, 
-        error: `Minimum length is ${minLength} characters` 
+      return {
+        isValid: false,
+        error: `Minimum length is ${minLength} characters`,
       };
     }
 
     if (sanitized.length > maxLength) {
-      return { 
-        isValid: false, 
-        error: `Maximum length is ${maxLength} characters` 
+      return {
+        isValid: false,
+        error: `Maximum length is ${maxLength} characters`,
       };
     }
 
     const pattern = this.patterns[type];
     if (pattern && !pattern.test(sanitized)) {
-      return { 
-        isValid: false, 
-        error: `Invalid ${type} format` 
+      return {
+        isValid: false,
+        error: `Invalid ${type} format`,
       };
     }
 
     // Check for malicious patterns
     if (!this.patterns.noScript.test(sanitized) || !this.patterns.noSql.test(sanitized)) {
-      return { 
-        isValid: false, 
-        error: 'Invalid characters detected' 
+      return {
+        isValid: false,
+        error: 'Invalid characters detected',
       };
     }
 
@@ -88,9 +89,9 @@ export class SecurityValidator {  static patterns = {
     Object.keys(rules).forEach(field => {
       const value = formData[field];
       const rule = rules[field];
-      
+
       const validation = this.validateInput(value, rule.type, rule.options);
-      
+
       if (!validation.isValid) {
         errors[field] = validation.error;
         isValid = false;
@@ -105,21 +106,21 @@ export class SecurityValidator {  static patterns = {
 
 // XSS Protection
 export const xssProtection = {
-  escapeHtml: (text) => {
+  escapeHtml: text => {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
   },
 
-  sanitizeUrl: (url) => {
+  sanitizeUrl: url => {
     try {
       const urlObj = new URL(url);
       const allowedProtocols = ['http:', 'https:', 'mailto:', 'tel:'];
-      
+
       if (!allowedProtocols.includes(urlObj.protocol)) {
         return '#';
       }
-      
+
       return urlObj.href;
     } catch {
       return '#';
@@ -128,15 +129,15 @@ export const xssProtection = {
 
   sanitizeAttribute: (attr, value) => {
     const dangerousAttrs = ['onclick', 'onload', 'onerror', 'onmouseover'];
-    
+
     if (dangerousAttrs.includes(attr.toLowerCase())) {
       return null;
     }
-    
+
     if (attr.toLowerCase() === 'href') {
       return xssProtection.sanitizeUrl(value);
     }
-    
+
     return SecurityValidator.sanitizeHtml(value);
   },
 };
@@ -149,7 +150,7 @@ export const csrfProtection = {
     return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
   },
 
-  setToken: (token) => {
+  setToken: token => {
     sessionStorage.setItem('csrf_token', token);
     // Set meta tag for forms
     let metaTag = document.querySelector('meta[name="csrf-token"]');
@@ -162,11 +163,13 @@ export const csrfProtection = {
   },
 
   getToken: () => {
-    return sessionStorage.getItem('csrf_token') || 
-           document.querySelector('meta[name="csrf-token"]')?.content;
+    return (
+      sessionStorage.getItem('csrf_token') ||
+      document.querySelector('meta[name="csrf-token"]')?.content
+    );
   },
 
-  validateToken: (token) => {
+  validateToken: token => {
     const storedToken = csrfProtection.getToken();
     return storedToken && token === storedToken;
   },
@@ -174,7 +177,7 @@ export const csrfProtection = {
 
 // Authentication Security
 export const authSecurity = {
-  hashPassword: async (password) => {
+  hashPassword: async password => {
     const encoder = new TextEncoder();
     const data = encoder.encode(password);
     const hash = await crypto.subtle.digest('SHA-256', data);
@@ -183,7 +186,7 @@ export const authSecurity = {
       .join('');
   },
 
-  validatePasswordStrength: (password) => {
+  validatePasswordStrength: password => {
     const checks = {
       length: password.length >= 8,
       uppercase: /[A-Z]/.test(password),
@@ -206,12 +209,10 @@ export const authSecurity = {
   generateSecureToken: (length = 32) => {
     const array = new Uint8Array(length);
     crypto.getRandomValues(array);
-    return btoa(String.fromCharCode.apply(null, array))
-      .replace(/[+/=]/g, '')
-      .substring(0, length);
+    return btoa(String.fromCharCode.apply(null, array)).replace(/[+/=]/g, '').substring(0, length);
   },
 
-  validateJWT: (token) => {
+  validateJWT: token => {
     try {
       const parts = token.split('.');
       if (parts.length !== 3) return false;
@@ -237,16 +238,14 @@ export class RateLimiter {
   isAllowed(identifier) {
     const now = Date.now();
     const userRequests = this.requests.get(identifier) || [];
-    
+
     // Remove old requests outside time window
-    const validRequests = userRequests.filter(
-      timestamp => now - timestamp < this.timeWindow
-    );
-    
+    const validRequests = userRequests.filter(timestamp => now - timestamp < this.timeWindow);
+
     if (validRequests.length >= this.maxRequests) {
       return false;
     }
-    
+
     validRequests.push(now);
     this.requests.set(identifier, validRequests);
     return true;
@@ -255,17 +254,15 @@ export class RateLimiter {
   getRemainingRequests(identifier) {
     const userRequests = this.requests.get(identifier) || [];
     const now = Date.now();
-    const validRequests = userRequests.filter(
-      timestamp => now - timestamp < this.timeWindow
-    );
-    
+    const validRequests = userRequests.filter(timestamp => now - timestamp < this.timeWindow);
+
     return Math.max(0, this.maxRequests - validRequests.length);
   }
 
   getResetTime(identifier) {
     const userRequests = this.requests.get(identifier) || [];
     if (userRequests.length === 0) return 0;
-    
+
     const oldestRequest = Math.min(...userRequests);
     return oldestRequest + this.timeWindow;
   }
@@ -279,7 +276,7 @@ export const cspHelpers = {
     return btoa(String.fromCharCode.apply(null, array));
   },
 
-  createCSPHeader: (nonce) => {
+  createCSPHeader: nonce => {
     return {
       'Content-Security-Policy': [
         "default-src 'self'",
@@ -292,8 +289,8 @@ export const cspHelpers = {
         "base-uri 'self'",
         "form-action 'self'",
         "frame-ancestors 'none'",
-        "upgrade-insecure-requests"
-      ].join('; ')
+        'upgrade-insecure-requests',
+      ].join('; '),
     };
   },
 };
@@ -338,7 +335,7 @@ export const securityMonitoring = {
   detectSuspiciousActivity: () => {
     // Detect rapid form submissions
     let lastSubmission = 0;
-    return (formType) => {
+    return formType => {
       const now = Date.now();
       if (now - lastSubmission < 1000) {
         securityMonitoring.logSecurityEvent('rapid_form_submission', {
@@ -347,7 +344,8 @@ export const securityMonitoring = {
         });
         return true;
       }
-      lastSubmission = now;    return false;
+      lastSubmission = now;
+      return false;
     };
   },
 };
@@ -363,4 +361,3 @@ const EnhancedSecurity = {
 };
 
 export default EnhancedSecurity;
-

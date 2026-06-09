@@ -11,8 +11,8 @@
  * **Validates: Requirements 10.1, 10.2, 10.3**
  */
 
-import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
+import { describe, it, expect } from 'vitest';
 
 // ---------------------------------------------------------------------------
 // Pure logic helpers — the sort/filter/pagination operations consumers perform
@@ -54,14 +54,14 @@ function sortRows<T extends Row>(rows: T[], columnKey: string, direction: 'asc' 
  */
 function filterRows<T extends Row>(
   rows: T[],
-  filters: { columnKey: string; value: string }[],
+  filters: { columnKey: string; value: string }[]
 ): T[] {
   if (filters.length === 0) return rows;
-  return rows.filter((row) =>
-    filters.every((f) => {
+  return rows.filter(row =>
+    filters.every(f => {
       const cellVal = String(row[f.columnKey] ?? '').toLowerCase();
       return cellVal.includes(f.value.toLowerCase());
-    }),
+    })
   );
 }
 
@@ -78,12 +78,14 @@ function paginateRows<T>(rows: T[], page: number, pageSize: number): T[] {
 // ---------------------------------------------------------------------------
 
 /** Generates a row with known sortable/filterable columns. */
-const rowArb: fc.Arbitrary<{ id: number; name: string; score: number; status: string }> = fc.record({
-  id: fc.integer({ min: 1, max: 100000 }),
-  name: fc.string({ minLength: 1, maxLength: 30 }),
-  score: fc.integer({ min: 0, max: 1000 }),
-  status: fc.constantFrom('active', 'inactive', 'pending', 'blocked'),
-});
+const rowArb: fc.Arbitrary<{ id: number; name: string; score: number; status: string }> = fc.record(
+  {
+    id: fc.integer({ min: 1, max: 100000 }),
+    name: fc.string({ minLength: 1, maxLength: 30 }),
+    score: fc.integer({ min: 0, max: 1000 }),
+    status: fc.constantFrom('active', 'inactive', 'pending', 'blocked'),
+  }
+);
 
 /** Generates a non-empty dataset of rows. */
 const datasetArb = fc.array(rowArb, { minLength: 1, maxLength: 100 });
@@ -112,8 +114,8 @@ describe('Feature: admin-portal-overhaul, Property 13: Data table sort ordering'
         expect(sorted.length).toBe(rows.length);
 
         // Verify it's a permutation by checking multiset equality (by id)
-        const inputIds = rows.map((r) => r.id).sort((a, b) => a - b);
-        const sortedIds = sorted.map((r) => r.id).sort((a, b) => a - b);
+        const inputIds = rows.map(r => r.id).sort((a, b) => a - b);
+        const sortedIds = sorted.map(r => r.id).sort((a, b) => a - b);
         expect(sortedIds).toEqual(inputIds);
 
         // 2. Adjacent elements respect the sort ordering
@@ -135,7 +137,7 @@ describe('Feature: admin-portal-overhaul, Property 13: Data table sort ordering'
           }
         }
       }),
-      { numRuns: 100 },
+      { numRuns: 100 }
     );
   });
 });
@@ -155,7 +157,7 @@ describe('Feature: admin-portal-overhaul, Property 14: Data table filter soundne
             columnKey: fc.constantFrom('name', 'status'),
             value: fc.string({ minLength: 1, maxLength: 5 }),
           }),
-          { minLength: 1, maxLength: 3 },
+          { minLength: 1, maxLength: 3 }
         ),
         (rows, filters) => {
           const filtered = filterRows(rows, filters);
@@ -172,16 +174,16 @@ describe('Feature: admin-portal-overhaul, Property 14: Data table filter soundne
           expect(filtered.length).toBeLessThanOrEqual(rows.length);
 
           // No row that satisfies the predicate should be excluded
-          const expectedFiltered = rows.filter((row) =>
-            filters.every((f) => {
+          const expectedFiltered = rows.filter(row =>
+            filters.every(f => {
               const cellVal = String(row[f.columnKey] ?? '').toLowerCase();
               return cellVal.includes(f.value.toLowerCase());
-            }),
+            })
           );
           expect(filtered.length).toBe(expectedFiltered.length);
-        },
+        }
       ),
-      { numRuns: 100 },
+      { numRuns: 100 }
     );
   });
 });
@@ -220,7 +222,7 @@ describe('Feature: admin-portal-overhaul, Property 15: Data table pagination int
           expect(allPaginatedRows[i]).toEqual(rows[i]);
         }
       }),
-      { numRuns: 100 },
+      { numRuns: 100 }
     );
   });
 });

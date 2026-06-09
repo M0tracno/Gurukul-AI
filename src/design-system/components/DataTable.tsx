@@ -129,7 +129,7 @@ export interface DataTableProps<TRow extends Record<string, unknown> = Record<st
 // ---------------------------------------------------------------------------
 
 function getFilterValue(filters: FilterState[] | undefined, columnKey: string): string {
-  return filters?.find((f) => f.columnKey === columnKey)?.value ?? '';
+  return filters?.find(f => f.columnKey === columnKey)?.value ?? '';
 }
 
 // ---------------------------------------------------------------------------
@@ -189,8 +189,8 @@ export function DataTable<TRow extends Record<string, unknown>>({
   // ---- derived values -----------------------------------------------------
   const totalRows = total ?? rows.length;
   const pageCount = pageSize > 0 ? Math.ceil(totalRows / pageSize) : 1;
-  const hasFilterableColumns = columns.some((c) => c.filterable);
-  const activeFilterCount = (filters ?? []).filter((f) => f.value.trim() !== '').length;
+  const hasFilterableColumns = columns.some(c => c.filterable);
+  const activeFilterCount = (filters ?? []).filter(f => f.value.trim() !== '').length;
 
   // ---- event handlers -----------------------------------------------------
   function handleSortClick(columnKey: string) {
@@ -205,7 +205,7 @@ export function DataTable<TRow extends Record<string, unknown>>({
   function handleFilterChange(columnKey: string, value: string) {
     if (!onFilterChange) return;
     const existing = filters ?? [];
-    const others = existing.filter((f) => f.columnKey !== columnKey);
+    const others = existing.filter(f => f.columnKey !== columnKey);
     onFilterChange(value ? [...others, { columnKey, value }] : others);
   }
 
@@ -233,14 +233,14 @@ export function DataTable<TRow extends Record<string, unknown>>({
             sx={{ color: colors.neutral[500], flexShrink: 0 }}
           />
           {columns
-            .filter((c) => c.filterable)
-            .map((col) => (
+            .filter(c => c.filterable)
+            .map(col => (
               <TextField
                 key={col.key}
                 size="small"
                 label={`Filter ${col.header}`}
                 value={getFilterValue(filters, col.key)}
-                onChange={(e) => handleFilterChange(col.key, e.target.value)}
+                onChange={e => handleFilterChange(col.key, e.target.value)}
                 slotProps={{
                   input: {
                     startAdornment: (
@@ -309,7 +309,7 @@ export function DataTable<TRow extends Record<string, unknown>>({
                   },
                 }}
               >
-                {columns.map((col) => (
+                {columns.map(col => (
                   <TableCell
                     key={col.key}
                     align={col.align ?? 'left'}
@@ -398,7 +398,7 @@ export function DataTable<TRow extends Record<string, unknown>>({
                       role={isClickable ? 'button' : undefined}
                       onKeyDown={
                         isClickable
-                          ? (e) => {
+                          ? e => {
                               if (e.key === 'Enter' || e.key === ' ') {
                                 e.preventDefault();
                                 onRowSelect!(row);
@@ -427,7 +427,7 @@ export function DataTable<TRow extends Record<string, unknown>>({
                         },
                       }}
                     >
-                      {columns.map((col) => (
+                      {columns.map(col => (
                         <TableCell key={col.key} align={col.align ?? 'left'}>
                           {col.render ? col.render(row) : String(row[col.key] ?? '')}
                         </TableCell>

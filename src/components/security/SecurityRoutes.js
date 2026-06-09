@@ -8,7 +8,6 @@ import { AdminRoute, FacultyRoute, SecureRoute } from './SecurityMiddleware';
  * Defines routes for security-related pages and components
  */
 
-
 // Security middleware
 
 // Lazy load security components for better performance
@@ -24,108 +23,114 @@ const SecurityRoutes = () => {
     <Suspense fallback={<ProgressiveLoader message="Loading security features..." />}>
       <Routes>
         {/* Main security dashboard - accessible to all authenticated users */}
-        <Route 
-          path="/dashboard" 
+        <Route
+          path="/dashboard"
           element={
             <SecureRoute allowedRoles={['admin', 'faculty', 'student', 'parent']}>
               <SecurityDashboard />
             </SecureRoute>
-          } 
+          }
         />
-        
+
         {/* Security settings - accessible to all authenticated users */}
-        <Route 
-          path="/settings" 
+        <Route
+          path="/settings"
           element={
             <SecureRoute allowedRoles={['admin', 'faculty', 'student', 'parent']}>
               <SecuritySettings />
             </SecureRoute>
-          } 
+          }
         />
-        
+
         {/* MFA setup - accessible to all authenticated users */}
-        <Route 
-          path="/mfa-setup" 
+        <Route
+          path="/mfa-setup"
           element={
             <SecureRoute allowedRoles={['admin', 'faculty', 'student', 'parent']}>
               <MFASetupDialog open={true} />
             </SecureRoute>
-          } 
+          }
         />
-        
+
         {/* Privacy consent - accessible to all authenticated users */}
-        <Route 
-          path="/privacy" 
+        <Route
+          path="/privacy"
           element={
             <SecureRoute allowedRoles={['admin', 'faculty', 'student', 'parent']}>
               <PrivacyConsentManager />
             </SecureRoute>
-          } 
+          }
         />
-        
+
         {/* Incident response - admin and faculty only with high security */}
-        <Route 
-          path="/incidents" 
+        <Route
+          path="/incidents"
           element={
-            <SecureRoute 
-              allowedRoles={['admin', 'faculty']} 
+            <SecureRoute
+              allowedRoles={['admin', 'faculty']}
               requiredSecurityLevel="high"
               requireMFA={true}
             >
               <IncidentResponseInterface />
             </SecureRoute>
-          } 
+          }
         />
-        
+
         {/* Advanced security management - admin only */}
-        <Route 
-          path="/admin/*" 
+        <Route
+          path="/admin/*"
           element={
             <AdminRoute requiredPermissions={['security_management']}>
               <Suspense fallback={<ProgressiveLoader message="Loading admin security..." />}>
                 <Routes>
                   <Route path="dashboard" element={<SecurityDashboard compactMode={false} />} />
-                  <Route path="incidents" element={<IncidentResponseInterface forensicsMode={true} />} />
+                  <Route
+                    path="incidents"
+                    element={<IncidentResponseInterface forensicsMode={true} />}
+                  />
                   <Route path="settings" element={<SecuritySettings advancedMode={true} />} />
                 </Routes>
               </Suspense>
             </AdminRoute>
-          } 
+          }
         />
-        
+
         {/* Faculty security routes */}
-        <Route 
-          path="/faculty/*" 
+        <Route
+          path="/faculty/*"
           element={
             <FacultyRoute>
               <Suspense fallback={<ProgressiveLoader message="Loading faculty security..." />}>
                 <Routes>
                   <Route path="dashboard" element={<SecurityDashboard showAlerts={true} />} />
-                  <Route path="incidents" element={<IncidentResponseInterface allowEscalation={false} />} />
+                  <Route
+                    path="incidents"
+                    element={<IncidentResponseInterface allowEscalation={false} />}
+                  />
                 </Routes>
               </Suspense>
             </FacultyRoute>
-          } 
+          }
         />
-        
+
         {/* Security integration example - admin only for testing */}
-        <Route 
-          path="/example" 
+        <Route
+          path="/example"
           element={
             <AdminRoute>
               <SecurityIntegrationExample />
             </AdminRoute>
-          } 
+          }
         />
-        
+
         {/* Default route redirects to dashboard */}
-        <Route 
-          path="/" 
+        <Route
+          path="/"
           element={
             <SecureRoute allowedRoles={['admin', 'faculty', 'student', 'parent']}>
               <SecurityDashboard />
             </SecureRoute>
-          } 
+          }
         />
       </Routes>
     </Suspense>
@@ -133,4 +138,3 @@ const SecurityRoutes = () => {
 };
 
 export default SecurityRoutes;
-

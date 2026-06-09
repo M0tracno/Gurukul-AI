@@ -20,7 +20,16 @@ export { createGurkulTheme, darkTheme, lightTheme } from './theme';
 export type { CreateThemeOptions } from './theme';
 
 // Components
-export { Button, Card, DataTable, Form, Modal, Navigation, SelectField, TextField } from './components';
+export {
+  Button,
+  Card,
+  DataTable,
+  Form,
+  Modal,
+  Navigation,
+  SelectField,
+  TextField,
+} from './components';
 export type {
   ButtonProps,
   CardProps,

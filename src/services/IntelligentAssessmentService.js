@@ -17,23 +17,23 @@ class IntelligentAssessmentService extends EventEmitter {
   async initialize() {
     try {
       console.log('Initializing Intelligent Assessment Service...');
-      
+
       // Initialize AI models for question generation and grading
       await this.initializeMLModels();
-      
+
       // Initialize feedback engine
       await this.initializeFeedbackEngine();
-      
+
       // Load question templates and patterns
       await this.loadQuestionTemplates();
-      
+
       // Initialize cheating detection system
       await this.initializeCheatingDetection();
-      
+
       this.initialized = true;
       this.emit('serviceInitialized');
       console.log('Intelligent Assessment Service initialized successfully');
-      
+
       return { success: true, message: 'Service initialized' };
     } catch (error) {
       console.error('Failed to initialize Intelligent Assessment Service:', error);
@@ -47,28 +47,28 @@ class IntelligentAssessmentService extends EventEmitter {
       model: 'gpt-3.5-turbo',
       temperature: 0.7,
       maxTokens: 500,
-      status: 'ready'
+      status: 'ready',
     });
 
     this.mlModels.set('difficultyPredictor', {
       algorithm: 'linear_regression',
       features: ['content_complexity', 'vocabulary_level', 'concept_depth'],
       accuracy: 0.92,
-      status: 'ready'
+      status: 'ready',
     });
 
     this.mlModels.set('performancePredictor', {
       algorithm: 'random_forest',
       features: ['past_performance', 'learning_style', 'time_patterns'],
       accuracy: 0.88,
-      status: 'ready'
+      status: 'ready',
     });
 
     this.mlModels.set('feedbackOptimizer', {
       algorithm: 'neural_network',
       layers: [128, 64, 32],
       activation: 'relu',
-      status: 'ready'
+      status: 'ready',
     });
   }
 
@@ -82,8 +82,8 @@ class IntelligentAssessmentService extends EventEmitter {
         immediate: 'Instant response validation',
         corrective: 'Mistake identification and guidance',
         encouraging: 'Positive reinforcement and motivation',
-        adaptive: 'Personalized hints based on learning profile'
-      }
+        adaptive: 'Personalized hints based on learning profile',
+      },
     };
   }
 
@@ -94,38 +94,38 @@ class IntelligentAssessmentService extends EventEmitter {
         algebra: [
           'Solve for x: {equation}',
           'Simplify the expression: {expression}',
-          'Find the value of {variable} when {condition}'
+          'Find the value of {variable} when {condition}',
         ],
         geometry: [
           'Calculate the area of a {shape} with {dimensions}',
           'Find the {measurement} of the {geometric_object}',
-          'Prove that {geometric_statement}'
-        ]
+          'Prove that {geometric_statement}',
+        ],
       },
       science: {
         physics: [
           'Calculate the {quantity} when {given_values}',
           'Explain the relationship between {concept1} and {concept2}',
-          'Predict what happens when {scenario}'
+          'Predict what happens when {scenario}',
         ],
         chemistry: [
           'Balance the chemical equation: {equation}',
           'Identify the {compound_type} in {chemical_formula}',
-          'Calculate the {measurement} of {substance}'
-        ]
+          'Calculate the {measurement} of {substance}',
+        ],
       },
       language: {
         grammar: [
           'Identify the {grammar_element} in: "{sentence}"',
           'Correct the grammatical error in: "{incorrect_sentence}"',
-          'Transform the sentence to {tense}: "{base_sentence}"'
+          'Transform the sentence to {tense}: "{base_sentence}"',
         ],
         comprehension: [
           'What is the main idea of the passage?',
           'Explain the meaning of "{phrase}" in context',
-          'Analyze the author\'s tone in paragraph {number}'
-        ]
-      }
+          "Analyze the author's tone in paragraph {number}",
+        ],
+      },
     };
 
     this.questionBank.set('templates', templates);
@@ -133,7 +133,7 @@ class IntelligentAssessmentService extends EventEmitter {
       beginner: { complexity: 1, vocabulary: 'basic', concepts: 1 },
       intermediate: { complexity: 2, vocabulary: 'moderate', concepts: 2 },
       advanced: { complexity: 3, vocabulary: 'complex', concepts: 3 },
-      expert: { complexity: 4, vocabulary: 'specialized', concepts: 4 }
+      expert: { complexity: 4, vocabulary: 'specialized', concepts: 4 },
     });
   }
 
@@ -144,21 +144,21 @@ class IntelligentAssessmentService extends EventEmitter {
         rapid_answers: { threshold: 5, timeLimit: 30000 }, // 5 answers in 30 seconds
         tab_switching: { threshold: 3, penalty: 'warning' },
         copy_paste: { detection: true, action: 'flag' },
-        unusual_patterns: { monitoring: true, aiAnalysis: true }
+        unusual_patterns: { monitoring: true, aiAnalysis: true },
       },
       preventionMeasures: {
         questionRandomization: true,
         timeWindow: true,
         browserLock: false, // Can be enabled for high-stakes assessments
-        webcamMonitoring: false // Optional feature
-      }
+        webcamMonitoring: false, // Optional feature
+      },
     };
   }
 
   // Assessment Management Methods
   async createAssessment(assessmentData) {
     const assessmentId = `assessment_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
+
     const assessment = {
       id: assessmentId,
       title: assessmentData.title,
@@ -171,17 +171,17 @@ class IntelligentAssessmentService extends EventEmitter {
         randomizeQuestions: assessmentData.randomizeQuestions !== false,
         allowRetakes: assessmentData.allowRetakes || false,
         showFeedback: assessmentData.showFeedback !== false,
-        adaptiveDifficulty: assessmentData.adaptiveDifficulty !== false
+        adaptiveDifficulty: assessmentData.adaptiveDifficulty !== false,
       },
       analytics: {
         totalAttempts: 0,
         averageScore: 0,
         completionRate: 0,
-        averageTime: 0
+        averageTime: 0,
       },
       createdAt: new Date(),
       createdBy: assessmentData.createdBy,
-      status: 'draft'
+      status: 'draft',
     };
 
     // Generate questions if not provided
@@ -197,14 +197,14 @@ class IntelligentAssessmentService extends EventEmitter {
 
     this.assessments.set(assessmentId, assessment);
     this.emit('assessmentCreated', { assessmentId, assessment });
-    
+
     return assessment;
   }
 
   async generateQuestions(subject, difficulty, count) {
     const questions = [];
     const templates = this.questionBank.get('templates')[subject];
-    
+
     if (!templates) {
       throw new Error(`No templates available for subject: ${subject}`);
     }
@@ -213,7 +213,7 @@ class IntelligentAssessmentService extends EventEmitter {
       const questionType = this.selectQuestionType();
       const template = this.selectTemplate(templates, questionType);
       const question = await this.generateQuestionFromTemplate(template, difficulty);
-      
+
       questions.push({
         id: `q_${Date.now()}_${i}`,
         type: questionType,
@@ -225,7 +225,7 @@ class IntelligentAssessmentService extends EventEmitter {
         hints: question.hints,
         feedback: question.feedback,
         points: this.calculateQuestionPoints(difficulty),
-        estimatedTime: this.estimateQuestionTime(question, difficulty)
+        estimatedTime: this.estimateQuestionTime(question, difficulty),
       });
     }
 
@@ -247,7 +247,7 @@ class IntelligentAssessmentService extends EventEmitter {
     // AI-powered question generation based on template and difficulty
     // Note: difficultySettings available for future use
     // const difficultySettings = this.questionBank.get('difficulty_levels')[difficulty];
-    
+
     // Simulate AI question generation (in production, this would call an AI service)
     const question = {
       content: this.processTemplate(template, difficulty),
@@ -255,7 +255,7 @@ class IntelligentAssessmentService extends EventEmitter {
       correctAnswer: this.determineCorrectAnswer(template, difficulty),
       explanation: this.generateExplanation(template, difficulty),
       hints: this.generateHints(template, difficulty),
-      feedback: this.generateFeedback(template, difficulty)
+      feedback: this.generateFeedback(template, difficulty),
     };
 
     return question;
@@ -287,7 +287,8 @@ class IntelligentAssessmentService extends EventEmitter {
       variable: () => ['x', 'y', 'z', 'a', 'b'][Math.floor(Math.random() * 5)],
       shape: () => ['circle', 'rectangle', 'triangle', 'square'][Math.floor(Math.random() * 4)],
       dimensions: () => this.generateDimensions(difficulty),
-      quantity: () => ['velocity', 'acceleration', 'force', 'energy'][Math.floor(Math.random() * 4)]
+      quantity: () =>
+        ['velocity', 'acceleration', 'force', 'energy'][Math.floor(Math.random() * 4)],
     };
 
     return valueGenerators[variable] ? valueGenerators[variable]() : variable;
@@ -295,10 +296,14 @@ class IntelligentAssessmentService extends EventEmitter {
 
   generateEquation(difficulty) {
     const complexityMap = {
-      beginner: () => `${Math.floor(Math.random() * 10) + 1}x + ${Math.floor(Math.random() * 10) + 1} = ${Math.floor(Math.random() * 20) + 1}`,
-      intermediate: () => `${Math.floor(Math.random() * 5) + 1}x² + ${Math.floor(Math.random() * 10) + 1}x + ${Math.floor(Math.random() * 10) + 1} = 0`,
-      advanced: () => `${Math.floor(Math.random() * 3) + 1}x³ + ${Math.floor(Math.random() * 5) + 1}x² + ${Math.floor(Math.random() * 10) + 1}x + ${Math.floor(Math.random() * 10) + 1} = 0`,
-      expert: () => `log(${Math.floor(Math.random() * 5) + 1}x) + ${Math.floor(Math.random() * 10) + 1} = ${Math.floor(Math.random() * 10) + 1}`
+      beginner: () =>
+        `${Math.floor(Math.random() * 10) + 1}x + ${Math.floor(Math.random() * 10) + 1} = ${Math.floor(Math.random() * 20) + 1}`,
+      intermediate: () =>
+        `${Math.floor(Math.random() * 5) + 1}x² + ${Math.floor(Math.random() * 10) + 1}x + ${Math.floor(Math.random() * 10) + 1} = 0`,
+      advanced: () =>
+        `${Math.floor(Math.random() * 3) + 1}x³ + ${Math.floor(Math.random() * 5) + 1}x² + ${Math.floor(Math.random() * 10) + 1}x + ${Math.floor(Math.random() * 10) + 1} = 0`,
+      expert: () =>
+        `log(${Math.floor(Math.random() * 5) + 1}x) + ${Math.floor(Math.random() * 10) + 1} = ${Math.floor(Math.random() * 10) + 1}`,
     };
 
     return complexityMap[difficulty] ? complexityMap[difficulty]() : complexityMap.intermediate();
@@ -306,10 +311,14 @@ class IntelligentAssessmentService extends EventEmitter {
 
   generateExpression(difficulty) {
     const complexityMap = {
-      beginner: () => `${Math.floor(Math.random() * 10) + 1}x + ${Math.floor(Math.random() * 10) + 1}`,
-      intermediate: () => `(${Math.floor(Math.random() * 5) + 1}x + ${Math.floor(Math.random() * 5) + 1})(${Math.floor(Math.random() * 5) + 1}x - ${Math.floor(Math.random() * 5) + 1})`,
-      advanced: () => `${Math.floor(Math.random() * 3) + 1}x² + ${Math.floor(Math.random() * 5) + 1}x + ${Math.floor(Math.random() * 10) + 1}`,
-      expert: () => `sin(${Math.floor(Math.random() * 5) + 1}x) + cos(${Math.floor(Math.random() * 5) + 1}x)`
+      beginner: () =>
+        `${Math.floor(Math.random() * 10) + 1}x + ${Math.floor(Math.random() * 10) + 1}`,
+      intermediate: () =>
+        `(${Math.floor(Math.random() * 5) + 1}x + ${Math.floor(Math.random() * 5) + 1})(${Math.floor(Math.random() * 5) + 1}x - ${Math.floor(Math.random() * 5) + 1})`,
+      advanced: () =>
+        `${Math.floor(Math.random() * 3) + 1}x² + ${Math.floor(Math.random() * 5) + 1}x + ${Math.floor(Math.random() * 10) + 1}`,
+      expert: () =>
+        `sin(${Math.floor(Math.random() * 5) + 1}x) + cos(${Math.floor(Math.random() * 5) + 1}x)`,
     };
 
     return complexityMap[difficulty] ? complexityMap[difficulty]() : complexityMap.intermediate();
@@ -317,10 +326,12 @@ class IntelligentAssessmentService extends EventEmitter {
 
   generateDimensions(difficulty) {
     const ranges = {
-      beginner: () => `length = ${Math.floor(Math.random() * 10) + 1}cm, width = ${Math.floor(Math.random() * 10) + 1}cm`,
+      beginner: () =>
+        `length = ${Math.floor(Math.random() * 10) + 1}cm, width = ${Math.floor(Math.random() * 10) + 1}cm`,
       intermediate: () => `radius = ${Math.floor(Math.random() * 15) + 1}cm`,
-      advanced: () => `side = ${Math.floor(Math.random() * 20) + 1}cm, height = ${Math.floor(Math.random() * 20) + 1}cm`,
-      expert: () => `complex dimensions with variables`
+      advanced: () =>
+        `side = ${Math.floor(Math.random() * 20) + 1}cm, height = ${Math.floor(Math.random() * 20) + 1}cm`,
+      expert: () => `complex dimensions with variables`,
     };
 
     return ranges[difficulty] ? ranges[difficulty]() : ranges.intermediate();
@@ -335,7 +346,7 @@ class IntelligentAssessmentService extends EventEmitter {
       options.push({
         id: `option_${i}`,
         text: `Option ${String.fromCharCode(65 + i)}`,
-        value: this.generateOptionValue(template, difficulty, i)
+        value: this.generateOptionValue(template, difficulty, i),
       });
     }
 
@@ -362,15 +373,16 @@ class IntelligentAssessmentService extends EventEmitter {
       'Start by identifying the given information',
       'Consider what formula or principle applies here',
       'Break down the problem into smaller steps',
-      'Check your work by substituting back into the original equation'
+      'Check your work by substituting back into the original equation',
     ];
   }
 
   generateFeedback(template, difficulty) {
     return {
       correct: 'Excellent! You have demonstrated a strong understanding of this concept.',
-      incorrect: 'Not quite right. Let\'s review the key concepts and try again.',
-      partial: 'You\'re on the right track! Consider reviewing the specific steps where you encountered difficulty.'
+      incorrect: "Not quite right. Let's review the key concepts and try again.",
+      partial:
+        "You're on the right track! Consider reviewing the specific steps where you encountered difficulty.",
     };
   }
 
@@ -379,17 +391,17 @@ class IntelligentAssessmentService extends EventEmitter {
       beginner: 1,
       intermediate: 2,
       advanced: 3,
-      expert: 4
+      expert: 4,
     };
     return pointMap[difficulty] || 2;
   }
 
   estimateQuestionTime(question, difficulty) {
     const baseTime = {
-      beginner: 60000,    // 1 minute
+      beginner: 60000, // 1 minute
       intermediate: 120000, // 2 minutes
-      advanced: 300000,   // 5 minutes
-      expert: 600000      // 10 minutes
+      advanced: 300000, // 5 minutes
+      expert: 600000, // 10 minutes
     };
 
     const typeMultiplier = {
@@ -397,7 +409,7 @@ class IntelligentAssessmentService extends EventEmitter {
       true_false: 0.5,
       short_answer: 1.5,
       essay: 3,
-      fill_blank: 1.2
+      fill_blank: 1.2,
     };
 
     return (baseTime[difficulty] || baseTime.intermediate) * (typeMultiplier[question.type] || 1);
@@ -427,12 +439,12 @@ class IntelligentAssessmentService extends EventEmitter {
         timePerQuestion: [],
         attempts: [],
         hintsUsed: [],
-        feedback: []
+        feedback: [],
       },
       settings: {
         ...assessment.settings,
-        ...options
-      }
+        ...options,
+      },
     };
 
     // Randomize questions if enabled
@@ -466,7 +478,7 @@ class IntelligentAssessmentService extends EventEmitter {
       timeSpent,
       timestamp: new Date(),
       isCorrect: this.evaluateAnswer(question, answer),
-      score: 0
+      score: 0,
     };
 
     // Calculate score
@@ -524,9 +536,7 @@ class IntelligentAssessmentService extends EventEmitter {
   evaluateFillBlank(correct, answer) {
     // Handle multiple possible correct answers
     const correctAnswers = Array.isArray(correct) ? correct : [correct];
-    return correctAnswers.some(ans => 
-      ans.toLowerCase().trim() === answer.toLowerCase().trim()
-    );
+    return correctAnswers.some(ans => ans.toLowerCase().trim() === answer.toLowerCase().trim());
   }
 
   async generateRealTimeFeedback(question, answer, isCorrect) {
@@ -536,13 +546,11 @@ class IntelligentAssessmentService extends EventEmitter {
 
     const feedback = {
       type: isCorrect ? 'correct' : 'incorrect',
-      message: isCorrect ? 
-        question.feedback.correct : 
-        question.feedback.incorrect,
+      message: isCorrect ? question.feedback.correct : question.feedback.incorrect,
       hints: isCorrect ? [] : question.hints.slice(0, 2),
       explanation: isCorrect ? question.explanation : null,
       encouragement: this.generateEncouragement(isCorrect),
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
     return feedback;
@@ -552,16 +560,16 @@ class IntelligentAssessmentService extends EventEmitter {
     const encouragements = {
       correct: [
         'Great job! Keep up the excellent work!',
-        'Perfect! You\'re really understanding this concept.',
+        "Perfect! You're really understanding this concept.",
         'Excellent! Your hard work is paying off.',
-        'Outstanding! You\'ve got this!'
+        "Outstanding! You've got this!",
       ],
       incorrect: [
-        'Don\'t worry, learning is a process. Keep trying!',
-        'You\'re making progress! Every mistake is a learning opportunity.',
-        'Stay positive! You\'re closer to the answer than you think.',
-        'Keep going! You\'ve got the skills to figure this out.'
-      ]
+        "Don't worry, learning is a process. Keep trying!",
+        "You're making progress! Every mistake is a learning opportunity.",
+        "Stay positive! You're closer to the answer than you think.",
+        "Keep going! You've got the skills to figure this out.",
+      ],
     };
 
     const messages = encouragements[isCorrect ? 'correct' : 'incorrect'];
@@ -592,11 +600,11 @@ class IntelligentAssessmentService extends EventEmitter {
     // Adjust the difficulty of remaining questions
     const difficultyLevels = ['beginner', 'intermediate', 'advanced', 'expert'];
     const currentIndex = session.currentQuestionIndex;
-    
+
     for (let i = currentIndex + 1; i < session.questions.length; i++) {
       const question = session.questions[i];
       const currentLevel = difficultyLevels.indexOf(question.difficulty);
-      
+
       if (direction === 'increase' && currentLevel < difficultyLevels.length - 1) {
         question.difficulty = difficultyLevels[currentLevel + 1];
         question.points = this.calculateQuestionPoints(question.difficulty);
@@ -631,7 +639,8 @@ class IntelligentAssessmentService extends EventEmitter {
     const totalQuestions = session.questions.length;
     const correctAnswers = responses.filter(r => r.isCorrect).length;
     const accuracy = correctAnswers / responses.length;
-    const averageTimePerQuestion = responses.reduce((sum, r) => sum + r.timeSpent, 0) / responses.length;
+    const averageTimePerQuestion =
+      responses.reduce((sum, r) => sum + r.timeSpent, 0) / responses.length;
 
     return {
       totalQuestions,
@@ -643,7 +652,7 @@ class IntelligentAssessmentService extends EventEmitter {
       timeSpent: session.timeSpent,
       averageTimePerQuestion,
       difficultyDistribution: this.getDifficultyDistribution(responses),
-      performanceTrend: this.getPerformanceTrend(responses)
+      performanceTrend: this.getPerformanceTrend(responses),
     };
   }
 
@@ -659,13 +668,12 @@ class IntelligentAssessmentService extends EventEmitter {
   getPerformanceTrend(responses) {
     const trend = [];
     let runningAccuracy = 0;
-    
+
     responses.forEach((response, index) => {
-      runningAccuracy = responses.slice(0, index + 1)
-        .filter(r => r.isCorrect).length / (index + 1);
+      runningAccuracy = responses.slice(0, index + 1).filter(r => r.isCorrect).length / (index + 1);
       trend.push(Math.round(runningAccuracy * 100));
     });
-    
+
     return trend;
   }
 
@@ -686,8 +694,9 @@ class IntelligentAssessmentService extends EventEmitter {
       throw new Error('Assessment not found');
     }
 
-    const sessions = Array.from(this.sessions.values())
-      .filter(session => session.assessmentId === assessmentId);
+    const sessions = Array.from(this.sessions.values()).filter(
+      session => session.assessmentId === assessmentId
+    );
 
     const report = {
       assessment,
@@ -697,7 +706,7 @@ class IntelligentAssessmentService extends EventEmitter {
       averageTime: this.calculateAverageTime(sessions),
       difficultyAnalysis: this.analyzeDifficultyPerformance(sessions),
       questionAnalysis: this.analyzeQuestionPerformance(sessions),
-      recommendations: this.generateRecommendations(sessions)
+      recommendations: this.generateRecommendations(sessions),
     };
 
     return report;
@@ -706,18 +715,21 @@ class IntelligentAssessmentService extends EventEmitter {
   calculateAverageScore(sessions) {
     const completedSessions = sessions.filter(s => s.status === 'completed');
     if (completedSessions.length === 0) return 0;
-    
+
     const totalScore = completedSessions.reduce((sum, s) => sum + s.score, 0);
-    const maxScore = completedSessions.reduce((sum, s) => 
-      sum + s.questions.reduce((qSum, q) => qSum + q.points, 0), 0) / completedSessions.length;
-    
+    const maxScore =
+      completedSessions.reduce(
+        (sum, s) => sum + s.questions.reduce((qSum, q) => qSum + q.points, 0),
+        0
+      ) / completedSessions.length;
+
     return Math.round((totalScore / completedSessions.length / maxScore) * 100);
   }
 
   calculateAverageTime(sessions) {
     const completedSessions = sessions.filter(s => s.status === 'completed');
     if (completedSessions.length === 0) return 0;
-    
+
     const totalTime = completedSessions.reduce((sum, s) => sum + s.timeSpent, 0);
     return totalTime / completedSessions.length;
   }
@@ -748,7 +760,7 @@ class IntelligentAssessmentService extends EventEmitter {
 
   analyzeQuestionPerformance(sessions) {
     const questionStats = {};
-    
+
     sessions.forEach(session => {
       session.responses?.forEach(response => {
         if (!questionStats[response.questionId]) {
@@ -756,19 +768,19 @@ class IntelligentAssessmentService extends EventEmitter {
             attempts: 0,
             correct: 0,
             averageTime: 0,
-            totalTime: 0
+            totalTime: 0,
           };
         }
-        
+
         const stats = questionStats[response.questionId];
         stats.attempts++;
         stats.totalTime += response.timeSpent;
         stats.averageTime = stats.totalTime / stats.attempts;
-        
+
         if (response.isCorrect) {
           stats.correct++;
         }
-        
+
         stats.accuracy = Math.round((stats.correct / stats.attempts) * 100);
       });
     });
@@ -778,7 +790,7 @@ class IntelligentAssessmentService extends EventEmitter {
 
   generateRecommendations(sessions) {
     const recommendations = [];
-    
+
     // Analyze overall performance patterns
     const completedSessions = sessions.filter(s => s.status === 'completed');
     if (completedSessions.length === 0) {
@@ -786,9 +798,11 @@ class IntelligentAssessmentService extends EventEmitter {
     }
 
     const averageAccuracy = this.calculateAverageScore(completedSessions);
-    
+
     if (averageAccuracy < 50) {
-      recommendations.push('Consider reviewing fundamental concepts before attempting this assessment');
+      recommendations.push(
+        'Consider reviewing fundamental concepts before attempting this assessment'
+      );
       recommendations.push('Provide additional practice materials for struggling students');
     } else if (averageAccuracy > 90) {
       recommendations.push('Consider increasing difficulty level for better challenge');
@@ -797,7 +811,7 @@ class IntelligentAssessmentService extends EventEmitter {
 
     const averageTime = this.calculateAverageTime(completedSessions);
     const timeLimit = completedSessions[0]?.settings?.timeLimit || 3600000;
-    
+
     if (averageTime > timeLimit * 0.9) {
       recommendations.push('Consider extending time limit or reducing question count');
     } else if (averageTime < timeLimit * 0.5) {
@@ -819,4 +833,3 @@ class IntelligentAssessmentService extends EventEmitter {
 }
 
 export default IntelligentAssessmentService;
-

@@ -16,23 +16,41 @@ export const useTheme = () => {
 // Enhanced theme configurations
 const getTheme = (mode, primaryColor = 'red') => {
   const isDark = mode === 'dark';
-  
+
   return createTheme({
     palette: {
       mode,
       primary: {
-        main: primaryColor === 'red' ? '#e74c3c' : 
-              primaryColor === 'blue' ? '#3498db' :
-              primaryColor === 'green' ? '#27ae60' :
-              primaryColor === 'purple' ? '#9b59b6' : '#e74c3c',
-        light: primaryColor === 'red' ? '#ff6b6b' : 
-               primaryColor === 'blue' ? '#74b9ff' :
-               primaryColor === 'green' ? '#55efc4' :
-               primaryColor === 'purple' ? '#a29bfe' : '#ff6b6b',
-        dark: primaryColor === 'red' ? '#c0392b' : 
-              primaryColor === 'blue' ? '#2980b9' :
-              primaryColor === 'green' ? '#229954' :
-              primaryColor === 'purple' ? '#8e44ad' : '#c0392b',
+        main:
+          primaryColor === 'red'
+            ? '#e74c3c'
+            : primaryColor === 'blue'
+              ? '#3498db'
+              : primaryColor === 'green'
+                ? '#27ae60'
+                : primaryColor === 'purple'
+                  ? '#9b59b6'
+                  : '#e74c3c',
+        light:
+          primaryColor === 'red'
+            ? '#ff6b6b'
+            : primaryColor === 'blue'
+              ? '#74b9ff'
+              : primaryColor === 'green'
+                ? '#55efc4'
+                : primaryColor === 'purple'
+                  ? '#a29bfe'
+                  : '#ff6b6b',
+        dark:
+          primaryColor === 'red'
+            ? '#c0392b'
+            : primaryColor === 'blue'
+              ? '#2980b9'
+              : primaryColor === 'green'
+                ? '#229954'
+                : primaryColor === 'purple'
+                  ? '#8e44ad'
+                  : '#c0392b',
       },
       secondary: {
         main: isDark ? '#bb86fc' : '#03dac6',
@@ -118,27 +136,29 @@ const getTheme = (mode, primaryColor = 'red') => {
     shape: {
       borderRadius: 12,
     },
-    shadows: isDark ? [
-      'none',
-      '0px 2px 4px rgba(0, 0, 0, 0.4)',
-      '0px 4px 8px rgba(0, 0, 0, 0.4)',
-      '0px 8px 16px rgba(0, 0, 0, 0.4)',
-      '0px 12px 24px rgba(0, 0, 0, 0.4)',
-      '0px 16px 32px rgba(0, 0, 0, 0.4)',
-      '0px 20px 40px rgba(0, 0, 0, 0.4)',
-      '0px 24px 48px rgba(0, 0, 0, 0.4)',
-      // ... continue with more dark shadows
-    ] : [
-      'none',
-      '0px 2px 4px rgba(0, 0, 0, 0.1)',
-      '0px 4px 8px rgba(0, 0, 0, 0.1)',
-      '0px 8px 16px rgba(0, 0, 0, 0.1)',
-      '0px 12px 24px rgba(0, 0, 0, 0.15)',
-      '0px 16px 32px rgba(0, 0, 0, 0.15)',
-      '0px 20px 40px rgba(0, 0, 0, 0.2)',
-      '0px 24px 48px rgba(0, 0, 0, 0.2)',
-      // ... continue with light shadows
-    ],
+    shadows: isDark
+      ? [
+          'none',
+          '0px 2px 4px rgba(0, 0, 0, 0.4)',
+          '0px 4px 8px rgba(0, 0, 0, 0.4)',
+          '0px 8px 16px rgba(0, 0, 0, 0.4)',
+          '0px 12px 24px rgba(0, 0, 0, 0.4)',
+          '0px 16px 32px rgba(0, 0, 0, 0.4)',
+          '0px 20px 40px rgba(0, 0, 0, 0.4)',
+          '0px 24px 48px rgba(0, 0, 0, 0.4)',
+          // ... continue with more dark shadows
+        ]
+      : [
+          'none',
+          '0px 2px 4px rgba(0, 0, 0, 0.1)',
+          '0px 4px 8px rgba(0, 0, 0, 0.1)',
+          '0px 8px 16px rgba(0, 0, 0, 0.1)',
+          '0px 12px 24px rgba(0, 0, 0, 0.15)',
+          '0px 16px 32px rgba(0, 0, 0, 0.15)',
+          '0px 20px 40px rgba(0, 0, 0, 0.2)',
+          '0px 24px 48px rgba(0, 0, 0, 0.2)',
+          // ... continue with light shadows
+        ],
     components: {
       MuiButton: {
         styleOverrides: {
@@ -168,8 +188,8 @@ const getTheme = (mode, primaryColor = 'red') => {
             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
             '&:hover': {
               transform: 'translateY(-4px)',
-              boxShadow: isDark 
-                ? '0px 12px 24px rgba(0, 0, 0, 0.4)' 
+              boxShadow: isDark
+                ? '0px 12px 24px rgba(0, 0, 0, 0.4)'
                 : '0px 12px 24px rgba(0, 0, 0, 0.15)',
             },
           },
@@ -188,8 +208,8 @@ const getTheme = (mode, primaryColor = 'red') => {
           root: {
             backgroundColor: isDark ? '#1e1e1e' : '#ffffff',
             color: isDark ? '#ffffff' : '#2c3e50',
-            boxShadow: isDark 
-              ? '0px 4px 12px rgba(0, 0, 0, 0.3)' 
+            boxShadow: isDark
+              ? '0px 4px 12px rgba(0, 0, 0, 0.3)'
               : '0px 2px 8px rgba(0, 0, 0, 0.1)',
             borderBottom: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`,
           },
@@ -212,7 +232,7 @@ export const CustomThemeProvider = ({ children }) => {
     const savedMode = localStorage.getItem('themeMode');
     return savedMode || 'light';
   });
-  
+
   const [primaryColor, setPrimaryColor] = useState(() => {
     const savedColor = localStorage.getItem('primaryColor');
     return savedColor || 'red';
@@ -226,7 +246,7 @@ export const CustomThemeProvider = ({ children }) => {
     localStorage.setItem('themeMode', newMode);
   };
 
-  const changePrimaryColor = (color) => {
+  const changePrimaryColor = color => {
     setPrimaryColor(color);
     localStorage.setItem('primaryColor', color);
   };
@@ -250,4 +270,3 @@ export const CustomThemeProvider = ({ children }) => {
 };
 
 export default CustomThemeProvider;
-

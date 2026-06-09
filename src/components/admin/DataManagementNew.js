@@ -58,7 +58,7 @@ const DataManagementNew = () => {
 
   const loadDataManagementInfo = async () => {
     setLoading(true);
-    
+
     // Mock data
     setTimeout(() => {
       setStorageInfo({
@@ -116,7 +116,7 @@ const DataManagementNew = () => {
 
   const handleCreateBackup = () => {
     setLoading(true);
-    
+
     // Simulate backup creation
     setTimeout(() => {
       const newBackup = {
@@ -128,7 +128,7 @@ const DataManagementNew = () => {
         status: 'Completed',
         location: 'Cloud Storage',
       };
-      
+
       setBackups([newBackup, ...backups]);
       setOpenBackupDialog(false);
       setLoading(false);
@@ -149,12 +149,16 @@ const DataManagementNew = () => {
     return (storageInfo.usedSpace / storageInfo.totalSpace) * 100;
   };
 
-  const getStatusColor = (status) => {
+  const getStatusColor = status => {
     switch (status) {
-      case 'Completed': return 'success';
-      case 'Failed': return 'error';
-      case 'In Progress': return 'warning';
-      default: return 'default';
+      case 'Completed':
+        return 'success';
+      case 'Failed':
+        return 'error';
+      case 'In Progress':
+        return 'warning';
+      default:
+        return 'default';
     }
   };
 
@@ -169,7 +173,7 @@ const DataManagementNew = () => {
             Manage system data, backups, and storage
           </Typography>
         </Box>
-        
+
         <Button
           variant="contained"
           startIcon={<BackupIcon />}
@@ -187,24 +191,22 @@ const DataManagementNew = () => {
 
       {/* Storage Overview */}
       <Grid container spacing={3} mb={4}>
-        <Grid size={{xs:12,md:8}}>
+        <Grid size={{ xs: 12, md: 8 }}>
           <Card sx={{ borderRadius: 3, height: '100%' }}>
             <CardContent sx={{ p: 3 }}>
               <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>
                 Storage Overview
               </Typography>
-              
+
               {storageInfo && (
                 <Box>
                   <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                    <Typography variant="body1">
-                      Total Storage Usage
-                    </Typography>
+                    <Typography variant="body1">Total Storage Usage</Typography>
                     <Typography variant="h6" sx={{ fontWeight: 600, color: '#667eea' }}>
                       {storageInfo.usedSpace} GB / {storageInfo.totalSpace} GB
                     </Typography>
                   </Box>
-                  
+
                   <LinearProgress
                     variant="determinate"
                     value={getStoragePercentage()}
@@ -219,9 +221,9 @@ const DataManagementNew = () => {
                       },
                     }}
                   />
-                  
+
                   <Grid container spacing={2}>
-                    <Grid size={{xs:6,sm:3}}>
+                    <Grid size={{ xs: 6, sm: 3 }}>
                       <Box textAlign="center" p={2} sx={{ bgcolor: '#f8f9fa', borderRadius: 2 }}>
                         <Typography variant="h6" sx={{ fontWeight: 600, color: '#667eea' }}>
                           {storageInfo.databaseSize} GB
@@ -231,8 +233,8 @@ const DataManagementNew = () => {
                         </Typography>
                       </Box>
                     </Grid>
-                    
-                    <Grid size={{xs:6,sm:3}}>
+
+                    <Grid size={{ xs: 6, sm: 3 }}>
                       <Box textAlign="center" p={2} sx={{ bgcolor: '#f8f9fa', borderRadius: 2 }}>
                         <Typography variant="h6" sx={{ fontWeight: 600, color: '#764ba2' }}>
                           {storageInfo.fileSize} GB
@@ -242,8 +244,8 @@ const DataManagementNew = () => {
                         </Typography>
                       </Box>
                     </Grid>
-                    
-                    <Grid size={{xs:6,sm:3}}>
+
+                    <Grid size={{ xs: 6, sm: 3 }}>
                       <Box textAlign="center" p={2} sx={{ bgcolor: '#f8f9fa', borderRadius: 2 }}>
                         <Typography variant="h6" sx={{ fontWeight: 600, color: '#f093fb' }}>
                           {storageInfo.backupSize} GB
@@ -253,8 +255,8 @@ const DataManagementNew = () => {
                         </Typography>
                       </Box>
                     </Grid>
-                    
-                    <Grid size={{xs:6,sm:3}}>
+
+                    <Grid size={{ xs: 6, sm: 3 }}>
                       <Box textAlign="center" p={2} sx={{ bgcolor: '#f8f9fa', borderRadius: 2 }}>
                         <Typography variant="h6" sx={{ fontWeight: 600, color: '#4facfe' }}>
                           {storageInfo.mediaSize} GB
@@ -270,52 +272,40 @@ const DataManagementNew = () => {
             </CardContent>
           </Card>
         </Grid>
-        
-        <Grid size={{xs:12,md:4}}>
+
+        <Grid size={{ xs: 12, md: 4 }}>
           <Card sx={{ borderRadius: 3, height: '100%' }}>
             <CardContent sx={{ p: 3 }}>
               <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>
                 Data Management Tools
               </Typography>
-                <List>
+              <List>
                 <ListItem component="div" sx={{ borderRadius: 2, mb: 1, cursor: 'pointer' }}>
                   <ListItemIcon>
                     <BackupIcon sx={{ color: '#667eea' }} />
                   </ListItemIcon>
-                  <ListItemText 
-                    primary="Create Backup"
-                    secondary="Full system backup"
-                  />
+                  <ListItemText primary="Create Backup" secondary="Full system backup" />
                 </ListItem>
-                
+
                 <ListItem component="div" sx={{ borderRadius: 2, mb: 1, cursor: 'pointer' }}>
                   <ListItemIcon>
                     <CloudUploadIcon sx={{ color: '#764ba2' }} />
                   </ListItemIcon>
-                  <ListItemText 
-                    primary="Export Data"
-                    secondary="Download system data"
-                  />
+                  <ListItemText primary="Export Data" secondary="Download system data" />
                 </ListItem>
-                
+
                 <ListItem component="div" sx={{ borderRadius: 2, mb: 1, cursor: 'pointer' }}>
                   <ListItemIcon>
                     <RefreshIcon sx={{ color: '#f093fb' }} />
                   </ListItemIcon>
-                  <ListItemText 
-                    primary="Refresh Data"
-                    secondary="Update cache and indexes"
-                  />
+                  <ListItemText primary="Refresh Data" secondary="Update cache and indexes" />
                 </ListItem>
-                
+
                 <ListItem component="div" sx={{ borderRadius: 2, mb: 1, cursor: 'pointer' }}>
                   <ListItemIcon>
                     <SecurityIcon sx={{ color: '#4facfe' }} />
                   </ListItemIcon>
-                  <ListItemText 
-                    primary="Security Scan"
-                    secondary="Check data integrity"
-                  />
+                  <ListItemText primary="Security Scan" secondary="Check data integrity" />
                 </ListItem>
               </List>
             </CardContent>
@@ -325,35 +315,25 @@ const DataManagementNew = () => {
 
       {/* System Health Alerts */}
       <Grid container spacing={3} mb={4}>
-        <Grid size={{xs:12}}>
+        <Grid size={{ xs: 12 }}>
           <Card sx={{ borderRadius: 3 }}>
             <CardContent sx={{ p: 3 }}>
               <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>
                 System Health Alerts
               </Typography>
-              
+
               <Grid container spacing={2}>
-                <Grid size={{xs:12,sm:6,md:3}}>
-                  <Alert 
-                    severity="success" 
-                    icon={<CheckCircleIcon />}
-                    sx={{ borderRadius: 2 }}
-                  >
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                  <Alert severity="success" icon={<CheckCircleIcon />} sx={{ borderRadius: 2 }}>
                     <Typography variant="body2" sx={{ fontWeight: 500 }}>
                       Database Online
                     </Typography>
-                    <Typography variant="caption">
-                      All systems operational
-                    </Typography>
+                    <Typography variant="caption">All systems operational</Typography>
                   </Alert>
                 </Grid>
-                
-                <Grid size={{xs:12,sm:6,md:3}}>
-                  <Alert 
-                    severity="warning" 
-                    icon={<WarningIcon />}
-                    sx={{ borderRadius: 2 }}
-                  >
+
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                  <Alert severity="warning" icon={<WarningIcon />} sx={{ borderRadius: 2 }}>
                     <Typography variant="body2" sx={{ fontWeight: 500 }}>
                       High Storage Usage
                     </Typography>
@@ -362,34 +342,22 @@ const DataManagementNew = () => {
                     </Typography>
                   </Alert>
                 </Grid>
-                
-                <Grid size={{xs:12,sm:6,md:3}}>
-                  <Alert 
-                    severity="info" 
-                    icon={<ScheduleIcon />}
-                    sx={{ borderRadius: 2 }}
-                  >
+
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                  <Alert severity="info" icon={<ScheduleIcon />} sx={{ borderRadius: 2 }}>
                     <Typography variant="body2" sx={{ fontWeight: 500 }}>
                       Scheduled Backup
                     </Typography>
-                    <Typography variant="caption">
-                      Tonight at 2:00 AM
-                    </Typography>
+                    <Typography variant="caption">Tonight at 2:00 AM</Typography>
                   </Alert>
                 </Grid>
-                
-                <Grid size={{xs:12,sm:6,md:3}}>
-                  <Alert 
-                    severity="success" 
-                    icon={<SecurityIcon />}
-                    sx={{ borderRadius: 2 }}
-                  >
+
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                  <Alert severity="success" icon={<SecurityIcon />} sx={{ borderRadius: 2 }}>
                     <Typography variant="body2" sx={{ fontWeight: 500 }}>
                       Security Status
                     </Typography>
-                    <Typography variant="caption">
-                      All checks passed
-                    </Typography>
+                    <Typography variant="caption">All checks passed</Typography>
                   </Alert>
                 </Grid>
               </Grid>
@@ -406,7 +374,7 @@ const DataManagementNew = () => {
               Backup History
             </Typography>
           </Box>
-          
+
           <TableContainer>
             <Table>
               <TableHead>
@@ -417,19 +385,26 @@ const DataManagementNew = () => {
                   <TableCell sx={{ fontWeight: 600 }}>Type</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>Location</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }} align="center">Actions</TableCell></TableRow>
+                  <TableCell sx={{ fontWeight: 600 }} align="center">
+                    Actions
+                  </TableCell>
+                </TableRow>
               </TableHead>
               <TableBody>
                 {loading ? (
-                  <TableRow><TableCell colSpan={7} align="center" sx={{ py: 4 }}>
+                  <TableRow>
+                    <TableCell colSpan={7} align="center" sx={{ py: 4 }}>
                       <CircularProgress />
-                    </TableCell></TableRow>
+                    </TableCell>
+                  </TableRow>
                 ) : backups.length === 0 ? (
-                  <TableRow><TableCell colSpan={7} align="center" sx={{ py: 4 }}>
+                  <TableRow>
+                    <TableCell colSpan={7} align="center" sx={{ py: 4 }}>
                       <Typography color="text.secondary">No backups found</Typography>
-                    </TableCell></TableRow>
+                    </TableCell>
+                  </TableRow>
                 ) : (
-                  backups.map((backup) => (
+                  backups.map(backup => (
                     <TableRow key={backup.id} hover>
                       <TableCell>
                         <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
@@ -437,9 +412,7 @@ const DataManagementNew = () => {
                         </Typography>
                       </TableCell>
                       <TableCell>
-                        <Typography variant="body2">
-                          {backup.date}
-                        </Typography>
+                        <Typography variant="body2">{backup.date}</Typography>
                       </TableCell>
                       <TableCell>
                         <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
@@ -447,24 +420,22 @@ const DataManagementNew = () => {
                         </Typography>
                       </TableCell>
                       <TableCell>
-                        <Chip 
-                          label={backup.type} 
-                          size="small" 
+                        <Chip
+                          label={backup.type}
+                          size="small"
                           variant="outlined"
                           color={backup.type === 'Manual' ? 'primary' : 'default'}
                         />
                       </TableCell>
                       <TableCell>
-                        <Chip 
-                          label={backup.status} 
-                          size="small" 
+                        <Chip
+                          label={backup.status}
+                          size="small"
                           color={getStatusColor(backup.status)}
                         />
                       </TableCell>
                       <TableCell>
-                        <Typography variant="body2">
-                          {backup.location}
-                        </Typography>
+                        <Typography variant="body2">{backup.location}</Typography>
                       </TableCell>
                       <TableCell align="center">
                         <Button
@@ -483,7 +454,8 @@ const DataManagementNew = () => {
                         >
                           Delete
                         </Button>
-                      </TableCell></TableRow>
+                      </TableCell>
+                    </TableRow>
                   ))
                 )}
               </TableBody>
@@ -493,7 +465,12 @@ const DataManagementNew = () => {
       </Card>
 
       {/* Create Backup Dialog */}
-      <Dialog open={openBackupDialog} onClose={() => setOpenBackupDialog(false)} maxWidth="sm" fullWidth>
+      <Dialog
+        open={openBackupDialog}
+        onClose={() => setOpenBackupDialog(false)}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>
           <Typography variant="h6" sx={{ fontWeight: 600 }}>
             Create System Backup
@@ -501,13 +478,14 @@ const DataManagementNew = () => {
         </DialogTitle>
         <DialogContent dividers>
           <Alert severity="info" sx={{ mb: 3 }}>
-            This will create a complete backup of all system data including database, user files, and configurations.
+            This will create a complete backup of all system data including database, user files,
+            and configurations.
           </Alert>
-          
+
           <Typography variant="body1" gutterBottom>
             Backup will include:
           </Typography>
-          
+
           <List>
             <ListItem>
               <ListItemIcon>
@@ -528,7 +506,7 @@ const DataManagementNew = () => {
               <ListItemText primary="System Configuration" />
             </ListItem>
           </List>
-          
+
           <Typography variant="body2" color="text.secondary">
             Estimated backup size: ~92 GB
           </Typography>
@@ -537,11 +515,9 @@ const DataManagementNew = () => {
           </Typography>
         </DialogContent>
         <DialogActions sx={{ p: 3 }}>
-          <Button onClick={() => setOpenBackupDialog(false)}>
-            Cancel
-          </Button>
-          <Button 
-            onClick={handleCreateBackup} 
+          <Button onClick={() => setOpenBackupDialog(false)}>Cancel</Button>
+          <Button
+            onClick={handleCreateBackup}
             variant="contained"
             disabled={loading}
             sx={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
@@ -557,8 +533,8 @@ const DataManagementNew = () => {
         autoHideDuration={6000}
         onClose={() => setNotification({ ...notification, open: false })}
       >
-        <Alert 
-          onClose={() => setNotification({ ...notification, open: false })} 
+        <Alert
+          onClose={() => setNotification({ ...notification, open: false })}
           severity={notification.severity}
           sx={{ width: '100%' }}
         >
@@ -569,4 +545,4 @@ const DataManagementNew = () => {
   );
 };
 
-export default DataManagementNew;
+export default DataManagementNew;

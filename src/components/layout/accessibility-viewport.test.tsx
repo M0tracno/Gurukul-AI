@@ -106,7 +106,7 @@ describe('Axe-core accessibility checks', () => {
 
   it('Navigation has no accessibility violations for labels and contrast (Req 9.1, 9.3)', async () => {
     const { container } = renderWithTheme(
-      <Navigation items={sampleNavItems} activeId="dashboard" aria-label="Main navigation" />,
+      <Navigation items={sampleNavItems} activeId="dashboard" aria-label="Main navigation" />
     );
     // Exclude the "list" rule — MUI ListItemButton renders role="button" inside <ul>,
     // which is a known MUI structural pattern. The buttons are still fully keyboard
@@ -122,7 +122,7 @@ describe('Axe-core accessibility checks', () => {
         rows={sampleRows}
         rowKey="id"
         aria-label="Student data table"
-      />,
+      />
     );
     const results = await axe(container);
     expect(results).toHaveNoViolations();
@@ -132,7 +132,7 @@ describe('Axe-core accessibility checks', () => {
     const { container } = renderWithTheme(
       <Modal open title="Confirm Action" onClose={() => {}}>
         <p>Are you sure you want to proceed?</p>
-      </Modal>,
+      </Modal>
     );
     const results = await axe(container);
     expect(results).toHaveNoViolations();
@@ -148,7 +148,7 @@ describe('Axe-core accessibility checks', () => {
         userRole="admin"
       >
         <p>Dashboard content</p>
-      </ResponsiveLayout>,
+      </ResponsiveLayout>
     );
     // Exclude "list" rule (MUI ListItemButton inside <ul>) — known MUI pattern.
     // Exclude "heading-order" — the layout shell contains a title <h1>; page-level
@@ -233,7 +233,7 @@ describe('Keyboard navigation', () => {
           rows={sampleRows}
           rowKey="id"
           onRowSelect={onRowSelect}
-        />,
+        />
       );
       const firstRow = screen.getByText('Alice').closest('tr')!;
       expect(firstRow).toHaveAttribute('tabindex', '0');
@@ -249,7 +249,7 @@ describe('Keyboard navigation', () => {
           rows={sampleRows}
           rowKey="id"
           onRowSelect={onRowSelect}
-        />,
+        />
       );
       const row = screen.getByText('Bob').closest('tr')!;
       fireEvent.keyDown(row, { key: 'Enter' });
@@ -264,7 +264,7 @@ describe('Keyboard navigation', () => {
           rows={sampleRows}
           rowKey="id"
           onRowSelect={onRowSelect}
-        />,
+        />
       );
       const row = screen.getByText('Charlie').closest('tr')!;
       fireEvent.keyDown(row, { key: ' ' });
@@ -287,7 +287,7 @@ describe('Keyboard navigation', () => {
           rows={sampleRows}
           rowKey="id"
           onSortChange={onSortChange}
-        />,
+        />
       );
       // Focus the sort button directly (in real DOM order, filter inputs may precede)
       const sortButton = screen.getByRole('button', { name: 'Sort by ID' });
@@ -305,7 +305,7 @@ describe('Keyboard navigation', () => {
       renderWithTheme(
         <Modal open title="Test Modal" onClose={onClose}>
           <p>Modal content</p>
-        </Modal>,
+        </Modal>
       );
       const closeBtn = screen.getByRole('button', { name: 'Close dialog' });
       closeBtn.focus();
@@ -318,7 +318,7 @@ describe('Keyboard navigation', () => {
       renderWithTheme(
         <Modal open title="Escapable" onClose={onClose}>
           <p>Press escape</p>
-        </Modal>,
+        </Modal>
       );
       fireEvent.keyDown(screen.getByRole('dialog'), { key: 'Escape' });
       expect(onClose).toHaveBeenCalledTimes(1);
@@ -328,13 +328,9 @@ describe('Keyboard navigation', () => {
   describe('ResponsiveLayout keyboard interaction', () => {
     it('notification button has accessible label', () => {
       renderWithTheme(
-        <ResponsiveLayout
-          title="Portal"
-          navigationItems={sampleNavItems}
-          notificationCount={5}
-        >
+        <ResponsiveLayout title="Portal" navigationItems={sampleNavItems} notificationCount={5}>
           <p>Content</p>
-        </ResponsiveLayout>,
+        </ResponsiveLayout>
       );
       expect(screen.getByLabelText('5 notifications')).toBeInTheDocument();
     });
@@ -343,7 +339,7 @@ describe('Keyboard navigation', () => {
       renderWithTheme(
         <ResponsiveLayout title="Portal" navigationItems={sampleNavItems}>
           <p>Content</p>
-        </ResponsiveLayout>,
+        </ResponsiveLayout>
       );
       expect(screen.getByLabelText('User account menu')).toBeInTheDocument();
     });
@@ -358,7 +354,7 @@ describe('Keyboard navigation', () => {
           userRole="admin"
         >
           <p>Content</p>
-        </ResponsiveLayout>,
+        </ResponsiveLayout>
       );
       const menuButton = screen.getByLabelText('Open navigation menu');
       expect(menuButton).toBeInTheDocument();
@@ -380,7 +376,7 @@ describe('Viewport overflow prevention (no horizontal scroll 320–2560px)', () 
       const { container } = renderWithTheme(
         <ResponsiveLayout title="Test" navigationItems={sampleNavItems}>
           <p>Content</p>
-        </ResponsiveLayout>,
+        </ResponsiveLayout>
       );
       // The outermost Box has overflowX: hidden and maxWidth: 100vw applied via MUI sx
       const rootBox = container.firstElementChild as HTMLElement;
@@ -393,7 +389,7 @@ describe('Viewport overflow prevention (no horizontal scroll 320–2560px)', () 
       const { container } = renderWithTheme(
         <ResponsiveLayout title="Test" navigationItems={sampleNavItems}>
           <div style={{ width: '5000px' }}>Wide content that could cause scroll</div>
-        </ResponsiveLayout>,
+        </ResponsiveLayout>
       );
       // The Container wraps the wide content — it still renders
       const content = screen.getByText('Wide content that could cause scroll');
@@ -407,7 +403,7 @@ describe('Viewport overflow prevention (no horizontal scroll 320–2560px)', () 
       const { container } = renderWithTheme(
         <ResponsiveLayout title="Test" navigationItems={sampleNavItems}>
           <p>Flex child</p>
-        </ResponsiveLayout>,
+        </ResponsiveLayout>
       );
       const mainElement = container.querySelector('main');
       expect(mainElement).toBeInTheDocument();
@@ -417,7 +413,7 @@ describe('Viewport overflow prevention (no horizontal scroll 320–2560px)', () 
       const { container } = renderWithTheme(
         <ResponsiveLayout title="Test" navigationItems={sampleNavItems}>
           <p>Content</p>
-        </ResponsiveLayout>,
+        </ResponsiveLayout>
       );
       const nav = container.querySelector('[aria-label="Sidebar navigation"]');
       expect(nav).toBeInTheDocument();
@@ -427,7 +423,7 @@ describe('Viewport overflow prevention (no horizontal scroll 320–2560px)', () 
   describe('DataTable prevents horizontal overflow', () => {
     it('DataTable uses TableContainer for horizontal containment', () => {
       const { container } = renderWithTheme(
-        <DataTable columns={sampleColumns} rows={sampleRows} rowKey="id" />,
+        <DataTable columns={sampleColumns} rows={sampleRows} rowKey="id" />
       );
       const tableContainer = container.querySelector('.MuiTableContainer-root');
       expect(tableContainer).toBeInTheDocument();
@@ -435,7 +431,7 @@ describe('Viewport overflow prevention (no horizontal scroll 320–2560px)', () 
 
     it('DataTable renders within Paper with overflow: hidden', () => {
       const { container } = renderWithTheme(
-        <DataTable columns={sampleColumns} rows={sampleRows} rowKey="id" />,
+        <DataTable columns={sampleColumns} rows={sampleRows} rowKey="id" />
       );
       const paper = container.querySelector('.MuiPaper-root');
       expect(paper).toBeInTheDocument();
@@ -445,7 +441,7 @@ describe('Viewport overflow prevention (no horizontal scroll 320–2560px)', () 
   describe('Viewport widths 320–2560px structural verification', () => {
     const viewportWidths = [320, 375, 768, 1024, 1440, 1920, 2560];
 
-    viewportWidths.forEach((width) => {
+    viewportWidths.forEach(width => {
       it(`renders without error at ${width}px viewport width`, () => {
         setupMatchMedia(width);
 
@@ -457,7 +453,7 @@ describe('Viewport overflow prevention (no horizontal scroll 320–2560px)', () 
             userRole="admin"
           >
             <p>Content at {width}px</p>
-          </ResponsiveLayout>,
+          </ResponsiveLayout>
         );
 
         expect(container.firstElementChild).toBeInTheDocument();
@@ -476,7 +472,7 @@ describe('Viewport overflow prevention (no horizontal scroll 320–2560px)', () 
           userRole="admin"
         >
           <p>Mobile content</p>
-        </ResponsiveLayout>,
+        </ResponsiveLayout>
       );
 
       // On mobile, the hamburger menu button should be present
@@ -495,7 +491,7 @@ describe('Viewport overflow prevention (no horizontal scroll 320–2560px)', () 
           userRole="admin"
         >
           <p>Desktop content</p>
-        </ResponsiveLayout>,
+        </ResponsiveLayout>
       );
 
       // On desktop, hamburger menu should NOT be present

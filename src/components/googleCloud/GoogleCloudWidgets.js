@@ -2,13 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { CheckCircle, Refresh, Warning } from '@mui/icons-material';
 import googleCloudService from '../../services/googleCloudService';
 
-
-import { Alert, Box, Card, CardContent, Chip, Grid, IconButton, LinearProgress, Typography } from '@mui/material';
+import {
+  Alert,
+  Box,
+  Card,
+  CardContent,
+  Chip,
+  Grid,
+  IconButton,
+  LinearProgress,
+  Typography,
+} from '@mui/material';
 const GoogleCloudStatusWidget = ({ classes }) => {
   const [status, setStatus] = useState({
     overall: 'loading',
     services: {},
-    timestamp: null
+    timestamp: null,
   });
   const [loading, setLoading] = useState(true);
 
@@ -24,7 +33,7 @@ const GoogleCloudStatusWidget = ({ classes }) => {
         overall: 'error',
         services: {},
         timestamp: new Date().toISOString(),
-        error: error.message
+        error: error.message,
       });
     } finally {
       setLoading(false);
@@ -38,7 +47,7 @@ const GoogleCloudStatusWidget = ({ classes }) => {
     return () => clearInterval(interval);
   }, []);
 
-  const getStatusIcon = (statusValue) => {
+  const getStatusIcon = statusValue => {
     switch (statusValue) {
       case 'healthy':
         return <CheckCircle sx={{ color: 'success.main' }} />;
@@ -51,7 +60,7 @@ const GoogleCloudStatusWidget = ({ classes }) => {
     }
   };
 
-  const getStatusColor = (statusValue) => {
+  const getStatusColor = statusValue => {
     switch (statusValue) {
       case 'healthy':
         return 'success';
@@ -97,9 +106,9 @@ const GoogleCloudStatusWidget = ({ classes }) => {
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
           {getStatusIcon(status.overall)}
           <Typography variant="h6" sx={{ ml: 1 }}>
-            Status: 
-            <Chip 
-              label={status.overall.toUpperCase()} 
+            Status:
+            <Chip
+              label={status.overall.toUpperCase()}
               color={getStatusColor(status.overall)}
               size="small"
               sx={{ ml: 1 }}
@@ -144,29 +153,29 @@ const GoogleCloudQuickActions = ({ classes }) => {
       description: 'Manage files and media',
       icon: <Storage />,
       color: '#4285f4',
-      path: '/admin-dashboard/google-cloud'
+      path: '/admin-dashboard/google-cloud',
     },
     {
       title: 'AI Services',
       description: 'Translation & Speech',
       icon: <Translate />,
       color: '#34a853',
-      path: '/admin-dashboard/google-cloud'
+      path: '/admin-dashboard/google-cloud',
     },
     {
       title: 'Functions',
       description: 'Serverless operations',
       icon: <Functions />,
       color: '#fbbc04',
-      path: '/admin-dashboard/google-cloud'
+      path: '/admin-dashboard/google-cloud',
     },
     {
       title: 'Security',
       description: 'Monitor & protect',
       icon: <Security />,
       color: '#ea4335',
-      path: '/admin-dashboard/google-cloud'
-    }
+      path: '/admin-dashboard/google-cloud',
+    },
   ];
 
   return (
@@ -176,26 +185,24 @@ const GoogleCloudQuickActions = ({ classes }) => {
           <CloudQueue sx={{ mr: 1, verticalAlign: 'middle' }} />
           Quick Actions
         </Typography>
-        
+
         <Grid container spacing={1}>
           {quickActions.map((action, index) => (
-            <Grid size={{xs:6}} key={index}>
-              <Card 
-                sx={{ 
+            <Grid size={{ xs: 6 }} key={index}>
+              <Card
+                sx={{
                   cursor: 'pointer',
                   transition: 'all 0.2s',
                   '&:hover': {
                     transform: 'translateY(-2px)',
-                    boxShadow: 2
-                  }
+                    boxShadow: 2,
+                  },
                 }}
-                onClick={() => window.location.href = action.path}
+                onClick={() => (window.location.href = action.path)}
               >
                 <CardContent sx={{ p: 1, '&:last-child': { pb: 1 } }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
-                    <Box sx={{ color: action.color, mr: 0.5 }}>
-                      {action.icon}
-                    </Box>
+                    <Box sx={{ color: action.color, mr: 0.5 }}>{action.icon}</Box>
                     <Typography variant="subtitle2" noWrap>
                       {action.title}
                     </Typography>
@@ -214,4 +221,3 @@ const GoogleCloudQuickActions = ({ classes }) => {
 };
 
 export { GoogleCloudStatusWidget, GoogleCloudQuickActions };
-

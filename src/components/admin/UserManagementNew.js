@@ -55,7 +55,8 @@ import {
 } from '@mui/icons-material';
 import AdminService from '../../services/adminService';
 
-const UserManagementNew = () => {  const [users, setUsers] = useState([]);
+const UserManagementNew = () => {
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -63,14 +64,14 @@ const UserManagementNew = () => {  const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRole, setFilterRole] = useState('all');
   const [refreshing, setRefreshing] = useState(false);
-  
+
   // Dialog states
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openViewDialog, setOpenViewDialog] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [openPasswordDialog, setOpenPasswordDialog] = useState(false);
-  
+
   // Form states
   const [selectedUser, setSelectedUser] = useState(null);
   const [newUser, setNewUser] = useState({
@@ -86,10 +87,10 @@ const UserManagementNew = () => {  const [users, setUsers] = useState([]);
     qualification: '',
     experience: '',
   });
-  
+
   // Generated credentials
   const [generatedCredentials, setGeneratedCredentials] = useState(null);
-  
+
   // Notification
   const [notification, setNotification] = useState({
     open: false,
@@ -127,7 +128,7 @@ const UserManagementNew = () => {  const [users, setUsers] = useState([]);
     return password;
   };
 
-  const generateUniqueId = (role) => {
+  const generateUniqueId = role => {
     const timestamp = Date.now();
     const prefix = role === 'student' ? 'STU' : role === 'faculty' ? 'FAC' : 'PAR';
     return `${prefix}${timestamp}`;
@@ -136,7 +137,7 @@ const UserManagementNew = () => {  const [users, setUsers] = useState([]);
   const handleAddUser = async () => {
     try {
       setLoading(true);
-      
+
       // Generate credentials
       const userPassword = generatePassword();
       const parentPassword = newUser.role === 'student' ? generatePassword() : null;
@@ -167,7 +168,7 @@ const UserManagementNew = () => {  const [users, setUsers] = useState([]);
 
       // Create main user
       const result = await AdminService.createUser(userData);
-      
+
       if (result.success) {
         // Store generated credentials
         const credentials = {
@@ -196,7 +197,7 @@ const UserManagementNew = () => {  const [users, setUsers] = useState([]);
           };
 
           const parentResult = await AdminService.createUser(parentData);
-          
+
           if (parentResult.success) {
             credentials.parent = {
               id: parentId,
@@ -228,7 +229,7 @@ const UserManagementNew = () => {  const [users, setUsers] = useState([]);
   const handleEditUser = async () => {
     try {
       setLoading(true);
-      
+
       const userData = {
         firstName: newUser.firstName,
         lastName: newUser.lastName,
@@ -244,7 +245,7 @@ const UserManagementNew = () => {  const [users, setUsers] = useState([]);
       };
 
       const result = await AdminService.updateUser(selectedUser.id, userData);
-      
+
       if (result.success) {
         setOpenEditDialog(false);
         resetForm();
@@ -264,9 +265,9 @@ const UserManagementNew = () => {  const [users, setUsers] = useState([]);
   const handleDeleteUser = async () => {
     try {
       setLoading(true);
-      
+
       const result = await AdminService.deleteUser(selectedUser.id);
-      
+
       if (result.success) {
         setOpenDeleteDialog(false);
         setSelectedUser(null);
@@ -308,7 +309,7 @@ const UserManagementNew = () => {  const [users, setUsers] = useState([]);
     });
   };
 
-  const openEditUserDialog = (user) => {
+  const openEditUserDialog = user => {
     setSelectedUser(user);
     setNewUser({
       role: user.role?.toLowerCase() || 'student',
@@ -326,17 +327,17 @@ const UserManagementNew = () => {  const [users, setUsers] = useState([]);
     setOpenEditDialog(true);
   };
 
-  const openViewUserDialog = (user) => {
+  const openViewUserDialog = user => {
     setSelectedUser(user);
     setOpenViewDialog(true);
   };
 
-  const openDeleteUserDialog = (user) => {
+  const openDeleteUserDialog = user => {
     setSelectedUser(user);
     setOpenDeleteDialog(true);
   };
 
-  const filteredUsers = users.filter((user) => {
+  const filteredUsers = users.filter(user => {
     if (tabValue === 0) return true; // All
     if (tabValue === 1) return user.role?.toLowerCase() === 'student';
     if (tabValue === 2) return user.role?.toLowerCase() === 'faculty';
@@ -344,22 +345,31 @@ const UserManagementNew = () => {  const [users, setUsers] = useState([]);
     return true;
   });
 
-  const getRoleColor = (role) => {
+  const getRoleColor = role => {
     switch (role?.toLowerCase()) {
-      case 'student': return 'primary';
-      case 'faculty': return 'secondary';
-      case 'parent': return 'warning';
-      case 'admin': return 'error';
-      default: return 'default';
+      case 'student':
+        return 'primary';
+      case 'faculty':
+        return 'secondary';
+      case 'parent':
+        return 'warning';
+      case 'admin':
+        return 'error';
+      default:
+        return 'default';
     }
   };
 
-  const getRoleIcon = (role) => {
+  const getRoleIcon = role => {
     switch (role?.toLowerCase()) {
-      case 'student': return <PersonIcon />;
-      case 'faculty': return <SchoolIcon />;
-      case 'parent': return <FamilyIcon />;
-      default: return <PersonIcon />;
+      case 'student':
+        return <PersonIcon />;
+      case 'faculty':
+        return <SchoolIcon />;
+      case 'parent':
+        return <FamilyIcon />;
+      default:
+        return <PersonIcon />;
     }
   };
   return (
@@ -373,7 +383,7 @@ const UserManagementNew = () => {  const [users, setUsers] = useState([]);
             Manage students, faculty, and parent accounts
           </Typography>
         </Box>
-        
+
         <Button
           variant="contained"
           startIcon={<AddIcon />}
@@ -391,8 +401,13 @@ const UserManagementNew = () => {  const [users, setUsers] = useState([]);
 
       {/* User Statistics */}
       <Grid container spacing={3} mb={3}>
-        <Grid size={{xs:12,sm:6,md:3}}>
-          <Card sx={{ borderRadius: 3, background: 'linear-gradient(135deg, #667eea15 0%, #667eea05 100%)' }}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <Card
+            sx={{
+              borderRadius: 3,
+              background: 'linear-gradient(135deg, #667eea15 0%, #667eea05 100%)',
+            }}
+          >
             <CardContent sx={{ textAlign: 'center', py: 3 }}>
               <PersonIcon sx={{ fontSize: 48, color: '#667eea', mb: 2 }} />
               <Typography variant="h4" sx={{ fontWeight: 700, color: '#667eea' }}>
@@ -402,9 +417,14 @@ const UserManagementNew = () => {  const [users, setUsers] = useState([]);
             </CardContent>
           </Card>
         </Grid>
-        
-        <Grid size={{xs:12,sm:6,md:3}}>
-          <Card sx={{ borderRadius: 3, background: 'linear-gradient(135deg, #764ba215 0%, #764ba205 100%)' }}>
+
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <Card
+            sx={{
+              borderRadius: 3,
+              background: 'linear-gradient(135deg, #764ba215 0%, #764ba205 100%)',
+            }}
+          >
             <CardContent sx={{ textAlign: 'center', py: 3 }}>
               <SchoolIcon sx={{ fontSize: 48, color: '#764ba2', mb: 2 }} />
               <Typography variant="h4" sx={{ fontWeight: 700, color: '#764ba2' }}>
@@ -414,9 +434,14 @@ const UserManagementNew = () => {  const [users, setUsers] = useState([]);
             </CardContent>
           </Card>
         </Grid>
-        
-        <Grid size={{xs:12,sm:6,md:3}}>
-          <Card sx={{ borderRadius: 3, background: 'linear-gradient(135deg, #f093fb15 0%, #f093fb05 100%)' }}>
+
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <Card
+            sx={{
+              borderRadius: 3,
+              background: 'linear-gradient(135deg, #f093fb15 0%, #f093fb05 100%)',
+            }}
+          >
             <CardContent sx={{ textAlign: 'center', py: 3 }}>
               <FamilyIcon sx={{ fontSize: 48, color: '#f093fb', mb: 2 }} />
               <Typography variant="h4" sx={{ fontWeight: 700, color: '#f093fb' }}>
@@ -426,9 +451,14 @@ const UserManagementNew = () => {  const [users, setUsers] = useState([]);
             </CardContent>
           </Card>
         </Grid>
-        
-        <Grid size={{xs:12,sm:6,md:3}}>
-          <Card sx={{ borderRadius: 3, background: 'linear-gradient(135deg, #4facfe15 0%, #4facfe05 100%)' }}>
+
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <Card
+            sx={{
+              borderRadius: 3,
+              background: 'linear-gradient(135deg, #4facfe15 0%, #4facfe05 100%)',
+            }}
+          >
             <CardContent sx={{ textAlign: 'center', py: 3 }}>
               <BadgeIcon sx={{ fontSize: 48, color: '#4facfe', mb: 2 }} />
               <Typography variant="h4" sx={{ fontWeight: 700, color: '#4facfe' }}>
@@ -451,7 +481,7 @@ const UserManagementNew = () => {  const [users, setUsers] = useState([]);
               <Tab label="Parents" />
             </Tabs>
           </Box>
-          
+
           <TableContainer>
             <Table>
               <TableHead>
@@ -461,21 +491,28 @@ const UserManagementNew = () => {  const [users, setUsers] = useState([]);
                   <TableCell sx={{ fontWeight: 600 }}>Role</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>ID</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }} align="center">Actions</TableCell></TableRow>
+                  <TableCell sx={{ fontWeight: 600 }} align="center">
+                    Actions
+                  </TableCell>
+                </TableRow>
               </TableHead>
               <TableBody>
                 {loading ? (
-                  <TableRow><TableCell colSpan={6} align="center" sx={{ py: 4 }}>
+                  <TableRow>
+                    <TableCell colSpan={6} align="center" sx={{ py: 4 }}>
                       <CircularProgress />
-                    </TableCell></TableRow>
+                    </TableCell>
+                  </TableRow>
                 ) : filteredUsers.length === 0 ? (
-                  <TableRow><TableCell colSpan={6} align="center" sx={{ py: 4 }}>
+                  <TableRow>
+                    <TableCell colSpan={6} align="center" sx={{ py: 4 }}>
                       <Typography color="text.secondary">No users found</Typography>
-                    </TableCell></TableRow>
+                    </TableCell>
+                  </TableRow>
                 ) : (
                   filteredUsers
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((user) => (
+                    .map(user => (
                       <TableRow key={user.id} hover>
                         <TableCell>
                           <Box display="flex" alignItems="center">
@@ -538,13 +575,14 @@ const UserManagementNew = () => {  const [users, setUsers] = useState([]);
                               <DeleteIcon />
                             </IconButton>
                           </Box>
-                        </TableCell></TableRow>
+                        </TableCell>
+                      </TableRow>
                     ))
                 )}
               </TableBody>
             </Table>
           </TableContainer>
-          
+
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
@@ -552,7 +590,7 @@ const UserManagementNew = () => {  const [users, setUsers] = useState([]);
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={(event, newPage) => setPage(newPage)}
-            onRowsPerPageChange={(event) => {
+            onRowsPerPageChange={event => {
               setRowsPerPage(parseInt(event.target.value, 10));
               setPage(0);
             }}
@@ -561,17 +599,17 @@ const UserManagementNew = () => {  const [users, setUsers] = useState([]);
       </Card>
 
       {/* Add User Dialog */}
-      <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)} maxWidth="md" fullWidth>        <DialogTitle>
-          Add New User
-        </DialogTitle>
+      <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)} maxWidth="md" fullWidth>
+        {' '}
+        <DialogTitle>Add New User</DialogTitle>
         <DialogContent dividers>
           <Grid container spacing={3}>
-            <Grid size={{xs:12}}>
+            <Grid size={{ xs: 12 }}>
               <FormControl fullWidth>
                 <InputLabel>User Role</InputLabel>
                 <Select
                   value={newUser.role}
-                  onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
+                  onChange={e => setNewUser({ ...newUser, role: e.target.value })}
                   label="User Role"
                 >
                   <MenuItem value="student">Student</MenuItem>
@@ -579,83 +617,83 @@ const UserManagementNew = () => {  const [users, setUsers] = useState([]);
                 </Select>
               </FormControl>
             </Grid>
-            
-            <Grid size={{xs:6}}>
+
+            <Grid size={{ xs: 6 }}>
               <TextField
                 fullWidth
                 label="First Name"
                 value={newUser.firstName}
-                onChange={(e) => setNewUser({ ...newUser, firstName: e.target.value })}
+                onChange={e => setNewUser({ ...newUser, firstName: e.target.value })}
                 required
               />
             </Grid>
-            
-            <Grid size={{xs:6}}>
+
+            <Grid size={{ xs: 6 }}>
               <TextField
                 fullWidth
                 label="Last Name"
                 value={newUser.lastName}
-                onChange={(e) => setNewUser({ ...newUser, lastName: e.target.value })}
+                onChange={e => setNewUser({ ...newUser, lastName: e.target.value })}
                 required
               />
             </Grid>
-            
-            <Grid size={{xs:12}}>
+
+            <Grid size={{ xs: 12 }}>
               <TextField
                 fullWidth
                 label="Email Address"
                 type="email"
                 value={newUser.email}
-                onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+                onChange={e => setNewUser({ ...newUser, email: e.target.value })}
                 required
               />
             </Grid>
 
             {newUser.role === 'student' && (
               <>
-                <Grid size={{xs:6}}>
+                <Grid size={{ xs: 6 }}>
                   <TextField
                     fullWidth
                     label="Age"
                     type="number"
                     value={newUser.age}
-                    onChange={(e) => setNewUser({ ...newUser, age: e.target.value })}
+                    onChange={e => setNewUser({ ...newUser, age: e.target.value })}
                   />
                 </Grid>
-                
-                <Grid size={{xs:12}}>
+
+                <Grid size={{ xs: 12 }}>
                   <Divider sx={{ my: 2 }}>
                     <Typography variant="body2" color="text.secondary">
                       Parent Information
                     </Typography>
                   </Divider>
                 </Grid>
-                
-                <Grid size={{xs:6}}>
+
+                <Grid size={{ xs: 6 }}>
                   <TextField
                     fullWidth
                     label="Parent Name"
                     value={newUser.parentName}
-                    onChange={(e) => setNewUser({ ...newUser, parentName: e.target.value })}
+                    onChange={e => setNewUser({ ...newUser, parentName: e.target.value })}
                   />
                 </Grid>
-                
-                <Grid size={{xs:6}}>
+
+                <Grid size={{ xs: 6 }}>
                   <TextField
                     fullWidth
                     label="Parent Email"
                     type="email"
                     value={newUser.parentEmail}
-                    onChange={(e) => setNewUser({ ...newUser, parentEmail: e.target.value })}
+                    onChange={e => setNewUser({ ...newUser, parentEmail: e.target.value })}
                   />
                 </Grid>
-                
-                <Grid size={{xs:6}}>
+
+                <Grid size={{ xs: 6 }}>
                   <TextField
                     fullWidth
                     label="Parent Phone"
                     value={newUser.parentPhone}
-                    onChange={(e) => setNewUser({ ...newUser, parentPhone: e.target.value })}
+                    onChange={e => setNewUser({ ...newUser, parentPhone: e.target.value })}
                   />
                 </Grid>
               </>
@@ -663,31 +701,31 @@ const UserManagementNew = () => {  const [users, setUsers] = useState([]);
 
             {newUser.role === 'faculty' && (
               <>
-                <Grid size={{xs:6}}>
+                <Grid size={{ xs: 6 }}>
                   <TextField
                     fullWidth
                     label="Department"
                     value={newUser.department}
-                    onChange={(e) => setNewUser({ ...newUser, department: e.target.value })}
+                    onChange={e => setNewUser({ ...newUser, department: e.target.value })}
                   />
                 </Grid>
-                
-                <Grid size={{xs:6}}>
+
+                <Grid size={{ xs: 6 }}>
                   <TextField
                     fullWidth
                     label="Qualification"
                     value={newUser.qualification}
-                    onChange={(e) => setNewUser({ ...newUser, qualification: e.target.value })}
+                    onChange={e => setNewUser({ ...newUser, qualification: e.target.value })}
                   />
                 </Grid>
-                
-                <Grid size={{xs:6}}>
+
+                <Grid size={{ xs: 6 }}>
                   <TextField
                     fullWidth
                     label="Experience (years)"
                     type="number"
                     value={newUser.experience}
-                    onChange={(e) => setNewUser({ ...newUser, experience: e.target.value })}
+                    onChange={e => setNewUser({ ...newUser, experience: e.target.value })}
                   />
                 </Grid>
               </>
@@ -698,9 +736,9 @@ const UserManagementNew = () => {  const [users, setUsers] = useState([]);
           <Button onClick={() => setOpenAddDialog(false)} startIcon={<CancelIcon />}>
             Cancel
           </Button>
-          <Button 
-            onClick={handleAddUser} 
-            variant="contained" 
+          <Button
+            onClick={handleAddUser}
+            variant="contained"
             startIcon={<SaveIcon />}
             disabled={loading || !newUser.firstName || !newUser.lastName || !newUser.email}
             sx={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
@@ -711,7 +749,12 @@ const UserManagementNew = () => {  const [users, setUsers] = useState([]);
       </Dialog>
 
       {/* Generated Password Dialog */}
-      <Dialog open={openPasswordDialog} onClose={() => setOpenPasswordDialog(false)} maxWidth="sm" fullWidth>
+      <Dialog
+        open={openPasswordDialog}
+        onClose={() => setOpenPasswordDialog(false)}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>
           <Box display="flex" alignItems="center">
             <KeyIcon sx={{ mr: 2, color: '#4caf50' }} />
@@ -722,40 +765,57 @@ const UserManagementNew = () => {  const [users, setUsers] = useState([]);
         </DialogTitle>
         <DialogContent dividers>
           <Alert severity="success" sx={{ mb: 3 }}>
-            User account(s) have been created. Please share these credentials with the respective users.
+            User account(s) have been created. Please share these credentials with the respective
+            users.
           </Alert>
-          
+
           {generatedCredentials && (
             <Box>
               <Paper sx={{ p: 3, mb: 2, bgcolor: '#f8f9fa' }}>
                 <Typography variant="h6" sx={{ fontWeight: 600, mb: 2, color: '#667eea' }}>
-                  {generatedCredentials.user.role.charAt(0).toUpperCase() + generatedCredentials.user.role.slice(1)} Account
+                  {generatedCredentials.user.role.charAt(0).toUpperCase() +
+                    generatedCredentials.user.role.slice(1)}{' '}
+                  Account
                 </Typography>
                 <List dense>
                   <ListItem>
-                    <ListItemIcon><BadgeIcon /></ListItemIcon>
+                    <ListItemIcon>
+                      <BadgeIcon />
+                    </ListItemIcon>
                     <ListItemText primary="User ID" secondary={generatedCredentials.user.id} />
                   </ListItem>
                   <ListItem>
-                    <ListItemIcon><PersonIcon /></ListItemIcon>
+                    <ListItemIcon>
+                      <PersonIcon />
+                    </ListItemIcon>
                     <ListItemText primary="Name" secondary={generatedCredentials.user.name} />
                   </ListItem>
                   <ListItem>
-                    <ListItemIcon><EmailIcon /></ListItemIcon>
+                    <ListItemIcon>
+                      <EmailIcon />
+                    </ListItemIcon>
                     <ListItemText primary="Email" secondary={generatedCredentials.user.email} />
                   </ListItem>
                   <ListItem>
-                    <ListItemIcon><KeyIcon /></ListItemIcon>
-                    <ListItemText 
-                      primary="Password" 
+                    <ListItemIcon>
+                      <KeyIcon />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary="Password"
                       secondary={
-                        <Typography 
-                          variant="body2" 
-                          sx={{ fontFamily: 'monospace', bgcolor: '#e3f2fd', p: 1, borderRadius: 1, display: 'inline-block' }}
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            fontFamily: 'monospace',
+                            bgcolor: '#e3f2fd',
+                            p: 1,
+                            borderRadius: 1,
+                            display: 'inline-block',
+                          }}
                         >
                           {generatedCredentials.user.password}
                         </Typography>
-                      } 
+                      }
                     />
                   </ListItem>
                 </List>
@@ -768,29 +828,46 @@ const UserManagementNew = () => {  const [users, setUsers] = useState([]);
                   </Typography>
                   <List dense>
                     <ListItem>
-                      <ListItemIcon><BadgeIcon /></ListItemIcon>
-                      <ListItemText primary="Parent ID" secondary={generatedCredentials.parent.id} />
+                      <ListItemIcon>
+                        <BadgeIcon />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary="Parent ID"
+                        secondary={generatedCredentials.parent.id}
+                      />
                     </ListItem>
                     <ListItem>
-                      <ListItemIcon><FamilyIcon /></ListItemIcon>
+                      <ListItemIcon>
+                        <FamilyIcon />
+                      </ListItemIcon>
                       <ListItemText primary="Name" secondary={generatedCredentials.parent.name} />
                     </ListItem>
                     <ListItem>
-                      <ListItemIcon><EmailIcon /></ListItemIcon>
+                      <ListItemIcon>
+                        <EmailIcon />
+                      </ListItemIcon>
                       <ListItemText primary="Email" secondary={generatedCredentials.parent.email} />
                     </ListItem>
                     <ListItem>
-                      <ListItemIcon><KeyIcon /></ListItemIcon>
-                      <ListItemText 
-                        primary="Password" 
+                      <ListItemIcon>
+                        <KeyIcon />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary="Password"
                         secondary={
-                          <Typography 
-                            variant="body2" 
-                            sx={{ fontFamily: 'monospace', bgcolor: '#ffe0b2', p: 1, borderRadius: 1, display: 'inline-block' }}
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              fontFamily: 'monospace',
+                              bgcolor: '#ffe0b2',
+                              p: 1,
+                              borderRadius: 1,
+                              display: 'inline-block',
+                            }}
                           >
                             {generatedCredentials.parent.password}
                           </Typography>
-                        } 
+                        }
                       />
                     </ListItem>
                   </List>
@@ -800,11 +877,11 @@ const UserManagementNew = () => {  const [users, setUsers] = useState([]);
           )}
         </DialogContent>
         <DialogActions sx={{ p: 3 }}>
-          <Button 
+          <Button
             onClick={() => {
               setOpenPasswordDialog(false);
               setGeneratedCredentials(null);
-            }} 
+            }}
             variant="contained"
             sx={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
           >
@@ -822,8 +899,8 @@ const UserManagementNew = () => {  const [users, setUsers] = useState([]);
         autoHideDuration={6000}
         onClose={() => setNotification({ ...notification, open: false })}
       >
-        <Alert 
-          onClose={() => setNotification({ ...notification, open: false })} 
+        <Alert
+          onClose={() => setNotification({ ...notification, open: false })}
           severity={notification.severity}
           sx={{ width: '100%' }}
         >
@@ -834,4 +911,4 @@ const UserManagementNew = () => {  const [users, setUsers] = useState([]);
   );
 };
 
-export default UserManagementNew;
+export default UserManagementNew;

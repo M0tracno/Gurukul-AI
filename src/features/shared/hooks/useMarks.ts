@@ -9,12 +9,7 @@
  * Validates: Requirements 5.2, 5.7
  */
 
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  type UseQueryOptions,
-} from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, type UseQueryOptions } from '@tanstack/react-query';
 import { apiClient } from '../services/apiClient';
 import { queryKeys } from './queryKeys';
 import type { PaginationParams, PaginatedResponse } from '../types';
@@ -86,10 +81,7 @@ export function useMarks(
 }
 
 /** Fetch a single mark record by ID */
-export function useMark(
-  id: string,
-  options?: Partial<UseQueryOptions<Mark>>
-) {
+export function useMark(id: string, options?: Partial<UseQueryOptions<Mark>>) {
   return useQuery({
     queryKey: queryKeys.marks.detail(id),
     queryFn: () => apiClient<Mark>(`/api/v1/marks/${id}`),
@@ -166,7 +158,7 @@ export function useUpdateMark(id: string) {
   return useMutation({
     mutationFn: (data: UpdateMarkInput) =>
       apiClient<Mark>(`/api/v1/marks/${id}`, { method: 'PUT', body: data }),
-    onSuccess: (updatedMark) => {
+    onSuccess: updatedMark => {
       queryClient.invalidateQueries({ queryKey: queryKeys.marks.lists() });
       queryClient.setQueryData(queryKeys.marks.detail(id), updatedMark);
       // Also invalidate student and course views
@@ -189,8 +181,7 @@ export function useDeleteMark() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) =>
-      apiClient<void>(`/api/v1/marks/${id}`, { method: 'DELETE' }),
+    mutationFn: (id: string) => apiClient<void>(`/api/v1/marks/${id}`, { method: 'DELETE' }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.marks.all });
     },

@@ -26,11 +26,7 @@ import { useAuth } from './AuthProvider';
 // Types
 // ---------------------------------------------------------------------------
 
-export type ConnectionStatus =
-  | 'connected'
-  | 'connecting'
-  | 'disconnected'
-  | 'failed';
+export type ConnectionStatus = 'connected' | 'connecting' | 'disconnected' | 'failed';
 
 export interface MessagePayload {
   recipientId: string;
@@ -210,12 +206,10 @@ export function SocketProvider({ children }: SocketProviderProps) {
       status,
       reconnect,
     }),
-    [socketInstance, status, reconnect],
+    [socketInstance, status, reconnect]
   );
 
-  return (
-    <SocketContext.Provider value={value}>{children}</SocketContext.Provider>
-  );
+  return <SocketContext.Provider value={value}>{children}</SocketContext.Provider>;
 }
 
 // ---------------------------------------------------------------------------
@@ -242,10 +236,7 @@ export function useSocket(): SocketContextValue {
  * Subscribe to a specific Socket.IO event. The callback is called each time
  * the event fires. Automatically cleans up on unmount or when deps change.
  */
-export function useSocketEvent<T = unknown>(
-  event: string,
-  handler: (data: T) => void,
-): void {
+export function useSocketEvent<T = unknown>(event: string, handler: (data: T) => void): void {
   const { socket } = useSocket();
   const handlerRef = useRef(handler);
   handlerRef.current = handler;
@@ -342,7 +333,7 @@ export function useMessaging(options: UseMessagingOptions = {}): UseMessagingRet
       if (!socket) return;
       socket.emit('send_message', payload);
     },
-    [socket],
+    [socket]
   );
 
   const joinConversation = useCallback(
@@ -350,7 +341,7 @@ export function useMessaging(options: UseMessagingOptions = {}): UseMessagingRet
       if (!socket) return;
       socket.emit('join_conversation', conversationId);
     },
-    [socket],
+    [socket]
   );
 
   const leaveConversation = useCallback(
@@ -358,7 +349,7 @@ export function useMessaging(options: UseMessagingOptions = {}): UseMessagingRet
       if (!socket) return;
       socket.emit('leave_conversation', conversationId);
     },
-    [socket],
+    [socket]
   );
 
   const syncMessages = useCallback(
@@ -370,7 +361,7 @@ export function useMessaging(options: UseMessagingOptions = {}): UseMessagingRet
           : lastMessageTimestamp;
       socket.emit('sync_messages', { lastMessageTimestamp: ts });
     },
-    [socket],
+    [socket]
   );
 
   return { sendMessage, joinConversation, leaveConversation, syncMessages };
@@ -401,9 +392,7 @@ interface UseTypingIndicatorReturn {
  * The server enforces rate limiting (max once per 3s per user) and auto-emits
  * a stopped-typing event after 5s of inactivity.
  */
-export function useTypingIndicator(
-  options: UseTypingIndicatorOptions,
-): UseTypingIndicatorReturn {
+export function useTypingIndicator(options: UseTypingIndicatorOptions): UseTypingIndicatorReturn {
   const { socket } = useSocket();
   const { conversationId, onUserTyping, onUserStoppedTyping } = options;
   const callbacksRef = useRef({ onUserTyping, onUserStoppedTyping });

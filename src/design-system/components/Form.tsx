@@ -43,7 +43,7 @@ export interface TextFieldProps extends Omit<MuiTextFieldProps, 'variant'> {
 
 export const TextField = forwardRef<HTMLDivElement, TextFieldProps>(function TextField(
   { variant = 'outlined', sx, ...props },
-  ref,
+  ref
 ) {
   return (
     <MuiTextField
@@ -69,7 +69,7 @@ export interface SelectFieldProps extends Omit<MuiTextFieldProps, 'variant' | 's
 
 export const SelectField = forwardRef<HTMLDivElement, SelectFieldProps>(function SelectField(
   { options, sx, children, ...props },
-  ref,
+  ref
 ) {
   return (
     <MuiTextField
@@ -81,7 +81,7 @@ export const SelectField = forwardRef<HTMLDivElement, SelectFieldProps>(function
       sx={{ ...inputSx, ...sx }}
       {...props}
     >
-      {options.map((opt) => (
+      {options.map(opt => (
         <MenuItem key={String(opt.value)} value={opt.value}>
           {opt.label}
         </MenuItem>
@@ -99,7 +99,7 @@ export interface FormProps extends BoxProps<'form'> {
 /** Form — a vertically stacked, token-spaced form layout. */
 export const Form = forwardRef<HTMLFormElement, FormProps>(function Form(
   { gap = 'md', sx, children, ...props },
-  ref,
+  ref
 ) {
   return (
     <Box

@@ -5,15 +5,14 @@ const API_BASE_URL = `${env.API_URL}/api`;
 
 // Course Allocation API Service
 class CourseAllocationService {
-  
   // Get all allocated courses with pagination and filters
   static async getAllocatedCourses(params = {}) {
     try {
       const response = await axios.get(`${API_BASE_URL}/course-allocation/courses`, {
         params,
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
       });
       return response.data;
     } catch (error) {
@@ -28,8 +27,8 @@ class CourseAllocationService {
       const response = await axios.get(`${API_BASE_URL}/course-allocation/stats`, {
         params,
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
       });
       return response.data;
     } catch (error) {
@@ -41,12 +40,16 @@ class CourseAllocationService {
   // Assign faculty to a single course
   static async assignFacultyToCourse(assignmentData) {
     try {
-      const response = await axios.post(`${API_BASE_URL}/course-allocation/assign-faculty`, assignmentData, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
+      const response = await axios.post(
+        `${API_BASE_URL}/course-allocation/assign-faculty`,
+        assignmentData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json',
+          },
         }
-      });
+      );
       return response.data;
     } catch (error) {
       console.error('Error assigning faculty to course:', error);
@@ -57,12 +60,16 @@ class CourseAllocationService {
   // Bulk assign faculty to multiple courses
   static async bulkAssignFaculty(assignmentData) {
     try {
-      const response = await axios.post(`${API_BASE_URL}/course-allocation/bulk-assign-faculty`, assignmentData, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
+      const response = await axios.post(
+        `${API_BASE_URL}/course-allocation/bulk-assign-faculty`,
+        assignmentData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json',
+          },
         }
-      });
+      );
       return response.data;
     } catch (error) {
       console.error('Error in bulk faculty assignment:', error);
@@ -73,12 +80,16 @@ class CourseAllocationService {
   // Bulk enroll students in courses
   static async bulkEnrollStudents(enrollmentData) {
     try {
-      const response = await axios.post(`${API_BASE_URL}/course-allocation/bulk-enroll-students`, enrollmentData, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
+      const response = await axios.post(
+        `${API_BASE_URL}/course-allocation/bulk-enroll-students`,
+        enrollmentData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json',
+          },
         }
-      });
+      );
       return response.data;
     } catch (error) {
       console.error('Error in bulk student enrollment:', error);
@@ -91,8 +102,8 @@ class CourseAllocationService {
     try {
       const response = await axios.get(`${API_BASE_URL}/faculty`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
       });
       return response.data;
     } catch (error) {
@@ -107,8 +118,8 @@ class CourseAllocationService {
       const response = await axios.get(`${API_BASE_URL}/students`, {
         params,
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
       });
       return response.data;
     } catch (error) {
@@ -123,8 +134,8 @@ class CourseAllocationService {
       const response = await axios.get(`${API_BASE_URL}/courses`, {
         params,
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
       });
       return response.data;
     } catch (error) {
@@ -135,7 +146,3 @@ class CourseAllocationService {
 }
 
 export default CourseAllocationService;
-
-
-
-

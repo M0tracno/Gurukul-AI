@@ -46,7 +46,7 @@ export interface NavigationProps extends Omit<BoxProps, 'onSelect'> {
 
 export const Navigation = forwardRef<HTMLElement, NavigationProps>(function Navigation(
   { items, activeId, onSelect, 'aria-label': ariaLabel = 'Main navigation', sx, ...props },
-  ref,
+  ref
 ) {
   return (
     <Box
@@ -56,8 +56,11 @@ export const Navigation = forwardRef<HTMLElement, NavigationProps>(function Navi
       sx={{ px: `${spacing.sm}px`, py: `${spacing.md}px`, ...sx }}
       {...props}
     >
-      <List disablePadding sx={{ display: 'flex', flexDirection: 'column', gap: `${spacing.xs}px` }}>
-        {items.map((item) => {
+      <List
+        disablePadding
+        sx={{ display: 'flex', flexDirection: 'column', gap: `${spacing.xs}px` }}
+      >
+        {items.map(item => {
           const selected = item.id === activeId;
           return (
             <ListItemButton

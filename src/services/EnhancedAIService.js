@@ -7,7 +7,6 @@ import env from '../config/env';
  * Part of the Educational Management System - Phase 2 Enhancement
  */
 
-
 class EnhancedAIService {
   constructor() {
     this.genAI = null;
@@ -16,7 +15,7 @@ class EnhancedAIService {
     this.cache = new Map();
     this.learningProfiles = new Map();
     this.gradingRubrics = new Map();
-    
+
     this.initialize();
   }
 
@@ -32,7 +31,7 @@ class EnhancedAIService {
       this.genAI = new GoogleGenerativeAI(apiKey);
       this.model = this.genAI.getGenerativeModel({ model: 'gemini-pro' });
       this.isInitialized = true;
-      
+
       console.log('Enhanced AI Service initialized successfully');
     } catch (error) {
       console.error('Failed to initialize Enhanced AI Service:', error);
@@ -44,7 +43,7 @@ class EnhancedAIService {
 
   async generateContentRecommendations(studentProfile, learningHistory, preferences = {}) {
     const cacheKey = `recommendations_${studentProfile.id}_${Date.now()}`;
-    
+
     if (this.cache.has(cacheKey)) {
       return this.cache.get(cacheKey);
     }
@@ -138,7 +137,7 @@ Please provide personalized recommendations in the following JSON format:
     } catch (error) {
       console.warn('Failed to parse AI recommendations, using mock data');
     }
-    
+
     return this.getMockRecommendations({ id: 'default' });
   }
 
@@ -146,42 +145,42 @@ Please provide personalized recommendations in the following JSON format:
     return {
       nextTopics: [
         {
-          subject: "Mathematics",
-          topic: "Linear Equations",
-          difficulty: "Intermediate",
-          estimatedTime: "45 minutes",
-          reason: "Strong foundation in basic algebra, ready for next level",
-          prerequisites: ["Basic Algebra", "Number Operations"],
-          resources: ["Interactive Practice", "Video Tutorials", "Practice Problems"]
+          subject: 'Mathematics',
+          topic: 'Linear Equations',
+          difficulty: 'Intermediate',
+          estimatedTime: '45 minutes',
+          reason: 'Strong foundation in basic algebra, ready for next level',
+          prerequisites: ['Basic Algebra', 'Number Operations'],
+          resources: ['Interactive Practice', 'Video Tutorials', 'Practice Problems'],
         },
         {
-          subject: "Science",
-          topic: "Cell Structure",
-          difficulty: "Beginner",
-          estimatedTime: "30 minutes",
-          reason: "Introduction to biology concepts",
-          prerequisites: ["Basic Scientific Method"],
-          resources: ["Interactive Diagrams", "Virtual Lab", "Animated Videos"]
-        }
+          subject: 'Science',
+          topic: 'Cell Structure',
+          difficulty: 'Beginner',
+          estimatedTime: '30 minutes',
+          reason: 'Introduction to biology concepts',
+          prerequisites: ['Basic Scientific Method'],
+          resources: ['Interactive Diagrams', 'Virtual Lab', 'Animated Videos'],
+        },
       ],
       reinforcementTopics: [
         {
-          subject: "Mathematics",
-          topic: "Fractions",
-          reason: "Recent quiz showed gaps in understanding",
-          practiceType: "Interactive exercises with immediate feedback"
-        }
+          subject: 'Mathematics',
+          topic: 'Fractions',
+          reason: 'Recent quiz showed gaps in understanding',
+          practiceType: 'Interactive exercises with immediate feedback',
+        },
       ],
       learningPath: {
-        shortTerm: ["Linear Equations", "Cell Structure", "Fraction Review"],
-        mediumTerm: ["Quadratic Equations", "Photosynthesis", "Decimal Operations"],
-        longTerm: ["Advanced Algebra", "Genetics", "Statistics"]
+        shortTerm: ['Linear Equations', 'Cell Structure', 'Fraction Review'],
+        mediumTerm: ['Quadratic Equations', 'Photosynthesis', 'Decimal Operations'],
+        longTerm: ['Advanced Algebra', 'Genetics', 'Statistics'],
       },
       studyStrategy: {
-        approach: "Visual and Interactive Learning",
-        techniques: ["Spaced Repetition", "Active Recall", "Practice Testing"],
-        schedule: "30-45 minute sessions, 3-4 times per week"
-      }
+        approach: 'Visual and Interactive Learning',
+        techniques: ['Spaced Repetition', 'Active Recall', 'Practice Testing'],
+        schedule: '30-45 minute sessions, 3-4 times per week',
+      },
     };
   }
 
@@ -206,8 +205,8 @@ Please provide personalized recommendations in the following JSON format:
   }
 
   buildGradingPrompt(assignment, studentResponse, rubric) {
-    const rubricText = rubric ? JSON.stringify(rubric) : "Standard academic grading criteria";
-    
+    const rubricText = rubric ? JSON.stringify(rubric) : 'Standard academic grading criteria';
+
     return `
 As an AI grading assistant, evaluate the following student response:
 
@@ -261,7 +260,7 @@ Please provide detailed grading in the following JSON format:
     } catch (error) {
       console.warn('Failed to parse AI grading, using mock data');
     }
-    
+
     return this.getMockGrading();
   }
 
@@ -270,57 +269,63 @@ Please provide detailed grading in the following JSON format:
       overallScore: 85,
       maxPoints: assignment.maxPoints || 100,
       percentage: 85,
-      letterGrade: "B+",
+      letterGrade: 'B+',
       criteria: [
         {
-          name: "Content Knowledge",
+          name: 'Content Knowledge',
           score: 38,
           maxScore: 40,
-          feedback: "Demonstrates strong understanding of key concepts",
-          suggestions: ["Include more specific examples", "Connect to real-world applications"]
+          feedback: 'Demonstrates strong understanding of key concepts',
+          suggestions: ['Include more specific examples', 'Connect to real-world applications'],
         },
         {
-          name: "Critical Thinking",
+          name: 'Critical Thinking',
           score: 32,
           maxScore: 35,
-          feedback: "Shows good analytical skills",
-          suggestions: ["Develop arguments more thoroughly", "Consider alternative perspectives"]
+          feedback: 'Shows good analytical skills',
+          suggestions: ['Develop arguments more thoroughly', 'Consider alternative perspectives'],
         },
         {
-          name: "Communication",
+          name: 'Communication',
           score: 15,
           maxScore: 25,
-          feedback: "Clear writing but could be more concise",
-          suggestions: ["Improve paragraph structure", "Use more varied vocabulary"]
-        }
+          feedback: 'Clear writing but could be more concise',
+          suggestions: ['Improve paragraph structure', 'Use more varied vocabulary'],
+        },
       ],
       strengths: [
-        "Clear understanding of main concepts",
-        "Good use of examples",
-        "Well-organized response"
+        'Clear understanding of main concepts',
+        'Good use of examples',
+        'Well-organized response',
       ],
       areasForImprovement: [
-        "More detailed analysis needed",
-        "Stronger conclusion required",
-        "Better integration of sources"
+        'More detailed analysis needed',
+        'Stronger conclusion required',
+        'Better integration of sources',
       ],
-      detailedFeedback: "This is a solid response that demonstrates good understanding of the topic. The main concepts are clearly explained with appropriate examples. To improve, focus on developing your analysis more deeply and creating stronger connections between ideas.",
+      detailedFeedback:
+        'This is a solid response that demonstrates good understanding of the topic. The main concepts are clearly explained with appropriate examples. To improve, focus on developing your analysis more deeply and creating stronger connections between ideas.',
       nextSteps: [
-        "Review feedback and revise weak areas",
-        "Practice analytical writing techniques",
-        "Study exemplary responses for comparison"
+        'Review feedback and revise weak areas',
+        'Practice analytical writing techniques',
+        'Study exemplary responses for comparison',
       ],
       plagiarismCheck: {
-        riskLevel: "Low",
+        riskLevel: 'Low',
         confidence: 0.95,
-        explanation: "Response appears to be original work with proper attribution"
-      }
+        explanation: 'Response appears to be original work with proper attribution',
+      },
     };
   }
 
   // ==================== SMART QUESTION GENERATION ====================
 
-  async generateQuestions(topic, difficulty, count = 5, questionTypes = ['multiple_choice', 'short_answer']) {
+  async generateQuestions(
+    topic,
+    difficulty,
+    count = 5,
+    questionTypes = ['multiple_choice', 'short_answer']
+  ) {
     try {
       if (!this.isInitialized) {
         return this.getMockQuestions(topic, difficulty, count);
@@ -387,35 +392,38 @@ Return questions in the following JSON format:
     } catch (error) {
       console.warn('Failed to parse AI questions, using mock data');
     }
-    
+
     return this.getMockQuestions('General Topic', 'Medium', 5);
   }
 
   getMockQuestions(topic, difficulty, count) {
     const questions = [];
-    
+
     for (let i = 1; i <= count; i++) {
       questions.push({
         id: `q_${Date.now()}_${i}`,
         type: i % 2 === 0 ? 'multiple_choice' : 'short_answer',
         question: `Sample question ${i} about ${topic}?`,
-        options: i % 2 === 0 ? [
-          `Option A for question ${i}`,
-          `Option B for question ${i}`,
-          `Option C for question ${i}`,
-          `Option D for question ${i}`
-        ] : undefined,
+        options:
+          i % 2 === 0
+            ? [
+                `Option A for question ${i}`,
+                `Option B for question ${i}`,
+                `Option C for question ${i}`,
+                `Option D for question ${i}`,
+              ]
+            : undefined,
         correctAnswer: i % 2 === 0 ? 0 : `Sample answer for question ${i}`,
         explanation: `This question tests understanding of key concepts in ${topic}. The correct answer demonstrates...`,
         difficulty: difficulty,
         learningObjective: `Understand core principles of ${topic}`,
         tags: [topic.toLowerCase(), difficulty.toLowerCase()],
-        estimatedTime: "2-3 minutes",
+        estimatedTime: '2-3 minutes',
         commonMistakes: [
-          "Confusing similar concepts",
-          "Overlooking key details",
-          "Not reading the question carefully"
-        ]
+          'Confusing similar concepts',
+          'Overlooking key details',
+          'Not reading the question carefully',
+        ],
       });
     }
 
@@ -425,8 +433,8 @@ Return questions in the following JSON format:
         topic,
         totalQuestions: count,
         averageDifficulty: difficulty,
-        estimatedDuration: `${count * 2}-${count * 3} minutes`
-      }
+        estimatedDuration: `${count * 2}-${count * 3} minutes`,
+      },
     };
   }
 
@@ -534,158 +542,159 @@ Create a structured learning path in JSON format:
     } catch (error) {
       console.warn('Failed to parse learning path, using mock data');
     }
-    
+
     return this.getMockLearningPath();
   }
 
   getMockLearningPath(studentProfile = {}, goals = []) {
     return {
       pathId: `path_${Date.now()}`,
-      title: "Personalized Mathematics Learning Journey",
-      description: "A customized learning path designed to improve mathematical skills and achieve specific academic goals",
-      duration: "3 months",
+      title: 'Personalized Mathematics Learning Journey',
+      description:
+        'A customized learning path designed to improve mathematical skills and achieve specific academic goals',
+      duration: '3 months',
       phases: [
         {
           phaseNumber: 1,
-          title: "Foundation Building",
-          duration: "4 weeks",
+          title: 'Foundation Building',
+          duration: '4 weeks',
           objectives: [
-            "Master basic algebraic operations",
-            "Understand linear equations",
-            "Develop problem-solving strategies"
+            'Master basic algebraic operations',
+            'Understand linear equations',
+            'Develop problem-solving strategies',
           ],
           modules: [
             {
-              moduleId: "mod_001",
-              title: "Basic Algebra Review",
-              description: "Comprehensive review of fundamental algebraic concepts",
+              moduleId: 'mod_001',
+              title: 'Basic Algebra Review',
+              description: 'Comprehensive review of fundamental algebraic concepts',
               estimatedHours: 8,
-              difficulty: "Beginner",
-              prerequisites: ["Basic arithmetic"],
+              difficulty: 'Beginner',
+              prerequisites: ['Basic arithmetic'],
               lessons: [
                 {
-                  lessonId: "lesson_001",
-                  title: "Variables and Expressions",
-                  type: "Interactive Tutorial",
-                  duration: "45 minutes",
-                  resources: ["Video", "Practice Problems", "Interactive Exercises"]
+                  lessonId: 'lesson_001',
+                  title: 'Variables and Expressions',
+                  type: 'Interactive Tutorial',
+                  duration: '45 minutes',
+                  resources: ['Video', 'Practice Problems', 'Interactive Exercises'],
                 },
                 {
-                  lessonId: "lesson_002",
-                  title: "Solving Simple Equations",
-                  type: "Guided Practice",
-                  duration: "60 minutes",
-                  resources: ["Step-by-step Guide", "Practice Problems", "Quiz"]
-                }
+                  lessonId: 'lesson_002',
+                  title: 'Solving Simple Equations',
+                  type: 'Guided Practice',
+                  duration: '60 minutes',
+                  resources: ['Step-by-step Guide', 'Practice Problems', 'Quiz'],
+                },
               ],
               assessments: [
                 {
-                  type: "Quiz",
-                  title: "Algebra Fundamentals Check",
-                  description: "10-question quiz covering basic algebra concepts"
-                }
-              ]
-            }
-          ]
+                  type: 'Quiz',
+                  title: 'Algebra Fundamentals Check',
+                  description: '10-question quiz covering basic algebra concepts',
+                },
+              ],
+            },
+          ],
         },
         {
           phaseNumber: 2,
-          title: "Skill Development",
-          duration: "6 weeks",
+          title: 'Skill Development',
+          duration: '6 weeks',
           objectives: [
-            "Solve complex linear equations",
-            "Work with systems of equations",
-            "Apply mathematics to real-world problems"
+            'Solve complex linear equations',
+            'Work with systems of equations',
+            'Apply mathematics to real-world problems',
           ],
           modules: [
             {
-              moduleId: "mod_002",
-              title: "Advanced Linear Equations",
-              description: "Deep dive into complex linear equation solving",
+              moduleId: 'mod_002',
+              title: 'Advanced Linear Equations',
+              description: 'Deep dive into complex linear equation solving',
               estimatedHours: 12,
-              difficulty: "Intermediate",
-              prerequisites: ["Basic Algebra"],
+              difficulty: 'Intermediate',
+              prerequisites: ['Basic Algebra'],
               lessons: [
                 {
-                  lessonId: "lesson_003",
-                  title: "Multi-step Equations",
-                  type: "Interactive Practice",
-                  duration: "75 minutes",
-                  resources: ["Tutorial Videos", "Practice Sets", "Real-world Examples"]
-                }
+                  lessonId: 'lesson_003',
+                  title: 'Multi-step Equations',
+                  type: 'Interactive Practice',
+                  duration: '75 minutes',
+                  resources: ['Tutorial Videos', 'Practice Sets', 'Real-world Examples'],
+                },
               ],
               assessments: [
                 {
-                  type: "Project",
-                  title: "Real-world Application Project",
-                  description: "Apply linear equations to solve a practical problem"
-                }
-              ]
-            }
-          ]
+                  type: 'Project',
+                  title: 'Real-world Application Project',
+                  description: 'Apply linear equations to solve a practical problem',
+                },
+              ],
+            },
+          ],
         },
         {
           phaseNumber: 3,
-          title: "Mastery and Application",
-          duration: "2 weeks",
+          title: 'Mastery and Application',
+          duration: '2 weeks',
           objectives: [
-            "Demonstrate mastery of all concepts",
-            "Apply skills independently",
-            "Prepare for advanced topics"
+            'Demonstrate mastery of all concepts',
+            'Apply skills independently',
+            'Prepare for advanced topics',
           ],
           modules: [
             {
-              moduleId: "mod_003",
-              title: "Comprehensive Review and Assessment",
-              description: "Final review and mastery demonstration",
+              moduleId: 'mod_003',
+              title: 'Comprehensive Review and Assessment',
+              description: 'Final review and mastery demonstration',
               estimatedHours: 6,
-              difficulty: "Advanced",
-              prerequisites: ["All previous modules"],
+              difficulty: 'Advanced',
+              prerequisites: ['All previous modules'],
               lessons: [
                 {
-                  lessonId: "lesson_004",
-                  title: "Comprehensive Practice",
-                  type: "Mixed Practice",
-                  duration: "90 minutes",
-                  resources: ["Mixed Problem Sets", "Timed Practice", "Review Materials"]
-                }
+                  lessonId: 'lesson_004',
+                  title: 'Comprehensive Practice',
+                  type: 'Mixed Practice',
+                  duration: '90 minutes',
+                  resources: ['Mixed Problem Sets', 'Timed Practice', 'Review Materials'],
+                },
               ],
               assessments: [
                 {
-                  type: "Final Assessment",
-                  title: "Mathematics Mastery Exam",
-                  description: "Comprehensive assessment of all learning objectives"
-                }
-              ]
-            }
-          ]
-        }
+                  type: 'Final Assessment',
+                  title: 'Mathematics Mastery Exam',
+                  description: 'Comprehensive assessment of all learning objectives',
+                },
+              ],
+            },
+          ],
+        },
       ],
       milestones: [
         {
           week: 2,
-          title: "Basic Skills Checkpoint",
-          description: "Demonstrate understanding of fundamental concepts",
-          criteria: ["Score 80% or higher on basic skills quiz", "Complete all practice exercises"]
+          title: 'Basic Skills Checkpoint',
+          description: 'Demonstrate understanding of fundamental concepts',
+          criteria: ['Score 80% or higher on basic skills quiz', 'Complete all practice exercises'],
         },
         {
           week: 6,
-          title: "Intermediate Skills Mastery",
-          description: "Show proficiency in intermediate-level problems",
-          criteria: ["Successfully complete project", "Pass intermediate assessment"]
+          title: 'Intermediate Skills Mastery',
+          description: 'Show proficiency in intermediate-level problems',
+          criteria: ['Successfully complete project', 'Pass intermediate assessment'],
         },
         {
           week: 12,
-          title: "Full Mastery Achievement",
-          description: "Demonstrate complete mastery of all objectives",
-          criteria: ["Score 85% or higher on final assessment", "Complete all modules"]
-        }
+          title: 'Full Mastery Achievement',
+          description: 'Demonstrate complete mastery of all objectives',
+          criteria: ['Score 85% or higher on final assessment', 'Complete all modules'],
+        },
       ],
       adaptiveElements: {
-        difficultyAdjustment: "Automatic adjustment based on performance and confidence levels",
-        paceAdaptation: "Flexible pacing allowing faster or slower progression as needed",
-        contentCustomization: "Additional practice or enrichment content based on individual needs"
-      }
+        difficultyAdjustment: 'Automatic adjustment based on performance and confidence levels',
+        paceAdaptation: 'Flexible pacing allowing faster or slower progression as needed',
+        contentCustomization: 'Additional practice or enrichment content based on individual needs',
+      },
     };
   }
 
@@ -717,7 +726,7 @@ Create a structured learning path in JSON format:
       isOnline: this.isInitialized,
       supportedLanguages: ['en', 'es', 'fr', 'de'],
       maxTokens: 30720,
-      responseTime: '2-5 seconds'
+      responseTime: '2-5 seconds',
     };
   }
 }
@@ -726,4 +735,3 @@ Create a structured learning path in JSON format:
 const enhancedAIService = new EnhancedAIService();
 
 export default enhancedAIService;
-

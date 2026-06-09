@@ -8,7 +8,11 @@
  * Requirements: 11.2, 11.3, 11.4
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import {
+  ExpandMore as ExpandMoreIcon,
+  Refresh as RefreshIcon,
+  Assignment as AssignmentIcon,
+} from '@mui/icons-material';
 import {
   Box,
   Typography,
@@ -21,15 +25,14 @@ import {
   IconButton,
   Tooltip,
 } from '@mui/material';
-import {
-  ExpandMore as ExpandMoreIcon,
-  Refresh as RefreshIcon,
-  Assignment as AssignmentIcon,
-} from '@mui/icons-material';
+import React, { useState, useEffect, useCallback } from 'react';
+
 import { FrostedCard } from '@/components/common/FrostedCard';
-import { colors } from '@/styles/designTokens';
 import { apiClient } from '@/features/shared/services/apiClient';
+import { colors } from '@/styles/designTokens';
+
 import { ApiClientError, type OverrideResult } from '../services/adminApiService';
+
 import { OverrideControls } from './OverrideControls';
 
 // Types for fetched submission data
@@ -72,10 +75,9 @@ export const GradingOverridePanel: React.FC = () => {
     setLoading(true);
     try {
       // Fetch completed submissions that can be overridden (not yet finalized)
-      const envelope = await apiClient<SubmissionsEnvelope>(
-        '/api/v1/grading/submissions',
-        { params: { status: 'completed', finalized: 'false', limit: 20 } }
-      );
+      const envelope = await apiClient<SubmissionsEnvelope>('/api/v1/grading/submissions', {
+        params: { status: 'completed', finalized: 'false', limit: 20 },
+      });
       setSubmissions(envelope.data || []);
     } catch (err) {
       if (err instanceof ApiClientError) {
@@ -99,12 +101,12 @@ export const GradingOverridePanel: React.FC = () => {
 
   const handleOverrideSuccess = (submissionId: string, result: OverrideResult) => {
     // Update the local state to reflect the override (Requirement 11.3)
-    setSubmissions((prev) =>
-      prev.map((sub) => {
+    setSubmissions(prev =>
+      prev.map(sub => {
         if (sub._id !== submissionId) return sub;
         return {
           ...sub,
-          gradedAnswers: sub.gradedAnswers?.map((ga) =>
+          gradedAnswers: sub.gradedAnswers?.map(ga =>
             ga.questionId === result.questionId
               ? { ...ga, score: result.score, feedback: result.feedback, overriddenByTeacher: true }
               : ga
@@ -117,7 +119,9 @@ export const GradingOverridePanel: React.FC = () => {
   if (loading) {
     return (
       <FrostedCard glassLevel="medium" neonGlow neonColor="blue" animate>
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 200 }}>
+        <Box
+          sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 200 }}
+        >
           <CircularProgress sx={{ color: colors.neon.blue }} />
         </Box>
       </FrostedCard>
@@ -160,7 +164,7 @@ export const GradingOverridePanel: React.FC = () => {
       )}
 
       {/* Submission list with expandable override controls */}
-      {submissions.map((submission) => (
+      {submissions.map(submission => (
         <Accordion
           key={submission._id}
           sx={{
@@ -186,10 +190,14 @@ export const GradingOverridePanel: React.FC = () => {
               size="small"
               sx={{
                 fontSize: '0.65rem',
-                color: submission.gradingStatus === 'completed' ? colors.semantic.success : colors.neutral[400],
-                background: submission.gradingStatus === 'completed'
-                  ? `${colors.semantic.success}15`
-                  : `${colors.neutral[600]}40`,
+                color:
+                  submission.gradingStatus === 'completed'
+                    ? colors.semantic.success
+                    : colors.neutral[400],
+                background:
+                  submission.gradingStatus === 'completed'
+                    ? `${colors.semantic.success}15`
+                    : `${colors.neutral[600]}40`,
               }}
             />
             {submission.gradedAnswers && (
@@ -200,7 +208,7 @@ export const GradingOverridePanel: React.FC = () => {
           </AccordionSummary>
           <AccordionDetails>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              {submission.gradedAnswers?.map((ga) => (
+              {submission.gradedAnswers?.map(ga => (
                 <OverrideControls
                   key={ga.questionId}
                   submissionId={submission._id}
@@ -209,9 +217,7 @@ export const GradingOverridePanel: React.FC = () => {
                   maxScore={ga.maxScore}
                   currentFeedback={ga.feedback || ''}
                   alreadyOverridden={ga.overriddenByTeacher}
-                  onOverrideSuccess={(result) =>
-                    handleOverrideSuccess(submission._id, result)
-                  }
+                  onOverrideSuccess={result => handleOverrideSuccess(submission._id, result)}
                 />
               ))}
               {(!submission.gradedAnswers || submission.gradedAnswers.length === 0) && (

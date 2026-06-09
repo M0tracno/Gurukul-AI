@@ -69,7 +69,7 @@ const CourseAllocationNew = () => {
 
   const loadData = async () => {
     setLoading(true);
-    
+
     // Mock data
     setTimeout(() => {
       setCourses([
@@ -97,7 +97,8 @@ const CourseAllocationNew = () => {
         { id: 6, name: 'Frank Miller', studentId: 'STU006', grade: '12th' },
         { id: 7, name: 'Grace Taylor', studentId: 'STU007', grade: '10th' },
         { id: 8, name: 'Henry Anderson', studentId: 'STU008', grade: '11th' },
-      ]);      setAllocations([
+      ]);
+      setAllocations([
         {
           id: 1,
           courseId: 1,
@@ -112,7 +113,7 @@ const CourseAllocationNew = () => {
             { id: 1, name: 'Alice Johnson', studentId: 'STU001' },
             { id: 2, name: 'Bob Smith', studentId: 'STU002' },
             { id: 3, name: 'Charlie Brown', studentId: 'STU003' },
-          ]
+          ],
         },
         {
           id: 2,
@@ -127,7 +128,7 @@ const CourseAllocationNew = () => {
           students: [
             { id: 4, name: 'Diana Wilson', studentId: 'STU004' },
             { id: 5, name: 'Eve Davis', studentId: 'STU005' },
-          ]
+          ],
         },
       ]);
 
@@ -143,7 +144,7 @@ const CourseAllocationNew = () => {
 
     const course = courses.find(c => c.id === parseInt(newAllocation.courseId));
     const facultyMember = faculty.find(f => f.id === parseInt(newAllocation.facultyId));
-    
+
     const allocation = {
       id: allocations.length + 1,
       courseId: newAllocation.courseId,
@@ -153,7 +154,7 @@ const CourseAllocationNew = () => {
       facultyName: facultyMember.name,
       studentCount: newAllocation.studentIds.length,
       semester: newAllocation.semester,
-      status: 'Active'
+      status: 'Active',
     };
 
     setAllocations([...allocations, allocation]);
@@ -162,7 +163,7 @@ const CourseAllocationNew = () => {
     showNotification('Course allocation created successfully', 'success');
   };
 
-  const handleEditAllocation = (allocation) => {
+  const handleEditAllocation = allocation => {
     setNewAllocation({
       courseId: allocation.courseId,
       facultyId: allocation.facultyId,
@@ -172,7 +173,7 @@ const CourseAllocationNew = () => {
     setOpenDialog(true);
   };
 
-  const handleDeleteAllocation = (allocationId) => {
+  const handleDeleteAllocation = allocationId => {
     if (window.confirm('Are you sure you want to delete this allocation?')) {
       setAllocations(prev => prev.filter(allocation => allocation.id !== allocationId));
       showNotification('Allocation deleted successfully', 'success');
@@ -207,7 +208,7 @@ const CourseAllocationNew = () => {
             Assign courses to faculty and enroll students
           </Typography>
         </Box>
-        
+
         <Button
           variant="contained"
           startIcon={<AddIcon />}
@@ -225,8 +226,13 @@ const CourseAllocationNew = () => {
 
       {/* Allocation Statistics */}
       <Grid container spacing={3} mb={4}>
-        <Grid size={{xs:12,sm:6,md:3}}>
-          <Card sx={{ borderRadius: 3, background: 'linear-gradient(135deg, #667eea15 0%, #667eea05 100%)' }}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <Card
+            sx={{
+              borderRadius: 3,
+              background: 'linear-gradient(135deg, #667eea15 0%, #667eea05 100%)',
+            }}
+          >
             <CardContent sx={{ textAlign: 'center', py: 3 }}>
               <AssignmentIcon sx={{ fontSize: 48, color: '#667eea', mb: 2 }} />
               <Typography variant="h4" sx={{ fontWeight: 700, color: '#667eea' }}>
@@ -236,9 +242,14 @@ const CourseAllocationNew = () => {
             </CardContent>
           </Card>
         </Grid>
-        
-        <Grid size={{xs:12,sm:6,md:3}}>
-          <Card sx={{ borderRadius: 3, background: 'linear-gradient(135deg, #764ba215 0%, #764ba205 100%)' }}>
+
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <Card
+            sx={{
+              borderRadius: 3,
+              background: 'linear-gradient(135deg, #764ba215 0%, #764ba205 100%)',
+            }}
+          >
             <CardContent sx={{ textAlign: 'center', py: 3 }}>
               <SchoolIcon sx={{ fontSize: 48, color: '#764ba2', mb: 2 }} />
               <Typography variant="h4" sx={{ fontWeight: 700, color: '#764ba2' }}>
@@ -248,9 +259,14 @@ const CourseAllocationNew = () => {
             </CardContent>
           </Card>
         </Grid>
-        
-        <Grid size={{xs:12,sm:6,md:3}}>
-          <Card sx={{ borderRadius: 3, background: 'linear-gradient(135deg, #f093fb15 0%, #f093fb05 100%)' }}>
+
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <Card
+            sx={{
+              borderRadius: 3,
+              background: 'linear-gradient(135deg, #f093fb15 0%, #f093fb05 100%)',
+            }}
+          >
             <CardContent sx={{ textAlign: 'center', py: 3 }}>
               <PersonIcon sx={{ fontSize: 48, color: '#f093fb', mb: 2 }} />
               <Typography variant="h4" sx={{ fontWeight: 700, color: '#f093fb' }}>
@@ -260,11 +276,17 @@ const CourseAllocationNew = () => {
             </CardContent>
           </Card>
         </Grid>
-        
-        <Grid size={{xs:12,sm:6,md:3}}>
-          <Card sx={{ borderRadius: 3, background: 'linear-gradient(135deg, #4facfe15 0%, #4facfe05 100%)' }}>
+
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <Card
+            sx={{
+              borderRadius: 3,
+              background: 'linear-gradient(135deg, #4facfe15 0%, #4facfe05 100%)',
+            }}
+          >
             <CardContent sx={{ textAlign: 'center', py: 3 }}>
-              <GroupIcon sx={{ fontSize: 48, color: '#4facfe', mb: 2 }} />              <Typography variant="h4" sx={{ fontWeight: 700, color: '#4facfe' }}>
+              <GroupIcon sx={{ fontSize: 48, color: '#4facfe', mb: 2 }} />{' '}
+              <Typography variant="h4" sx={{ fontWeight: 700, color: '#4facfe' }}>
                 {allocations.reduce((sum, allocation) => sum + (allocation.studentCount || 0), 0)}
               </Typography>
               <Typography variant="h6">Total Enrolled</Typography>
@@ -284,18 +306,26 @@ const CourseAllocationNew = () => {
                   <TableCell sx={{ fontWeight: 600 }}>Faculty</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>Enrolled Students</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>Semester</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }} align="center">Actions</TableCell></TableRow>
+                  <TableCell sx={{ fontWeight: 600 }} align="center">
+                    Actions
+                  </TableCell>
+                </TableRow>
               </TableHead>
               <TableBody>
                 {loading ? (
-                  <TableRow><TableCell colSpan={5} align="center" sx={{ py: 4 }}>
+                  <TableRow>
+                    <TableCell colSpan={5} align="center" sx={{ py: 4 }}>
                       <CircularProgress />
-                    </TableCell></TableRow>
+                    </TableCell>
+                  </TableRow>
                 ) : allocations.length === 0 ? (
-                  <TableRow><TableCell colSpan={5} align="center" sx={{ py: 4 }}>
+                  <TableRow>
+                    <TableCell colSpan={5} align="center" sx={{ py: 4 }}>
                       <Typography color="text.secondary">No course allocations found</Typography>
-                    </TableCell></TableRow>
-                ) : (                  allocations.map((allocation) => (
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  allocations.map(allocation => (
                     <TableRow key={allocation.id} hover>
                       <TableCell>
                         <Box>
@@ -324,17 +354,22 @@ const CourseAllocationNew = () => {
                       </TableCell>
                       <TableCell>
                         <Box>
-                          <Chip 
-                            label={`${allocation.studentCount || 0} Students`} 
-                            color="primary" 
-                            size="small" 
+                          <Chip
+                            label={`${allocation.studentCount || 0} Students`}
+                            color="primary"
+                            size="small"
                             sx={{ mb: 1 }}
                           />
                           <Box sx={{ maxHeight: 100, overflow: 'auto' }}>
                             {allocation.students && allocation.students.length > 0 ? (
                               <>
                                 {allocation.students.slice(0, 3).map((student, index) => (
-                                  <Typography key={student?.id || index} variant="caption" display="block" color="text.secondary">
+                                  <Typography
+                                    key={student?.id || index}
+                                    variant="caption"
+                                    display="block"
+                                    color="text.secondary"
+                                  >
                                     {student?.name || 'Unknown'} ({student?.studentId || 'N/A'})
                                   </Typography>
                                 ))}
@@ -354,18 +389,19 @@ const CourseAllocationNew = () => {
                       </TableCell>
                       <TableCell>
                         <Chip label={allocation.semester} variant="outlined" size="small" />
-                      </TableCell>                      <TableCell align="center">
+                      </TableCell>{' '}
+                      <TableCell align="center">
                         <Box>
-                          <IconButton 
-                            size="small" 
+                          <IconButton
+                            size="small"
                             sx={{ color: '#ff9800' }}
                             onClick={() => handleEditAllocation(allocation)}
                             title="Edit Allocation"
                           >
                             <EditIcon />
                           </IconButton>
-                          <IconButton 
-                            size="small" 
+                          <IconButton
+                            size="small"
                             sx={{ color: '#f44336' }}
                             onClick={() => handleDeleteAllocation(allocation.id)}
                             title="Delete Allocation"
@@ -373,7 +409,8 @@ const CourseAllocationNew = () => {
                             <DeleteIcon />
                           </IconButton>
                         </Box>
-                      </TableCell></TableRow>
+                      </TableCell>
+                    </TableRow>
                   ))
                 )}
               </TableBody>
@@ -391,15 +428,15 @@ const CourseAllocationNew = () => {
         </DialogTitle>
         <DialogContent dividers>
           <Grid container spacing={3}>
-            <Grid size={{xs:12,sm:6}}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <FormControl fullWidth required>
                 <InputLabel>Select Course</InputLabel>
                 <Select
                   value={newAllocation.courseId}
-                  onChange={(e) => setNewAllocation({ ...newAllocation, courseId: e.target.value })}
+                  onChange={e => setNewAllocation({ ...newAllocation, courseId: e.target.value })}
                   label="Select Course"
                 >
-                  {courses.map((course) => (
+                  {courses.map(course => (
                     <MenuItem key={course.id} value={course.id}>
                       {course.name} ({course.code})
                     </MenuItem>
@@ -407,16 +444,16 @@ const CourseAllocationNew = () => {
                 </Select>
               </FormControl>
             </Grid>
-            
-            <Grid size={{xs:12,sm:6}}>
+
+            <Grid size={{ xs: 12, sm: 6 }}>
               <FormControl fullWidth required>
                 <InputLabel>Select Faculty</InputLabel>
                 <Select
                   value={newAllocation.facultyId}
-                  onChange={(e) => setNewAllocation({ ...newAllocation, facultyId: e.target.value })}
+                  onChange={e => setNewAllocation({ ...newAllocation, facultyId: e.target.value })}
                   label="Select Faculty"
                 >
-                  {faculty.map((facultyMember) => (
+                  {faculty.map(facultyMember => (
                     <MenuItem key={facultyMember.id} value={facultyMember.id}>
                       {facultyMember.name} - {facultyMember.department}
                     </MenuItem>
@@ -424,13 +461,13 @@ const CourseAllocationNew = () => {
                 </Select>
               </FormControl>
             </Grid>
-            
-            <Grid size={{xs:12,sm:6}}>
+
+            <Grid size={{ xs: 12, sm: 6 }}>
               <FormControl fullWidth>
                 <InputLabel>Semester</InputLabel>
                 <Select
                   value={newAllocation.semester}
-                  onChange={(e) => setNewAllocation({ ...newAllocation, semester: e.target.value })}
+                  onChange={e => setNewAllocation({ ...newAllocation, semester: e.target.value })}
                   label="Semester"
                 >
                   <MenuItem value="Fall 2024">Fall 2024</MenuItem>
@@ -439,31 +476,27 @@ const CourseAllocationNew = () => {
                 </Select>
               </FormControl>
             </Grid>
-            
-            <Grid size={{xs:12}}>
+
+            <Grid size={{ xs: 12 }}>
               <FormControl fullWidth>
                 <InputLabel>Select Students</InputLabel>
                 <Select
                   multiple
                   value={newAllocation.studentIds}
-                  onChange={(e) => setNewAllocation({ ...newAllocation, studentIds: e.target.value })}
+                  onChange={e => setNewAllocation({ ...newAllocation, studentIds: e.target.value })}
                   label="Select Students"
-                  renderValue={(selected) => (
+                  renderValue={selected => (
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                      {selected.map((value) => {
+                      {selected.map(value => {
                         const student = students.find(s => s.id === value);
                         return (
-                          <Chip 
-                            key={value} 
-                            label={student ? student.name : value} 
-                            size="small"
-                          />
+                          <Chip key={value} label={student ? student.name : value} size="small" />
                         );
                       })}
                     </Box>
                   )}
                 >
-                  {students.map((student) => (
+                  {students.map(student => (
                     <MenuItem key={student.id} value={student.id}>
                       {student.name} ({student.studentId}) - Grade {student.grade}
                     </MenuItem>
@@ -472,14 +505,17 @@ const CourseAllocationNew = () => {
               </FormControl>
             </Grid>
           </Grid>
-          
+
           {newAllocation.studentIds.length > 0 && (
             <Box mt={3}>
               <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 600 }}>
                 Selected Students ({newAllocation.studentIds.length}):
               </Typography>
-              <List dense sx={{ maxHeight: 200, overflow: 'auto', bgcolor: '#f8f9fa', borderRadius: 1 }}>
-                {newAllocation.studentIds.map((studentId) => {
+              <List
+                dense
+                sx={{ maxHeight: 200, overflow: 'auto', bgcolor: '#f8f9fa', borderRadius: 1 }}
+              >
+                {newAllocation.studentIds.map(studentId => {
                   const student = students.find(s => s.id === studentId);
                   return (
                     <ListItem key={studentId}>
@@ -500,11 +536,9 @@ const CourseAllocationNew = () => {
           )}
         </DialogContent>
         <DialogActions sx={{ p: 3 }}>
-          <Button onClick={() => setOpenDialog(false)}>
-            Cancel
-          </Button>
-          <Button 
-            onClick={handleCreateAllocation} 
+          <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
+          <Button
+            onClick={handleCreateAllocation}
             variant="contained"
             disabled={!newAllocation.courseId || !newAllocation.facultyId}
             sx={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
@@ -520,8 +554,8 @@ const CourseAllocationNew = () => {
         autoHideDuration={6000}
         onClose={() => setNotification({ ...notification, open: false })}
       >
-        <Alert 
-          onClose={() => setNotification({ ...notification, open: false })} 
+        <Alert
+          onClose={() => setNotification({ ...notification, open: false })}
           severity={notification.severity}
           sx={{ width: '100%' }}
         >
@@ -532,4 +566,4 @@ const CourseAllocationNew = () => {
   );
 };
 
-export default CourseAllocationNew;
+export default CourseAllocationNew;

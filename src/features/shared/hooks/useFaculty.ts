@@ -9,12 +9,7 @@
  * Validates: Requirements 5.2, 5.7
  */
 
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  type UseQueryOptions,
-} from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, type UseQueryOptions } from '@tanstack/react-query';
 import { apiClient } from '../services/apiClient';
 import { queryKeys } from './queryKeys';
 import type { PaginationParams, PaginatedResponse } from '../types';
@@ -85,10 +80,7 @@ export function useFaculty(
 }
 
 /** Fetch a single faculty member by ID */
-export function useFacultyMember(
-  id: string,
-  options?: Partial<UseQueryOptions<Faculty>>
-) {
+export function useFacultyMember(id: string, options?: Partial<UseQueryOptions<Faculty>>) {
   return useQuery({
     queryKey: queryKeys.faculty.detail(id),
     queryFn: () => apiClient<Faculty>(`/api/v1/faculty/${id}`),
@@ -121,7 +113,7 @@ export function useUpdateFaculty(id: string) {
   return useMutation({
     mutationFn: (data: UpdateFacultyInput) =>
       apiClient<Faculty>(`/api/v1/faculty/${id}`, { method: 'PUT', body: data }),
-    onSuccess: (updatedFaculty) => {
+    onSuccess: updatedFaculty => {
       queryClient.invalidateQueries({ queryKey: queryKeys.faculty.lists() });
       queryClient.setQueryData(queryKeys.faculty.detail(id), updatedFaculty);
     },
@@ -133,8 +125,7 @@ export function useDeleteFaculty() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) =>
-      apiClient<void>(`/api/v1/faculty/${id}`, { method: 'DELETE' }),
+    mutationFn: (id: string) => apiClient<void>(`/api/v1/faculty/${id}`, { method: 'DELETE' }),
     onSuccess: (_data, id) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.faculty.lists() });
       queryClient.removeQueries({ queryKey: queryKeys.faculty.detail(id) });

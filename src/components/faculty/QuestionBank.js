@@ -11,11 +11,33 @@ import {
   School as SubjectIcon,
   Quiz as QuizIcon,
   CloudUpload as ImportIcon,
-  Download as ExportIcon
+  Download as ExportIcon,
 } from '@mui/icons-material';
 import facultyService from '../../services/facultyService';
 
-import { Alert, Box, Button, Card, CardContent, Checkbox, Chip, Container, Dialog, DialogActions, DialogContent, DialogTitle, Fab, FormControl, FormControlLabel, Grid, IconButton, InputLabelItem, Select, TextField, Typography } from '@mui/material';
+import {
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Checkbox,
+  Chip,
+  Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Fab,
+  FormControl,
+  FormControlLabel,
+  Grid,
+  IconButton,
+  InputLabelItem,
+  Select,
+  TextField,
+  Typography,
+} from '@mui/material';
 function TabPanel({ children, value, index, ...other }) {
   return (
     <div
@@ -46,7 +68,11 @@ const QuestionBank = () => {
   const [selectedType, setSelectedType] = useState('');
 
   // Dialog states
-  const [questionDialog, setQuestionDialog] = useState({ open: false, question: null, mode: 'create' });
+  const [questionDialog, setQuestionDialog] = useState({
+    open: false,
+    question: null,
+    mode: 'create',
+  });
   const [deleteDialog, setDeleteDialog] = useState({ open: false, question: null });
   const [categoryDialog, setCategoryDialog] = useState({ open: false });
   const [importDialog, setImportDialog] = useState({ open: false });
@@ -66,7 +92,7 @@ const QuestionBank = () => {
     category: '',
     difficulty: 'medium',
     tags: '',
-    points: 1
+    points: 1,
   });
 
   useEffect(() => {
@@ -118,9 +144,10 @@ const QuestionBank = () => {
     let filtered = [...questions];
 
     if (searchTerm) {
-      filtered = filtered.filter(q =>
-        q.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        q.tags?.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(
+        q =>
+          q.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          q.tags?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -205,11 +232,11 @@ const QuestionBank = () => {
       category: '',
       difficulty: 'medium',
       tags: '',
-      points: 1
+      points: 1,
     });
   };
 
-  const openEditDialog = (question) => {
+  const openEditDialog = question => {
     setQuestionForm({
       question: question.question,
       type: question.type,
@@ -220,28 +247,38 @@ const QuestionBank = () => {
       category: question.category,
       difficulty: question.difficulty,
       tags: question.tags || '',
-      points: question.points || 1
+      points: question.points || 1,
     });
     setQuestionDialog({ open: true, question, mode: 'edit' });
   };
 
-  const getDifficultyColor = (difficulty) => {
+  const getDifficultyColor = difficulty => {
     switch (difficulty) {
-      case 'easy': return 'success';
-      case 'medium': return 'warning';
-      case 'hard': return 'error';
-      default: return 'default';
+      case 'easy':
+        return 'success';
+      case 'medium':
+        return 'warning';
+      case 'hard':
+        return 'error';
+      default:
+        return 'default';
     }
   };
 
-  const getTypeIcon = (type) => {
+  const getTypeIcon = type => {
     switch (type) {
-      case 'multiple-choice': return '◉';
-      case 'true-false': return '✓/✗';
-      case 'fill-in-blank': return '___';
-      case 'short-answer': return '📝';
-      case 'essay': return '📄';
-      default: return '?';
+      case 'multiple-choice':
+        return '◉';
+      case 'true-false':
+        return '✓/✗';
+      case 'fill-in-blank':
+        return '___';
+      case 'short-answer':
+        return '📝';
+      case 'essay':
+        return '📄';
+      default:
+        return '?';
     }
   };
 
@@ -253,7 +290,7 @@ const QuestionBank = () => {
             <Box display="flex" alignItems="center" mb={1}>
               <Checkbox
                 checked={selectedQuestions.has(question.id)}
-                onChange={(e) => {
+                onChange={e => {
                   const newSelected = new Set(selectedQuestions);
                   if (e.target.checked) {
                     newSelected.add(question.id);
@@ -262,7 +299,8 @@ const QuestionBank = () => {
                   }
                   setSelectedQuestions(newSelected);
                 }}
-              />              <Typography variant="body2" color="textSecondary" style={{ marginRight: 8 }}>
+              />{' '}
+              <Typography variant="body2" color="textSecondary" style={{ marginRight: 8 }}>
                 {getTypeIcon(question.type)}
               </Typography>
               <Chip
@@ -271,38 +309,42 @@ const QuestionBank = () => {
                 color={getDifficultyColor(question.difficulty)}
                 style={{ marginRight: 8 }}
               />
-              <Chip label={question.subject} size="small" variant="outlined" style={{ marginRight: 8 }} />
+              <Chip
+                label={question.subject}
+                size="small"
+                variant="outlined"
+                style={{ marginRight: 8 }}
+              />
               {question.category && (
                 <Chip label={question.category} size="small" variant="outlined" />
               )}
             </Box>
-
             <Typography variant="h6" gutterBottom>
               {question.question}
-            </Typography>              {question.type === 'multiple-choice' && question.options && (
+            </Typography>{' '}
+            {question.type === 'multiple-choice' && question.options && (
               <Box style={{ marginLeft: 16, marginBottom: 16 }}>
-                {Array.isArray(question.options) && question.options.map((option, index) => (
-                  <Typography
-                    key={index}
-                    variant="body2"
-                    color={option === question.correctAnswer ? 'primary' : 'textSecondary'}
-                    style={{ fontWeight: option === question.correctAnswer ? 'bold' : 'normal' }}
-                  >
-                    {String.fromCharCode(65 + index)}. {option}
-                  </Typography>
-                ))}
+                {Array.isArray(question.options) &&
+                  question.options.map((option, index) => (
+                    <Typography
+                      key={index}
+                      variant="body2"
+                      color={option === question.correctAnswer ? 'primary' : 'textSecondary'}
+                      style={{ fontWeight: option === question.correctAnswer ? 'bold' : 'normal' }}
+                    >
+                      {String.fromCharCode(65 + index)}. {option}
+                    </Typography>
+                  ))}
               </Box>
             )}
-              {question.explanation && (
+            {question.explanation && (
               <Typography variant="body2" color="textSecondary" style={{ fontStyle: 'italic' }}>
                 Explanation: {question.explanation}
               </Typography>
             )}
-
             <Box display="flex" alignItems="center" mt={1}>
               <Typography variant="caption" color="textSecondary">
-                Points: {question.points || 1} |
-                Used in {question.usageCount || 0} quizzes |
+                Points: {question.points || 1} | Used in {question.usageCount || 0} quizzes |
                 Created: {new Date(question.createdAt).toLocaleDateString()}
               </Typography>
             </Box>
@@ -331,54 +373,63 @@ const QuestionBank = () => {
         <Typography variant="h6" gutterBottom>
           Filters & Search
         </Typography>
-          <Grid container spacing={2}>
-          <Grid size={{xs:12,md:3}}>
+        <Grid container spacing={2}>
+          <Grid size={{ xs: 12, md: 3 }}>
             <TextField
               fullWidth
               label="Search Questions"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={e => setSearchTerm(e.target.value)}
               InputProps={{
-                startAdornment: <SearchIcon style={{ marginRight: 8, color: '#757575' }} />
+                startAdornment: <SearchIcon style={{ marginRight: 8, color: '#757575' }} />,
               }}
             />
           </Grid>
 
-          <Grid size={{xs:12,md:2}}>
+          <Grid size={{ xs: 12, md: 2 }}>
             <FormControl fullWidth>
               <InputLabel>Subject</InputLabel>
               <Select
                 value={selectedSubject}
-                onChange={(e) => setSelectedSubject(e.target.value)}
-                label="Subject"              >
+                onChange={e => setSelectedSubject(e.target.value)}
+                label="Subject"
+              >
                 <MenuItem value="">All Subjects</MenuItem>
-                {Array.isArray(subjects) && subjects.map(subject => (
-                  <MenuItem key={subject} value={subject}>{subject}</MenuItem>
-                ))}
+                {Array.isArray(subjects) &&
+                  subjects.map(subject => (
+                    <MenuItem key={subject} value={subject}>
+                      {subject}
+                    </MenuItem>
+                  ))}
               </Select>
             </FormControl>
           </Grid>
 
-          <Grid size={{xs:12,md:2}}>
+          <Grid size={{ xs: 12, md: 2 }}>
             <FormControl fullWidth>
               <InputLabel>Category</InputLabel>
               <Select
                 value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                label="Category"              >
+                onChange={e => setSelectedCategory(e.target.value)}
+                label="Category"
+              >
                 <MenuItem value="">All Categories</MenuItem>
-                {Array.isArray(categories) && categories.map(category => (
-                  <MenuItem key={category} value={category}>{category}</MenuItem>
-                ))}
+                {Array.isArray(categories) &&
+                  categories.map(category => (
+                    <MenuItem key={category} value={category}>
+                      {category}
+                    </MenuItem>
+                  ))}
               </Select>
-            </FormControl>          </Grid>
+            </FormControl>{' '}
+          </Grid>
 
-          <Grid size={{xs:12,md:2}}>
+          <Grid size={{ xs: 12, md: 2 }}>
             <FormControl fullWidth>
               <InputLabel>Difficulty</InputLabel>
               <Select
                 value={selectedDifficulty}
-                onChange={(e) => setSelectedDifficulty(e.target.value)}
+                onChange={e => setSelectedDifficulty(e.target.value)}
                 label="Difficulty"
               >
                 <MenuItem value="">All Levels</MenuItem>
@@ -389,12 +440,12 @@ const QuestionBank = () => {
             </FormControl>
           </Grid>
 
-          <Grid size={{xs:12,md:2}}>
+          <Grid size={{ xs: 12, md: 2 }}>
             <FormControl fullWidth>
               <InputLabel>Type</InputLabel>
               <Select
                 value={selectedType}
-                onChange={(e) => setSelectedType(e.target.value)}
+                onChange={e => setSelectedType(e.target.value)}
                 label="Type"
               >
                 <MenuItem value="">All Types</MenuItem>
@@ -404,12 +455,14 @@ const QuestionBank = () => {
                 <MenuItem value="short-answer">Short Answer</MenuItem>
                 <MenuItem value="essay">Essay</MenuItem>
               </Select>
-            </FormControl>          </Grid>
+            </FormControl>{' '}
+          </Grid>
 
-          <Grid size={{xs:12,md:1}}>
+          <Grid size={{ xs: 12, md: 1 }}>
             <Button
               fullWidth
-              variant="outlined"              onClick={() => {
+              variant="outlined"
+              onClick={() => {
                 setSearchTerm('');
                 setSelectedSubject('');
                 setSelectedCategory('');
@@ -435,18 +488,18 @@ const QuestionBank = () => {
           Manage your question library for quiz creation
         </Typography>
       </Box>
-
       <FilterPanel />
-
       {/* Bulk Actions */}
       {selectedQuestions.size > 0 && (
         <Alert
           severity="info"
           action={
-            <Box display="flex" gap={1}>              <FormControl size="small" style={{ minWidth: 120 }}>
+            <Box display="flex" gap={1}>
+              {' '}
+              <FormControl size="small" style={{ minWidth: 120 }}>
                 <Select
                   value={bulkAction}
-                  onChange={(e) => setBulkAction(e.target.value)}
+                  onChange={e => setBulkAction(e.target.value)}
                   displayEmpty
                 >
                   <MenuItem value="">Select Action</MenuItem>
@@ -461,19 +514,20 @@ const QuestionBank = () => {
                 onClick={handleBulkAction}
                 disabled={!bulkAction}
               >
-                Apply              </Button>
+                Apply{' '}
+              </Button>
             </Box>
           }
           style={{ marginBottom: '16px' }}
         >
           {selectedQuestions.size} question(s) selected
         </Alert>
-      )}      {/* Question List */}
+      )}{' '}
+      {/* Question List */}
       <Box>
-        {Array.isArray(filteredQuestions) && filteredQuestions.map(question => (
-          <QuestionCard key={question.id} question={question} />
-        ))}
-          {(!Array.isArray(filteredQuestions) || filteredQuestions.length === 0) && !loading && (
+        {Array.isArray(filteredQuestions) &&
+          filteredQuestions.map(question => <QuestionCard key={question.id} question={question} />)}
+        {(!Array.isArray(filteredQuestions) || filteredQuestions.length === 0) && !loading && (
           <Card>
             <CardContent style={{ textAlign: 'center', paddingTop: 64, paddingBottom: 64 }}>
               <QuestionIcon style={{ fontSize: 64, color: '#757575', marginBottom: 16 }} />
@@ -481,10 +535,9 @@ const QuestionBank = () => {
                 No questions found
               </Typography>
               <Typography variant="body2" color="textSecondary" style={{ marginBottom: 24 }}>
-                {searchTerm || selectedSubject || selectedCategory ?
-                  'Try adjusting your filters or search terms' :
-                  'Start building your question bank by adding your first question'
-                }
+                {searchTerm || selectedSubject || selectedCategory
+                  ? 'Try adjusting your filters or search terms'
+                  : 'Start building your question bank by adding your first question'}
               </Typography>
               <Button
                 variant="contained"
@@ -496,7 +549,8 @@ const QuestionBank = () => {
             </CardContent>
           </Card>
         )}
-      </Box>      {/* Floating Action Buttons */}
+      </Box>{' '}
+      {/* Floating Action Buttons */}
       <Box style={{ position: 'fixed', bottom: 16, right: 16 }}>
         <Fab
           color="primary"
@@ -514,7 +568,6 @@ const QuestionBank = () => {
           <ImportIcon />
         </Fab>
       </Box>
-
       {/* Question Creation/Edit Dialog */}
       <Dialog
         open={questionDialog.open}
@@ -524,23 +577,26 @@ const QuestionBank = () => {
       >
         <DialogTitle>
           {questionDialog.mode === 'create' ? 'Add New Question' : 'Edit Question'}
-        </DialogTitle>        <DialogContent>
+        </DialogTitle>{' '}
+        <DialogContent>
           <Grid container spacing={2} style={{ marginTop: 8 }}>
-            <Grid size={{xs:12}}>              <TextField
+            <Grid size={{ xs: 12 }}>
+              {' '}
+              <TextField
                 fullWidth
                 label="Question"
                 multiline
                 minRows={3}
                 value={questionForm.question}
-                onChange={(e) => setQuestionForm({ ...questionForm, question: e.target.value })}              />
+                onChange={e => setQuestionForm({ ...questionForm, question: e.target.value })}
+              />
             </Grid>
-
-            <Grid size={{xs:12,sm:6}}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <FormControl fullWidth>
                 <InputLabel>Question Type</InputLabel>
                 <Select
                   value={questionForm.type}
-                  onChange={(e) => setQuestionForm({ ...questionForm, type: e.target.value })}
+                  onChange={e => setQuestionForm({ ...questionForm, type: e.target.value })}
                   label="Question Type"
                 >
                   <MenuItem value="multiple-choice">Multiple Choice</MenuItem>
@@ -550,39 +606,47 @@ const QuestionBank = () => {
                   <MenuItem value="essay">Essay</MenuItem>
                 </Select>
               </FormControl>
-            </Grid>              <Grid size={{xs:12,sm:6}}>
+            </Grid>{' '}
+            <Grid size={{ xs: 12, sm: 6 }}>
               <FormControl fullWidth>
                 <InputLabel>Subject</InputLabel>
                 <Select
                   value={questionForm.subject}
-                  onChange={(e) => setQuestionForm({ ...questionForm, subject: e.target.value })}
-                  label="Subject"                >
-                  {Array.isArray(subjects) && subjects.map(subject => (
-                    <MenuItem key={subject} value={subject}>{subject}</MenuItem>
-                  ))}
+                  onChange={e => setQuestionForm({ ...questionForm, subject: e.target.value })}
+                  label="Subject"
+                >
+                  {Array.isArray(subjects) &&
+                    subjects.map(subject => (
+                      <MenuItem key={subject} value={subject}>
+                        {subject}
+                      </MenuItem>
+                    ))}
                 </Select>
               </FormControl>
             </Grid>
-
-            <Grid size={{xs:12,sm:4}}>
+            <Grid size={{ xs: 12, sm: 4 }}>
               <FormControl fullWidth>
                 <InputLabel>Category</InputLabel>
                 <Select
                   value={questionForm.category}
-                  onChange={(e) => setQuestionForm({ ...questionForm, category: e.target.value })}
-                  label="Category"                >
-                  {Array.isArray(categories) && categories.map(category => (
-                    <MenuItem key={category} value={category}>{category}</MenuItem>
-                  ))}
+                  onChange={e => setQuestionForm({ ...questionForm, category: e.target.value })}
+                  label="Category"
+                >
+                  {Array.isArray(categories) &&
+                    categories.map(category => (
+                      <MenuItem key={category} value={category}>
+                        {category}
+                      </MenuItem>
+                    ))}
                 </Select>
-              </FormControl>            </Grid>
-
-            <Grid size={{xs:12,sm:4}}>
+              </FormControl>{' '}
+            </Grid>
+            <Grid size={{ xs: 12, sm: 4 }}>
               <FormControl fullWidth>
                 <InputLabel>Difficulty</InputLabel>
                 <Select
                   value={questionForm.difficulty}
-                  onChange={(e) => setQuestionForm({ ...questionForm, difficulty: e.target.value })}
+                  onChange={e => setQuestionForm({ ...questionForm, difficulty: e.target.value })}
                   label="Difficulty"
                 >
                   <MenuItem value="easy">Easy</MenuItem>
@@ -591,29 +655,33 @@ const QuestionBank = () => {
                 </Select>
               </FormControl>
             </Grid>
-
-            <Grid size={{xs:12,sm:4}}>
+            <Grid size={{ xs: 12, sm: 4 }}>
               <TextField
                 fullWidth
                 label="Points"
                 type="number"
                 value={questionForm.points}
-                onChange={(e) => setQuestionForm({ ...questionForm, points: parseInt(e.target.value) })}
+                onChange={e =>
+                  setQuestionForm({ ...questionForm, points: parseInt(e.target.value) })
+                }
                 inputProps={{ min: 1, max: 10 }}
               />
-            </Grid>            {/* Options for Multiple Choice and True/False */}
+            </Grid>{' '}
+            {/* Options for Multiple Choice and True/False */}
             {(questionForm.type === 'multiple-choice' || questionForm.type === 'true-false') && (
-              <Grid size={{xs:12}}>
+              <Grid size={{ xs: 12 }}>
                 <Typography variant="subtitle1" gutterBottom>
-                  Answer Options                </Typography>
+                  Answer Options{' '}
+                </Typography>
                 {questionForm.type === 'multiple-choice' ? (
-                  Array.isArray(questionForm.options) && questionForm.options.map((option, index) => (
+                  Array.isArray(questionForm.options) &&
+                  questionForm.options.map((option, index) => (
                     <Box key={index} display="flex" alignItems="center" gap={1} mb={1}>
                       <TextField
                         fullWidth
                         label={`Option ${String.fromCharCode(65 + index)}`}
                         value={option}
-                        onChange={(e) => {
+                        onChange={e => {
                           const newOptions = [...questionForm.options];
                           newOptions[index] = e.target.value;
                           setQuestionForm({ ...questionForm, options: newOptions });
@@ -621,7 +689,7 @@ const QuestionBank = () => {
                       />
                       <Checkbox
                         checked={questionForm.correctAnswer === option}
-                        onChange={(e) => {
+                        onChange={e => {
                           if (e.target.checked) {
                             setQuestionForm({ ...questionForm, correctAnswer: option });
                           }
@@ -639,10 +707,12 @@ const QuestionBank = () => {
                           control={
                             <Checkbox
                               checked={questionForm.correctAnswer === 'true'}
-                              onChange={(e) => setQuestionForm({
-                                ...questionForm,
-                                correctAnswer: e.target.checked ? 'true' : ''
-                              })}
+                              onChange={e =>
+                                setQuestionForm({
+                                  ...questionForm,
+                                  correctAnswer: e.target.checked ? 'true' : '',
+                                })
+                              }
                             />
                           }
                           label="True"
@@ -651,10 +721,12 @@ const QuestionBank = () => {
                           control={
                             <Checkbox
                               checked={questionForm.correctAnswer === 'false'}
-                              onChange={(e) => setQuestionForm({
-                                ...questionForm,
-                                correctAnswer: e.target.checked ? 'false' : ''
-                              })}
+                              onChange={e =>
+                                setQuestionForm({
+                                  ...questionForm,
+                                  correctAnswer: e.target.checked ? 'false' : '',
+                                })
+                              }
                             />
                           }
                           label="False"
@@ -664,44 +736,54 @@ const QuestionBank = () => {
                   </Box>
                 )}
               </Grid>
-            )}            {/* Correct Answer for other types */}
-            {(questionForm.type === 'fill-in-blank' || questionForm.type === 'short-answer' || questionForm.type === 'essay') && (
-              <Grid size={{xs:12}}>                <TextField
+            )}{' '}
+            {/* Correct Answer for other types */}
+            {(questionForm.type === 'fill-in-blank' ||
+              questionForm.type === 'short-answer' ||
+              questionForm.type === 'essay') && (
+              <Grid size={{ xs: 12 }}>
+                {' '}
+                <TextField
                   fullWidth
                   label="Correct Answer / Sample Answer"
                   value={questionForm.correctAnswer}
-                  onChange={(e) => setQuestionForm({ ...questionForm, correctAnswer: e.target.value })}
+                  onChange={e =>
+                    setQuestionForm({ ...questionForm, correctAnswer: e.target.value })
+                  }
                   placeholder="Enter the correct answer or sample answer..."
                   multiline={questionForm.type === 'essay'}
                   minRows={questionForm.type === 'essay' ? 3 : 1}
                 />
-              </Grid>            )}
-
-            <Grid size={{xs:12}}>              <TextField
+              </Grid>
+            )}
+            <Grid size={{ xs: 12 }}>
+              {' '}
+              <TextField
                 fullWidth
                 label="Explanation (Optional)"
                 multiline
                 minRows={2}
                 value={questionForm.explanation}
-                onChange={(e) => setQuestionForm({ ...questionForm, explanation: e.target.value })}
+                onChange={e => setQuestionForm({ ...questionForm, explanation: e.target.value })}
                 placeholder="Provide an explanation for the correct answer..."
-              />            </Grid>
-
-            <Grid size={{xs:12}}>
+              />{' '}
+            </Grid>
+            <Grid size={{ xs: 12 }}>
               <TextField
                 fullWidth
                 label="Tags (Optional)"
                 value={questionForm.tags}
-                onChange={(e) => setQuestionForm({ ...questionForm, tags: e.target.value })}
+                onChange={e => setQuestionForm({ ...questionForm, tags: e.target.value })}
                 placeholder="Enter tags separated by commas (e.g., algebra, equations, math)"
                 helperText="Tags help organize and search for questions"
               />
             </Grid>
-
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setQuestionDialog({ open: false, question: null, mode: 'create' })}>
+          <Button
+            onClick={() => setQuestionDialog({ open: false, question: null, mode: 'create' })}
+          >
             Cancel
           </Button>
           <Button onClick={handleSaveQuestion} variant="contained">
@@ -709,7 +791,6 @@ const QuestionBank = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
       {/* Delete Confirmation Dialog */}
       <Dialog
         open={deleteDialog.open}
@@ -722,9 +803,7 @@ const QuestionBank = () => {
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDeleteDialog({ open: false, question: null })}>
-            Cancel
-          </Button>
+          <Button onClick={() => setDeleteDialog({ open: false, question: null })}>Cancel</Button>
           <Button onClick={handleDeleteQuestion} color="error" variant="contained">
             Delete
           </Button>
@@ -735,4 +814,3 @@ const QuestionBank = () => {
 };
 
 export default QuestionBank;
-

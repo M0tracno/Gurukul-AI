@@ -1,13 +1,28 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Box, Card, CardContent, Chip, CircularProgress, FormControl, Grid, IconButton, InputLabel, LinearProgressItem, Paper, Select, Tooltip, Typography } from '@mui/material';
-import { 
+import {
+  Box,
+  Card,
+  CardContent,
+  Chip,
+  CircularProgress,
+  FormControl,
+  Grid,
+  IconButton,
+  InputLabel,
+  LinearProgressItem,
+  Paper,
+  Select,
+  Tooltip,
+  Typography,
+} from '@mui/material';
+import {
   Download,
   Insights as InsightsIcon,
   Refresh,
   TrendingUp as TrendingUpIcon,
-  TrendingDown as TrendingDownIcon
+  TrendingDown as TrendingDownIcon,
 } from '@mui/icons-material';
-import { 
+import {
   Area,
   AreaChart,
   BarChart,
@@ -23,7 +38,7 @@ import {
   Legend,
   Tooltip as RechartsTooltip,
   ComposedChart,
-  Cell
+  Cell,
 } from 'recharts';
 
 const EnhancedAnalytics = () => {
@@ -37,7 +52,7 @@ const EnhancedAnalytics = () => {
     try {
       // Simulate API call with mock data
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       const mockData = generateMockAnalyticsData();
       setAnalyticsData(mockData);
       setInsights(generateInsights(mockData));
@@ -55,11 +70,11 @@ const EnhancedAnalytics = () => {
   const generateMockAnalyticsData = () => {
     const now = new Date();
     const days = timeRange === '7d' ? 7 : timeRange === '30d' ? 30 : 90;
-    
+
     const dailyData = Array.from({ length: days }, (_, i) => {
       const date = new Date(now);
       date.setDate(date.getDate() - (days - 1 - i));
-      
+
       return {
         date: date.toISOString().split('T')[0],
         users: Math.floor(Math.random() * 200) + 150,
@@ -67,7 +82,8 @@ const EnhancedAnalytics = () => {
         assignments: Math.floor(Math.random() * 50) + 20,
         quizzes: Math.floor(Math.random() * 30) + 10,
         engagement: Math.floor(Math.random() * 100) + 50,
-        performance: Math.floor(Math.random() * 100) + 60};
+        performance: Math.floor(Math.random() * 100) + 60,
+      };
     });
 
     const userDistribution = [
@@ -99,31 +115,39 @@ const EnhancedAnalytics = () => {
       engagementMetrics,
       totalUsers: userDistribution.reduce((sum, item) => sum + item.value, 0),
       activeToday: Math.floor(Math.random() * 400) + 200,
-      systemHealth: 98.5};
+      systemHealth: 98.5,
+    };
   };
 
-  const generateInsights = (data) => {
+  const generateInsights = data => {
     const insights = [
       {
         type: 'positive',
         title: 'High Engagement Detected',
-        description: 'User engagement increased by 12.5% this week, indicating improved learning outcomes.',
-        priority: 'high'},
+        description:
+          'User engagement increased by 12.5% this week, indicating improved learning outcomes.',
+        priority: 'high',
+      },
       {
         type: 'warning',
         title: 'Mathematics Performance Concern',
-        description: 'Mathematics has the highest average but lowest completion rate. Consider additional support.',
-        priority: 'medium'},
+        description:
+          'Mathematics has the highest average but lowest completion rate. Consider additional support.',
+        priority: 'medium',
+      },
       {
         type: 'info',
         title: 'Peak Usage Hours',
-        description: 'Most activity occurs between 10 AM - 2 PM. Schedule maintenance outside these hours.',
-        priority: 'low'},
+        description:
+          'Most activity occurs between 10 AM - 2 PM. Schedule maintenance outside these hours.',
+        priority: 'low',
+      },
       {
         type: 'positive',
         title: 'Assignment Completion Excellence',
         description: 'Assignment submission rate of 93% exceeds the target of 90%.',
-        priority: 'medium'},
+        priority: 'medium',
+      },
     ];
 
     return insights;
@@ -176,20 +200,20 @@ const EnhancedAnalytics = () => {
             <Select
               value={timeRange}
               label="Time Range"
-              onChange={(e) => setTimeRange(e.target.value)}
+              onChange={e => setTimeRange(e.target.value)}
             >
               <MenuItem value="7d">Last 7 Days</MenuItem>
               <MenuItem value="30d">Last 30 Days</MenuItem>
               <MenuItem value="90d">Last 90 Days</MenuItem>
             </Select>
           </FormControl>
-          
+
           <FormControl size="small" sx={{ minWidth: 120 }}>
             <InputLabel>Metric</InputLabel>
             <Select
               value={selectedMetric}
               label="Metric"
-              onChange={(e) => setSelectedMetric(e.target.value)}
+              onChange={e => setSelectedMetric(e.target.value)}
             >
               <MenuItem value="overview">Overview</MenuItem>
               <MenuItem value="users">Users</MenuItem>
@@ -213,7 +237,13 @@ const EnhancedAnalytics = () => {
       </Box>
 
       {/* AI-Powered Insights */}
-      <Card sx={{ mb: 3, background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white' }}>
+      <Card
+        sx={{
+          mb: 3,
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          color: 'white',
+        }}
+      >
         <CardContent>
           <Box display="flex" alignItems="center" gap={2} mb={2}>
             <InsightsIcon />
@@ -221,15 +251,26 @@ const EnhancedAnalytics = () => {
           </Box>
           <Grid container spacing={2}>
             {insights.map((insight, index) => (
-              <Grid size={{xs:12,md:6}} key={index}>
+              <Grid size={{ xs: 12, md: 6 }} key={index}>
                 <Paper sx={{ p: 2, backgroundColor: 'rgba(255, 255, 255, 0.1)', color: 'white' }}>
                   <Box display="flex" alignItems="center" gap={1} mb={1}>
-                    <Chip 
-                      label={insight.type} 
-                      size="small" 
-                      color={insight.type === 'positive' ? 'success' : insight.type === 'warning' ? 'warning' : 'info'}
+                    <Chip
+                      label={insight.type}
+                      size="small"
+                      color={
+                        insight.type === 'positive'
+                          ? 'success'
+                          : insight.type === 'warning'
+                            ? 'warning'
+                            : 'info'
+                      }
                     />
-                    <Chip label={insight.priority} size="small" variant="outlined" sx={{ color: 'white', borderColor: 'white' }} />
+                    <Chip
+                      label={insight.priority}
+                      size="small"
+                      variant="outlined"
+                      sx={{ color: 'white', borderColor: 'white' }}
+                    />
                   </Box>
                   <Typography variant="subtitle2" gutterBottom>
                     {insight.title}
@@ -247,7 +288,7 @@ const EnhancedAnalytics = () => {
       {/* Key Metrics */}
       <Grid container spacing={3} sx={{ mb: 3 }}>
         {analyticsData.engagementMetrics.map((metric, index) => (
-          <Grid size={{xs:12,sm:6,md:3}} key={index}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }} key={index}>
             <Card>
               <CardContent>
                 <Box display="flex" justifyContent="space-between" alignItems="flex-start">
@@ -265,8 +306,8 @@ const EnhancedAnalytics = () => {
                     ) : (
                       <TrendingDownIcon color="error" />
                     )}
-                    <Typography 
-                      variant="caption" 
+                    <Typography
+                      variant="caption"
                       color={metric.trend === 'up' ? 'success.main' : 'error.main'}
                       fontWeight="bold"
                     >
@@ -276,9 +317,10 @@ const EnhancedAnalytics = () => {
                 </Box>
                 <LinearProgress
                   variant="determinate"
-                  value={typeof metric.value === 'string' && metric.value.includes('%') 
-                    ? parseInt(metric.value) 
-                    : Math.min(100, (typeof metric.value === 'number' ? metric.value : 50))
+                  value={
+                    typeof metric.value === 'string' && metric.value.includes('%')
+                      ? parseInt(metric.value)
+                      : Math.min(100, typeof metric.value === 'number' ? metric.value : 50)
                   }
                   sx={{ mt: 2, height: 8, borderRadius: 4 }}
                 />
@@ -291,7 +333,7 @@ const EnhancedAnalytics = () => {
       {/* Charts Section */}
       <Grid container spacing={3}>
         {/* Daily Activity Trend */}
-        <Grid size={{xs:12,lg:8}}>
+        <Grid size={{ xs: 12, lg: 8 }}>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -300,15 +342,34 @@ const EnhancedAnalytics = () => {
               <ResponsiveContainer width="100%" height={300}>
                 <ComposedChart data={analyticsData.dailyData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="date" 
-                    tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                  <XAxis
+                    dataKey="date"
+                    tickFormatter={value =>
+                      new Date(value).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                      })
+                    }
                   />
                   <YAxis />
                   <RechartsTooltip content={<CustomTooltip />} />
                   <Legend />
-                  <Area type="monotone" dataKey="users" stackId="1" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
-                  <Area type="monotone" dataKey="sessions" stackId="1" stroke="#82ca9d" fill="#82ca9d" fillOpacity={0.6} />
+                  <Area
+                    type="monotone"
+                    dataKey="users"
+                    stackId="1"
+                    stroke="#8884d8"
+                    fill="#8884d8"
+                    fillOpacity={0.6}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="sessions"
+                    stackId="1"
+                    stroke="#82ca9d"
+                    fill="#82ca9d"
+                    fillOpacity={0.6}
+                  />
                   <Line type="monotone" dataKey="engagement" stroke="#ff7300" strokeWidth={3} />
                 </ComposedChart>
               </ResponsiveContainer>
@@ -317,7 +378,7 @@ const EnhancedAnalytics = () => {
         </Grid>
 
         {/* User Distribution */}
-        <Grid size={{xs:12,lg:4}}>
+        <Grid size={{ xs: 12, lg: 4 }}>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -347,7 +408,7 @@ const EnhancedAnalytics = () => {
         </Grid>
 
         {/* Subject Performance */}
-        <Grid size={{xs:12}}>
+        <Grid size={{ xs: 12 }}>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -384,7 +445,13 @@ const EnhancedAnalytics = () => {
                 variant="determinate"
                 value={analyticsData.systemHealth}
                 sx={{ height: 12, borderRadius: 6 }}
-                color={analyticsData.systemHealth > 95 ? 'success' : analyticsData.systemHealth > 80 ? 'warning' : 'error'}
+                color={
+                  analyticsData.systemHealth > 95
+                    ? 'success'
+                    : analyticsData.systemHealth > 80
+                      ? 'warning'
+                      : 'error'
+                }
               />
               <Typography variant="h4" fontWeight="bold" color="success.main" sx={{ mt: 1 }}>
                 {analyticsData.systemHealth}%
@@ -406,4 +473,3 @@ const EnhancedAnalytics = () => {
 };
 
 export default EnhancedAnalytics;
-

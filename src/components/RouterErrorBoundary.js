@@ -14,7 +14,7 @@ class RouterErrorBoundary extends React.Component {
 
   componentDidCatch(error, errorInfo) {
     console.error('Router Error Boundary caught an error:', error, errorInfo);
-    
+
     // Suppress scrollTop errors
     if (error.message && error.message.includes('scrollTop')) {
       this.setState({ hasError: false, error: null });
@@ -29,13 +29,7 @@ class RouterErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          minHeight="100vh"
-          p={3}
-        >
+        <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh" p={3}>
           <Paper elevation={3} sx={{ p: 4, textAlign: 'center', maxWidth: 400 }}>
             <Typography variant="h5" color="error" gutterBottom>
               Oops! Something went wrong
@@ -61,4 +55,3 @@ class RouterErrorBoundary extends React.Component {
 }
 
 export default RouterErrorBoundary;
-

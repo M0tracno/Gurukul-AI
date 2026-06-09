@@ -139,9 +139,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(
-        (errorData as { message?: string }).message || 'Login failed',
-      );
+      throw new Error((errorData as { message?: string }).message || 'Login failed');
     }
 
     const data = (await response.json()) as {
@@ -236,7 +234,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       logout,
       refreshTokens,
     }),
-    [user, isLoading, accessToken, login, logout, refreshTokens],
+    [user, isLoading, accessToken, login, logout, refreshTokens]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

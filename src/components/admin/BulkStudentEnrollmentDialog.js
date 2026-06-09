@@ -3,51 +3,88 @@ import {
   ExpandMore as ExpandMoreIcon,
   CheckCircle as CheckCircleIcon,
   Error as ErrorIcon,
-  Warning as WarningIcon
+  Warning as WarningIcon,
 } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 import makeStyles from '../../utils/makeStylesCompat';
 import CourseAllocationService from '../../services/courseAllocationService';
 
-import { Accordion, AccordionDetails, AccordionSummary, Alert, Box, Button, Checkbox, Chip, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControlLabel, List, ListItem, ListItemIcon, ListItemText, Step, StepLabel, Stepper, Table,
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Alert,
+  Box,
+  Button,
+  Checkbox,
+  Chip,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Divider,
+  FormControlLabel,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Step,
+  StepLabel,
+  Stepper,
+  Table,
   TableBody,
   TableCell,
-  TableContainer, TableHead, TableRow, Typography } from '@mui/material';
-const useStyles = makeStyles((theme) => ({
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+} from '@mui/material';
+const useStyles = makeStyles(theme => ({
   stepContent: {
     minHeight: '400px',
-    padding: theme.spacing(2)},
+    padding: theme.spacing(2),
+  },
   selectionGrid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
     gap: theme.spacing(2),
-    marginTop: theme.spacing(2)},
+    marginTop: theme.spacing(2),
+  },
   selectionCard: {
     padding: theme.spacing(2),
     border: `1px solid ${theme.palette.divider}`,
     borderRadius: theme.shape.borderRadius,
-    backgroundColor: theme.palette.background.paper},
+    backgroundColor: theme.palette.background.paper,
+  },
   conflictItem: {
     marginBottom: theme.spacing(1),
     padding: theme.spacing(1),
     borderRadius: theme.shape.borderRadius,
     '&.warning': {
       backgroundColor: theme.palette.warning.light,
-      color: theme.palette.warning.contrastText},
+      color: theme.palette.warning.contrastText,
+    },
     '&.error': {
       backgroundColor: theme.palette.error.light,
-      color: theme.palette.error.contrastText}},
+      color: theme.palette.error.contrastText,
+    },
+  },
   successItem: {
     backgroundColor: theme.palette.success.light,
-    color: theme.palette.success.contrastText},
+    color: theme.palette.success.contrastText,
+  },
   errorItem: {
     backgroundColor: theme.palette.error.light,
-    color: theme.palette.error.contrastText},
+    color: theme.palette.error.contrastText,
+  },
   enrollmentSummary: {
     padding: theme.spacing(2),
     marginBottom: theme.spacing(2),
     backgroundColor: theme.palette.background.default,
-    borderRadius: theme.shape.borderRadius}}));
+    borderRadius: theme.shape.borderRadius,
+  },
+}));
 
 const steps = ['Select Students & Courses', 'Review Conflicts', 'Enrollment Results'];
 
@@ -61,11 +98,46 @@ const apiService = {
       console.error('Error fetching students:', error);
       // Fallback to mock data if API fails
       return [
-        { id: 1, firstName: 'John', lastName: 'Doe', studentId: 'ST001', grade: '10', section: 'A' },
-        { id: 2, firstName: 'Jane', lastName: 'Smith', studentId: 'ST002', grade: '10', section: 'B' },
-        { id: 3, firstName: 'Mike', lastName: 'Johnson', studentId: 'ST003', grade: '11', section: 'A' },
-        { id: 4, firstName: 'Sarah', lastName: 'Wilson', studentId: 'ST004', grade: '11', section: 'B' },
-        { id: 5, firstName: 'Alex', lastName: 'Brown', studentId: 'ST005', grade: '10', section: 'A' },
+        {
+          id: 1,
+          firstName: 'John',
+          lastName: 'Doe',
+          studentId: 'ST001',
+          grade: '10',
+          section: 'A',
+        },
+        {
+          id: 2,
+          firstName: 'Jane',
+          lastName: 'Smith',
+          studentId: 'ST002',
+          grade: '10',
+          section: 'B',
+        },
+        {
+          id: 3,
+          firstName: 'Mike',
+          lastName: 'Johnson',
+          studentId: 'ST003',
+          grade: '11',
+          section: 'A',
+        },
+        {
+          id: 4,
+          firstName: 'Sarah',
+          lastName: 'Wilson',
+          studentId: 'ST004',
+          grade: '11',
+          section: 'B',
+        },
+        {
+          id: 5,
+          firstName: 'Alex',
+          lastName: 'Brown',
+          studentId: 'ST005',
+          grade: '10',
+          section: 'A',
+        },
       ];
     }
   },
@@ -87,7 +159,7 @@ const apiService = {
     }
   },
 
-  bulkEnrollStudents: async (enrollments) => {
+  bulkEnrollStudents: async enrollments => {
     try {
       const response = await CourseAllocationService.bulkEnrollStudents({ enrollments });
       return response;
@@ -95,7 +167,8 @@ const apiService = {
       console.error('Error in bulk enrollment:', error);
       throw error;
     }
-  }};
+  },
+};
 
 function BulkStudentEnrollmentDialog({ open, onClose, onComplete }) {
   const classes = useStyles();
@@ -156,7 +229,8 @@ function BulkStudentEnrollmentDialog({ open, onClose, onComplete }) {
               type: 'warning',
               student,
               course,
-              message: `Grade mismatch: Student is in grade ${student.grade} but course is for grade ${course.grade}`});
+              message: `Grade mismatch: Student is in grade ${student.grade} but course is for grade ${course.grade}`,
+            });
           }
 
           // Simulate capacity conflicts
@@ -165,7 +239,8 @@ function BulkStudentEnrollmentDialog({ open, onClose, onComplete }) {
               type: 'error',
               student,
               course,
-              message: `Course capacity exceeded for ${course.name}`});
+              message: `Course capacity exceeded for ${course.name}`,
+            });
           }
         });
       });
@@ -189,9 +264,11 @@ function BulkStudentEnrollmentDialog({ open, onClose, onComplete }) {
             studentId: student.id,
             courseId: course.id,
             studentName: `${student.firstName} ${student.lastName}`,
-            courseName: course.name});
+            courseName: course.name,
+          });
         });
-      });      const results = await apiService.bulkEnrollStudents(enrollments);
+      });
+      const results = await apiService.bulkEnrollStudents(enrollments);
       setEnrollmentResults(results);
     } catch (error) {
       console.error('Error performing enrollment:', error);
@@ -201,7 +278,7 @@ function BulkStudentEnrollmentDialog({ open, onClose, onComplete }) {
   };
 
   const handleBack = () => {
-  const theme = useTheme();
+    const theme = useTheme();
     setActiveStep(activeStep - 1);
   };
 
@@ -221,7 +298,7 @@ function BulkStudentEnrollmentDialog({ open, onClose, onComplete }) {
     handleClose();
   };
 
-  const handleStudentToggle = (student) => {
+  const handleStudentToggle = student => {
     setSelectedStudents(prev => {
       const isSelected = prev.find(s => s.id === student.id);
       if (isSelected) {
@@ -232,7 +309,7 @@ function BulkStudentEnrollmentDialog({ open, onClose, onComplete }) {
     });
   };
 
-  const handleCourseToggle = (course) => {
+  const handleCourseToggle = course => {
     setSelectedCourses(prev => {
       const isSelected = prev.find(c => c.id === course.id);
       if (isSelected) {
@@ -279,7 +356,8 @@ function BulkStudentEnrollmentDialog({ open, onClose, onComplete }) {
                               {student.firstName} {student.lastName}
                             </Typography>
                             <Typography variant="caption" color="textSecondary">
-                              {student.studentId} • Grade {student.grade} • Section {student.section}
+                              {student.studentId} • Grade {student.grade} • Section{' '}
+                              {student.section}
                             </Typography>
                           </Box>
                         }
@@ -325,7 +403,8 @@ function BulkStudentEnrollmentDialog({ open, onClose, onComplete }) {
                 Enrollment Summary
               </Typography>
               <Typography variant="body2">
-                {selectedStudents.length} students × {selectedCourses.length} courses = {selectedStudents.length * selectedCourses.length} total enrollments
+                {selectedStudents.length} students × {selectedCourses.length} courses ={' '}
+                {selectedStudents.length * selectedCourses.length} total enrollments
               </Typography>
             </Box>
           </Box>
@@ -375,7 +454,9 @@ function BulkStudentEnrollmentDialog({ open, onClose, onComplete }) {
                                     <WarningIcon color="warning" />
                                   )}
                                 </ListItemIcon>
-                                <ListItemText primaryTypographyProps={{ component: "div" }} primary={`${conflict.student.firstName} ${conflict.student.lastName} → ${conflict.course.name}`}
+                                <ListItemText
+                                  primaryTypographyProps={{ component: 'div' }}
+                                  primary={`${conflict.student.firstName} ${conflict.student.lastName} → ${conflict.course.name}`}
                                   secondary={conflict.message}
                                 />
                               </ListItem>
@@ -452,10 +533,12 @@ function BulkStudentEnrollmentDialog({ open, onClose, onComplete }) {
                 <TableContainer component={Paper}>
                   <Table size="small">
                     <TableHead>
-                      <TableRow><TableCell>Student</TableCell>
+                      <TableRow>
+                        <TableCell>Student</TableCell>
                         <TableCell>Course</TableCell>
                         <TableCell>Status</TableCell>
-                        <TableCell>Message</TableCell></TableRow>
+                        <TableCell>Message</TableCell>
+                      </TableRow>
                     </TableHead>
                     <TableBody>
                       {enrollmentResults.results.map((result, index) => (
@@ -467,22 +550,24 @@ function BulkStudentEnrollmentDialog({ open, onClose, onComplete }) {
                               size="small"
                               label={result.status}
                               color={
-                                result.status === 'success' ? 'primary' :
-                                result.status === 'conflict' ? 'default' : 'secondary'
+                                result.status === 'success'
+                                  ? 'primary'
+                                  : result.status === 'conflict'
+                                    ? 'default'
+                                    : 'secondary'
                               }
                               variant={result.status === 'success' ? 'default' : 'outlined'}
                             />
                           </TableCell>
-                          <TableCell>{result.message}</TableCell></TableRow>
+                          <TableCell>{result.message}</TableCell>
+                        </TableRow>
                       ))}
                     </TableBody>
                   </Table>
                 </TableContainer>
               </>
             ) : (
-              <Alert severity="error">
-                Failed to process enrollments. Please try again.
-              </Alert>
+              <Alert severity="error">Failed to process enrollments. Please try again.</Alert>
             )}
           </Box>
         );
@@ -498,7 +583,7 @@ function BulkStudentEnrollmentDialog({ open, onClose, onComplete }) {
 
       <DialogContent dividers>
         <Stepper activeStep={activeStep} alternativeLabel>
-          {steps.map((label) => (
+          {steps.map(label => (
             <Step key={label}>
               <StepLabel>{label}</StepLabel>
             </Step>
@@ -543,4 +628,3 @@ function BulkStudentEnrollmentDialog({ open, onClose, onComplete }) {
 }
 
 export default BulkStudentEnrollmentDialog;
-

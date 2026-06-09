@@ -5,14 +5,27 @@ import { navigateToDashboard } from '../utils/navigationHelpers';
 import LinkBehavior from '../components/common/LinkBehavior';
 import { useFormInteractionFix } from '../utils/formInteractionFix';
 import { appleColors, appleGradients, appleShadows, appleTransitions } from '../styles/appleTheme';
-import { Alert, Box, Button, Checkbox, CircularProgress, Fade, FormControlLabel, IconButton, InputAdornment, Slide, TextField, Typography } from '@mui/material';
+import {
+  Alert,
+  Box,
+  Button,
+  Checkbox,
+  CircularProgress,
+  Fade,
+  FormControlLabel,
+  IconButton,
+  InputAdornment,
+  Slide,
+  TextField,
+  Typography,
+} from '@mui/material';
 import {
   ArrowBack as ArrowBackIcon,
   School as SchoolIcon,
   Email as EmailIcon,
   Lock as LockIcon,
   Visibility as VisibilityIcon,
-  VisibilityOff as VisibilityOffIcon
+  VisibilityOff as VisibilityOffIcon,
 } from '@mui/icons-material';
 
 // Import form interaction fix and Apple theme
@@ -42,7 +55,7 @@ function FacultyLogin() {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
 
     // Validation
@@ -91,11 +104,14 @@ function FacultyLogin() {
             radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
             radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.06) 0%, transparent 50%)
           `,
-          animation: 'backgroundFloat 20s ease-in-out infinite'},
+          animation: 'backgroundFloat 20s ease-in-out infinite',
+        },
         '@keyframes backgroundFloat': {
           '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
           '33%': { transform: 'translate(30px, -30px) scale(1.1)' },
-          '66%': { transform: 'translate(-20px, 20px) scale(0.9)' }}}}
+          '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+        },
+      }}
     >
       <Fade in timeout={800}>
         <Box
@@ -118,7 +134,9 @@ function FacultyLogin() {
               bottom: 0,
               borderRadius: '24px',
               background: 'linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))',
-              zIndex: -1}}}
+              zIndex: -1,
+            },
+          }}
         >
           <Slide direction="up" in timeout={1000}>
             <Box sx={{ textAlign: 'center', mb: 4 }}>
@@ -136,7 +154,9 @@ function FacultyLogin() {
                   animation: 'float 3s ease-in-out infinite',
                   '@keyframes float': {
                     '0%, 100%': { transform: 'translateY(0px)' },
-                    '50%': { transform: 'translateY(-10px)' }}}}
+                    '50%': { transform: 'translateY(-10px)' },
+                  },
+                }}
               >
                 <SchoolIcon sx={{ fontSize: 40, color: 'white' }} />
               </Box>
@@ -147,7 +167,8 @@ function FacultyLogin() {
                   color: 'white',
                   fontWeight: 700,
                   mb: 1,
-                  textShadow: '0 2px 4px rgba(0,0,0,0.1)'}}
+                  textShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                }}
               >
                 Faculty Portal
               </Typography>
@@ -156,7 +177,8 @@ function FacultyLogin() {
                 variant="body1"
                 sx={{
                   color: 'rgba(255, 255, 255, 0.8)',
-                  fontSize: '1.1rem'}}
+                  fontSize: '1.1rem',
+                }}
               >
                 Access your teaching dashboard and resources
               </Typography>
@@ -174,7 +196,8 @@ function FacultyLogin() {
                   border: '1px solid rgba(244, 67, 54, 0.3)',
                   backdropFilter: 'blur(10px)',
                   '& .MuiAlert-message': {
-                    color: 'rgba(255, 255, 255, 0.9)'}
+                    color: 'rgba(255, 255, 255, 0.9)',
+                  },
                 }}
               >
                 {error}
@@ -191,7 +214,7 @@ function FacultyLogin() {
               label="Email Address"
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={e => setEmail(e.target.value)}
               required
               autoFocus
               placeholder="Enter your email address"
@@ -204,7 +227,8 @@ function FacultyLogin() {
                 style: {
                   pointerEvents: 'auto',
                   userSelect: 'auto',
-                  touchAction: 'manipulation'}
+                  touchAction: 'manipulation',
+                },
               }}
               sx={{
                 '& .MuiOutlinedInput-root': {
@@ -215,28 +239,37 @@ function FacultyLogin() {
                   pointerEvents: 'auto',
                   '& fieldset': {
                     borderColor: 'rgba(255, 255, 255, 0.3)',
-                    borderWidth: '1px'},
+                    borderWidth: '1px',
+                  },
                   '&:hover fieldset': {
-                    borderColor: 'rgba(255, 255, 255, 0.5)'},
+                    borderColor: 'rgba(255, 255, 255, 0.5)',
+                  },
                   '&.Mui-focused fieldset': {
                     borderColor: appleColors.faculty.main,
                     borderWidth: '2px',
-                    boxShadow: `0 0 0 4px ${appleColors.faculty.main}25`}},
+                    boxShadow: `0 0 0 4px ${appleColors.faculty.main}25`,
+                  },
+                },
                 '& .MuiInputLabel-root': {
                   color: 'rgba(255, 255, 255, 0.7)',
                   '&.Mui-focused': {
-                    color: appleColors.faculty.main}},
+                    color: appleColors.faculty.main,
+                  },
+                },
                 '& .MuiOutlinedInput-input': {
                   color: 'white',
                   '&::placeholder': {
-                    color: 'rgba(255, 255, 255, 0.5)'}}}}
+                    color: 'rgba(255, 255, 255, 0.5)',
+                  },
+                },
+              }}
             />
 
             <TextField
               label="Password"
               type={showPassword ? 'text' : 'password'}
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={e => setPassword(e.target.value)}
               required
               placeholder="Enter your password"
               InputProps={{
@@ -257,7 +290,8 @@ function FacultyLogin() {
                         touchAction: 'manipulation',
                         '&:hover': {
                           color: 'white',
-                          background: 'rgba(255, 255, 255, 0.1)'}
+                          background: 'rgba(255, 255, 255, 0.1)',
+                        },
                       }}
                     >
                       {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
@@ -267,7 +301,8 @@ function FacultyLogin() {
                 style: {
                   pointerEvents: 'auto',
                   userSelect: 'auto',
-                  touchAction: 'manipulation'}
+                  touchAction: 'manipulation',
+                },
               }}
               sx={{
                 '& .MuiOutlinedInput-root': {
@@ -278,21 +313,30 @@ function FacultyLogin() {
                   pointerEvents: 'auto',
                   '& fieldset': {
                     borderColor: 'rgba(255, 255, 255, 0.3)',
-                    borderWidth: '1px'},
+                    borderWidth: '1px',
+                  },
                   '&:hover fieldset': {
-                    borderColor: 'rgba(255, 255, 255, 0.5)'},
+                    borderColor: 'rgba(255, 255, 255, 0.5)',
+                  },
                   '&.Mui-focused fieldset': {
                     borderColor: appleColors.faculty.main,
                     borderWidth: '2px',
-                    boxShadow: `0 0 0 4px ${appleColors.faculty.main}25`}},
+                    boxShadow: `0 0 0 4px ${appleColors.faculty.main}25`,
+                  },
+                },
                 '& .MuiInputLabel-root': {
                   color: 'rgba(255, 255, 255, 0.7)',
                   '&.Mui-focused': {
-                    color: appleColors.faculty.main}},
+                    color: appleColors.faculty.main,
+                  },
+                },
                 '& .MuiOutlinedInput-input': {
                   color: 'white',
                   '&::placeholder': {
-                    color: 'rgba(255, 255, 255, 0.5)'}}}}
+                    color: 'rgba(255, 255, 255, 0.5)',
+                  },
+                },
+              }}
             />
 
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -300,15 +344,17 @@ function FacultyLogin() {
                 control={
                   <Checkbox
                     checked={remember}
-                    onChange={(e) => setRemember(e.target.checked)}
+                    onChange={e => setRemember(e.target.checked)}
                     sx={{
                       color: 'rgba(255, 255, 255, 0.7)',
                       pointerEvents: 'auto',
                       touchAction: 'manipulation',
                       '&.Mui-checked': {
-                        color: appleColors.faculty.main},
+                        color: appleColors.faculty.main,
+                      },
                       '&:hover': {
-                        background: 'rgba(255, 255, 255, 0.1)'}
+                        background: 'rgba(255, 255, 255, 0.1)',
+                      },
                     }}
                   />
                 }
@@ -332,7 +378,8 @@ function FacultyLogin() {
                   transition: appleTransitions.smooth,
                   '&:hover': {
                     color: 'white',
-                    textDecoration: 'underline'}
+                    textDecoration: 'underline',
+                  },
                 }}
               >
                 Forgot Password?
@@ -358,12 +405,16 @@ function FacultyLogin() {
                 '&:hover': {
                   background: appleGradients.faculty.light,
                   transform: 'translateY(-2px)',
-                  boxShadow: appleShadows.large},
+                  boxShadow: appleShadows.large,
+                },
                 '&:active': {
-                  transform: 'translateY(0px)'},
+                  transform: 'translateY(0px)',
+                },
                 '&:disabled': {
                   background: 'rgba(255, 255, 255, 0.2)',
-                  color: 'rgba(255, 255, 255, 0.5)'}}}
+                  color: 'rgba(255, 255, 255, 0.5)',
+                },
+              }}
             >
               {loading ? (
                 <>
@@ -396,7 +447,8 @@ function FacultyLogin() {
                 transition: appleTransitions.smooth,
                 '&:hover': {
                   color: 'white',
-                  transform: 'translateX(-4px)'}
+                  transform: 'translateX(-4px)',
+                },
               }}
             >
               <ArrowBackIcon sx={{ mr: 1, fontSize: 18 }} />
@@ -410,4 +462,3 @@ function FacultyLogin() {
 }
 
 export default FacultyLogin;
-

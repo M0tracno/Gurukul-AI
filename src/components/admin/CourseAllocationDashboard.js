@@ -6,7 +6,7 @@ import {
   TrendingUp as TrendingUpIcon,
   GroupAdd as AddIcon,
   Book as CourseIcon,
-  PeopleAlt as StudentsIcon
+  PeopleAlt as StudentsIcon,
 } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 import makeStyles from '../../utils/makeStylesCompat';
@@ -14,11 +14,43 @@ import BulkAssignmentDialog from './BulkAssignmentDialog';
 import BulkStudentEnrollmentDialog from './BulkStudentEnrollmentDialog';
 import CourseAllocationService from '../../services/courseAllocationService';
 
-import { Alert, Box, Button, Card, CardContent, Chip, CircularProgress, Container, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grid, IconButton, InputLabel, List, ListItem, ListItemText, MenuItem, Paper, Select, Snackbar, Tab, Table,
+import {
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  CircularProgress,
+  Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  Grid,
+  IconButton,
+  InputLabel,
+  List,
+  ListItem,
+  ListItemText,
+  MenuItem,
+  Paper,
+  Select,
+  Snackbar,
+  Tab,
+  Table,
   TableBody,
   TableCell,
-  TableContainer, TableHead, TableRow, Tabs, TextField, Tooltip, Typography } from '@mui/material';
-const useStyles = makeStyles((theme) => ({
+  TableContainer,
+  TableHead,
+  TableRow,
+  Tabs,
+  TextField,
+  Tooltip,
+  Typography,
+} from '@mui/material';
+const useStyles = makeStyles(theme => ({
   container: {
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
@@ -74,21 +106,13 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.success.light,
     color: theme.palette.success.contrastText,
     margin: theme.spacing(1, 0),
-  }
+  },
 }));
 
 function TabPanel({ children, value, index, ...other }) {
   return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      {...other}
-    >
-      {value === index && (
-        <Box className="tabPanel">
-          {children}
-        </Box>
-      )}
+    <div role="tabpanel" hidden={value !== index} {...other}>
+      {value === index && <Box className="tabPanel">{children}</Box>}
     </div>
   );
 }
@@ -105,7 +129,7 @@ function CourseAllocationDashboard() {
   const [selectedFaculty, setSelectedFaculty] = useState('');
   const [bulkAssignments] = useState([]);
   const [bulkEnrollments] = useState([]);
-    // Dialog states
+  // Dialog states
   const [facultyAssignDialog, setFacultyAssignDialog] = useState(false);
   const [studentEnrollDialog, setStudentEnrollDialog] = useState(false);
   const [bulkAssignDialog, setBulkAssignDialog] = useState(false);
@@ -117,7 +141,7 @@ function CourseAllocationDashboard() {
     academicYear: '',
     semester: '',
     department: '',
-    facultyId: ''
+    facultyId: '',
   });
   // Result states
   const [conflicts, setConflicts] = useState([]);
@@ -161,7 +185,8 @@ function CourseAllocationDashboard() {
   useEffect(() => {
     loadCourses();
     loadFaculty();
-    loadStats();  }, [loadCourses, loadFaculty, loadStats]);
+    loadStats();
+  }, [loadCourses, loadFaculty, loadStats]);
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -178,7 +203,7 @@ function CourseAllocationDashboard() {
       const response = await CourseAllocationService.assignFacultyToCourse({
         courseId: selectedCourse.id,
         facultyId: selectedFaculty,
-        forceAssign: false
+        forceAssign: false,
       });
 
       if (response.success) {
@@ -197,8 +222,12 @@ function CourseAllocationDashboard() {
         setConflicts(error.response.data.conflicts);
         setConflictDialog(true);
       } else {
-        showSnackbar('Error assigning faculty: ' + (error.response?.data?.message || error.message), 'error');
-      }    } finally {
+        showSnackbar(
+          'Error assigning faculty: ' + (error.response?.data?.message || error.message),
+          'error'
+        );
+      }
+    } finally {
       setLoading(false);
     }
   };
@@ -207,14 +236,14 @@ function CourseAllocationDashboard() {
     setSnackbar({ open: true, message, severity });
   };
 
-  const getStatusColor = (course) => {
+  const getStatusColor = course => {
     if (!course.faculty) return 'secondary';
     if (course.enrollmentCount >= course.maxCapacity) return 'primary';
     if (course.enrollmentCount === 0) return 'default';
     return 'primary';
   };
 
-  const getStatusLabel = (course) => {
+  const getStatusLabel = course => {
     if (!course.faculty) return 'No Faculty';
     if (course.enrollmentCount >= course.maxCapacity) return 'Full';
     if (course.enrollmentCount === 0) return 'Empty';
@@ -233,7 +262,7 @@ function CourseAllocationDashboard() {
       const response = await CourseAllocationService.assignFacultyToCourse({
         courseId: selectedCourse.id,
         facultyId: selectedFaculty,
-        forceAssign: true
+        forceAssign: true,
       });
 
       if (response.success) {
@@ -246,7 +275,10 @@ function CourseAllocationDashboard() {
       }
     } catch (error) {
       console.error('Error in force assignment:', error);
-      showSnackbar('Error force-assigning faculty: ' + (error.response?.data?.message || error.message), 'error');
+      showSnackbar(
+        'Error force-assigning faculty: ' + (error.response?.data?.message || error.message),
+        'error'
+      );
     } finally {
       setLoading(false);
     }
@@ -265,30 +297,27 @@ function CourseAllocationDashboard() {
       </Box>
 
       {/* Statistics Cards */}
-      <Grid container spacing={3} style={{ marginBottom: 24 }}>        <Grid size={{xs:12,sm:6,md:3}}>
+      <Grid container spacing={3} style={{ marginBottom: 24 }}>
+        {' '}
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <Card className={classes.statsCard}>
             <CardContent>
               <CourseIcon className={classes.statsIcon} />
-              <Typography className={classes.statsValue}>
-                {stats.courses?.total || 0}
-              </Typography>
+              <Typography className={classes.statsValue}>{stats.courses?.total || 0}</Typography>
               <Typography variant="h6">Total Courses</Typography>
             </CardContent>
           </Card>
         </Grid>
-        <Grid size={{xs:12,sm:6,md:3}}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <Card className={classes.statsCard}>
             <CardContent>
               <PersonIcon className={classes.statsIcon} />
-              <Typography className={classes.statsValue}>
-                {stats.courses?.assigned || 0}
-              </Typography>
+              <Typography className={classes.statsValue}>{stats.courses?.assigned || 0}</Typography>
               <Typography variant="h6">Assigned Courses</Typography>
             </CardContent>
           </Card>
         </Grid>
-
-        <Grid size={{xs:12,sm:6,md:3}}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <Card className={classes.statsCard}>
             <CardContent>
               <StudentsIcon className={classes.statsIcon} />
@@ -299,7 +328,7 @@ function CourseAllocationDashboard() {
             </CardContent>
           </Card>
         </Grid>
-          <Grid size={{xs:12,sm:6,md:3}}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <Card className={classes.statsCard}>
             <CardContent>
               <TrendingUpIcon className={classes.statsIcon} />
@@ -314,7 +343,12 @@ function CourseAllocationDashboard() {
 
       {/* Main Content Tabs */}
       <Paper>
-        <Tabs value={tabValue} onChange={handleTabChange} indicatorColor="primary" textColor="primary">
+        <Tabs
+          value={tabValue}
+          onChange={handleTabChange}
+          indicatorColor="primary"
+          textColor="primary"
+        >
           <Tab label="Course Allocations" />
           <Tab label="Faculty Assignments" />
         </Tabs>
@@ -345,12 +379,14 @@ function CourseAllocationDashboard() {
               </Grid>
               <Grid xs>
                 {/* Filters */}
-                <Grid container spacing={2}>                  <Grid size={{xs:12,sm:3}}>
+                <Grid container spacing={2}>
+                  {' '}
+                  <Grid size={{ xs: 12, sm: 3 }}>
                     <TextField
                       select
                       label="Academic Year"
                       value={filters.academicYear}
-                      onChange={(e) => setFilters({...filters, academicYear: e.target.value})}
+                      onChange={e => setFilters({ ...filters, academicYear: e.target.value })}
                       fullWidth
                       size="small"
                     >
@@ -358,12 +394,13 @@ function CourseAllocationDashboard() {
                       <MenuItem value="2023-2024">2023-2024</MenuItem>
                       <MenuItem value="2024-2025">2024-2025</MenuItem>
                     </TextField>
-                  </Grid>                  <Grid size={{xs:12,sm:3}}>
+                  </Grid>{' '}
+                  <Grid size={{ xs: 12, sm: 3 }}>
                     <TextField
                       select
                       label="Semester"
                       value={filters.semester}
-                      onChange={(e) => setFilters({...filters, semester: e.target.value})}
+                      onChange={e => setFilters({ ...filters, semester: e.target.value })}
                       fullWidth
                       size="small"
                     >
@@ -381,15 +418,17 @@ function CourseAllocationDashboard() {
           <TableContainer className={classes.tableContainer}>
             <Table>
               <TableHead>
-                <TableRow><TableCell>Course</TableCell>
+                <TableRow>
+                  <TableCell>Course</TableCell>
                   <TableCell>Class & Section</TableCell>
                   <TableCell>Faculty</TableCell>
                   <TableCell>Enrollments</TableCell>
                   <TableCell>Status</TableCell>
-                  <TableCell>Actions</TableCell></TableRow>
+                  <TableCell>Actions</TableCell>
+                </TableRow>
               </TableHead>
               <TableBody>
-                {courses.map((course) => (
+                {courses.map(course => (
                   <TableRow key={course.id}>
                     <TableCell>
                       <Box>
@@ -403,10 +442,9 @@ function CourseAllocationDashboard() {
                       {course.classId} - {course.section}
                     </TableCell>
                     <TableCell>
-                      {course.faculty ?
-                        `${course.faculty.firstName} ${course.faculty.lastName}` :
-                        'Unassigned'
-                      }
+                      {course.faculty
+                        ? `${course.faculty.firstName} ${course.faculty.lastName}`
+                        : 'Unassigned'}
                     </TableCell>
                     <TableCell>
                       <Box>
@@ -451,7 +489,8 @@ function CourseAllocationDashboard() {
                           <PersonIcon />
                         </IconButton>
                       </Tooltip>
-                    </TableCell></TableRow>
+                    </TableCell>
+                  </TableRow>
                 ))}
               </TableBody>
             </Table>
@@ -460,10 +499,12 @@ function CourseAllocationDashboard() {
 
         {/* Faculty Assignments Tab */}
         <TabPanel value={tabValue} index={1}>
-          <Typography variant="h6" gutterBottom>Faculty Workload Distribution</Typography>
+          <Typography variant="h6" gutterBottom>
+            Faculty Workload Distribution
+          </Typography>
           <Grid container spacing={3}>
             {stats.facultyWorkload?.map((workload, index) => (
-              <Grid size={{xs:12,sm:6,md:4}} key={index}>
+              <Grid size={{ xs: 12, sm: 6, md: 4 }} key={index}>
                 <Card>
                   <CardContent>
                     <Typography variant="h6">
@@ -483,7 +524,7 @@ function CourseAllocationDashboard() {
         </TabPanel>
       </Paper>
 
-        {/* Faculty Assignment Dialog */}
+      {/* Faculty Assignment Dialog */}
       <Dialog
         open={facultyAssignDialog}
         onClose={() => setFacultyAssignDialog(false)}
@@ -501,11 +542,8 @@ function CourseAllocationDashboard() {
           )}
           <FormControl fullWidth margin="normal">
             <InputLabel>Select Faculty</InputLabel>
-            <Select
-              value={selectedFaculty}
-              onChange={(e) => setSelectedFaculty(e.target.value)}
-            >
-              {faculty.map((facultyMember) => (
+            <Select value={selectedFaculty} onChange={e => setSelectedFaculty(e.target.value)}>
+              {faculty.map(facultyMember => (
                 <MenuItem key={facultyMember.id} value={facultyMember.id}>
                   {facultyMember.firstName} {facultyMember.lastName} - {facultyMember.department}
                 </MenuItem>
@@ -514,9 +552,7 @@ function CourseAllocationDashboard() {
           </FormControl>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setFacultyAssignDialog(false)}>
-            Cancel
-          </Button>
+          <Button onClick={() => setFacultyAssignDialog(false)}>Cancel</Button>
           <Button
             onClick={handleAssignFaculty}
             color="primary"
@@ -543,7 +579,9 @@ function CourseAllocationDashboard() {
           <List>
             {conflicts.map((conflict, index) => (
               <ListItem key={index}>
-                <ListItemText primaryTypographyProps={{ component: "div" }} primary={`${conflict.courseName} (${conflict.courseCode})`}
+                <ListItemText
+                  primaryTypographyProps={{ component: 'div' }}
+                  primary={`${conflict.courseName} (${conflict.courseCode})`}
                   secondary="Time conflict detected"
                 />
               </ListItem>
@@ -554,28 +592,28 @@ function CourseAllocationDashboard() {
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setConflictDialog(false)}>
-            Cancel
-          </Button>          <Button
+          <Button onClick={() => setConflictDialog(false)}>Cancel</Button>{' '}
+          <Button
             onClick={handleForceAssign}
             color="secondary"
             variant="contained"
             disabled={loading}
           >
             {loading ? <CircularProgress size={20} /> : 'Force Assign'}
-          </Button>        </DialogActions>
+          </Button>{' '}
+        </DialogActions>
       </Dialog>
 
       {/* Bulk Assignment Dialog */}
       <BulkAssignmentDialog
         open={bulkAssignDialog}
         onClose={() => setBulkAssignDialog(false)}
-        onComplete={(results) => {
+        onComplete={results => {
           setAssignmentResults(results);
           setSnackbar({
             open: true,
             message: `Bulk assignment completed: ${results.summary.successful} successful, ${results.summary.conflicts} conflicts`,
-            severity: results.summary.conflicts > 0 ? 'warning' : 'success'
+            severity: results.summary.conflicts > 0 ? 'warning' : 'success',
           });
           loadCourses(); // Refresh course data
         }}
@@ -585,12 +623,12 @@ function CourseAllocationDashboard() {
       <BulkStudentEnrollmentDialog
         open={bulkEnrollDialog}
         onClose={() => setBulkEnrollDialog(false)}
-        onComplete={(results) => {
+        onComplete={results => {
           setEnrollmentResults(results);
           setSnackbar({
             open: true,
             message: `Bulk enrollment completed: ${results.summary.successful} successful, ${results.summary.errors} errors`,
-            severity: results.summary.errors > 0 ? 'warning' : 'success'
+            severity: results.summary.errors > 0 ? 'warning' : 'success',
           });
           loadCourses(); // Refresh course data
         }}
@@ -602,7 +640,10 @@ function CourseAllocationDashboard() {
         autoHideDuration={6000}
         onClose={() => setSnackbar({ ...snackbar, open: false })}
       >
-        <Alert onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.severity}>
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+        >
           {snackbar.message}
         </Alert>
       </Snackbar>
@@ -611,4 +652,3 @@ function CourseAllocationDashboard() {
 }
 
 export default CourseAllocationDashboard;
-

@@ -32,7 +32,7 @@ import {
   Snackbar,
   Avatar,
   Tooltip,
-  Fab
+  Fab,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -45,7 +45,7 @@ import {
   People as PeopleIcon,
   CheckCircle,
   RadioButtonUnchecked,
-  Assessment
+  Assessment,
 } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 import EnhancedFacultyService from '../../services/enhancedFacultyService';
@@ -93,7 +93,7 @@ const QuizManagement = () => {
     passingScore: 70,
     startDate: '',
     endDate: '',
-    questions: []
+    questions: [],
   });
 
   useEffect(() => {
@@ -149,7 +149,7 @@ const QuizManagement = () => {
           passingScore: 70,
           startDate: '',
           endDate: '',
-          questions: []
+          questions: [],
         });
         await loadData();
       }
@@ -161,7 +161,7 @@ const QuizManagement = () => {
     }
   };
 
-  const handleEditQuiz = (quiz) => {
+  const handleEditQuiz = quiz => {
     setSelectedQuiz(quiz);
     setNewQuiz(quiz);
     setEditQuizDialog(true);
@@ -190,7 +190,7 @@ const QuizManagement = () => {
     }
   };
 
-  const handleDeleteQuiz = async (quizId) => {
+  const handleDeleteQuiz = async quizId => {
     if (!window.confirm('Are you sure you want to delete this quiz?')) return;
 
     setLoading(true);
@@ -232,7 +232,7 @@ const QuizManagement = () => {
     <Box>
       {/* Stats Cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid size={{xs:12,sm:6,md:3}}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <StatCard color="#667eea">
             <CardContent>
               <Box display="flex" alignItems="center" justifyContent="space-between">
@@ -251,7 +251,7 @@ const QuizManagement = () => {
             </CardContent>
           </StatCard>
         </Grid>
-        <Grid size={{xs:12,sm:6,md:3}}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <StatCard color="#4CAF50">
             <CardContent>
               <Box display="flex" alignItems="center" justifyContent="space-between">
@@ -270,7 +270,7 @@ const QuizManagement = () => {
             </CardContent>
           </StatCard>
         </Grid>
-        <Grid size={{xs:12,sm:6,md:3}}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <StatCard color="#FF9800">
             <CardContent>
               <Box display="flex" alignItems="center" justifyContent="space-between">
@@ -289,7 +289,7 @@ const QuizManagement = () => {
             </CardContent>
           </StatCard>
         </Grid>
-        <Grid size={{xs:12,sm:6,md:3}}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <StatCard color="#9C27B0">
             <CardContent>
               <Box display="flex" alignItems="center" justifyContent="space-between">
@@ -332,16 +332,18 @@ const QuizManagement = () => {
           <TableContainer>
             <Table>
               <TableHead>
-                <TableRow><TableCell>Quiz Title</TableCell>
+                <TableRow>
+                  <TableCell>Quiz Title</TableCell>
                   <TableCell>Course</TableCell>
                   <TableCell>Questions</TableCell>
                   <TableCell>Duration</TableCell>
                   <TableCell>Status</TableCell>
-                  <TableCell>Actions</TableCell></TableRow>
+                  <TableCell>Actions</TableCell>
+                </TableRow>
               </TableHead>
               <TableBody>
                 {quizzes.length > 0 ? (
-                  quizzes.map((quiz) => (
+                  quizzes.map(quiz => (
                     <TableRow key={quiz.id} hover>
                       <TableCell>
                         <Box>
@@ -354,30 +356,30 @@ const QuizManagement = () => {
                         </Box>
                       </TableCell>
                       <TableCell>
-                        <Chip 
-                          label={courses.find(c => c.id === quiz.courseId)?.code || 'Unknown'} 
-                          size="small" 
-                          color="primary" 
+                        <Chip
+                          label={courses.find(c => c.id === quiz.courseId)?.code || 'Unknown'}
+                          size="small"
+                          color="primary"
                           variant="outlined"
                         />
                       </TableCell>
                       <TableCell>
-                        <Typography variant="body2">
-                          {quiz.totalQuestions} questions
-                        </Typography>
+                        <Typography variant="body2">{quiz.totalQuestions} questions</Typography>
                       </TableCell>
                       <TableCell>
-                        <Typography variant="body2">
-                          {quiz.duration} minutes
-                        </Typography>
+                        <Typography variant="body2">{quiz.duration} minutes</Typography>
                       </TableCell>
                       <TableCell>
                         <Chip
                           label={quiz.status || 'active'}
                           color={
-                            quiz.status === 'active' ? 'success' :
-                            quiz.status === 'completed' ? 'default' :
-                            quiz.status === 'draft' ? 'warning' : 'primary'
+                            quiz.status === 'active'
+                              ? 'success'
+                              : quiz.status === 'completed'
+                                ? 'default'
+                                : quiz.status === 'draft'
+                                  ? 'warning'
+                                  : 'primary'
                           }
                           size="small"
                         />
@@ -390,8 +392,8 @@ const QuizManagement = () => {
                             </IconButton>
                           </Tooltip>
                           <Tooltip title="Edit Quiz">
-                            <IconButton 
-                              size="small" 
+                            <IconButton
+                              size="small"
                               color="primary"
                               onClick={() => handleEditQuiz(quiz)}
                             >
@@ -404,8 +406,8 @@ const QuizManagement = () => {
                             </IconButton>
                           </Tooltip>
                           <Tooltip title="Delete Quiz">
-                            <IconButton 
-                              size="small" 
+                            <IconButton
+                              size="small"
                               color="error"
                               onClick={() => handleDeleteQuiz(quiz.id)}
                             >
@@ -413,10 +415,12 @@ const QuizManagement = () => {
                             </IconButton>
                           </Tooltip>
                         </Box>
-                      </TableCell></TableRow>
+                      </TableCell>
+                    </TableRow>
                   ))
                 ) : (
-                  <TableRow><TableCell colSpan={6} align="center">
+                  <TableRow>
+                    <TableCell colSpan={6} align="center">
                       <Box py={4}>
                         <QuizIcon sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
                         <Typography variant="h6" color="textSecondary">
@@ -426,7 +430,8 @@ const QuizManagement = () => {
                           Click "Create Quiz" to get started
                         </Typography>
                       </Box>
-                    </TableCell></TableRow>
+                    </TableCell>
+                  </TableRow>
                 )}
               </TableBody>
             </Table>
@@ -470,11 +475,13 @@ const QuizManagement = () => {
   );
 
   return (
-    <Box sx={{ 
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-      py: 3
-    }}>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+        py: 3,
+      }}
+    >
       <Container maxWidth="xl">
         {/* Header */}
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
@@ -526,34 +533,34 @@ const QuizManagement = () => {
           <DialogTitle>Create New Quiz</DialogTitle>
           <DialogContent>
             <Grid container spacing={2} sx={{ mt: 1 }}>
-              <Grid size={{xs:12}}>
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   label="Quiz Title"
                   value={newQuiz.title}
-                  onChange={(e) => setNewQuiz({ ...newQuiz, title: e.target.value })}
+                  onChange={e => setNewQuiz({ ...newQuiz, title: e.target.value })}
                   fullWidth
                   required
                 />
               </Grid>
-              <Grid size={{xs:12}}>
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   label="Description"
                   value={newQuiz.description}
-                  onChange={(e) => setNewQuiz({ ...newQuiz, description: e.target.value })}
+                  onChange={e => setNewQuiz({ ...newQuiz, description: e.target.value })}
                   fullWidth
                   multiline
                   rows={3}
                 />
               </Grid>
-              <Grid size={{xs:12,md:6}}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <FormControl fullWidth required>
                   <InputLabel>Course</InputLabel>
                   <Select
                     value={newQuiz.courseId}
-                    onChange={(e) => setNewQuiz({ ...newQuiz, courseId: e.target.value })}
+                    onChange={e => setNewQuiz({ ...newQuiz, courseId: e.target.value })}
                     label="Course"
                   >
-                    {courses.map((course) => (
+                    {courses.map(course => (
                       <MenuItem key={course.id} value={course.id}>
                         {course.code} - {course.name}
                       </MenuItem>
@@ -561,49 +568,51 @@ const QuizManagement = () => {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid size={{xs:12,md:6}}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <TextField
                   label="Duration (minutes)"
                   type="number"
                   value={newQuiz.duration}
-                  onChange={(e) => setNewQuiz({ ...newQuiz, duration: parseInt(e.target.value) })}
+                  onChange={e => setNewQuiz({ ...newQuiz, duration: parseInt(e.target.value) })}
                   fullWidth
                 />
               </Grid>
-              <Grid size={{xs:12,md:6}}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <TextField
                   label="Total Questions"
                   type="number"
                   value={newQuiz.totalQuestions}
-                  onChange={(e) => setNewQuiz({ ...newQuiz, totalQuestions: parseInt(e.target.value) })}
+                  onChange={e =>
+                    setNewQuiz({ ...newQuiz, totalQuestions: parseInt(e.target.value) })
+                  }
                   fullWidth
                 />
               </Grid>
-              <Grid size={{xs:12,md:6}}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <TextField
                   label="Passing Score (%)"
                   type="number"
                   value={newQuiz.passingScore}
-                  onChange={(e) => setNewQuiz({ ...newQuiz, passingScore: parseInt(e.target.value) })}
+                  onChange={e => setNewQuiz({ ...newQuiz, passingScore: parseInt(e.target.value) })}
                   fullWidth
                 />
               </Grid>
-              <Grid size={{xs:12,md:6}}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <TextField
                   label="Start Date"
                   type="datetime-local"
                   value={newQuiz.startDate}
-                  onChange={(e) => setNewQuiz({ ...newQuiz, startDate: e.target.value })}
+                  onChange={e => setNewQuiz({ ...newQuiz, startDate: e.target.value })}
                   fullWidth
                   InputLabelProps={{ shrink: true }}
                 />
               </Grid>
-              <Grid size={{xs:12,md:6}}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <TextField
                   label="End Date"
                   type="datetime-local"
                   value={newQuiz.endDate}
-                  onChange={(e) => setNewQuiz({ ...newQuiz, endDate: e.target.value })}
+                  onChange={e => setNewQuiz({ ...newQuiz, endDate: e.target.value })}
                   fullWidth
                   InputLabelProps={{ shrink: true }}
                 />
@@ -611,14 +620,8 @@ const QuizManagement = () => {
             </Grid>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setCreateQuizDialog(false)}>
-              Cancel
-            </Button>
-            <Button
-              onClick={handleCreateQuiz}
-              variant="contained"
-              disabled={loading}
-            >
+            <Button onClick={() => setCreateQuizDialog(false)}>Cancel</Button>
+            <Button onClick={handleCreateQuiz} variant="contained" disabled={loading}>
               Create Quiz
             </Button>
           </DialogActions>
@@ -634,34 +637,34 @@ const QuizManagement = () => {
           <DialogTitle>Edit Quiz</DialogTitle>
           <DialogContent>
             <Grid container spacing={2} sx={{ mt: 1 }}>
-              <Grid size={{xs:12}}>
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   label="Quiz Title"
                   value={newQuiz.title}
-                  onChange={(e) => setNewQuiz({ ...newQuiz, title: e.target.value })}
+                  onChange={e => setNewQuiz({ ...newQuiz, title: e.target.value })}
                   fullWidth
                   required
                 />
               </Grid>
-              <Grid size={{xs:12}}>
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   label="Description"
                   value={newQuiz.description}
-                  onChange={(e) => setNewQuiz({ ...newQuiz, description: e.target.value })}
+                  onChange={e => setNewQuiz({ ...newQuiz, description: e.target.value })}
                   fullWidth
                   multiline
                   rows={3}
                 />
               </Grid>
-              <Grid size={{xs:12,md:6}}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <FormControl fullWidth required>
                   <InputLabel>Course</InputLabel>
                   <Select
                     value={newQuiz.courseId}
-                    onChange={(e) => setNewQuiz({ ...newQuiz, courseId: e.target.value })}
+                    onChange={e => setNewQuiz({ ...newQuiz, courseId: e.target.value })}
                     label="Course"
                   >
-                    {courses.map((course) => (
+                    {courses.map(course => (
                       <MenuItem key={course.id} value={course.id}>
                         {course.code} - {course.name}
                       </MenuItem>
@@ -669,26 +672,20 @@ const QuizManagement = () => {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid size={{xs:12,md:6}}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <TextField
                   label="Duration (minutes)"
                   type="number"
                   value={newQuiz.duration}
-                  onChange={(e) => setNewQuiz({ ...newQuiz, duration: parseInt(e.target.value) })}
+                  onChange={e => setNewQuiz({ ...newQuiz, duration: parseInt(e.target.value) })}
                   fullWidth
                 />
               </Grid>
             </Grid>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setEditQuizDialog(false)}>
-              Cancel
-            </Button>
-            <Button
-              onClick={handleUpdateQuiz}
-              variant="contained"
-              disabled={loading}
-            >
+            <Button onClick={() => setEditQuizDialog(false)}>Cancel</Button>
+            <Button onClick={handleUpdateQuiz} variant="contained" disabled={loading}>
               Update Quiz
             </Button>
           </DialogActions>
@@ -701,11 +698,7 @@ const QuizManagement = () => {
           onClose={handleSnackbarClose}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         >
-          <Alert 
-            onClose={handleSnackbarClose} 
-            severity={snackbar.severity}
-            sx={{ width: '100%' }}
-          >
+          <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: '100%' }}>
             {snackbar.message}
           </Alert>
         </Snackbar>
@@ -714,4 +707,4 @@ const QuizManagement = () => {
   );
 };
 
-export default QuizManagement;
+export default QuizManagement;

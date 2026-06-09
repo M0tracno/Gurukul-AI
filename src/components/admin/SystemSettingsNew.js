@@ -90,8 +90,13 @@ const SystemSettingsNew = () => {
   const [loading, setLoading] = useState(false);
   const [tabValue, setTabValue] = useState(0);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
-  const [confirmDialog, setConfirmDialog] = useState({ open: false, title: '', message: '', action: null });
-  
+  const [confirmDialog, setConfirmDialog] = useState({
+    open: false,
+    title: '',
+    message: '',
+    action: null,
+  });
+
   const [settings, setSettings] = useState({
     general: {
       siteName: 'Global Digital Campus',
@@ -164,7 +169,7 @@ const SystemSettingsNew = () => {
       // Mock loading settings from API
       // const response = await AdminService.getSystemSettings();
       // setSettings(response.data);
-      
+
       // For now, use default settings above
       console.log('Settings loaded');
     } catch (error) {
@@ -180,7 +185,7 @@ const SystemSettingsNew = () => {
     try {
       // Mock saving settings to API
       // await AdminService.updateSystemSettings(section ? { [section]: settings[section] } : settings);
-      
+
       showSnackbar('Settings saved successfully', 'success');
     } catch (error) {
       console.error('Error saving settings:', error);
@@ -313,7 +318,7 @@ const SystemSettingsNew = () => {
         {/* General Settings */}
         <TabPanel value={tabValue} index={0}>
           <Grid container spacing={3}>
-            <Grid size={{xs:12,md:6}}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <SettingCard>
                 <CardHeader title="Site Configuration" />
                 <CardContent>
@@ -321,14 +326,16 @@ const SystemSettingsNew = () => {
                     fullWidth
                     label="Site Name"
                     value={settings.general.siteName}
-                    onChange={(e) => handleSettingChange('general', 'siteName', e.target.value)}
+                    onChange={e => handleSettingChange('general', 'siteName', e.target.value)}
                     sx={{ mb: 2 }}
                   />
                   <TextField
                     fullWidth
                     label="Site Description"
                     value={settings.general.siteDescription}
-                    onChange={(e) => handleSettingChange('general', 'siteDescription', e.target.value)}
+                    onChange={e =>
+                      handleSettingChange('general', 'siteDescription', e.target.value)
+                    }
                     multiline
                     rows={3}
                     sx={{ mb: 2 }}
@@ -338,7 +345,7 @@ const SystemSettingsNew = () => {
                     <Select
                       value={settings.general.language}
                       label="Language"
-                      onChange={(e) => handleSettingChange('general', 'language', e.target.value)}
+                      onChange={e => handleSettingChange('general', 'language', e.target.value)}
                     >
                       <MenuItem value="en">English</MenuItem>
                       <MenuItem value="es">Spanish</MenuItem>
@@ -351,7 +358,7 @@ const SystemSettingsNew = () => {
                     <Select
                       value={settings.general.timezone}
                       label="Timezone"
-                      onChange={(e) => handleSettingChange('general', 'timezone', e.target.value)}
+                      onChange={e => handleSettingChange('general', 'timezone', e.target.value)}
                     >
                       <MenuItem value="UTC">UTC</MenuItem>
                       <MenuItem value="EST">Eastern Standard Time</MenuItem>
@@ -362,7 +369,7 @@ const SystemSettingsNew = () => {
                 </CardContent>
               </SettingCard>
             </Grid>
-            <Grid size={{xs:12,md:6}}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <SettingCard>
                 <CardHeader title="User Registration" />
                 <CardContent>
@@ -370,7 +377,9 @@ const SystemSettingsNew = () => {
                     control={
                       <Switch
                         checked={settings.general.allowRegistration}
-                        onChange={(e) => handleSettingChange('general', 'allowRegistration', e.target.checked)}
+                        onChange={e =>
+                          handleSettingChange('general', 'allowRegistration', e.target.checked)
+                        }
                       />
                     }
                     label="Allow User Registration"
@@ -380,7 +389,13 @@ const SystemSettingsNew = () => {
                     control={
                       <Switch
                         checked={settings.general.requireEmailVerification}
-                        onChange={(e) => handleSettingChange('general', 'requireEmailVerification', e.target.checked)}
+                        onChange={e =>
+                          handleSettingChange(
+                            'general',
+                            'requireEmailVerification',
+                            e.target.checked
+                          )
+                        }
                       />
                     }
                     label="Require Email Verification"
@@ -390,7 +405,9 @@ const SystemSettingsNew = () => {
                     control={
                       <Switch
                         checked={settings.general.maintenanceMode}
-                        onChange={(e) => handleSettingChange('general', 'maintenanceMode', e.target.checked)}
+                        onChange={e =>
+                          handleSettingChange('general', 'maintenanceMode', e.target.checked)
+                        }
                       />
                     }
                     label="Maintenance Mode"
@@ -410,7 +427,7 @@ const SystemSettingsNew = () => {
         {/* Security Settings */}
         <TabPanel value={tabValue} index={1}>
           <Grid container spacing={3}>
-            <Grid size={{xs:12,md:6}}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <SettingCard>
                 <CardHeader title="Password Policy" />
                 <CardContent>
@@ -419,14 +436,28 @@ const SystemSettingsNew = () => {
                     type="number"
                     label="Minimum Password Length"
                     value={settings.security.passwordPolicy.minLength}
-                    onChange={(e) => handleNestedSettingChange('security', 'passwordPolicy', 'minLength', parseInt(e.target.value))}
+                    onChange={e =>
+                      handleNestedSettingChange(
+                        'security',
+                        'passwordPolicy',
+                        'minLength',
+                        parseInt(e.target.value)
+                      )
+                    }
                     sx={{ mb: 2 }}
                   />
                   <FormControlLabel
                     control={
                       <Switch
                         checked={settings.security.passwordPolicy.requireNumbers}
-                        onChange={(e) => handleNestedSettingChange('security', 'passwordPolicy', 'requireNumbers', e.target.checked)}
+                        onChange={e =>
+                          handleNestedSettingChange(
+                            'security',
+                            'passwordPolicy',
+                            'requireNumbers',
+                            e.target.checked
+                          )
+                        }
                       />
                     }
                     label="Require Numbers"
@@ -436,7 +467,14 @@ const SystemSettingsNew = () => {
                     control={
                       <Switch
                         checked={settings.security.passwordPolicy.requireSymbols}
-                        onChange={(e) => handleNestedSettingChange('security', 'passwordPolicy', 'requireSymbols', e.target.checked)}
+                        onChange={e =>
+                          handleNestedSettingChange(
+                            'security',
+                            'passwordPolicy',
+                            'requireSymbols',
+                            e.target.checked
+                          )
+                        }
                       />
                     }
                     label="Require Symbols"
@@ -446,7 +484,14 @@ const SystemSettingsNew = () => {
                     control={
                       <Switch
                         checked={settings.security.passwordPolicy.requireUppercase}
-                        onChange={(e) => handleNestedSettingChange('security', 'passwordPolicy', 'requireUppercase', e.target.checked)}
+                        onChange={e =>
+                          handleNestedSettingChange(
+                            'security',
+                            'passwordPolicy',
+                            'requireUppercase',
+                            e.target.checked
+                          )
+                        }
                       />
                     }
                     label="Require Uppercase"
@@ -456,7 +501,14 @@ const SystemSettingsNew = () => {
                     control={
                       <Switch
                         checked={settings.security.passwordPolicy.requireLowercase}
-                        onChange={(e) => handleNestedSettingChange('security', 'passwordPolicy', 'requireLowercase', e.target.checked)}
+                        onChange={e =>
+                          handleNestedSettingChange(
+                            'security',
+                            'passwordPolicy',
+                            'requireLowercase',
+                            e.target.checked
+                          )
+                        }
                       />
                     }
                     label="Require Lowercase"
@@ -464,7 +516,7 @@ const SystemSettingsNew = () => {
                 </CardContent>
               </SettingCard>
             </Grid>
-            <Grid size={{xs:12,md:6}}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <SettingCard>
                 <CardHeader title="Session & Login Security" />
                 <CardContent>
@@ -473,7 +525,9 @@ const SystemSettingsNew = () => {
                     type="number"
                     label="Session Timeout (minutes)"
                     value={settings.security.sessionTimeout}
-                    onChange={(e) => handleSettingChange('security', 'sessionTimeout', parseInt(e.target.value))}
+                    onChange={e =>
+                      handleSettingChange('security', 'sessionTimeout', parseInt(e.target.value))
+                    }
                     sx={{ mb: 2 }}
                   />
                   <TextField
@@ -481,7 +535,9 @@ const SystemSettingsNew = () => {
                     type="number"
                     label="Max Login Attempts"
                     value={settings.security.maxLoginAttempts}
-                    onChange={(e) => handleSettingChange('security', 'maxLoginAttempts', parseInt(e.target.value))}
+                    onChange={e =>
+                      handleSettingChange('security', 'maxLoginAttempts', parseInt(e.target.value))
+                    }
                     sx={{ mb: 2 }}
                   />
                   <TextField
@@ -489,14 +545,18 @@ const SystemSettingsNew = () => {
                     type="number"
                     label="Lockout Duration (minutes)"
                     value={settings.security.lockoutDuration}
-                    onChange={(e) => handleSettingChange('security', 'lockoutDuration', parseInt(e.target.value))}
+                    onChange={e =>
+                      handleSettingChange('security', 'lockoutDuration', parseInt(e.target.value))
+                    }
                     sx={{ mb: 2 }}
                   />
                   <FormControlLabel
                     control={
                       <Switch
                         checked={settings.security.twoFactorAuth}
-                        onChange={(e) => handleSettingChange('security', 'twoFactorAuth', e.target.checked)}
+                        onChange={e =>
+                          handleSettingChange('security', 'twoFactorAuth', e.target.checked)
+                        }
                       />
                     }
                     label="Enable Two-Factor Authentication"
@@ -506,7 +566,9 @@ const SystemSettingsNew = () => {
                     control={
                       <Switch
                         checked={settings.security.ipRestriction}
-                        onChange={(e) => handleSettingChange('security', 'ipRestriction', e.target.checked)}
+                        onChange={e =>
+                          handleSettingChange('security', 'ipRestriction', e.target.checked)
+                        }
                       />
                     }
                     label="Enable IP Restriction"
@@ -516,7 +578,7 @@ const SystemSettingsNew = () => {
                       fullWidth
                       label="Allowed IP Addresses (comma separated)"
                       value={settings.security.allowedIPs}
-                      onChange={(e) => handleSettingChange('security', 'allowedIPs', e.target.value)}
+                      onChange={e => handleSettingChange('security', 'allowedIPs', e.target.value)}
                       sx={{ mt: 2 }}
                       placeholder="192.168.1.1, 10.0.0.1"
                     />
@@ -530,7 +592,7 @@ const SystemSettingsNew = () => {
         {/* Notifications Settings */}
         <TabPanel value={tabValue} index={2}>
           <Grid container spacing={3}>
-            <Grid size={{xs:12,md:6}}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <SettingCard>
                 <CardHeader title="Notification Channels" />
                 <CardContent>
@@ -538,7 +600,13 @@ const SystemSettingsNew = () => {
                     control={
                       <Switch
                         checked={settings.notifications.emailNotifications}
-                        onChange={(e) => handleSettingChange('notifications', 'emailNotifications', e.target.checked)}
+                        onChange={e =>
+                          handleSettingChange(
+                            'notifications',
+                            'emailNotifications',
+                            e.target.checked
+                          )
+                        }
                       />
                     }
                     label="Email Notifications"
@@ -548,7 +616,13 @@ const SystemSettingsNew = () => {
                     control={
                       <Switch
                         checked={settings.notifications.pushNotifications}
-                        onChange={(e) => handleSettingChange('notifications', 'pushNotifications', e.target.checked)}
+                        onChange={e =>
+                          handleSettingChange(
+                            'notifications',
+                            'pushNotifications',
+                            e.target.checked
+                          )
+                        }
                       />
                     }
                     label="Push Notifications"
@@ -558,7 +632,9 @@ const SystemSettingsNew = () => {
                     control={
                       <Switch
                         checked={settings.notifications.smsNotifications}
-                        onChange={(e) => handleSettingChange('notifications', 'smsNotifications', e.target.checked)}
+                        onChange={e =>
+                          handleSettingChange('notifications', 'smsNotifications', e.target.checked)
+                        }
                       />
                     }
                     label="SMS Notifications"
@@ -569,7 +645,9 @@ const SystemSettingsNew = () => {
                     <Select
                       value={settings.notifications.digestFrequency}
                       label="Digest Frequency"
-                      onChange={(e) => handleSettingChange('notifications', 'digestFrequency', e.target.value)}
+                      onChange={e =>
+                        handleSettingChange('notifications', 'digestFrequency', e.target.value)
+                      }
                     >
                       <MenuItem value="immediate">Immediate</MenuItem>
                       <MenuItem value="hourly">Hourly</MenuItem>
@@ -580,7 +658,7 @@ const SystemSettingsNew = () => {
                 </CardContent>
               </SettingCard>
             </Grid>
-            <Grid size={{xs:12,md:6}}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <SettingCard>
                 <CardHeader title="Admin Notifications" />
                 <CardContent>
@@ -588,7 +666,9 @@ const SystemSettingsNew = () => {
                     control={
                       <Switch
                         checked={settings.notifications.notifyAdminLogin}
-                        onChange={(e) => handleSettingChange('notifications', 'notifyAdminLogin', e.target.checked)}
+                        onChange={e =>
+                          handleSettingChange('notifications', 'notifyAdminLogin', e.target.checked)
+                        }
                       />
                     }
                     label="Notify on Admin Login"
@@ -598,7 +678,13 @@ const SystemSettingsNew = () => {
                     control={
                       <Switch
                         checked={settings.notifications.notifyUserRegistration}
-                        onChange={(e) => handleSettingChange('notifications', 'notifyUserRegistration', e.target.checked)}
+                        onChange={e =>
+                          handleSettingChange(
+                            'notifications',
+                            'notifyUserRegistration',
+                            e.target.checked
+                          )
+                        }
                       />
                     }
                     label="Notify on User Registration"
@@ -608,7 +694,13 @@ const SystemSettingsNew = () => {
                     control={
                       <Switch
                         checked={settings.notifications.notifySystemErrors}
-                        onChange={(e) => handleSettingChange('notifications', 'notifySystemErrors', e.target.checked)}
+                        onChange={e =>
+                          handleSettingChange(
+                            'notifications',
+                            'notifySystemErrors',
+                            e.target.checked
+                          )
+                        }
                       />
                     }
                     label="Notify on System Errors"
@@ -622,7 +714,7 @@ const SystemSettingsNew = () => {
         {/* Email Settings */}
         <TabPanel value={tabValue} index={3}>
           <Grid container spacing={3}>
-            <Grid size={{xs:12,md:6}}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <SettingCard>
                 <CardHeader title="SMTP Configuration" />
                 <CardContent>
@@ -630,7 +722,7 @@ const SystemSettingsNew = () => {
                     fullWidth
                     label="SMTP Host"
                     value={settings.email.smtpHost}
-                    onChange={(e) => handleSettingChange('email', 'smtpHost', e.target.value)}
+                    onChange={e => handleSettingChange('email', 'smtpHost', e.target.value)}
                     sx={{ mb: 2 }}
                   />
                   <TextField
@@ -638,14 +730,16 @@ const SystemSettingsNew = () => {
                     type="number"
                     label="SMTP Port"
                     value={settings.email.smtpPort}
-                    onChange={(e) => handleSettingChange('email', 'smtpPort', parseInt(e.target.value))}
+                    onChange={e =>
+                      handleSettingChange('email', 'smtpPort', parseInt(e.target.value))
+                    }
                     sx={{ mb: 2 }}
                   />
                   <TextField
                     fullWidth
                     label="SMTP Username"
                     value={settings.email.smtpUsername}
-                    onChange={(e) => handleSettingChange('email', 'smtpUsername', e.target.value)}
+                    onChange={e => handleSettingChange('email', 'smtpUsername', e.target.value)}
                     sx={{ mb: 2 }}
                   />
                   <TextField
@@ -653,7 +747,7 @@ const SystemSettingsNew = () => {
                     type="password"
                     label="SMTP Password"
                     value={settings.email.smtpPassword}
-                    onChange={(e) => handleSettingChange('email', 'smtpPassword', e.target.value)}
+                    onChange={e => handleSettingChange('email', 'smtpPassword', e.target.value)}
                     sx={{ mb: 2 }}
                   />
                   <FormControl fullWidth>
@@ -661,7 +755,7 @@ const SystemSettingsNew = () => {
                     <Select
                       value={settings.email.smtpEncryption}
                       label="Encryption"
-                      onChange={(e) => handleSettingChange('email', 'smtpEncryption', e.target.value)}
+                      onChange={e => handleSettingChange('email', 'smtpEncryption', e.target.value)}
                     >
                       <MenuItem value="none">None</MenuItem>
                       <MenuItem value="tls">TLS</MenuItem>
@@ -671,7 +765,7 @@ const SystemSettingsNew = () => {
                 </CardContent>
               </SettingCard>
             </Grid>
-            <Grid size={{xs:12,md:6}}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <SettingCard>
                 <CardHeader title="Email Settings" />
                 <CardContent>
@@ -679,14 +773,14 @@ const SystemSettingsNew = () => {
                     fullWidth
                     label="From Email"
                     value={settings.email.fromEmail}
-                    onChange={(e) => handleSettingChange('email', 'fromEmail', e.target.value)}
+                    onChange={e => handleSettingChange('email', 'fromEmail', e.target.value)}
                     sx={{ mb: 2 }}
                   />
                   <TextField
                     fullWidth
                     label="From Name"
                     value={settings.email.fromName}
-                    onChange={(e) => handleSettingChange('email', 'fromName', e.target.value)}
+                    onChange={e => handleSettingChange('email', 'fromName', e.target.value)}
                     sx={{ mb: 3 }}
                   />
                   <Button
@@ -712,7 +806,7 @@ const SystemSettingsNew = () => {
         {/* Backup Settings */}
         <TabPanel value={tabValue} index={4}>
           <Grid container spacing={3}>
-            <Grid size={{xs:12,md:6}}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <SettingCard>
                 <CardHeader title="Backup Configuration" />
                 <CardContent>
@@ -720,7 +814,9 @@ const SystemSettingsNew = () => {
                     control={
                       <Switch
                         checked={settings.backup.autoBackup}
-                        onChange={(e) => handleSettingChange('backup', 'autoBackup', e.target.checked)}
+                        onChange={e =>
+                          handleSettingChange('backup', 'autoBackup', e.target.checked)
+                        }
                       />
                     }
                     label="Enable Automatic Backup"
@@ -731,7 +827,9 @@ const SystemSettingsNew = () => {
                     <Select
                       value={settings.backup.backupFrequency}
                       label="Backup Frequency"
-                      onChange={(e) => handleSettingChange('backup', 'backupFrequency', e.target.value)}
+                      onChange={e =>
+                        handleSettingChange('backup', 'backupFrequency', e.target.value)
+                      }
                       disabled={!settings.backup.autoBackup}
                     >
                       <MenuItem value="hourly">Hourly</MenuItem>
@@ -745,7 +843,9 @@ const SystemSettingsNew = () => {
                     type="number"
                     label="Backup Retention (days)"
                     value={settings.backup.backupRetention}
-                    onChange={(e) => handleSettingChange('backup', 'backupRetention', parseInt(e.target.value))}
+                    onChange={e =>
+                      handleSettingChange('backup', 'backupRetention', parseInt(e.target.value))
+                    }
                     sx={{ mb: 2 }}
                   />
                   <FormControl fullWidth>
@@ -753,7 +853,9 @@ const SystemSettingsNew = () => {
                     <Select
                       value={settings.backup.backupLocation}
                       label="Backup Location"
-                      onChange={(e) => handleSettingChange('backup', 'backupLocation', e.target.value)}
+                      onChange={e =>
+                        handleSettingChange('backup', 'backupLocation', e.target.value)
+                      }
                     >
                       <MenuItem value="local">Local Storage</MenuItem>
                       <MenuItem value="cloud">Cloud Storage</MenuItem>
@@ -763,7 +865,7 @@ const SystemSettingsNew = () => {
                 </CardContent>
               </SettingCard>
             </Grid>
-            <Grid size={{xs:12,md:6}}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <SettingCard>
                 <CardHeader title="Backup Actions" />
                 <CardContent>
@@ -780,11 +882,7 @@ const SystemSettingsNew = () => {
                   >
                     Create Backup Now
                   </Button>
-                  <Button
-                    fullWidth
-                    variant="outlined"
-                    startIcon={<RestoreIcon />}
-                  >
+                  <Button fullWidth variant="outlined" startIcon={<RestoreIcon />}>
                     Restore from Backup
                   </Button>
                 </CardContent>
@@ -796,7 +894,7 @@ const SystemSettingsNew = () => {
         {/* System Settings */}
         <TabPanel value={tabValue} index={5}>
           <Grid container spacing={3}>
-            <Grid size={{xs:12,md:6}}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <SettingCard>
                 <CardHeader title="System Configuration" />
                 <CardContent>
@@ -804,7 +902,7 @@ const SystemSettingsNew = () => {
                     control={
                       <Switch
                         checked={settings.system.debugMode}
-                        onChange={(e) => handleSettingChange('system', 'debugMode', e.target.checked)}
+                        onChange={e => handleSettingChange('system', 'debugMode', e.target.checked)}
                       />
                     }
                     label="Debug Mode"
@@ -815,7 +913,7 @@ const SystemSettingsNew = () => {
                     <Select
                       value={settings.system.logLevel}
                       label="Log Level"
-                      onChange={(e) => handleSettingChange('system', 'logLevel', e.target.value)}
+                      onChange={e => handleSettingChange('system', 'logLevel', e.target.value)}
                     >
                       <MenuItem value="error">Error</MenuItem>
                       <MenuItem value="warn">Warning</MenuItem>
@@ -827,7 +925,9 @@ const SystemSettingsNew = () => {
                     control={
                       <Switch
                         checked={settings.system.cacheEnabled}
-                        onChange={(e) => handleSettingChange('system', 'cacheEnabled', e.target.checked)}
+                        onChange={e =>
+                          handleSettingChange('system', 'cacheEnabled', e.target.checked)
+                        }
                       />
                     }
                     label="Enable Cache"
@@ -837,7 +937,9 @@ const SystemSettingsNew = () => {
                     control={
                       <Switch
                         checked={settings.system.compressionEnabled}
-                        onChange={(e) => handleSettingChange('system', 'compressionEnabled', e.target.checked)}
+                        onChange={e =>
+                          handleSettingChange('system', 'compressionEnabled', e.target.checked)
+                        }
                       />
                     }
                     label="Enable Compression"
@@ -845,7 +947,7 @@ const SystemSettingsNew = () => {
                 </CardContent>
               </SettingCard>
             </Grid>
-            <Grid size={{xs:12,md:6}}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <SettingCard>
                 <CardHeader title="File Management" />
                 <CardContent>
@@ -854,14 +956,18 @@ const SystemSettingsNew = () => {
                     type="number"
                     label="Max File Size (MB)"
                     value={settings.system.maxFileSize}
-                    onChange={(e) => handleSettingChange('system', 'maxFileSize', parseInt(e.target.value))}
+                    onChange={e =>
+                      handleSettingChange('system', 'maxFileSize', parseInt(e.target.value))
+                    }
                     sx={{ mb: 2 }}
                   />
                   <TextField
                     fullWidth
                     label="Allowed File Types"
                     value={settings.system.allowedFileTypes}
-                    onChange={(e) => handleSettingChange('system', 'allowedFileTypes', e.target.value)}
+                    onChange={e =>
+                      handleSettingChange('system', 'allowedFileTypes', e.target.value)
+                    }
                     helperText="Comma separated file extensions"
                     sx={{ mb: 3 }}
                   />
@@ -919,4 +1025,4 @@ const SystemSettingsNew = () => {
   );
 };
 
-export default SystemSettingsNew;
+export default SystemSettingsNew;

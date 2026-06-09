@@ -1,11 +1,56 @@
 import React, { useState, useEffect } from 'react';
-import { Announcement, Assignment, Close, Delete, Email, ExpandMore, Grade, MarkEmailRead, Message, Notifications, NotificationsActive, Phone, Schedule, Settings } from '@mui/icons-material';
+import {
+  Announcement,
+  Assignment,
+  Close,
+  Delete,
+  Email,
+  ExpandMore,
+  Grade,
+  MarkEmailRead,
+  Message,
+  Notifications,
+  NotificationsActive,
+  Phone,
+  Schedule,
+  Settings,
+} from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatDistanceToNow } from 'date-fns';
 import SmartNotificationService from '../../services/SmartNotificationService';
 import { useAuth } from '../../auth/AuthContext';
 
-import { Accordion, AccordionDetails, AccordionSummary, Alert, Avatar, Badge, Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, Grid, IconButton, InputLabel, List, ListItem, ListItemAvatar, ListItemText, MenuItem, Paper, Select, Snackbar, Switch, TextField, Typography } from '@mui/material';
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Alert,
+  Avatar,
+  Badge,
+  Box,
+  Button,
+  Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  FormControlLabel,
+  Grid,
+  IconButton,
+  InputLabel,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  MenuItem,
+  Paper,
+  Select,
+  Snackbar,
+  Switch,
+  TextField,
+  Typography,
+} from '@mui/material';
 const SmartNotificationPanel = ({ open, onClose }) => {
   const { currentUser } = useAuth();
   const [notifications, setNotifications] = useState([]);
@@ -18,7 +63,7 @@ const SmartNotificationPanel = ({ open, onClose }) => {
     subjectFilters: ['assignments', 'grades', 'announcements'],
     frequency: 'immediate',
     smartGrouping: true,
-    adaptiveTiming: true
+    adaptiveTiming: true,
   });
   const [loading, setLoading] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'info' });
@@ -33,10 +78,7 @@ const SmartNotificationPanel = ({ open, onClose }) => {
   const loadNotifications = async () => {
     try {
       setLoading(true);
-      const history = await SmartNotificationService.getNotificationHistory(
-        currentUser.uid,
-        50
-      );
+      const history = await SmartNotificationService.getNotificationHistory(currentUser.uid, 50);
       setNotifications(history);
     } catch (error) {
       console.error('Error loading notifications:', error);
@@ -67,13 +109,11 @@ const SmartNotificationPanel = ({ open, onClose }) => {
     }
   };
 
-  const markAsRead = async (notificationId) => {
+  const markAsRead = async notificationId => {
     try {
       // Update local state immediately
-      setNotifications(prev =>
-        prev.map(n => n.id === notificationId ? { ...n, read: true } : n)
-      );
-      
+      setNotifications(prev => prev.map(n => (n.id === notificationId ? { ...n, read: true } : n)));
+
       // Call backend API
       // await notificationAPI.markAsRead(notificationId);
     } catch (error) {
@@ -81,7 +121,7 @@ const SmartNotificationPanel = ({ open, onClose }) => {
     }
   };
 
-  const deleteNotification = async (notificationId) => {
+  const deleteNotification = async notificationId => {
     try {
       setNotifications(prev => prev.filter(n => n.id !== notificationId));
       // await notificationAPI.delete(notificationId);
@@ -107,7 +147,7 @@ const SmartNotificationPanel = ({ open, onClose }) => {
         title: 'Test Notification',
         message: 'This is a test notification to verify your settings.',
         type: 'test',
-        priority: 'medium'
+        priority: 'medium',
       });
       showSnackbar('Test notification sent', 'success');
     } catch (error) {
@@ -119,23 +159,23 @@ const SmartNotificationPanel = ({ open, onClose }) => {
   const handlePreferenceChange = (key, value) => {
     setPreferences(prev => ({
       ...prev,
-      [key]: value
+      [key]: value,
     }));
   };
 
-  const handleChannelToggle = (channel) => {
+  const handleChannelToggle = channel => {
     const updatedChannels = preferences.channels.includes(channel)
       ? preferences.channels.filter(c => c !== channel)
       : [...preferences.channels, channel];
-    
+
     handlePreferenceChange('channels', updatedChannels);
   };
 
-  const handleSubjectFilterToggle = (subject) => {
+  const handleSubjectFilterToggle = subject => {
     const updatedFilters = preferences.subjectFilters.includes(subject)
       ? preferences.subjectFilters.filter(s => s !== subject)
       : [...preferences.subjectFilters, subject];
-    
+
     handlePreferenceChange('subjectFilters', updatedFilters);
   };
 
@@ -143,7 +183,7 @@ const SmartNotificationPanel = ({ open, onClose }) => {
     setSnackbar({ open: true, message, severity });
   };
 
-  const getNotificationIcon = (type) => {
+  const getNotificationIcon = type => {
     switch (type) {
       case 'assignment':
         return <Assignment />;
@@ -158,7 +198,7 @@ const SmartNotificationPanel = ({ open, onClose }) => {
     }
   };
 
-  const getPriorityColor = (priority) => {
+  const getPriorityColor = priority => {
     switch (priority) {
       case 'urgent':
         return 'error';
@@ -176,7 +216,8 @@ const SmartNotificationPanel = ({ open, onClose }) => {
   const filteredNotifications = notifications.filter(notification => {
     if (filter === 'all') return true;
     if (filter === 'unread') return !notification.read;
-    if (filter === 'priority') return notification.priority === 'high' || notification.priority === 'urgent';
+    if (filter === 'priority')
+      return notification.priority === 'high' || notification.priority === 'urgent';
     return notification.type === filter;
   });
 
@@ -194,7 +235,7 @@ const SmartNotificationPanel = ({ open, onClose }) => {
           bgcolor: notification.read ? 'transparent' : 'action.hover',
           borderRadius: 1,
           mb: 0.5,
-          '&:hover': { bgcolor: 'action.selected' }
+          '&:hover': { bgcolor: 'action.selected' },
         }}
       >
         <ListItemAvatar>
@@ -202,7 +243,7 @@ const SmartNotificationPanel = ({ open, onClose }) => {
             {getNotificationIcon(notification.type)}
           </Avatar>
         </ListItemAvatar>
-        
+
         <ListItemText
           primary={
             <Box display="flex" alignItems="center" justifyContent="space-between">
@@ -241,7 +282,7 @@ const SmartNotificationPanel = ({ open, onClose }) => {
             </Box>
           }
         />
-        
+
         <Box display="flex" flexDirection="column" gap={0.5}>
           {!notification.read && (
             <IconButton
@@ -265,20 +306,13 @@ const SmartNotificationPanel = ({ open, onClose }) => {
   );
 
   const SettingsDialog = () => (
-    <Dialog
-      open={settingsOpen}
-      onClose={() => setSettingsOpen(false)}
-      maxWidth="md"
-      fullWidth
-    >
-      <DialogTitle>
-        Notification Settings
-      </DialogTitle>
-      
+    <Dialog open={settingsOpen} onClose={() => setSettingsOpen(false)} maxWidth="md" fullWidth>
+      <DialogTitle>Notification Settings</DialogTitle>
+
       <DialogContent>
         <Grid container spacing={3}>
           {/* Priority Settings */}
-          <Grid size={{xs:12,md:6}}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Accordion>
               <AccordionSummary expandIcon={<ExpandMore />}>
                 <Typography variant="h6">Priority & Filtering</Typography>
@@ -289,7 +323,7 @@ const SmartNotificationPanel = ({ open, onClose }) => {
                     <InputLabel>Minimum Priority</InputLabel>
                     <Select
                       value={preferences.priority}
-                      onChange={(e) => handlePreferenceChange('priority', e.target.value)}
+                      onChange={e => handlePreferenceChange('priority', e.target.value)}
                       label="Minimum Priority"
                     >
                       <MenuItem value="low">Low</MenuItem>
@@ -299,28 +333,30 @@ const SmartNotificationPanel = ({ open, onClose }) => {
                     </Select>
                   </FormControl>
                 </Box>
-                
+
                 <Typography variant="subtitle2" gutterBottom>
                   Subject Filters
                 </Typography>
-                {['assignments', 'grades', 'announcements', 'reminders', 'messages'].map(subject => (
-                  <FormControlLabel
-                    key={subject}
-                    control={
-                      <Switch
-                        checked={preferences.subjectFilters.includes(subject)}
-                        onChange={() => handleSubjectFilterToggle(subject)}
-                      />
-                    }
-                    label={subject.charAt(0).toUpperCase() + subject.slice(1)}
-                  />
-                ))}
+                {['assignments', 'grades', 'announcements', 'reminders', 'messages'].map(
+                  subject => (
+                    <FormControlLabel
+                      key={subject}
+                      control={
+                        <Switch
+                          checked={preferences.subjectFilters.includes(subject)}
+                          onChange={() => handleSubjectFilterToggle(subject)}
+                        />
+                      }
+                      label={subject.charAt(0).toUpperCase() + subject.slice(1)}
+                    />
+                  )
+                )}
               </AccordionDetails>
             </Accordion>
           </Grid>
 
           {/* Delivery Channels */}
-          <Grid size={{xs:12,md:6}}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Accordion>
               <AccordionSummary expandIcon={<ExpandMore />}>
                 <Typography variant="h6">Delivery Channels</Typography>
@@ -330,7 +366,7 @@ const SmartNotificationPanel = ({ open, onClose }) => {
                   { key: 'push', label: 'Push Notifications', icon: <NotificationsActive /> },
                   { key: 'email', label: 'Email', icon: <Email /> },
                   { key: 'sms', label: 'SMS', icon: <Phone /> },
-                  { key: 'in-app', label: 'In-App', icon: <Message /> }
+                  { key: 'in-app', label: 'In-App', icon: <Message /> },
                 ].map(channel => (
                   <FormControlLabel
                     key={channel.key}
@@ -353,45 +389,49 @@ const SmartNotificationPanel = ({ open, onClose }) => {
           </Grid>
 
           {/* Timing Settings */}
-          <Grid size={{xs:12}}>
+          <Grid size={{ xs: 12 }}>
             <Accordion>
               <AccordionSummary expandIcon={<ExpandMore />}>
                 <Typography variant="h6">Timing & Schedule</Typography>
               </AccordionSummary>
               <AccordionDetails>
                 <Grid container spacing={2}>
-                  <Grid size={{xs:12,md:6}}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <TextField
                       label="Quiet Hours Start"
                       type="time"
                       value={preferences.quietHours.start}
-                      onChange={(e) => handlePreferenceChange('quietHours', {
-                        ...preferences.quietHours,
-                        start: e.target.value
-                      })}
+                      onChange={e =>
+                        handlePreferenceChange('quietHours', {
+                          ...preferences.quietHours,
+                          start: e.target.value,
+                        })
+                      }
                       fullWidth
                       InputLabelProps={{ shrink: true }}
                     />
                   </Grid>
-                  <Grid size={{xs:12,md:6}}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <TextField
                       label="Quiet Hours End"
                       type="time"
                       value={preferences.quietHours.end}
-                      onChange={(e) => handlePreferenceChange('quietHours', {
-                        ...preferences.quietHours,
-                        end: e.target.value
-                      })}
+                      onChange={e =>
+                        handlePreferenceChange('quietHours', {
+                          ...preferences.quietHours,
+                          end: e.target.value,
+                        })
+                      }
                       fullWidth
                       InputLabelProps={{ shrink: true }}
                     />
                   </Grid>
-                  <Grid size={{xs:12}}>
+                  <Grid size={{ xs: 12 }}>
                     <FormControl fullWidth>
                       <InputLabel>Delivery Frequency</InputLabel>
                       <Select
                         value={preferences.frequency}
-                        onChange={(e) => handlePreferenceChange('frequency', e.target.value)}
+                        onChange={e => handlePreferenceChange('frequency', e.target.value)}
                         label="Delivery Frequency"
                       >
                         <MenuItem value="immediate">Immediate</MenuItem>
@@ -406,7 +446,7 @@ const SmartNotificationPanel = ({ open, onClose }) => {
           </Grid>
 
           {/* Smart Features */}
-          <Grid size={{xs:12}}>
+          <Grid size={{ xs: 12 }}>
             <Accordion>
               <AccordionSummary expandIcon={<ExpandMore />}>
                 <Typography variant="h6">Smart Features</Typography>
@@ -416,7 +456,7 @@ const SmartNotificationPanel = ({ open, onClose }) => {
                   control={
                     <Switch
                       checked={preferences.smartGrouping}
-                      onChange={(e) => handlePreferenceChange('smartGrouping', e.target.checked)}
+                      onChange={e => handlePreferenceChange('smartGrouping', e.target.checked)}
                     />
                   }
                   label="Smart Grouping - Group similar notifications"
@@ -425,7 +465,7 @@ const SmartNotificationPanel = ({ open, onClose }) => {
                   control={
                     <Switch
                       checked={preferences.adaptiveTiming}
-                      onChange={(e) => handlePreferenceChange('adaptiveTiming', e.target.checked)}
+                      onChange={e => handlePreferenceChange('adaptiveTiming', e.target.checked)}
                     />
                   }
                   label="Adaptive Timing - Learn optimal delivery times"
@@ -435,14 +475,12 @@ const SmartNotificationPanel = ({ open, onClose }) => {
           </Grid>
         </Grid>
       </DialogContent>
-      
+
       <DialogActions>
         <Button onClick={testNotification} variant="outlined">
           Send Test
         </Button>
-        <Button onClick={() => setSettingsOpen(false)}>
-          Cancel
-        </Button>
+        <Button onClick={() => setSettingsOpen(false)}>Cancel</Button>
         <Button onClick={savePreferences} variant="contained">
           Save Settings
         </Button>
@@ -460,24 +498,14 @@ const SmartNotificationPanel = ({ open, onClose }) => {
               <Badge badgeContent={unreadCount} color="error">
                 <Notifications />
               </Badge>
-              <Typography variant="h6">
-                Notifications
-              </Typography>
+              <Typography variant="h6">Notifications</Typography>
             </Box>
-            
+
             <Box display="flex" gap={1}>
-              <IconButton
-                size="small"
-                onClick={() => setSettingsOpen(true)}
-                title="Settings"
-              >
+              <IconButton size="small" onClick={() => setSettingsOpen(true)} title="Settings">
                 <Settings />
               </IconButton>
-              <IconButton
-                size="small"
-                onClick={onClose}
-                title="Close"
-              >
+              <IconButton size="small" onClick={onClose} title="Close">
                 <Close />
               </IconButton>
             </Box>
@@ -486,11 +514,7 @@ const SmartNotificationPanel = ({ open, onClose }) => {
           {/* Filter Controls */}
           <Box display="flex" justifyContent="space-between" alignItems="center" mt={2}>
             <FormControl size="small" sx={{ minWidth: 120 }}>
-              <Select
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-                displayEmpty
-              >
+              <Select value={filter} onChange={e => setFilter(e.target.value)} displayEmpty>
                 <MenuItem value="all">All</MenuItem>
                 <MenuItem value="unread">Unread</MenuItem>
                 <MenuItem value="priority">Priority</MenuItem>
@@ -499,13 +523,9 @@ const SmartNotificationPanel = ({ open, onClose }) => {
                 <MenuItem value="announcement">Announcements</MenuItem>
               </Select>
             </FormControl>
-            
+
             {unreadCount > 0 && (
-              <Button
-                size="small"
-                onClick={markAllAsRead}
-                variant="outlined"
-              >
+              <Button size="small" onClick={markAllAsRead} variant="outlined">
                 Mark All Read
               </Button>
             )}
@@ -525,10 +545,9 @@ const SmartNotificationPanel = ({ open, onClose }) => {
                 No notifications
               </Typography>
               <Typography variant="body2" color="textSecondary" textAlign="center">
-                {filter === 'unread' 
+                {filter === 'unread'
                   ? "You're all caught up!"
-                  : "You'll see notifications here when you receive them."
-                }
+                  : "You'll see notifications here when you receive them."}
               </Typography>
             </Box>
           ) : (
@@ -566,4 +585,3 @@ const SmartNotificationPanel = ({ open, onClose }) => {
 };
 
 export default SmartNotificationPanel;
-

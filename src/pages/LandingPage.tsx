@@ -8,14 +8,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import {
-  Box,
-  Typography,
-  Button,
-  Container,
-  Grid,
-  Stack,
-} from '@mui/material';
+import { Box, Typography, Button, Container, Grid, Stack } from '@mui/material';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import InsightsIcon from '@mui/icons-material/Insights';
@@ -76,7 +69,7 @@ const roles = [
   {
     icon: <FamilyRestroomIcon sx={{ fontSize: 40 }} />,
     title: 'Parent',
-    description: 'Stay connected with your child\'s academic performance.',
+    description: "Stay connected with your child's academic performance.",
     path: '/parent-login',
     color: '#34d399',
   },
@@ -108,7 +101,7 @@ function useScrollReveal(threshold = 0.15) {
           observer.unobserve(el);
         }
       },
-      { threshold },
+      { threshold }
     );
 
     observer.observe(el);
@@ -172,8 +165,7 @@ function HeroSection() {
           width: { xs: '150px', md: '300px' },
           height: { xs: '150px', md: '300px' },
           borderRadius: '50%',
-          background:
-            'radial-gradient(circle, rgba(52, 211, 153, 0.1) 0%, transparent 60%)',
+          background: 'radial-gradient(circle, rgba(52, 211, 153, 0.1) 0%, transparent 60%)',
           filter: 'blur(40px)',
           animation: 'orbFloat2 10s ease-in-out infinite',
           '@keyframes orbFloat2': {
@@ -229,8 +221,8 @@ function HeroSection() {
             transition: 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s',
           }}
         >
-          Advanced tools for teachers, students, and parents. AI-powered grading,
-          real-time messaging, and comprehensive academic management.
+          Advanced tools for teachers, students, and parents. AI-powered grading, real-time
+          messaging, and comprehensive academic management.
         </Typography>
 
         <Stack
@@ -578,13 +570,8 @@ function FooterSection() {
         </Box>
 
         {/* Footer links */}
-        <Stack
-          direction="row"
-          spacing={3}
-          justifyContent="center"
-          sx={{ mt: 6, mb: 3 }}
-        >
-          {['About', 'Privacy', 'Terms'].map((link) => (
+        <Stack direction="row" spacing={3} justifyContent="center" sx={{ mt: 6, mb: 3 }}>
+          {['About', 'Privacy', 'Terms'].map(link => (
             <Typography
               key={link}
               component="span"

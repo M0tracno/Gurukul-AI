@@ -1,9 +1,40 @@
 import React, { useState } from 'react';
-import { Accessibility as AccessibilityIcon, Backup as BackupIcon, DarkMode as DarkModeIcon, Language as LanguageIcon, LightMode as LightModeIcon, Notifications as NotificationsIcon, Palette as PaletteIcon, Restore, Restore as RestoreIcon, Shield as SecurityIcon, Settings, Storage as StorageIcon } from '@mui/icons-material';
+import {
+  Accessibility as AccessibilityIcon,
+  Backup as BackupIcon,
+  DarkMode as DarkModeIcon,
+  Language as LanguageIcon,
+  LightMode as LightModeIcon,
+  Notifications as NotificationsIcon,
+  Palette as PaletteIcon,
+  Restore,
+  Restore as RestoreIcon,
+  Shield as SecurityIcon,
+  Settings,
+  Storage as StorageIcon,
+} from '@mui/icons-material';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useNotifications } from '../../contexts/NotificationContext';
 
-import { Alert, Box, Button, Card, CardContent, Divider, FormControl, FormControlLabel, Grid, IconButton, InputLabelItem, Radio, Select, Slider, Switch, Tooltip, Typography } from '@mui/material';
+import {
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Divider,
+  FormControl,
+  FormControlLabel,
+  Grid,
+  IconButton,
+  InputLabelItem,
+  Radio,
+  Select,
+  Slider,
+  Switch,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 const SettingsPanel = () => {
   const theme = useTheme();
@@ -16,19 +47,23 @@ const SettingsPanel = () => {
       push: true,
       email: true,
       sound: true,
-      desktop: false},
+      desktop: false,
+    },
     privacy: {
       profileVisibility: 'public',
       dataCollection: true,
-      analyticsTracking: false},
+      analyticsTracking: false,
+    },
     accessibility: {
       fontSize: 16,
       highContrast: false,
       reduceMotion: false,
-      screenReader: false},
+      screenReader: false,
+    },
     language: 'en',
     autoSave: true,
-    compactMode: false});
+    compactMode: false,
+  });
 
   const colorOptions = [
     { name: 'Red', value: 'red', color: '#e74c3c' },
@@ -51,7 +86,9 @@ const SettingsPanel = () => {
       ...prev,
       [category]: {
         ...prev[category],
-        [setting]: value}}));
+        [setting]: value,
+      },
+    }));
 
     showSnackbar(`${setting} setting updated`, 'success');
   };
@@ -60,7 +97,8 @@ const SettingsPanel = () => {
     const settingsData = {
       theme: { mode, primaryColor },
       ...settings,
-      exportDate: new Date().toISOString()};
+      exportDate: new Date().toISOString(),
+    };
 
     const dataStr = JSON.stringify(settingsData, null, 2);
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
@@ -73,11 +111,11 @@ const SettingsPanel = () => {
     showSnackbar('Settings exported successfully', 'success');
   };
 
-  const importSettings = (event) => {
+  const importSettings = event => {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = e => {
         try {
           const importedSettings = JSON.parse(e.target.result);
           setSettings(importedSettings);
@@ -102,19 +140,23 @@ const SettingsPanel = () => {
         push: true,
         email: true,
         sound: true,
-        desktop: false},
+        desktop: false,
+      },
       privacy: {
         profileVisibility: 'public',
         dataCollection: true,
-        analyticsTracking: false},
+        analyticsTracking: false,
+      },
       accessibility: {
         fontSize: 16,
         highContrast: false,
         reduceMotion: false,
-        screenReader: false},
+        screenReader: false,
+      },
       language: 'en',
       autoSave: true,
-      compactMode: false});
+      compactMode: false,
+    });
 
     showSnackbar('Settings reset to defaults', 'info');
   };
@@ -127,7 +169,7 @@ const SettingsPanel = () => {
 
       <Grid container spacing={3}>
         {/* Appearance Settings */}
-        <Grid size={{xs:12,md:6}}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Card>
             <CardContent>
               <Box display="flex" alignItems="center" gap={2} mb={3}>
@@ -154,7 +196,7 @@ const SettingsPanel = () => {
                   Primary Color
                 </Typography>
                 <Box display="flex" gap={1} flexWrap="wrap">
-                  {colorOptions.map((color) => (
+                  {colorOptions.map(color => (
                     <Tooltip key={color.value} title={color.name}>
                       <IconButton
                         onClick={() => changePrimaryColor(color.value)}
@@ -164,7 +206,9 @@ const SettingsPanel = () => {
                           borderColor: primaryColor === color.value ? 'primary.main' : 'divider',
                           '&:hover': {
                             backgroundColor: color.color,
-                            opacity: 0.8}}}
+                            opacity: 0.8,
+                          },
+                        }}
                       />
                     </Tooltip>
                   ))}
@@ -175,7 +219,9 @@ const SettingsPanel = () => {
                 control={
                   <Switch
                     checked={settings.compactMode}
-                    onChange={(e) => setSettings(prev => ({ ...prev, compactMode: e.target.checked }))}
+                    onChange={e =>
+                      setSettings(prev => ({ ...prev, compactMode: e.target.checked }))
+                    }
                   />
                 }
                 label="Compact Mode"
@@ -185,7 +231,7 @@ const SettingsPanel = () => {
         </Grid>
 
         {/* Notification Settings */}
-        <Grid size={{xs:12,md:6}}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Card>
             <CardContent>
               <Box display="flex" alignItems="center" gap={2} mb={3}>
@@ -199,7 +245,7 @@ const SettingsPanel = () => {
                   control={
                     <Switch
                       checked={value}
-                      onChange={(e) => handleSettingChange('notifications', key, e.target.checked)}
+                      onChange={e => handleSettingChange('notifications', key, e.target.checked)}
                     />
                   }
                   label={key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')}
@@ -211,7 +257,7 @@ const SettingsPanel = () => {
         </Grid>
 
         {/* Language & Localization */}
-        <Grid size={{xs:12,md:6}}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Card>
             <CardContent>
               <Box display="flex" alignItems="center" gap={2} mb={3}>
@@ -224,9 +270,9 @@ const SettingsPanel = () => {
                 <Select
                   value={settings.language}
                   label="Language"
-                  onChange={(e) => setSettings(prev => ({ ...prev, language: e.target.value }))}
+                  onChange={e => setSettings(prev => ({ ...prev, language: e.target.value }))}
                 >
-                  {languageOptions.map((lang) => (
+                  {languageOptions.map(lang => (
                     <MenuItem key={lang.code} value={lang.code}>
                       <Box display="flex" alignItems="center" gap={1}>
                         <span>{lang.flag}</span>
@@ -245,7 +291,7 @@ const SettingsPanel = () => {
         </Grid>
 
         {/* Accessibility Settings */}
-        <Grid size={{xs:12,md:6}}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Card>
             <CardContent>
               <Box display="flex" alignItems="center" gap={2} mb={3}>
@@ -268,16 +314,20 @@ const SettingsPanel = () => {
                 />
               </Box>
 
-              {['highContrast', 'reduceMotion', 'screenReader'].map((setting) => (
+              {['highContrast', 'reduceMotion', 'screenReader'].map(setting => (
                 <FormControlLabel
                   key={setting}
                   control={
                     <Switch
                       checked={settings.accessibility[setting]}
-                      onChange={(e) => handleSettingChange('accessibility', setting, e.target.checked)}
+                      onChange={e =>
+                        handleSettingChange('accessibility', setting, e.target.checked)
+                      }
                     />
                   }
-                  label={setting.charAt(0).toUpperCase() + setting.slice(1).replace(/([A-Z])/g, ' $1')}
+                  label={
+                    setting.charAt(0).toUpperCase() + setting.slice(1).replace(/([A-Z])/g, ' $1')
+                  }
                   sx={{ display: 'block', mb: 1 }}
                 />
               ))}
@@ -286,7 +336,7 @@ const SettingsPanel = () => {
         </Grid>
 
         {/* Privacy Settings */}
-        <Grid size={{xs:12,md:6}}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Card>
             <CardContent>
               <Box display="flex" alignItems="center" gap={2} mb={3}>
@@ -298,7 +348,9 @@ const SettingsPanel = () => {
                 <FormLabel component="legend">Profile Visibility</FormLabel>
                 <RadioGroup
                   value={settings.privacy.profileVisibility}
-                  onChange={(e) => handleSettingChange('privacy', 'profileVisibility', e.target.value)}
+                  onChange={e =>
+                    handleSettingChange('privacy', 'profileVisibility', e.target.value)
+                  }
                 >
                   <FormControlLabel value="public" control={<Radio />} label="Public" />
                   <FormControlLabel value="restricted" control={<Radio />} label="Restricted" />
@@ -310,7 +362,9 @@ const SettingsPanel = () => {
                 control={
                   <Switch
                     checked={settings.privacy.dataCollection}
-                    onChange={(e) => handleSettingChange('privacy', 'dataCollection', e.target.checked)}
+                    onChange={e =>
+                      handleSettingChange('privacy', 'dataCollection', e.target.checked)
+                    }
                   />
                 }
                 label="Allow Data Collection"
@@ -321,7 +375,9 @@ const SettingsPanel = () => {
                 control={
                   <Switch
                     checked={settings.privacy.analyticsTracking}
-                    onChange={(e) => handleSettingChange('privacy', 'analyticsTracking', e.target.checked)}
+                    onChange={e =>
+                      handleSettingChange('privacy', 'analyticsTracking', e.target.checked)
+                    }
                   />
                 }
                 label="Analytics Tracking"
@@ -332,7 +388,7 @@ const SettingsPanel = () => {
         </Grid>
 
         {/* Data Management */}
-        <Grid size={{xs:12,md:6}}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Card>
             <CardContent>
               <Box display="flex" alignItems="center" gap={2} mb={3}>
@@ -344,7 +400,7 @@ const SettingsPanel = () => {
                 control={
                   <Switch
                     checked={settings.autoSave}
-                    onChange={(e) => setSettings(prev => ({ ...prev, autoSave: e.target.checked }))}
+                    onChange={e => setSettings(prev => ({ ...prev, autoSave: e.target.checked }))}
                   />
                 }
                 label="Auto-save Settings"
@@ -374,20 +430,10 @@ const SettingsPanel = () => {
                   size="small"
                 >
                   Import Settings
-                  <input
-                    type="file"
-                    hidden
-                    accept=".json"
-                    onChange={importSettings}
-                  />
+                  <input type="file" hidden accept=".json" onChange={importSettings} />
                 </Button>
 
-                <Button
-                  variant="outlined"
-                  color="warning"
-                  onClick={resetToDefaults}
-                  size="small"
-                >
+                <Button variant="outlined" color="warning" onClick={resetToDefaults} size="small">
                   Reset to Defaults
                 </Button>
               </Box>
@@ -396,7 +442,7 @@ const SettingsPanel = () => {
         </Grid>
 
         {/* System Information */}
-        <Grid size={{xs:12}}>
+        <Grid size={{ xs: 12 }}>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -404,7 +450,7 @@ const SettingsPanel = () => {
               </Typography>
 
               <Grid container spacing={2}>
-                <Grid size={{xs:12,sm:6,md:3}}>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                   <Box textAlign="center">
                     <Typography variant="h4" color="primary" fontWeight="bold">
                       v2.1.0
@@ -415,7 +461,7 @@ const SettingsPanel = () => {
                   </Box>
                 </Grid>
 
-                <Grid size={{xs:12,sm:6,md:3}}>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                   <Box textAlign="center">
                     <Typography variant="h4" color="success.main" fontWeight="bold">
                       98.5%
@@ -426,7 +472,7 @@ const SettingsPanel = () => {
                   </Box>
                 </Grid>
 
-                <Grid size={{xs:12,sm:6,md:3}}>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                   <Box textAlign="center">
                     <Typography variant="h4" color="info.main" fontWeight="bold">
                       156ms
@@ -437,7 +483,7 @@ const SettingsPanel = () => {
                   </Box>
                 </Grid>
 
-                <Grid size={{xs:12,sm:6,md:3}}>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                   <Box textAlign="center">
                     <Typography variant="h4" color="warning.main" fontWeight="bold">
                       2.4GB
@@ -461,4 +507,3 @@ const SettingsPanel = () => {
 };
 
 export default SettingsPanel;
-

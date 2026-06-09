@@ -1,13 +1,24 @@
-import React, {  useEffect } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+import React, { useEffect } from 'react';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+} from 'recharts';
 import { Alert, Box, Card, CardContent, Grid, Paper, Tooltip, Typography } from '@mui/material';
-
 
 const SystemAnalytics = () => {
   const [analytics, setAnalytics] = useState({
     userStats: [],
     performanceData: [],
-    systemHealth: 'Good'
+    systemHealth: 'Good',
   });
 
   // Sample data for demo
@@ -17,7 +28,7 @@ const SystemAnalytics = () => {
         { name: 'Students', value: 450, color: '#8884d8' },
         { name: 'Faculty', value: 45, color: '#82ca9d' },
         { name: 'Parents', value: 320, color: '#ffc658' },
-        { name: 'Admins', value: 5, color: '#ff7300' }
+        { name: 'Admins', value: 5, color: '#ff7300' },
       ],
       performanceData: [
         { name: 'Jan', users: 400, active: 240 },
@@ -25,9 +36,9 @@ const SystemAnalytics = () => {
         { name: 'Mar', users: 500, active: 350 },
         { name: 'Apr', users: 520, active: 380 },
         { name: 'May', users: 580, active: 420 },
-        { name: 'Jun', users: 620, active: 450 }
+        { name: 'Jun', users: 620, active: 450 },
       ],
-      systemHealth: 'Good'
+      systemHealth: 'Good',
     });
   }, []);
 
@@ -39,7 +50,7 @@ const SystemAnalytics = () => {
 
       <Grid container spacing={3}>
         {/* User Distribution */}
-        <Grid size={{xs:12,md:6}}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -69,7 +80,7 @@ const SystemAnalytics = () => {
         </Grid>
 
         {/* User Growth */}
-        <Grid size={{xs:12,md:6}}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -91,21 +102,21 @@ const SystemAnalytics = () => {
         </Grid>
 
         {/* System Health */}
-        <Grid size={{xs:12}}>
+        <Grid size={{ xs: 12 }}>
           <Alert severity="success">
             System Health: {analytics.systemHealth} - All services are running normally
           </Alert>
         </Grid>
 
         {/* Quick Stats */}
-        <Grid size={{xs:12}}>
+        <Grid size={{ xs: 12 }}>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
                 Quick Statistics
               </Typography>
               <Grid container spacing={3}>
-                <Grid size={{xs:6,md:3}}>
+                <Grid size={{ xs: 6, md: 3 }}>
                   <Paper sx={{ p: 2, textAlign: 'center' }}>
                     <Typography variant="h4" color="primary">
                       {analytics.userStats.reduce((sum, stat) => sum + stat.value, 0)}
@@ -115,7 +126,7 @@ const SystemAnalytics = () => {
                     </Typography>
                   </Paper>
                 </Grid>
-                <Grid size={{xs:6,md:3}}>
+                <Grid size={{ xs: 6, md: 3 }}>
                   <Paper sx={{ p: 2, textAlign: 'center' }}>
                     <Typography variant="h4" color="success.main">
                       95%
@@ -125,7 +136,7 @@ const SystemAnalytics = () => {
                     </Typography>
                   </Paper>
                 </Grid>
-                <Grid size={{xs:6,md:3}}>
+                <Grid size={{ xs: 6, md: 3 }}>
                   <Paper sx={{ p: 2, textAlign: 'center' }}>
                     <Typography variant="h4" color="info.main">
                       2.3s
@@ -135,7 +146,7 @@ const SystemAnalytics = () => {
                     </Typography>
                   </Paper>
                 </Grid>
-                <Grid size={{xs:6,md:3}}>
+                <Grid size={{ xs: 6, md: 3 }}>
                   <Paper sx={{ p: 2, textAlign: 'center' }}>
                     <Typography variant="h4" color="warning.main">
                       12
@@ -155,4 +166,3 @@ const SystemAnalytics = () => {
 };
 
 export default SystemAnalytics;
-

@@ -8,19 +8,25 @@ import { useScrollTopFix } from './utils/scrollTopFix';
 import { AppRoutes } from './app/routes';
 
 // Context providers
-const SecurityProvider = React.lazy(() => import('./contexts/SecurityContext').then(m => ({ default: m.SecurityProvider })));
-const DatabaseProvider = React.lazy(() => import('./contexts/DatabaseContext').then(m => ({ default: m.DatabaseProvider })));
+const SecurityProvider = React.lazy(() =>
+  import('./contexts/SecurityContext').then(m => ({ default: m.SecurityProvider }))
+);
+const DatabaseProvider = React.lazy(() =>
+  import('./contexts/DatabaseContext').then(m => ({ default: m.DatabaseProvider }))
+);
 
 // Lightweight loading component
 const LoadingFallback = ({ message = 'Loading...' }) => (
-  <div style={{ 
-    display: 'flex', 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    minHeight: '200px',
-    fontSize: '16px',
-    color: '#666'
-  }}>
+  <div
+    style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      minHeight: '200px',
+      fontSize: '16px',
+      color: '#666',
+    }}
+  >
     {message}
   </div>
 );
@@ -47,19 +53,19 @@ function App() {
     const initServices = async () => {
       try {
         // Only import heavy services when needed
-        const [
-          PerformanceMonitoringService,
-          SecurityService,
-          StartupPerformanceService
-        ] = await Promise.all([
-          import('./services/PerformanceMonitoringService').then(m => m.default),
-          import('./services/SecurityService').then(m => m.default),
-          import('./services/StartupPerformanceService').then(m => m.default)
-        ]);
+        const [PerformanceMonitoringService, SecurityService, StartupPerformanceService] =
+          await Promise.all([
+            import('./services/PerformanceMonitoringService').then(m => m.default),
+            import('./services/SecurityService').then(m => m.default),
+            import('./services/StartupPerformanceService').then(m => m.default),
+          ]);
 
         PerformanceMonitoringService.initialize();
         SecurityService.initialize();
-        StartupPerformanceService.recordMilestone('core_services_init', 'Core services initialized');
+        StartupPerformanceService.recordMilestone(
+          'core_services_init',
+          'Core services initialized'
+        );
       } catch (error) {
         console.error('Failed to initialize core services:', error);
       }
@@ -69,7 +75,10 @@ function App() {
   }, []);
 
   const [isDeployed] = useState(() => {
-    return !window.location.hostname.includes('localhost') && !window.location.hostname.includes('127.0.0.1');
+    return (
+      !window.location.hostname.includes('localhost') &&
+      !window.location.hostname.includes('127.0.0.1')
+    );
   });
 
   useEffect(() => {

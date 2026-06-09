@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Avatar, 
-  Box, 
-  Button, 
-  Card, 
-  CardContent, 
-  Chip, 
-  Container, 
-  Divider, 
-  Grid, 
-  IconButton, 
-  List, 
-  ListItem, 
-  ListItemAvatar, 
-  ListItemText, 
-  Paper, 
+import {
+  Avatar,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  Container,
+  Divider,
+  Grid,
+  IconButton,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Paper,
   Typography,
   LinearProgress,
-  Badge
+  Badge,
 } from '@mui/material';
 import {
   Schedule as ScheduleIcon,
@@ -29,7 +29,7 @@ import {
   Quiz as QuizIcon,
   School as SchoolIcon,
   AccessTime as TimeIcon,
-  Star as StarIcon
+  Star as StarIcon,
 } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 import EnhancedFacultyService from '../../services/enhancedFacultyService';
@@ -50,7 +50,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
     '& .course-header': {
       background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
       color: 'white',
-    }
+    },
   },
   '&::before': {
     content: '""',
@@ -60,7 +60,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
     right: 0,
     height: 4,
     background: 'linear-gradient(90deg, #667eea 0%, #764ba2 50%, #667eea 100%)',
-  }
+  },
 }));
 
 const CourseHeader = styled(Box)(({ theme }) => ({
@@ -79,7 +79,7 @@ const StatChip = styled(Chip)(({ theme, color }) => ({
   border: `1px solid ${color}30`,
   '& .MuiChip-icon': {
     color: color,
-  }
+  },
 }));
 
 const ProgressContainer = styled(Box)(({ theme }) => ({
@@ -106,7 +106,7 @@ const FacultyCourses = () => {
             schedule: course.schedule,
             assignments: course.assignments,
             quizzes: course.quizzes,
-            progress: Math.round((course.assignments + course.quizzes) * 10) // Mock progress calculation
+            progress: Math.round((course.assignments + course.quizzes) * 10), // Mock progress calculation
           }));
           setCourses(formattedCourses);
         } else {
@@ -120,7 +120,7 @@ const FacultyCourses = () => {
               schedule: 'MWF 9:00-10:00',
               assignments: 8,
               quizzes: 5,
-              progress: 75
+              progress: 75,
             },
             {
               id: 2,
@@ -130,7 +130,7 @@ const FacultyCourses = () => {
               schedule: 'TTh 10:00-12:00',
               assignments: 6,
               quizzes: 4,
-              progress: 60
+              progress: 60,
             },
             {
               id: 3,
@@ -140,8 +140,8 @@ const FacultyCourses = () => {
               schedule: 'MW 2:00-3:30',
               assignments: 4,
               quizzes: 3,
-              progress: 85
-            }
+              progress: 85,
+            },
           ];
           setCourses(mockCourses);
         }
@@ -157,7 +157,7 @@ const FacultyCourses = () => {
             schedule: 'MWF 9:00-10:00',
             assignments: 8,
             quizzes: 5,
-            progress: 75
+            progress: 75,
           },
           {
             id: 2,
@@ -167,7 +167,7 @@ const FacultyCourses = () => {
             schedule: 'TTh 10:00-12:00',
             assignments: 6,
             quizzes: 4,
-            progress: 60
+            progress: 60,
           },
           {
             id: 3,
@@ -177,8 +177,8 @@ const FacultyCourses = () => {
             schedule: 'MW 2:00-3:30',
             assignments: 4,
             quizzes: 3,
-            progress: 85
-          }
+            progress: 85,
+          },
         ];
         setCourses(mockCourses);
       } finally {
@@ -193,32 +193,37 @@ const FacultyCourses = () => {
     console.log('Add new course');
   };
 
-  const handleEditCourse = (courseId) => {
+  const handleEditCourse = courseId => {
     console.log('Edit course:', courseId);
   };
 
-  const handleViewStudents = (courseId) => {
+  const handleViewStudents = courseId => {
     console.log('View students for course:', courseId);
   };
   if (loading) {
     return (
       <Container maxWidth="xl" sx={{ py: 4 }}>
         <Box display="flex" justifyContent="center" alignItems="center" minHeight="300px">
-          <Typography variant="h6" color="text.secondary">Loading courses...</Typography>
+          <Typography variant="h6" color="text.secondary">
+            Loading courses...
+          </Typography>
         </Box>
       </Container>
     );
   }
 
   return (
-    <Container maxWidth="xl" sx={{ 
-      py: 4,
-      background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-      minHeight: '100vh',
-      borderRadius: 0
-    }}>
+    <Container
+      maxWidth="xl"
+      sx={{
+        py: 4,
+        background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+        minHeight: '100vh',
+        borderRadius: 0,
+      }}
+    >
       {/* Header Section */}
-      <Box 
+      <Box
         sx={{
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
           borderRadius: 4,
@@ -226,19 +231,21 @@ const FacultyCourses = () => {
           mb: 4,
           color: 'white',
           position: 'relative',
-          overflow: 'hidden'
+          overflow: 'hidden',
         }}
       >
         <Box sx={{ position: 'relative', zIndex: 2 }}>
           <Grid container spacing={3} alignItems="center">
-            <Grid size={{xs:12,md:8}}>
+            <Grid size={{ xs: 12, md: 8 }}>
               <Box display="flex" alignItems="center" gap={2}>
-                <Avatar sx={{ 
-                  width: 64, 
-                  height: 64, 
-                  bgcolor: 'rgba(255,255,255,0.2)',
-                  fontSize: '1.5rem' 
-                }}>
+                <Avatar
+                  sx={{
+                    width: 64,
+                    height: 64,
+                    bgcolor: 'rgba(255,255,255,0.2)',
+                    fontSize: '1.5rem',
+                  }}
+                >
                   <SchoolIcon fontSize="large" />
                 </Avatar>
                 <Box>
@@ -251,21 +258,21 @@ const FacultyCourses = () => {
                 </Box>
               </Box>
             </Grid>
-            <Grid size={{xs:12,md:4}}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <Box display="flex" gap={2} justifyContent="flex-end">
                 <Button
                   variant="contained"
                   size="large"
                   startIcon={<AddIcon />}
                   onClick={handleAddCourse}
-                  sx={{ 
+                  sx={{
                     bgcolor: 'rgba(255,255,255,0.2)',
                     backdropFilter: 'blur(10px)',
                     borderRadius: 3,
                     px: 3,
                     '&:hover': {
-                      bgcolor: 'rgba(255,255,255,0.3)'
-                    }
+                      bgcolor: 'rgba(255,255,255,0.3)',
+                    },
                   }}
                 >
                   Add New Course
@@ -274,7 +281,7 @@ const FacultyCourses = () => {
             </Grid>
           </Grid>
         </Box>
-        
+
         {/* Background decoration */}
         <Box
           sx={{
@@ -285,7 +292,7 @@ const FacultyCourses = () => {
             height: 200,
             background: 'rgba(255,255,255,0.1)',
             borderRadius: '50%',
-            zIndex: 1
+            zIndex: 1,
           }}
         />
         <Box
@@ -297,21 +304,26 @@ const FacultyCourses = () => {
             height: 150,
             background: 'rgba(255,255,255,0.05)',
             borderRadius: '50%',
-            zIndex: 1
+            zIndex: 1,
           }}
         />
       </Box>
 
       {/* Courses Grid */}
       <Grid container spacing={4}>
-        {courses.map((course) => (
-          <Grid size={{xs:12,sm:6,lg:4}} key={course.id}>
+        {courses.map(course => (
+          <Grid size={{ xs: 12, sm: 6, lg: 4 }} key={course.id}>
             <StyledCard>
               {/* Course Header */}
               <CourseHeader className="course-header">
                 <Box display="flex" justifyContent="space-between" alignItems="flex-start">
                   <Box flex={1}>
-                    <Typography variant="h5" fontWeight="bold" gutterBottom sx={{ color: '#1e293b' }}>
+                    <Typography
+                      variant="h5"
+                      fontWeight="bold"
+                      gutterBottom
+                      sx={{ color: '#1e293b' }}
+                    >
                       {course.name}
                     </Typography>
                     <StatChip
@@ -323,12 +335,12 @@ const FacultyCourses = () => {
                   </Box>
                   <IconButton
                     onClick={() => handleEditCourse(course.id)}
-                    sx={{ 
+                    sx={{
                       bgcolor: 'rgba(103, 126, 234, 0.1)',
                       color: '#667eea',
                       '&:hover': {
-                        bgcolor: 'rgba(103, 126, 234, 0.2)'
-                      }
+                        bgcolor: 'rgba(103, 126, 234, 0.2)',
+                      },
                     }}
                   >
                     <EditIcon />
@@ -339,54 +351,50 @@ const FacultyCourses = () => {
               <CardContent sx={{ p: 3 }}>
                 {/* Course Stats */}
                 <Grid container spacing={2} sx={{ mb: 3 }}>
-                  <Grid size={{xs:6}}>
+                  <Grid size={{ xs: 6 }}>
                     <Box
                       sx={{
                         p: 2,
                         borderRadius: 3,
                         background: 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)',
                         color: 'white',
-                        textAlign: 'center'
+                        textAlign: 'center',
                       }}
                     >
                       <PeopleIcon sx={{ fontSize: 24, mb: 1 }} />
                       <Typography variant="h6" fontWeight="bold">
                         {course.students}
                       </Typography>
-                      <Typography variant="caption">
-                        Students
-                      </Typography>
+                      <Typography variant="caption">Students</Typography>
                     </Box>
                   </Grid>
-                  <Grid size={{xs:6}}>
+                  <Grid size={{ xs: 6 }}>
                     <Box
                       sx={{
                         p: 2,
                         borderRadius: 3,
                         background: 'linear-gradient(135deg, #FF9800 0%, #f57c00 100%)',
                         color: 'white',
-                        textAlign: 'center'
+                        textAlign: 'center',
                       }}
                     >
                       <TimeIcon sx={{ fontSize: 24, mb: 1 }} />
                       <Typography variant="body2" fontWeight="bold">
                         Active
                       </Typography>
-                      <Typography variant="caption">
-                        Status
-                      </Typography>
+                      <Typography variant="caption">Status</Typography>
                     </Box>
                   </Grid>
                 </Grid>
 
                 {/* Schedule */}
-                <Box 
+                <Box
                   sx={{
                     p: 2,
                     borderRadius: 2,
                     background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
                     border: '1px solid rgba(0,0,0,0.05)',
-                    mb: 3
+                    mb: 3,
                   }}
                 >
                   <Box display="flex" alignItems="center" gap={1} mb={1}>
@@ -402,15 +410,15 @@ const FacultyCourses = () => {
 
                 {/* Assignments and Quizzes */}
                 <Grid container spacing={2} sx={{ mb: 3 }}>
-                  <Grid size={{xs:6}}>
-                    <Paper 
+                  <Grid size={{ xs: 6 }}>
+                    <Paper
                       elevation={0}
-                      sx={{ 
-                        p: 2, 
-                        textAlign: 'center', 
+                      sx={{
+                        p: 2,
+                        textAlign: 'center',
                         background: 'linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%)',
                         border: '1px solid #4CAF50',
-                        borderRadius: 2
+                        borderRadius: 2,
                       }}
                     >
                       <AssignmentIcon sx={{ color: '#4CAF50', mb: 1 }} />
@@ -422,15 +430,15 @@ const FacultyCourses = () => {
                       </Typography>
                     </Paper>
                   </Grid>
-                  <Grid size={{xs:6}}>
-                    <Paper 
+                  <Grid size={{ xs: 6 }}>
+                    <Paper
                       elevation={0}
-                      sx={{ 
-                        p: 2, 
-                        textAlign: 'center', 
+                      sx={{
+                        p: 2,
+                        textAlign: 'center',
                         background: 'linear-gradient(135deg, #fff3e0 0%, #ffcc02 30%)',
                         border: '1px solid #FF9800',
-                        borderRadius: 2
+                        borderRadius: 2,
                       }}
                     >
                       <QuizIcon sx={{ color: '#FF9800', mb: 1 }} />
@@ -454,17 +462,17 @@ const FacultyCourses = () => {
                       {course.progress}%
                     </Typography>
                   </Box>
-                  <LinearProgress 
-                    variant="determinate" 
-                    value={course.progress} 
+                  <LinearProgress
+                    variant="determinate"
+                    value={course.progress}
                     sx={{
                       height: 8,
                       borderRadius: 4,
                       backgroundColor: 'rgba(103, 126, 234, 0.1)',
                       '& .MuiLinearProgress-bar': {
                         borderRadius: 4,
-                        background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)'
-                      }
+                        background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)',
+                      },
                     }}
                   />
                 </ProgressContainer>
@@ -476,7 +484,7 @@ const FacultyCourses = () => {
                   size="large"
                   startIcon={<PeopleIcon />}
                   onClick={() => handleViewStudents(course.id)}
-                  sx={{ 
+                  sx={{
                     mt: 3,
                     borderRadius: 3,
                     background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -485,8 +493,8 @@ const FacultyCourses = () => {
                     '&:hover': {
                       background: 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)',
                       transform: 'translateY(-2px)',
-                      boxShadow: '0 8px 25px rgba(103, 126, 234, 0.3)'
-                    }
+                      boxShadow: '0 8px 25px rgba(103, 126, 234, 0.3)',
+                    },
                   }}
                 >
                   View Students
@@ -503,7 +511,7 @@ const FacultyCourses = () => {
           sx={{
             textAlign: 'center',
             py: 8,
-            px: 4
+            px: 4,
           }}
         >
           <Avatar
@@ -512,7 +520,7 @@ const FacultyCourses = () => {
               height: 80,
               bgcolor: 'primary.light',
               mx: 'auto',
-              mb: 3
+              mb: 3,
             }}
           >
             <SchoolIcon sx={{ fontSize: 40 }} />
@@ -539,4 +547,3 @@ const FacultyCourses = () => {
 };
 
 export default FacultyCourses;
-

@@ -25,7 +25,7 @@ vi.mock('../../features/shared/services/apiClient', () => {
       msg: string,
       statusCode: number,
       code: string,
-      details?: Array<{ field: string; value: unknown; reason: string }>,
+      details?: Array<{ field: string; value: unknown; reason: string }>
     ) {
       super(msg);
       this.name = 'ApiClientError';
@@ -42,7 +42,11 @@ vi.mock('../../features/shared/services/apiClient', () => {
 });
 
 import { apiClient, ApiClientError } from '../../features/shared/services/apiClient';
-import { useCreateMark, type Mark, type CreateMarkInput } from '../../features/shared/hooks/useMarks';
+import {
+  useCreateMark,
+  type Mark,
+  type CreateMarkInput,
+} from '../../features/shared/hooks/useMarks';
 
 const mockApiClient = vi.mocked(apiClient);
 
@@ -94,11 +98,7 @@ function AssignmentSubmissionForm({
       <form onSubmit={handleSubmit} aria-label="Grade submission form">
         <div>
           <label htmlFor="exam-type">Exam Type</label>
-          <select
-            id="exam-type"
-            value={examType}
-            onChange={(e) => setExamType(e.target.value)}
-          >
+          <select id="exam-type" value={examType} onChange={e => setExamType(e.target.value)}>
             <option value="midterm">Midterm</option>
             <option value="final">Final</option>
             <option value="assignment">Assignment</option>
@@ -112,7 +112,7 @@ function AssignmentSubmissionForm({
             id="score"
             type="number"
             value={score}
-            onChange={(e) => setScore(e.target.value)}
+            onChange={e => setScore(e.target.value)}
             min="0"
             required
           />
@@ -124,7 +124,7 @@ function AssignmentSubmissionForm({
             id="max-score"
             type="number"
             value={maxScore}
-            onChange={(e) => setMaxScore(e.target.value)}
+            onChange={e => setMaxScore(e.target.value)}
             min="1"
             required
           />
@@ -136,7 +136,7 @@ function AssignmentSubmissionForm({
             id="weight"
             type="number"
             value={weight}
-            onChange={(e) => setWeight(e.target.value)}
+            onChange={e => setWeight(e.target.value)}
             min="0"
             step="0.1"
           />
@@ -147,7 +147,7 @@ function AssignmentSubmissionForm({
           <textarea
             id="remarks"
             value={remarks}
-            onChange={(e) => setRemarks(e.target.value)}
+            onChange={e => setRemarks(e.target.value)}
             placeholder="Optional remarks..."
           />
         </div>
@@ -166,8 +166,7 @@ function AssignmentSubmissionForm({
       {createMark.isError && (
         <div data-testid="submission-error" role="alert">
           <p>{(createMark.error as Error).message}</p>
-          {(createMark.error as { details?: Array<{ field: string; reason: string }> })
-            .details && (
+          {(createMark.error as { details?: Array<{ field: string; reason: string }> }).details && (
             <ul data-testid="error-details">
               {(
                 createMark.error as {
@@ -195,9 +194,7 @@ function createWrapper() {
   });
 
   return function Wrapper({ children }: { children: ReactNode }) {
-    return (
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-    );
+    return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
   };
 }
 
@@ -231,10 +228,9 @@ describe('Assignment Submission Integration Flow', () => {
 
     mockApiClient.mockResolvedValueOnce(mockCreatedMark);
 
-    render(
-      <AssignmentSubmissionForm courseId="course-math" studentId="student-1" />,
-      { wrapper: createWrapper() },
-    );
+    render(<AssignmentSubmissionForm courseId="course-math" studentId="student-1" />, {
+      wrapper: createWrapper(),
+    });
 
     // Fill in the form
     const scoreInput = screen.getByLabelText(/^score$/i);
@@ -270,9 +266,7 @@ describe('Assignment Submission Integration Flow', () => {
     await waitFor(() => {
       expect(screen.getByTestId('success-message')).toBeInTheDocument();
     });
-    expect(screen.getByRole('status')).toHaveTextContent(
-      'Grade submitted successfully',
-    );
+    expect(screen.getByRole('status')).toHaveTextContent('Grade submitted successfully');
 
     // Verify form is partially cleared (score and remarks reset)
     expect(scoreInput).toHaveValue(null);
@@ -298,13 +292,9 @@ describe('Assignment Submission Integration Flow', () => {
 
     mockApiClient.mockResolvedValueOnce(mockCreatedMark);
 
-    render(
-      <AssignmentSubmissionForm
-        courseId="course-science"
-        studentId="student-2"
-      />,
-      { wrapper: createWrapper() },
-    );
+    render(<AssignmentSubmissionForm courseId="course-science" studentId="student-2" />, {
+      wrapper: createWrapper(),
+    });
 
     // Select assignment exam type
     const examTypeSelect = screen.getByLabelText(/exam type/i);
@@ -343,20 +333,14 @@ describe('Assignment Submission Integration Flow', () => {
   it('displays validation error details when submission fails', async () => {
     const user = userEvent.setup();
 
-    const validationError = new ApiClientError(
-      'Validation failed',
-      400,
-      'VALIDATION_ERROR',
-      [
-        { field: 'score', value: 150, reason: 'Score cannot exceed maxScore' },
-      ],
-    );
+    const validationError = new ApiClientError('Validation failed', 400, 'VALIDATION_ERROR', [
+      { field: 'score', value: 150, reason: 'Score cannot exceed maxScore' },
+    ]);
     mockApiClient.mockRejectedValueOnce(validationError);
 
-    render(
-      <AssignmentSubmissionForm courseId="course-math" studentId="student-1" />,
-      { wrapper: createWrapper() },
-    );
+    render(<AssignmentSubmissionForm courseId="course-math" studentId="student-1" />, {
+      wrapper: createWrapper(),
+    });
 
     // Enter an invalid score (exceeds max)
     const scoreInput = screen.getByLabelText(/^score$/i);
@@ -381,14 +365,11 @@ describe('Assignment Submission Integration Flow', () => {
   it('displays generic error when server returns 500', async () => {
     const user = userEvent.setup();
 
-    mockApiClient.mockRejectedValueOnce(
-      new Error('Internal server error'),
-    );
+    mockApiClient.mockRejectedValueOnce(new Error('Internal server error'));
 
-    render(
-      <AssignmentSubmissionForm courseId="course-math" studentId="student-1" />,
-      { wrapper: createWrapper() },
-    );
+    render(<AssignmentSubmissionForm courseId="course-math" studentId="student-1" />, {
+      wrapper: createWrapper(),
+    });
 
     const scoreInput = screen.getByLabelText(/^score$/i);
     await user.clear(scoreInput);
@@ -400,9 +381,7 @@ describe('Assignment Submission Integration Flow', () => {
       expect(screen.getByTestId('submission-error')).toBeInTheDocument();
     });
 
-    expect(screen.getByRole('alert')).toHaveTextContent(
-      'Internal server error',
-    );
+    expect(screen.getByRole('alert')).toHaveTextContent('Internal server error');
   });
 
   it('shows loading state while submission is pending', async () => {
@@ -411,15 +390,14 @@ describe('Assignment Submission Integration Flow', () => {
     // Use a delayed resolution to observe the pending state
     let resolveApi: (value: Mark) => void;
     mockApiClient.mockReturnValueOnce(
-      new Promise<Mark>((resolve) => {
+      new Promise<Mark>(resolve => {
         resolveApi = resolve;
-      }) as unknown as ReturnType<typeof apiClient>,
+      }) as unknown as ReturnType<typeof apiClient>
     );
 
-    render(
-      <AssignmentSubmissionForm courseId="course-math" studentId="student-1" />,
-      { wrapper: createWrapper() },
-    );
+    render(<AssignmentSubmissionForm courseId="course-math" studentId="student-1" />, {
+      wrapper: createWrapper(),
+    });
 
     const scoreInput = screen.getByLabelText(/^score$/i);
     await user.clear(scoreInput);
@@ -430,9 +408,7 @@ describe('Assignment Submission Integration Flow', () => {
 
     // Button should show loading state
     await waitFor(() => {
-      expect(
-        screen.getByRole('button', { name: /submitting/i }),
-      ).toBeDisabled();
+      expect(screen.getByRole('button', { name: /submitting/i })).toBeDisabled();
     });
 
     // Resolve the API call
@@ -452,9 +428,7 @@ describe('Assignment Submission Integration Flow', () => {
 
     // Button should return to normal
     await waitFor(() => {
-      expect(
-        screen.getByRole('button', { name: /submit grade/i }),
-      ).not.toBeDisabled();
+      expect(screen.getByRole('button', { name: /submit grade/i })).not.toBeDisabled();
     });
   });
 });

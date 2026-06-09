@@ -50,7 +50,7 @@ const lightPalette = {
     primary: '#2d3748',
     secondary: '#4a5568',
     disabled: '#a0aec0',
-  }
+  },
 };
 
 const darkPalette = {
@@ -100,7 +100,7 @@ const darkPalette = {
     primary: 'rgba(255, 255, 255, 0.95)',
     secondary: 'rgba(255, 255, 255, 0.6)',
     disabled: 'rgba(255, 255, 255, 0.3)',
-  }
+  },
 };
 
 // Typography enhancements
@@ -163,7 +163,7 @@ const typography = {
 };
 
 // Enhanced component customizations
-const getComponentOverrides = (isDark) => ({
+const getComponentOverrides = isDark => ({
   MuiCssBaseline: {
     styleOverrides: {
       body: {
@@ -222,18 +222,14 @@ const getComponentOverrides = (isDark) => ({
     styleOverrides: {
       root: {
         borderRadius: '16px',
-        boxShadow: isDark
-          ? '0 4px 24px rgba(0, 0, 0, 0.6)'
-          : '0 4px 24px rgba(0, 0, 0, 0.08)',
+        boxShadow: isDark ? '0 4px 24px rgba(0, 0, 0, 0.6)' : '0 4px 24px rgba(0, 0, 0, 0.08)',
         backdropFilter: isDark ? 'blur(20px)' : 'blur(10px)',
         background: isDark ? 'rgba(255, 255, 255, 0.03)' : undefined,
         border: isDark ? '1px solid rgba(255, 255, 255, 0.06)' : '1px solid rgba(0, 0, 0, 0.05)',
         transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
         '&:hover': {
           transform: 'translateY(-2px)',
-          boxShadow: isDark
-            ? '0 8px 32px rgba(0, 0, 0, 0.7)'
-            : '0 8px 32px rgba(0, 0, 0, 0.12)',
+          boxShadow: isDark ? '0 8px 32px rgba(0, 0, 0, 0.7)' : '0 8px 32px rgba(0, 0, 0, 0.12)',
         },
       },
     },
@@ -245,9 +241,7 @@ const getComponentOverrides = (isDark) => ({
         border: isDark ? '1px solid rgba(255, 255, 255, 0.06)' : '1px solid rgba(0, 0, 0, 0.05)',
       },
       elevation1: {
-        boxShadow: isDark
-          ? '0 2px 8px rgba(0, 0, 0, 0.4)'
-          : '0 2px 8px rgba(0, 0, 0, 0.04)',
+        boxShadow: isDark ? '0 2px 8px rgba(0, 0, 0, 0.4)' : '0 2px 8px rgba(0, 0, 0, 0.04)',
       },
     },
   },
@@ -264,12 +258,8 @@ const getComponentOverrides = (isDark) => ({
     styleOverrides: {
       root: {
         backdropFilter: 'blur(20px)',
-        backgroundColor: isDark
-          ? 'rgba(10, 10, 15, 0.8)'
-          : 'rgba(255, 255, 255, 0.9)',
-        boxShadow: isDark
-          ? '0 2px 24px rgba(0, 0, 0, 0.5)'
-          : '0 2px 24px rgba(0, 0, 0, 0.08)',
+        backgroundColor: isDark ? 'rgba(10, 10, 15, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+        boxShadow: isDark ? '0 2px 24px rgba(0, 0, 0, 0.5)' : '0 2px 24px rgba(0, 0, 0, 0.08)',
         borderBottom: isDark ? '1px solid rgba(255, 255, 255, 0.06)' : undefined,
       },
     },
@@ -297,54 +287,64 @@ const getComponentOverrides = (isDark) => ({
   },
   MuiTableContainer: {
     styleOverrides: {
-      root: isDark ? {
-        background: 'rgba(17, 17, 24, 0.6)',
-        borderRadius: '12px',
-        border: '1px solid rgba(255, 255, 255, 0.06)',
-      } : {},
+      root: isDark
+        ? {
+            background: 'rgba(17, 17, 24, 0.6)',
+            borderRadius: '12px',
+            border: '1px solid rgba(255, 255, 255, 0.06)',
+          }
+        : {},
     },
   },
   MuiTableHead: {
     styleOverrides: {
-      root: isDark ? {
-        '& .MuiTableCell-head': {
-          backgroundColor: 'rgba(167, 139, 250, 0.08)',
-          color: 'rgba(255, 255, 255, 0.9)',
-          fontWeight: 600,
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-        },
-      } : {},
+      root: isDark
+        ? {
+            '& .MuiTableCell-head': {
+              backgroundColor: 'rgba(167, 139, 250, 0.08)',
+              color: 'rgba(255, 255, 255, 0.9)',
+              fontWeight: 600,
+              borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+            },
+          }
+        : {},
     },
   },
   MuiTableRow: {
     styleOverrides: {
-      root: isDark ? {
-        '&:hover': {
-          backgroundColor: 'rgba(167, 139, 250, 0.04)',
-        },
-        '& .MuiTableCell-root': {
-          borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
-        },
-      } : {},
+      root: isDark
+        ? {
+            '&:hover': {
+              backgroundColor: 'rgba(167, 139, 250, 0.04)',
+            },
+            '& .MuiTableCell-root': {
+              borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
+            },
+          }
+        : {},
     },
   },
   MuiChip: {
     styleOverrides: {
-      root: isDark ? {
-        background: 'rgba(255, 255, 255, 0.06)',
-        border: '1px solid rgba(255, 255, 255, 0.08)',
-        backdropFilter: 'blur(8px)',
-      } : {},
+      root: isDark
+        ? {
+            background: 'rgba(255, 255, 255, 0.06)',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            backdropFilter: 'blur(8px)',
+          }
+        : {},
     },
   },
   MuiDialog: {
     styleOverrides: {
-      paper: isDark ? {
-        background: 'rgba(17, 17, 24, 0.95)',
-        backdropFilter: 'blur(20px)',
-        border: '1px solid rgba(255, 255, 255, 0.08)',
-        borderRadius: '16px',
-      } : {},
+      paper: isDark
+        ? {
+            background: 'rgba(17, 17, 24, 0.95)',
+            backdropFilter: 'blur(20px)',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            borderRadius: '16px',
+          }
+        : {},
     },
   },
 });
@@ -370,7 +370,7 @@ const shape = {
 };
 
 // Shadow system - Material-UI requires 25 shadow levels (0-24)
-const shadows = (isDark) => [
+const shadows = isDark => [
   'none',
   isDark ? '0 2px 4px rgba(0, 0, 0, 0.3)' : '0 2px 4px rgba(0, 0, 0, 0.05)',
   isDark ? '0 4px 8px rgba(0, 0, 0, 0.4)' : '0 4px 8px rgba(0, 0, 0, 0.08)',
@@ -474,13 +474,9 @@ const createEnhancedTheme = (isDark = false, LinkBehavior) => {
         },
       },
       glassmorphism: {
-        background: isDark
-          ? 'rgba(17, 17, 24, 0.8)'
-          : 'rgba(255, 255, 255, 0.8)',
+        background: isDark ? 'rgba(17, 17, 24, 0.8)' : 'rgba(255, 255, 255, 0.8)',
         backdropFilter: 'blur(20px)',
-        border: isDark
-          ? '1px solid rgba(255, 255, 255, 0.06)'
-          : '1px solid rgba(0, 0, 0, 0.05)',
+        border: isDark ? '1px solid rgba(255, 255, 255, 0.06)' : '1px solid rgba(0, 0, 0, 0.05)',
       },
     },
   });

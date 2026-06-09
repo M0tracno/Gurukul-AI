@@ -55,9 +55,15 @@
 }
 
 @keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.5; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .last-update {
@@ -78,7 +84,9 @@
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .monitor-card:hover {
@@ -444,7 +452,7 @@
   outline-offset: 2px;
 }
 
-.alert-item[role="alert"] {
+.alert-item[role='alert'] {
   border-left-width: 4px;
 }
 

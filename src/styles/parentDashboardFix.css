@@ -9,7 +9,7 @@
 }
 
 /* More specific selectors for stubborn cards */
-.parent-dashboard .MuiCard-root[style*="background"] {
+.parent-dashboard .MuiCard-root[style*='background'] {
   background-color: #ffffff !important;
   background: #ffffff !important;
 }
@@ -25,7 +25,7 @@
 }
 
 /* Fix any gradient backgrounds that might be dark */
-.parent-dashboard .MuiCard-root[style*="linear-gradient"] {
+.parent-dashboard .MuiCard-root[style*='linear-gradient'] {
   background-color: #ffffff !important;
 }
 
@@ -46,14 +46,14 @@
 }
 
 /* Additional overrides for events cards and any missed cards */
-.parent-dashboard div[class*="MuiCard"] {
+.parent-dashboard div[class*='MuiCard'] {
   background-color: #ffffff !important;
   background: #ffffff !important;
 }
 
 /* Force white background on all card-like containers */
-.parent-dashboard [class*="Card"],
-.parent-dashboard [class*="card"] {
+.parent-dashboard [class*='Card'],
+.parent-dashboard [class*='card'] {
   background-color: #ffffff !important;
   background: #ffffff !important;
 }
@@ -75,9 +75,9 @@
 }
 
 /* Extreme override - target all possible card selectors */
-.parent-dashboard [role="presentation"],
-.parent-dashboard [class*="card"],
-.parent-dashboard [class*="Card"],
+.parent-dashboard [role='presentation'],
+.parent-dashboard [class*='card'],
+.parent-dashboard [class*='Card'],
 .parent-dashboard .MuiPaper-root {
   background: #ffffff !important;
   background-color: #ffffff !important;

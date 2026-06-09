@@ -49,7 +49,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
     sx,
     ...props
   },
-  ref,
+  ref
 ) {
   const showDivider = divider ?? Boolean(title);
 

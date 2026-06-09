@@ -7,9 +7,10 @@
  * - Failed override shows Error_Envelope message and leaves the record unchanged (Requirement 11.4)
  */
 
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
 import { OverrideControls } from './OverrideControls';
 
 // Mock the admin API service
@@ -114,15 +115,15 @@ describe('OverrideControls', () => {
       mockSubmitGradeOverride.mockResolvedValueOnce(updatedResult);
 
       const onSuccess = vi.fn();
-      renderWithTheme(
-        <OverrideControls {...defaultProps} onOverrideSuccess={onSuccess} />,
-      );
+      renderWithTheme(<OverrideControls {...defaultProps} onOverrideSuccess={onSuccess} />);
 
       // Change score and feedback
       const scoreInput = screen.getByLabelText('Score');
       const feedbackInput = screen.getByLabelText('Feedback');
       fireEvent.change(scoreInput, { target: { value: '9' } });
-      fireEvent.change(feedbackInput, { target: { value: 'Excellent work with thorough explanation.' } });
+      fireEvent.change(feedbackInput, {
+        target: { value: 'Excellent work with thorough explanation.' },
+      });
 
       // Submit override
       fireEvent.click(screen.getByRole('button', { name: /submit override/i }));
@@ -134,7 +135,9 @@ describe('OverrideControls', () => {
 
       // Verify updated record details are displayed
       expect(screen.getByText(/Score: 9/)).toBeInTheDocument();
-      expect(screen.getByText(/Feedback: Excellent work with thorough explanation\./)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Feedback: Excellent work with thorough explanation\./)
+      ).toBeInTheDocument();
     });
 
     it('calls onOverrideSuccess callback with the result', async () => {
@@ -148,9 +151,7 @@ describe('OverrideControls', () => {
       mockSubmitGradeOverride.mockResolvedValueOnce(updatedResult);
 
       const onSuccess = vi.fn();
-      renderWithTheme(
-        <OverrideControls {...defaultProps} onOverrideSuccess={onSuccess} />,
-      );
+      renderWithTheme(<OverrideControls {...defaultProps} onOverrideSuccess={onSuccess} />);
 
       fireEvent.click(screen.getByRole('button', { name: /submit override/i }));
 
@@ -194,8 +195,8 @@ describe('OverrideControls', () => {
         new ApiClientError(
           'Submission is already finalized and cannot be overridden.',
           400,
-          'ALREADY_FINALIZED',
-        ),
+          'ALREADY_FINALIZED'
+        )
       );
 
       renderWithTheme(<OverrideControls {...defaultProps} />);
@@ -204,14 +205,14 @@ describe('OverrideControls', () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText('Submission is already finalized and cannot be overridden.'),
+          screen.getByText('Submission is already finalized and cannot be overridden.')
         ).toBeInTheDocument();
       });
     });
 
     it('does NOT display a success message when override fails', async () => {
       mockSubmitGradeOverride.mockRejectedValueOnce(
-        new ApiClientError('Forbidden: insufficient permissions.', 403, 'FORBIDDEN'),
+        new ApiClientError('Forbidden: insufficient permissions.', 403, 'FORBIDDEN')
       );
 
       renderWithTheme(<OverrideControls {...defaultProps} />);
@@ -228,7 +229,7 @@ describe('OverrideControls', () => {
 
     it('leaves the displayed record unchanged on failure (score and feedback remain)', async () => {
       mockSubmitGradeOverride.mockRejectedValueOnce(
-        new ApiClientError('Internal server error.', 500, 'INTERNAL_ERROR'),
+        new ApiClientError('Internal server error.', 500, 'INTERNAL_ERROR')
       );
 
       renderWithTheme(<OverrideControls {...defaultProps} />);
@@ -260,20 +261,18 @@ describe('OverrideControls', () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText('An unexpected error occurred while submitting the override.'),
+          screen.getByText('An unexpected error occurred while submitting the override.')
         ).toBeInTheDocument();
       });
     });
 
     it('does not call onOverrideSuccess when override fails', async () => {
       mockSubmitGradeOverride.mockRejectedValueOnce(
-        new ApiClientError('Conflict detected.', 409, 'CONFLICT'),
+        new ApiClientError('Conflict detected.', 409, 'CONFLICT')
       );
 
       const onSuccess = vi.fn();
-      renderWithTheme(
-        <OverrideControls {...defaultProps} onOverrideSuccess={onSuccess} />,
-      );
+      renderWithTheme(<OverrideControls {...defaultProps} onOverrideSuccess={onSuccess} />);
 
       fireEvent.click(screen.getByRole('button', { name: /submit override/i }));
 

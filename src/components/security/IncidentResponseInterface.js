@@ -52,7 +52,7 @@ import {
   Switch,
   FormControlLabel,
   Divider,
-  LinearProgress
+  LinearProgress,
 } from '@mui/material';
 import {
   Report as ReportIcon,
@@ -87,7 +87,7 @@ import {
   FileCopy as CopyIcon,
   Share as ShareIcon,
   Lock as LockIcon,
-  VpnKey as KeyIcon
+  VpnKey as KeyIcon,
 } from '@mui/icons-material';
 
 /**
@@ -97,7 +97,7 @@ import {
  * with automated workflows, escalation procedures, and forensic tools
  */
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   container: {
     padding: theme.spacing(3),
   },
@@ -252,7 +252,7 @@ const IncidentResponseInterface = () => {
           createdAt: new Date(Date.now() - 3600000).toISOString(),
           assignedTo: 'security-team',
           affectedSystems: ['authentication', 'user-database'],
-          source: 'automated-detection'
+          source: 'automated-detection',
         },
         {
           id: 'INC-2024-002',
@@ -263,8 +263,8 @@ const IncidentResponseInterface = () => {
           createdAt: new Date(Date.now() - 7200000).toISOString(),
           assignedTo: 'incident-response-team',
           affectedSystems: ['network', 'file-server'],
-          source: 'network-monitoring'
-        }
+          source: 'network-monitoring',
+        },
       ]);
 
       setResponsePlaybooks([
@@ -274,7 +274,7 @@ const IncidentResponseInterface = () => {
           description: 'Comprehensive response for data security incidents',
           steps: 8,
           estimatedTime: '4-6 hours',
-          category: 'data-security'
+          category: 'data-security',
         },
         {
           id: 'pb-malware',
@@ -282,7 +282,7 @@ const IncidentResponseInterface = () => {
           description: 'Detection and containment of malicious software',
           steps: 6,
           estimatedTime: '2-4 hours',
-          category: 'malware'
+          category: 'malware',
         },
         {
           id: 'pb-ddos',
@@ -290,8 +290,8 @@ const IncidentResponseInterface = () => {
           description: 'Mitigation strategies for distributed denial of service attacks',
           steps: 5,
           estimatedTime: '1-2 hours',
-          category: 'network-security'
-        }
+          category: 'network-security',
+        },
       ]);
 
       setResponseTeam([
@@ -300,24 +300,23 @@ const IncidentResponseInterface = () => {
           name: 'Alice Johnson',
           role: 'Incident Commander',
           status: 'active',
-          contact: '+1-555-0101'
+          contact: '+1-555-0101',
         },
         {
           id: 'security-analyst',
           name: 'Bob Smith',
           role: 'Security Analyst',
           status: 'active',
-          contact: '+1-555-0102'
+          contact: '+1-555-0102',
         },
         {
           id: 'forensic-expert',
           name: 'Carol Williams',
           role: 'Digital Forensics',
           status: 'on-call',
-          contact: '+1-555-0103'
-        }
+          contact: '+1-555-0103',
+        },
       ]);
-
     } catch (error) {
       console.error('Error loading incident data:', error);
     } finally {
@@ -325,54 +324,69 @@ const IncidentResponseInterface = () => {
     }
   };
 
-  const getSeverityClass = (severity) => {
+  const getSeverityClass = severity => {
     switch (severity?.toLowerCase()) {
-      case 'critical': return classes.criticalIncident;
-      case 'high': return classes.highIncident;
-      case 'medium': return classes.mediumIncident;
-      case 'low': return classes.lowIncident;
-      default: return '';
+      case 'critical':
+        return classes.criticalIncident;
+      case 'high':
+        return classes.highIncident;
+      case 'medium':
+        return classes.mediumIncident;
+      case 'low':
+        return classes.lowIncident;
+      default:
+        return '';
     }
   };
 
-  const getSeverityColor = (severity) => {
+  const getSeverityColor = severity => {
     switch (severity?.toLowerCase()) {
-      case 'critical': return 'error';
-      case 'high': return 'warning';
-      case 'medium': return 'info';
-      case 'low': return 'success';
-      default: return 'default';
+      case 'critical':
+        return 'error';
+      case 'high':
+        return 'warning';
+      case 'medium':
+        return 'info';
+      case 'low':
+        return 'success';
+      default:
+        return 'default';
     }
   };
 
-  const getStatusColor = (status) => {
+  const getStatusColor = status => {
     switch (status?.toLowerCase()) {
-      case 'resolved': return 'success';
-      case 'investigating': return 'warning';
-      case 'active': return 'error';
-      case 'new': return 'info';
-      default: return 'default';
+      case 'resolved':
+        return 'success';
+      case 'investigating':
+        return 'warning';
+      case 'active':
+        return 'error';
+      case 'new':
+        return 'info';
+      default:
+        return 'default';
     }
   };
 
-  const handleIncidentSelect = (incident) => {
+  const handleIncidentSelect = incident => {
     setSelectedIncident(incident);
     setIncidentDialogOpen(true);
   };
 
-  const handlePlaybookActivate = (playbook) => {
+  const handlePlaybookActivate = playbook => {
     setActivePlaybook(playbook);
     setPlaybookDialogOpen(true);
   };
 
-  const handleEscalation = (level) => {
+  const handleEscalation = level => {
     // Implement escalation logic
     console.log('Escalating to level:', level);
   };
 
   const renderIncidentsTab = () => (
     <Grid container spacing={3}>
-      <Grid size={{xs:12}}>
+      <Grid size={{ xs: 12 }}>
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
           <Typography variant="h6">Active Incidents</Typography>
           <Button
@@ -386,8 +400,8 @@ const IncidentResponseInterface = () => {
         </Box>
       </Grid>
 
-      {incidents.map((incident) => (
-        <Grid size={{xs:12}} key={incident.id}>
+      {incidents.map(incident => (
+        <Grid size={{ xs: 12 }} key={incident.id}>
           <Card className={`${classes.incidentCard} ${getSeverityClass(incident.severity)}`}>
             <CardContent>
               <Box display="flex" justifyContent="space-between" alignItems="flex-start">
@@ -441,14 +455,14 @@ const IncidentResponseInterface = () => {
 
   const renderPlaybooksTab = () => (
     <Grid container spacing={3}>
-      <Grid size={{xs:12}}>
+      <Grid size={{ xs: 12 }}>
         <Typography variant="h6" gutterBottom>
           Response Playbooks
         </Typography>
       </Grid>
 
-      {responsePlaybooks.map((playbook) => (
-        <Grid size={{xs:12,md:4}} key={playbook.id}>
+      {responsePlaybooks.map(playbook => (
+        <Grid size={{ xs: 12, md: 4 }} key={playbook.id}>
           <Card
             className={`${classes.playbookCard} ${activePlaybook?.id === playbook.id ? classes.activePlaybook : ''}`}
             onClick={() => handlePlaybookActivate(playbook)}
@@ -461,9 +475,7 @@ const IncidentResponseInterface = () => {
                 {playbook.description}
               </Typography>
               <Box display="flex" justifyContent="space-between" alignItems="center">
-                <Typography variant="body2">
-                  {playbook.steps} steps
-                </Typography>
+                <Typography variant="body2">{playbook.steps} steps</Typography>
                 <Typography variant="body2" color="textSecondary">
                   {playbook.estimatedTime}
                 </Typography>
@@ -477,25 +489,21 @@ const IncidentResponseInterface = () => {
 
   const renderResponseTeamTab = () => (
     <Grid container spacing={3}>
-      <Grid size={{xs:12}}>
+      <Grid size={{ xs: 12 }}>
         <Typography variant="h6" gutterBottom>
           Response Team
         </Typography>
       </Grid>
 
-      <Grid size={{xs:12,md:6}}>
+      <Grid size={{ xs: 12, md: 6 }}>
         <Card>
           <CardHeader title="Active Team Members" />
           <CardContent>
-            {responseTeam.map((member) => (
+            {responseTeam.map(member => (
               <Box key={member.id} className={classes.responseTeam}>
-                <Avatar className={classes.teammateAvatar}>
-                  {member.name.charAt(0)}
-                </Avatar>
+                <Avatar className={classes.teammateAvatar}>{member.name.charAt(0)}</Avatar>
                 <Box flex={1}>
-                  <Typography fontWeight="bold">
-                    {member.name}
-                  </Typography>
+                  <Typography fontWeight="bold">{member.name}</Typography>
                   <Typography variant="body2" color="textSecondary">
                     {member.role}
                   </Typography>
@@ -516,7 +524,7 @@ const IncidentResponseInterface = () => {
         </Card>
       </Grid>
 
-      <Grid size={{xs:12,md:6}}>
+      <Grid size={{ xs: 12, md: 6 }}>
         <Card>
           <CardHeader title="Escalation Contacts" />
           <CardContent>
@@ -553,47 +561,39 @@ const IncidentResponseInterface = () => {
 
   const renderForensicsTab = () => (
     <Grid container spacing={3}>
-      <Grid size={{xs:12}}>
+      <Grid size={{ xs: 12 }}>
         <Typography variant="h6" gutterBottom>
           Digital Forensics & Evidence Collection
         </Typography>
       </Grid>
 
-      <Grid size={{xs:12,md:6}}>
+      <Grid size={{ xs: 12, md: 6 }}>
         <Card>
           <CardHeader title="Forensic Tools" />
           <CardContent>
             <Grid container spacing={2}>
-              <Grid size={{xs:6}}>
+              <Grid size={{ xs: 6 }}>
                 <Box className={classes.forensicTool}>
                   <ComputerIcon style={{ fontSize: 40, marginBottom: 8 }} />
-                  <Typography variant="body2">
-                    System Imaging
-                  </Typography>
+                  <Typography variant="body2">System Imaging</Typography>
                 </Box>
               </Grid>
-              <Grid size={{xs:6}}>
+              <Grid size={{ xs: 6 }}>
                 <Box className={classes.forensicTool}>
                   <NetworkIcon style={{ fontSize: 40, marginBottom: 8 }} />
-                  <Typography variant="body2">
-                    Network Analysis
-                  </Typography>
+                  <Typography variant="body2">Network Analysis</Typography>
                 </Box>
               </Grid>
-              <Grid size={{xs:6}}>
+              <Grid size={{ xs: 6 }}>
                 <Box className={classes.forensicTool}>
                   <StorageIcon style={{ fontSize: 40, marginBottom: 8 }} />
-                  <Typography variant="body2">
-                    Data Recovery
-                  </Typography>
+                  <Typography variant="body2">Data Recovery</Typography>
                 </Box>
               </Grid>
-              <Grid size={{xs:6}}>
+              <Grid size={{ xs: 6 }}>
                 <Box className={classes.forensicTool}>
                   <FingerprintIcon style={{ fontSize: 40, marginBottom: 8 }} />
-                  <Typography variant="body2">
-                    Hash Analysis
-                  </Typography>
+                  <Typography variant="body2">Hash Analysis</Typography>
                 </Box>
               </Grid>
             </Grid>
@@ -601,7 +601,7 @@ const IncidentResponseInterface = () => {
         </Card>
       </Grid>
 
-      <Grid size={{xs:12,md:6}}>
+      <Grid size={{ xs: 12, md: 6 }}>
         <Card>
           <CardHeader title="Evidence Collection" />
           <CardContent>
@@ -609,9 +609,7 @@ const IncidentResponseInterface = () => {
               <Box key={index} className={classes.evidenceCard}>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                   <Box>
-                    <Typography fontWeight="bold">
-                      {evidence.type}
-                    </Typography>
+                    <Typography fontWeight="bold">{evidence.type}</Typography>
                     <Typography variant="body2" color="textSecondary">
                       {evidence.description}
                     </Typography>
@@ -652,11 +650,7 @@ const IncidentResponseInterface = () => {
           >
             Refresh
           </Button>
-          <Button
-            variant="contained"
-            color="error"
-            startIcon={<WarningIcon />}
-          >
+          <Button variant="contained" color="error" startIcon={<WarningIcon />}>
             Emergency Response
           </Button>
         </Box>
@@ -683,23 +677,31 @@ const IncidentResponseInterface = () => {
         maxWidth="lg"
         fullWidth
       >
-        <DialogTitle>
-          Incident Investigation - {selectedIncident?.id}
-        </DialogTitle>
+        <DialogTitle>Incident Investigation - {selectedIncident?.id}</DialogTitle>
         <DialogContent>
           {selectedIncident && (
             <Grid container spacing={3}>
-              <Grid size={{xs:12,md:6}}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <Typography variant="h6" gutterBottom>
                   Incident Details
                 </Typography>
-                <Typography><strong>Title:</strong> {selectedIncident.title}</Typography>
-                <Typography><strong>Description:</strong> {selectedIncident.description}</Typography>
-                <Typography><strong>Severity:</strong> {selectedIncident.severity}</Typography>
-                <Typography><strong>Status:</strong> {selectedIncident.status}</Typography>
-                <Typography><strong>Created:</strong> {new Date(selectedIncident.createdAt).toLocaleString()}</Typography>
+                <Typography>
+                  <strong>Title:</strong> {selectedIncident.title}
+                </Typography>
+                <Typography>
+                  <strong>Description:</strong> {selectedIncident.description}
+                </Typography>
+                <Typography>
+                  <strong>Severity:</strong> {selectedIncident.severity}
+                </Typography>
+                <Typography>
+                  <strong>Status:</strong> {selectedIncident.status}
+                </Typography>
+                <Typography>
+                  <strong>Created:</strong> {new Date(selectedIncident.createdAt).toLocaleString()}
+                </Typography>
               </Grid>
-              <Grid size={{xs:12,md:6}}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <Typography variant="h6" gutterBottom>
                   Quick Actions
                 </Typography>
@@ -720,9 +722,7 @@ const IncidentResponseInterface = () => {
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setIncidentDialogOpen(false)}>
-            Close
-          </Button>
+          <Button onClick={() => setIncidentDialogOpen(false)}>Close</Button>
         </DialogActions>
       </Dialog>
 
@@ -738,9 +738,7 @@ const IncidentResponseInterface = () => {
           <Alert severity="error" style={{ marginBottom: 16 }}>
             This will immediately notify all emergency contacts and activate crisis protocols.
           </Alert>
-          <Typography gutterBottom>
-            Select escalation level:
-          </Typography>
+          <Typography gutterBottom>Select escalation level:</Typography>
           <FormControl fullWidth>
             <InputLabel>Escalation Level</InputLabel>
             <Select>
@@ -752,9 +750,7 @@ const IncidentResponseInterface = () => {
           </FormControl>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setEscalationDialogOpen(false)}>
-            Cancel
-          </Button>
+          <Button onClick={() => setEscalationDialogOpen(false)}>Cancel</Button>
           <Button variant="contained" color="error">
             Escalate Now
           </Button>
@@ -765,4 +761,3 @@ const IncidentResponseInterface = () => {
 };
 
 export default IncidentResponseInterface;
-
