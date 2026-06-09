@@ -193,7 +193,7 @@ Enrollment: ${course.enrolled}/${course.capacity}`);
           startIcon={<AddIcon />}
           onClick={() => setOpenDialog(true)}
           sx={{
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            background: 'linear-gradient(135deg, #E5484D 0%, #B4282E 100%)',
             borderRadius: 2,
             px: 3,
             py: 1.5,
@@ -209,12 +209,12 @@ Enrollment: ${course.enrolled}/${course.capacity}`);
           <Card
             sx={{
               borderRadius: 3,
-              background: 'linear-gradient(135deg, #667eea15 0%, #667eea05 100%)',
+              background: 'linear-gradient(135deg, #E5484D15 0%, #E5484D05 100%)',
             }}
           >
             <CardContent sx={{ textAlign: 'center', py: 3 }}>
-              <SchoolIcon sx={{ fontSize: 48, color: '#667eea', mb: 2 }} />
-              <Typography variant="h4" sx={{ fontWeight: 700, color: '#667eea' }}>
+              <SchoolIcon sx={{ fontSize: 48, color: '#E5484D', mb: 2 }} />
+              <Typography variant="h4" sx={{ fontWeight: 700, color: '#E5484D' }}>
                 {courses.length}
               </Typography>
               <Typography variant="h6">Total Courses</Typography>
@@ -226,12 +226,12 @@ Enrollment: ${course.enrolled}/${course.capacity}`);
           <Card
             sx={{
               borderRadius: 3,
-              background: 'linear-gradient(135deg, #764ba215 0%, #764ba205 100%)',
+              background: 'linear-gradient(135deg, #B4282E15 0%, #B4282E05 100%)',
             }}
           >
             <CardContent sx={{ textAlign: 'center', py: 3 }}>
-              <PeopleIcon sx={{ fontSize: 48, color: '#764ba2', mb: 2 }} />
-              <Typography variant="h4" sx={{ fontWeight: 700, color: '#764ba2' }}>
+              <PeopleIcon sx={{ fontSize: 48, color: '#B4282E', mb: 2 }} />
+              <Typography variant="h4" sx={{ fontWeight: 700, color: '#B4282E' }}>
                 {courses.reduce((sum, course) => sum + course.enrolled, 0)}
               </Typography>
               <Typography variant="h6">Total Enrolled</Typography>
@@ -465,7 +465,7 @@ Enrollment: ${course.enrolled}/${course.capacity}`);
             onClick={handleAddCourse}
             variant="contained"
             disabled={!newCourse.name || !newCourse.code}
-            sx={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
+            sx={{ background: 'linear-gradient(135deg, #E5484D 0%, #B4282E 100%)' }}
           >
             Create Course
           </Button>

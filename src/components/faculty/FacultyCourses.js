@@ -38,8 +38,9 @@ import EnhancedFacultyService from '../../services/enhancedFacultyService';
 const StyledCard = styled(Card)(({ theme }) => ({
   height: '100%',
   borderRadius: 20,
-  background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
-  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
+  background: 'linear-gradient(180deg, #10131A 0%, #08090C 150%)',
+  border: '1px solid rgba(255,255,255,0.08)',
+  boxShadow: '0 26px 60px -34px rgba(0,0,0,0.9)',
   transition: 'all 0.3s ease-in-out',
   border: '1px solid rgba(255, 255, 255, 0.2)',
   overflow: 'hidden',
@@ -48,7 +49,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
     transform: 'translateY(-8px)',
     boxShadow: '0 16px 48px rgba(0, 0, 0, 0.12)',
     '& .course-header': {
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      background: 'linear-gradient(135deg, #E3A648 0%, #B97E26 100%)',
       color: 'white',
     },
   },
@@ -59,7 +60,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
     left: 0,
     right: 0,
     height: 4,
-    background: 'linear-gradient(90deg, #667eea 0%, #764ba2 50%, #667eea 100%)',
+    background: 'linear-gradient(90deg, #E3A648 0%, #B97E26 50%, #E3A648 100%)',
   },
 }));
 
@@ -84,9 +85,9 @@ const StatChip = styled(Chip)(({ theme, color }) => ({
 
 const ProgressContainer = styled(Box)(({ theme }) => ({
   padding: theme.spacing(1.5),
-  background: 'rgba(103, 126, 234, 0.05)',
+  background: 'rgba(227, 166, 72, 0.05)',
   borderRadius: 12,
-  border: '1px solid rgba(103, 126, 234, 0.1)',
+  border: '1px solid rgba(227, 166, 72, 0.1)',
 }));
 
 const FacultyCourses = () => {
@@ -216,16 +217,17 @@ const FacultyCourses = () => {
     <Container
       maxWidth="xl"
       sx={{
-        py: 4,
-        background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-        minHeight: '100vh',
+        py: 1,
+        background: 'transparent',
+        minHeight: '100%',
         borderRadius: 0,
       }}
     >
       {/* Header Section */}
       <Box
         sx={{
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          background: 'linear-gradient(180deg, #10131A 0%, #08090C 140%)',
+          border: '1px solid rgba(255,255,255,0.08)',
           borderRadius: 4,
           p: 4,
           mb: 4,
@@ -329,17 +331,17 @@ const FacultyCourses = () => {
                     <StatChip
                       label={course.code}
                       size="medium"
-                      color="#667eea"
+                      color="#E3A648"
                       icon={<SchoolIcon />}
                     />
                   </Box>
                   <IconButton
                     onClick={() => handleEditCourse(course.id)}
                     sx={{
-                      bgcolor: 'rgba(103, 126, 234, 0.1)',
-                      color: '#667eea',
+                      bgcolor: 'rgba(227, 166, 72, 0.1)',
+                      color: '#E3A648',
                       '&:hover': {
-                        bgcolor: 'rgba(103, 126, 234, 0.2)',
+                        bgcolor: 'rgba(227, 166, 72, 0.2)',
                       },
                     }}
                   >
@@ -468,10 +470,10 @@ const FacultyCourses = () => {
                     sx={{
                       height: 8,
                       borderRadius: 4,
-                      backgroundColor: 'rgba(103, 126, 234, 0.1)',
+                      backgroundColor: 'rgba(227, 166, 72, 0.1)',
                       '& .MuiLinearProgress-bar': {
                         borderRadius: 4,
-                        background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)',
+                        background: 'linear-gradient(90deg, #E3A648 0%, #B97E26 100%)',
                       },
                     }}
                   />
@@ -487,13 +489,13 @@ const FacultyCourses = () => {
                   sx={{
                     mt: 3,
                     borderRadius: 3,
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    background: 'linear-gradient(135deg, #E3A648 0%, #B97E26 100%)',
                     py: 1.5,
                     fontWeight: 600,
                     '&:hover': {
-                      background: 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)',
+                      background: 'linear-gradient(135deg, #C68F32 0%, #8C5D17 100%)',
                       transform: 'translateY(-2px)',
-                      boxShadow: '0 8px 25px rgba(103, 126, 234, 0.3)',
+                      boxShadow: '0 8px 25px rgba(227, 166, 72, 0.3)',
                     },
                   }}
                 >

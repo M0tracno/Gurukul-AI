@@ -45,6 +45,9 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import UnifiedDashboardLayout from '../components/layout/UnifiedDashboardLayout';
 import ParentService from '../services/parentService';
+import { accents, ink, surfaces } from '../theme/cinematic';
+
+const ACCENT = accents.teal;
 
 const ParentDashboard = () => {
   const theme = useTheme();
@@ -106,99 +109,33 @@ const ParentDashboard = () => {
 
       setDashboardData({
         profile: profileData || { firstName: 'Parent', lastName: 'User' },
-        children: childrenData || [
-          {
-            id: '1',
-            name: 'Arjun Sharma',
-            class: '10',
-            section: 'A',
-            avgGrade: 87,
-            attendance: 94,
-            subjects: ['Mathematics', 'Science', 'English', 'Computer Science'],
-            achievements: ['Honor Roll', 'Science Fair'],
-          },
-        ],
+        children: childrenData || [],
         stats: summaryData || {
-          totalChildren: 1,
-          totalCourses: 4,
-          recentGrades: 3,
-          pendingMeetings: 1,
-          avgGrade: 87.3,
-          avgAttendance: 94.5,
+          totalChildren: 0,
+          totalCourses: 0,
+          recentGrades: 0,
+          pendingMeetings: 0,
+          avgGrade: 0,
+          avgAttendance: 0,
         },
-        recentGrades: gradesData || [
-          {
-            id: '1',
-            subject: 'Mathematics',
-            assignment: 'Calculus Quiz',
-            grade: 'A',
-            studentName: 'Arjun Sharma',
-            date: new Date().toISOString(),
-            feedback: 'Excellent work!',
-            teacher: 'Dr. Williams',
-          },
-        ],
-        upcomingEvents: eventsData || [
-          {
-            id: '1',
-            title: 'Parent-Teacher Meeting',
-            date: new Date(Date.now() + 7 * 86400000).toISOString(),
-            time: '3:00 PM',
-            type: 'meeting',
-            description: 'Semester progress discussion',
-            status: 'confirmed',
-          },
-        ],
-        recentFeedback: feedbackData || [
-          {
-            id: '1',
-            subject: 'Computer Science',
-            teacherName: 'Dr. Smith',
-            studentName: 'Arjun Sharma',
-            feedback: 'Shows great aptitude for programming. Excellent project work.',
-            date: new Date().toISOString(),
-            type: 'positive',
-            rating: 5,
-          },
-        ],
-        assignments: assignmentsData || [
-          {
-            id: '1',
-            title: 'Python Project',
-            studentName: 'Arjun Sharma',
-            subject: 'Computer Science',
-            dueDate: new Date(Date.now() + 5 * 86400000).toISOString(),
-            status: 'pending',
-            priority: 'high',
-            description: 'Build a simple web application',
-            progress: 40,
-          },
-        ],
+        recentGrades: gradesData || [],
+        upcomingEvents: eventsData || [],
+        recentFeedback: feedbackData || [],
+        assignments: assignmentsData || [],
       });
     } catch (error) {
       console.error('Error loading dashboard data:', error);
       // Set minimal fallback data so UI always renders
       setDashboardData({
         profile: { firstName: 'Parent', lastName: 'User' },
-        children: [
-          {
-            id: '1',
-            name: 'Student',
-            class: '10',
-            section: 'A',
-            avgGrade: 85,
-            attendance: 92,
-            subjects: ['Mathematics', 'Science', 'English'],
-            achievements: [],
-          },
-        ],
+        children: [],
         stats: {
-          totalChildren: 1,
-          totalCourses: 3,
+          totalChildren: 0,
+          totalCourses: 0,
           recentGrades: 0,
           pendingMeetings: 0,
-          avgGrade: 85,
-          avgAttendance: 92,
+          avgGrade: 0,
+          avgAttendance: 0,
         },
         recentGrades: [],
         upcomingEvents: [],
@@ -326,8 +263,8 @@ const ParentDashboard = () => {
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Avatar
               sx={{
-                bgcolor: alpha('#a78bfa', 0.2),
-                color: '#a78bfa',
+                bgcolor: `rgba(${ACCENT.rgb}, 0.14)`,
+                color: ACCENT.light,
                 width: 48,
                 height: 48,
                 boxShadow: `0 4px 12px rgba(167, 139, 250, 0.3)`,
@@ -352,9 +289,9 @@ const ParentDashboard = () => {
             sx={{
               textTransform: 'none',
               fontWeight: 600,
-              color: '#a78bfa',
+              color: ACCENT.light,
               '&:hover': {
-                bgcolor: 'rgba(167, 139, 250, 0.1)',
+                bgcolor: `rgba(${ACCENT.rgb}, 0.1)`,
               },
             }}
           >
@@ -457,90 +394,87 @@ const ParentDashboard = () => {
             sx={{
               p: 4,
               mb: 4,
-              background:
-                'linear-gradient(135deg, rgba(167, 139, 250, 0.15) 0%, rgba(124, 58, 237, 0.15) 100%)',
-              backdropFilter: 'blur(10px)',
-              color: 'white',
+              background: `linear-gradient(180deg, ${surfaces.paper} 0%, ${surfaces.base} 140%)`,
+              color: ink.primary,
               borderRadius: 4,
               position: 'relative',
               overflow: 'hidden',
-              boxShadow: '0 12px 40px rgba(0, 0, 0, 0.6)',
-              border: '1px solid rgba(167, 139, 250, 0.2)',
+              boxShadow: '0 30px 80px -40px rgba(0,0,0,0.9)',
+              border: `1px solid ${surfaces.border}`,
             }}
           >
             <Box sx={{ position: 'relative', zIndex: 1 }}>
+              <Typography variant="overline" sx={{ color: ACCENT.light }}>
+                Parent overview
+              </Typography>
               <Typography
                 variant="h3"
                 sx={{
-                  fontWeight: 'bold',
-                  mb: 2,
-                  textShadow: '0 2px 4px rgba(0,0,0,0.3)',
-                  fontSize: { xs: '2rem', md: '2.5rem' },
+                  fontWeight: 700,
+                  mt: 0.5,
+                  mb: 1.5,
+                  fontSize: { xs: '1.9rem', md: '2.4rem' },
+                  color: ink.primary,
                 }}
               >
-                Welcome back, {dashboardData.profile.firstName || 'Parent'}! 👋
+                Welcome back, {dashboardData.profile.firstName || 'Parent'}.
               </Typography>
               <Typography
-                variant="h5"
+                variant="h6"
                 sx={{
-                  opacity: 0.95,
+                  color: ink.secondary,
                   mb: 3,
-                  fontWeight: 500,
-                  textShadow: '0 1px 2px rgba(0,0,0,0.2)',
-                  fontSize: { xs: '1.2rem', md: '1.5rem' },
+                  fontWeight: 400,
+                  fontSize: { xs: '1.05rem', md: '1.2rem' },
                 }}
               >
-                Here's your children's academic overview for today
+                Here's your children's academic overview for today.
               </Typography>
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                 <Button
                   variant="contained"
                   size="large"
                   sx={{
-                    bgcolor: 'rgba(255,255,255,0.1)',
-                    color: 'white',
-                    fontWeight: 'bold',
+                    bgcolor: ACCENT.main,
+                    color: '#fff',
+                    fontWeight: 600,
                     fontSize: '1rem',
                     px: 3,
-                    py: 1.5,
-                    '&:hover': {
-                      bgcolor: 'rgba(255,255,255,0.15)',
-                      transform: 'translateY(-1px)',
-                    },
-                    backdropFilter: 'blur(10px)',
-                    border: '1px solid rgba(255,255,255,0.15)',
+                    py: 1.4,
                     textTransform: 'none',
+                    '&:hover': { bgcolor: ACCENT.light, transform: 'translateY(-1px)' },
                   }}
                   startIcon={<RefreshIcon />}
                   onClick={loadDashboardData}
                 >
-                  Refresh Data
+                  Refresh data
                 </Button>
                 <Button
                   variant="outlined"
                   size="large"
                   sx={{
-                    borderColor: 'rgba(255,255,255,0.4)',
-                    color: 'white',
-                    fontWeight: 'bold',
+                    borderColor: surfaces.borderStrong,
+                    color: ink.primary,
+                    fontWeight: 600,
                     fontSize: '1rem',
                     px: 3,
-                    py: 1.5,
+                    py: 1.4,
                     textTransform: 'none',
                     '&:hover': {
-                      borderColor: 'rgba(255,255,255,0.6)',
-                      bgcolor: 'rgba(255,255,255,0.08)',
+                      borderColor: `rgba(${ACCENT.rgb}, 0.6)`,
+                      bgcolor: `rgba(${ACCENT.rgb}, 0.08)`,
                       transform: 'translateY(-1px)',
                     },
                   }}
                   startIcon={<EventIcon />}
                   onClick={() => setCurrentView('events')}
                 >
-                  View Calendar
+                  View calendar
                 </Button>
               </Stack>
             </Box>
             <Box
+              aria-hidden
               sx={{
                 position: 'absolute',
                 top: -60,
@@ -548,19 +482,7 @@ const ParentDashboard = () => {
                 width: 240,
                 height: 240,
                 borderRadius: '50%',
-                background:
-                  'radial-gradient(circle, rgba(167, 139, 250, 0.1) 0%, rgba(167, 139, 250, 0.03) 70%, transparent 100%)',
-              }}
-            />
-            <Box
-              sx={{
-                position: 'absolute',
-                bottom: -40,
-                left: -40,
-                width: 160,
-                height: 160,
-                borderRadius: '50%',
-                background: 'radial-gradient(circle, rgba(124, 58, 237, 0.08) 0%, transparent 70%)',
+                background: `radial-gradient(circle, rgba(${ACCENT.rgb}, 0.16) 0%, transparent 70%)`,
               }}
             />
           </Paper>
@@ -577,7 +499,7 @@ const ParentDashboard = () => {
                 title="Total Children"
                 value={stats.totalChildren || children.length}
                 icon={<ChildrenIcon />}
-                color="#a78bfa"
+                color={ACCENT.main}
                 subtitle="Enrolled students"
               />
             </Grid>
@@ -586,7 +508,7 @@ const ParentDashboard = () => {
                 title="Active Courses"
                 value={stats.totalCourses || 0}
                 icon={<SchoolIcon />}
-                color="#34d399"
+                color={ACCENT.main}
                 subtitle="This semester"
               />
             </Grid>
@@ -595,7 +517,7 @@ const ParentDashboard = () => {
                 title="Recent Grades"
                 value={stats.recentGrades || recentGrades.length}
                 icon={<GradesIcon />}
-                color="#60a5fa"
+                color={ACCENT.main}
                 subtitle="This week"
                 trend={stats.recentGrades > 0 ? `+${stats.recentGrades}` : ''}
               />
@@ -605,7 +527,7 @@ const ParentDashboard = () => {
                 title="Upcoming Events"
                 value={stats.pendingMeetings || upcomingEvents.length}
                 icon={<EventIcon />}
-                color="#fbbf24"
+                color={ACCENT.main}
                 subtitle="Next 30 days"
               />
             </Grid>
@@ -664,8 +586,8 @@ const ParentDashboard = () => {
                           bgcolor: alpha('#34d399', 0.1),
                           '& .MuiLinearProgress-bar': {
                             borderRadius: 8,
-                            background: `linear-gradient(90deg, #34d399 0%, #60a5fa 100%)`,
-                            boxShadow: `0 2px 8px rgba(52, 211, 153, 0.4)`,
+                            background: `linear-gradient(90deg, ${ACCENT.deep} 0%, ${ACCENT.main} 100%)`,
+                            boxShadow: `0 2px 8px rgba(${ACCENT.rgb}, 0.4)`,
                           },
                         }}
                       />
@@ -702,8 +624,8 @@ const ParentDashboard = () => {
                           bgcolor: alpha('#60a5fa', 0.1),
                           '& .MuiLinearProgress-bar': {
                             borderRadius: 8,
-                            background: `linear-gradient(90deg, #60a5fa 0%, #a78bfa 100%)`,
-                            boxShadow: `0 2px 8px rgba(96, 165, 250, 0.4)`,
+                            background: `linear-gradient(90deg, ${ACCENT.main} 0%, ${ACCENT.light} 100%)`,
+                            boxShadow: `0 2px 8px rgba(${ACCENT.rgb}, 0.4)`,
                           },
                         }}
                       />
@@ -802,6 +724,27 @@ const ParentDashboard = () => {
         </Typography>
 
         <Grid container spacing={3}>
+          {children.length === 0 && (
+            <Grid size={{ xs: 12 }}>
+              <Box
+                sx={{
+                  p: 6,
+                  textAlign: 'center',
+                  borderRadius: 3,
+                  border: `1px dashed ${surfaces.borderStrong}`,
+                  background: `linear-gradient(180deg, ${surfaces.paper} 0%, ${surfaces.base} 150%)`,
+                }}
+              >
+                <ChildrenIcon sx={{ fontSize: 44, color: ACCENT.light, mb: 1.5, opacity: 0.8 }} />
+                <Typography variant="h6" sx={{ color: ink.primary, mb: 0.5 }}>
+                  No linked children yet
+                </Typography>
+                <Typography sx={{ color: ink.secondary, fontSize: '0.95rem' }}>
+                  Once your child's account is linked, their progress will appear here.
+                </Typography>
+              </Box>
+            </Grid>
+          )}
           {children.map(child => (
             <Grid size={{ xs: 12, md: 6, lg: 4 }} key={child.id}>
               <motion.div
@@ -814,13 +757,11 @@ const ParentDashboard = () => {
                 <Card
                   sx={{
                     borderRadius: 3,
-                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.6)',
-                    border: '1px solid rgba(96, 165, 250, 0.15)',
-                    background: 'rgba(255, 255, 255, 0.03)',
-                    backdropFilter: 'blur(10px)',
+                    boxShadow: '0 26px 60px -34px rgba(0,0,0,0.9)',
+                    border: `1px solid ${surfaces.border}`,
+                    background: `linear-gradient(180deg, ${surfaces.paper} 0%, ${surfaces.base} 150%)`,
                     '&:hover': {
-                      boxShadow: '0 12px 40px rgba(0, 0, 0, 0.7)',
-                      border: '1px solid rgba(96, 165, 250, 0.25)',
+                      borderColor: `rgba(${ACCENT.rgb}, 0.4)`,
                     },
                   }}
                 >
@@ -830,11 +771,11 @@ const ParentDashboard = () => {
                         sx={{
                           width: 60,
                           height: 60,
-                          bgcolor: alpha('#60a5fa', 0.2),
-                          color: '#60a5fa',
+                          bgcolor: `rgba(${ACCENT.rgb}, 0.14)`,
+                          color: ACCENT.light,
                           fontSize: '1.5rem',
                           mr: 2,
-                          border: '1px solid rgba(96, 165, 250, 0.3)',
+                          border: `1px solid rgba(${ACCENT.rgb}, 0.3)`,
                         }}
                       >
                         {child.name.charAt(0)}
@@ -1662,7 +1603,8 @@ const ParentDashboard = () => {
 
   return (
     <UnifiedDashboardLayout
-      title="Parent Dashboard"
+      title="Parent"
+      accent="teal"
       menuItems={menuItems}
       currentView={currentView}
       onViewChange={setCurrentView}

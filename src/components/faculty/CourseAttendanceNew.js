@@ -300,16 +300,16 @@ const CourseAttendance = () => {
   return (
     <Box
       sx={{
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-        py: 3,
+        minHeight: '100%',
+        background: 'transparent',
+        py: 1,
       }}
     >
       <Container maxWidth="xl">
         {/* Header */}
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
           <Typography variant="h4" fontWeight="bold" color="primary">
-            📊 Course Attendance Management
+            Course Attendance
           </Typography>
           <Button
             variant="contained"
@@ -453,7 +453,7 @@ const CourseAttendance = () => {
             <StyledCard>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
-                  📈 Attendance History - {courses.find(c => c.id === selectedCourse)?.name}
+                  Attendance History — {courses.find(c => c.id === selectedCourse)?.name}
                 </Typography>
                 <TableContainer>
                   <Table>
@@ -513,7 +513,7 @@ const CourseAttendance = () => {
             <StyledCard>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
-                  📋 Mark Attendance - {selectedDate}
+                  Mark Attendance — {selectedDate}
                 </Typography>
                 {students.length > 0 ? (
                   <TableContainer>

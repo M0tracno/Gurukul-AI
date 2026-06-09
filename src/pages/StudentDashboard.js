@@ -59,6 +59,9 @@ import UnifiedDashboardLayout from '../components/layout/UnifiedDashboardLayout'
 import StudentService from '../services/studentService';
 import { useAuth } from '../auth/AuthContext';
 import env from '../config/env';
+import { accents, surfaces } from '../theme/cinematic';
+
+const ACCENT = accents.blue;
 
 // Lazy load student components
 const StudentCourses = React.lazy(() => import('../components/student/Courses'));
@@ -81,184 +84,12 @@ const StudentDashboard = () => {
   const [attendance, setAttendance] = useState([]);
   const [dataLoaded, setDataLoaded] = useState(false);
 
-  // Mock data for all sections
-  const mockCourses = [
-    {
-      id: 1,
-      name: 'Introduction to Computer Science',
-      code: 'CS101',
-      instructor: 'Dr. Smith',
-      schedule: 'Mon, Wed 10:00-11:30 AM',
-      assignments: 5,
-      grade: 'A',
-      progress: 85,
-      color: '#60a5fa',
-      credits: 3,
-      room: 'Lab 204',
-    },
-    {
-      id: 2,
-      name: 'Calculus I',
-      code: 'MATH201',
-      instructor: 'Dr. Williams',
-      schedule: 'Tue, Thu 1:00-2:30 PM',
-      assignments: 8,
-      grade: 'B+',
-      progress: 78,
-      color: '#34d399',
-      credits: 4,
-      room: 'Room 301',
-    },
-    {
-      id: 3,
-      name: 'World History',
-      code: 'HIST101',
-      instructor: 'Prof. Johnson',
-      schedule: 'Mon, Wed, Fri 2:00-3:00 PM',
-      assignments: 4,
-      grade: 'A',
-      progress: 92,
-      color: '#fbbf24',
-      credits: 3,
-      room: 'Room 205',
-    },
-    {
-      id: 4,
-      name: 'Introduction to Physics',
-      code: 'PHYS101',
-      instructor: 'Dr. Brown',
-      schedule: 'Tue, Thu 9:00-10:30 AM',
-      assignments: 6,
-      grade: 'B',
-      progress: 72,
-      color: '#f87171',
-      credits: 4,
-      room: 'Lab 101',
-    },
-  ];
+  // Mock data removed — the dashboard renders live API data or clean empty states.
+  const mockCourses = [];
 
-  const mockAssignments = [
-    {
-      id: 1,
-      title: 'Python Programming Project',
-      subject: 'Computer Science',
-      course: 'CS101',
-      dueDate: '2025-06-20',
-      status: 'pending',
-      priority: 'high',
-      description: 'Create a simple web scraper using Python',
-      points: 100,
-      submittedAt: null,
-    },
-    {
-      id: 2,
-      title: 'Calculus Problem Set 7',
-      subject: 'Mathematics',
-      course: 'MATH201',
-      dueDate: '2025-06-18',
-      status: 'pending',
-      priority: 'medium',
-      description: 'Integration by parts exercises',
-      points: 50,
-      submittedAt: null,
-    },
-    {
-      id: 3,
-      title: 'World War II Essay',
-      subject: 'History',
-      course: 'HIST101',
-      dueDate: '2025-06-25',
-      status: 'pending',
-      priority: 'medium',
-      description: '1500-word essay on causes of WWII',
-      points: 75,
-      submittedAt: null,
-    },
-    {
-      id: 4,
-      title: 'Lab Report: Motion Physics',
-      subject: 'Physics',
-      course: 'PHYS101',
-      dueDate: '2025-06-15',
-      status: 'completed',
-      priority: 'low',
-      description: 'Analysis of projectile motion experiment',
-      points: 40,
-      grade: 'A-',
-      submittedAt: '2025-06-14',
-    },
-    {
-      id: 5,
-      title: 'Algorithm Complexity Analysis',
-      subject: 'Computer Science',
-      course: 'CS101',
-      dueDate: '2025-06-12',
-      status: 'completed',
-      priority: 'high',
-      description: 'Big O notation and time complexity',
-      points: 80,
-      grade: 'A',
-      submittedAt: '2025-06-11',
-    },
-  ];
+  const mockAssignments = [];
 
-  const mockGrades = [
-    {
-      id: 1,
-      subject: 'Computer Science',
-      course: 'CS101',
-      assignment: 'Algorithm Analysis',
-      grade: 'A',
-      percentage: 94,
-      date: '2025-06-10',
-      feedback: 'Excellent understanding of time complexity',
-      points: '94/100',
-    },
-    {
-      id: 2,
-      subject: 'Mathematics',
-      course: 'MATH201',
-      assignment: 'Derivatives Quiz',
-      grade: 'B+',
-      percentage: 87,
-      date: '2025-06-08',
-      feedback: 'Good work, minor calculation errors',
-      points: '87/100',
-    },
-    {
-      id: 3,
-      subject: 'History',
-      course: 'HIST101',
-      assignment: 'Renaissance Presentation',
-      grade: 'A',
-      percentage: 96,
-      date: '2025-06-05',
-      feedback: 'Outstanding research and presentation skills',
-      points: '96/100',
-    },
-    {
-      id: 4,
-      subject: 'Physics',
-      course: 'PHYS101',
-      assignment: 'Force and Motion Test',
-      grade: 'B',
-      percentage: 82,
-      date: '2025-06-03',
-      feedback: 'Solid understanding, practice more word problems',
-      points: '82/100',
-    },
-    {
-      id: 5,
-      subject: 'Computer Science',
-      course: 'CS101',
-      assignment: 'Data Structures Project',
-      grade: 'A-',
-      percentage: 91,
-      date: '2025-05-28',
-      feedback: 'Great implementation, clean code',
-      points: '91/100',
-    },
-  ];
+  const mockGrades = [];
 
   const fetchStudentData = useCallback(async () => {
     try {
@@ -308,7 +139,7 @@ const StudentDashboard = () => {
       class: '12th Grade',
       section: 'A',
       enrollmentYear: '2023',
-      gpa: '3.7',
+      gpa: 'N/A',
     },
     courses:
       courses.length > 0
@@ -333,7 +164,7 @@ const StudentDashboard = () => {
       averageGrade:
         grades.length > 0
           ? `${Math.round(grades.flatMap(g => g.marks).reduce((sum, m) => sum + m.percentage, 0) / Math.max(grades.flatMap(g => g.marks).length, 1))}%`
-          : '87%',
+          : 'N/A',
       attendanceRate:
         attendance.length > 0
           ? Math.round(
@@ -341,8 +172,8 @@ const StudentDashboard = () => {
                 Math.max(attendance.length, 1)) *
                 100
             )
-          : 94,
-      gpa: '3.7',
+          : 0,
+      gpa: 'N/A',
     },
     recentGrades:
       grades.length > 0
@@ -394,58 +225,7 @@ const StudentDashboard = () => {
             }))
           )
         : mockGrades,
-    recentFeedback: [
-      {
-        id: 1,
-        from: 'Dr. Smith',
-        subject: 'Computer Science - CS101',
-        message:
-          'Excellent work on your Python programming project! Your code structure was clean and well-documented. You demonstrated a strong understanding of object-oriented programming concepts.',
-        date: '2025-06-11',
-        type: 'positive',
-        rating: 5,
-      },
-      {
-        id: 2,
-        from: 'Dr. Williams',
-        subject: 'Mathematics - MATH201',
-        message:
-          'Good progress on calculus concepts. Consider attending office hours for extra help with integration by parts techniques. Practice more word problems to improve application skills.',
-        date: '2025-06-09',
-        type: 'constructive',
-        rating: 4,
-      },
-      {
-        id: 3,
-        from: 'Prof. Johnson',
-        subject: 'History - HIST101',
-        message:
-          'Your essay on Renaissance art was well-researched and demonstrated critical thinking. Excellent use of primary sources and clear argumentation throughout.',
-        date: '2025-06-07',
-        type: 'positive',
-        rating: 5,
-      },
-      {
-        id: 4,
-        from: 'Dr. Brown',
-        subject: 'Physics - PHYS101',
-        message:
-          'Great improvement in lab report quality. Your analysis of experimental data shows good understanding of physics principles. Keep up the momentum!',
-        date: '2025-06-05',
-        type: 'positive',
-        rating: 4,
-      },
-      {
-        id: 5,
-        from: 'Academic Advisor',
-        subject: 'General Academic Performance',
-        message:
-          'Congratulations on maintaining excellent grades this semester. Your consistent effort and dedication are paying off. Continue this excellent work ethic.',
-        date: '2025-06-03',
-        type: 'general',
-        rating: 5,
-      },
-    ],
+    recentFeedback: [],
     attendance:
       attendance.length > 0
         ? {
@@ -464,16 +244,10 @@ const StudentDashboard = () => {
             })),
           }
         : {
-            totalClasses: 120,
-            attendedClasses: 113,
-            percentage: 94,
-            recentRecords: [
-              { date: '2025-06-12', status: 'present', subject: 'Computer Science' },
-              { date: '2025-06-11', status: 'present', subject: 'Mathematics' },
-              { date: '2025-06-10', status: 'absent', subject: 'History' },
-              { date: '2025-06-09', status: 'present', subject: 'Physics' },
-              { date: '2025-06-08', status: 'present', subject: 'Computer Science' },
-            ],
+            totalClasses: 0,
+            attendedClasses: 0,
+            percentage: 0,
+            recentRecords: [],
           },
   };
 
@@ -492,18 +266,18 @@ const StudentDashboard = () => {
     <motion.div whileHover={{ scale: 1.02 }} transition={{ type: 'spring', stiffness: 300 }}>
       <Card
         sx={{
-          background: `linear-gradient(135deg, ${alpha(color, 0.1)} 0%, ${alpha(color, 0.05)} 100%)`,
-          border: `1px solid ${alpha(color, 0.3)}`,
+          background: `linear-gradient(180deg, ${surfaces.paper} 0%, ${surfaces.base} 150%)`,
+          border: `1px solid ${surfaces.border}`,
           borderRadius: 3,
           height: '100%',
           position: 'relative',
           overflow: 'hidden',
-          backdropFilter: 'blur(10px)',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.6)',
-          transition: 'all 0.3s ease',
+          boxShadow: '0 26px 60px -34px rgba(0,0,0,0.9)',
+          transition: 'all 0.5s cubic-bezier(0.16,1,0.3,1)',
           '&:hover': {
-            boxShadow: '0 8px 30px rgba(0,0,0,0.7)',
-            transform: 'translateY(-2px)',
+            borderColor: `${color}55`,
+            boxShadow: `0 30px 60px -36px ${color}66`,
+            transform: 'translateY(-3px)',
           },
         }}
       >
@@ -513,10 +287,11 @@ const StudentDashboard = () => {
           >
             <Avatar
               sx={{
-                bgcolor: color,
-                width: 48,
-                height: 48,
-                color: 'white',
+                bgcolor: alpha(color, 0.14),
+                color,
+                width: 44,
+                height: 44,
+                border: `1px solid ${alpha(color, 0.25)}`,
               }}
             >
               {icon}
@@ -786,9 +561,10 @@ const StudentDashboard = () => {
                     sx={{
                       width: 64,
                       height: 64,
-                      bgcolor: '#a78bfa',
+                      bgcolor: ACCENT.soft,
+                      color: ACCENT.light,
+                      border: `1px solid rgba(${ACCENT.rgb}, 0.3)`,
                       fontSize: '1.5rem',
-                      boxShadow: '0 4px 15px rgba(167, 139, 250, 0.3)',
                     }}
                   >
                     {profile.firstName?.[0]}
@@ -834,7 +610,7 @@ const StudentDashboard = () => {
                 title="Enrolled Courses"
                 value={stats.totalCourses}
                 icon={<SchoolIcon />}
-                color="#60a5fa"
+                color={ACCENT.main}
                 subtitle="Active this semester"
               />
             </Grid>
@@ -843,7 +619,7 @@ const StudentDashboard = () => {
                 title="Completed Tasks"
                 value={stats.completedAssignments}
                 icon={<CheckIcon />}
-                color="#34d399"
+                color={ACCENT.main}
                 subtitle={`${stats.pendingAssignments} pending`}
               />
             </Grid>
@@ -852,7 +628,7 @@ const StudentDashboard = () => {
                 title="Average Grade"
                 value={stats.averageGrade}
                 icon={<StarIcon />}
-                color="#fbbf24"
+                color={ACCENT.main}
                 subtitle="Overall performance"
               />
             </Grid>
@@ -861,7 +637,7 @@ const StudentDashboard = () => {
                 title="Attendance"
                 value={`${stats.attendanceRate}%`}
                 icon={<AttendanceIcon />}
-                color="#c084fc"
+                color={ACCENT.main}
                 subtitle="This semester"
               />
             </Grid>
@@ -890,7 +666,7 @@ const StudentDashboard = () => {
                     }}
                   >
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <GradesIcon sx={{ color: '#a78bfa' }} />
+                      <GradesIcon sx={{ color: ACCENT.light }} />
                       <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                         Recent Grades
                       </Typography>
@@ -1009,16 +785,16 @@ const StudentDashboard = () => {
             fontSize: '1rem',
             minHeight: 48,
             '&.Mui-selected': {
-              color: '#a78bfa',
+              color: ACCENT.light,
               fontWeight: 'bold',
             },
             '&:hover': {
-              color: '#a78bfa',
-              backgroundColor: 'rgba(167, 139, 250, 0.04)',
+              color: ACCENT.light,
+              backgroundColor: `rgba(${ACCENT.rgb}, 0.06)`,
             },
           },
           '& .MuiTabs-indicator': {
-            backgroundColor: '#a78bfa',
+            backgroundColor: ACCENT.main,
             height: 3,
             borderRadius: '3px 3px 0 0',
           },
@@ -1197,7 +973,7 @@ const StudentDashboard = () => {
                         backgroundColor: 'rgba(255, 255, 255, 0.02)',
                       },
                       '&:hover': {
-                        backgroundColor: alpha('#a78bfa', 0.05),
+                        backgroundColor: `rgba(${ACCENT.rgb}, 0.05)`,
                         cursor: 'pointer',
                       },
                       transition: 'all 0.2s ease',
@@ -1718,7 +1494,8 @@ const StudentDashboard = () => {
   if (loading) {
     return (
       <UnifiedDashboardLayout
-        title="Student Dashboard"
+        title="Student"
+        accent="blue"
         menuItems={menuItems}
         currentView={currentView}
         onViewChange={setCurrentView}
@@ -1732,7 +1509,8 @@ const StudentDashboard = () => {
 
   return (
     <UnifiedDashboardLayout
-      title="Student Dashboard"
+      title="Student"
+      accent="blue"
       menuItems={menuItems}
       currentView={currentView}
       onViewChange={setCurrentView}

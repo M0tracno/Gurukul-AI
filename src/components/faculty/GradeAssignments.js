@@ -53,8 +53,9 @@ import { styled } from '@mui/material/styles';
 // Styled components for modern design
 const StyledCard = styled(Card)(({ theme }) => ({
   borderRadius: 20,
-  background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
-  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
+  background: 'linear-gradient(180deg, #10131A 0%, #08090C 150%)',
+  border: '1px solid rgba(255,255,255,0.08)',
+  boxShadow: '0 26px 60px -34px rgba(0,0,0,0.9)',
   transition: 'all 0.3s ease-in-out',
   border: '1px solid rgba(255, 255, 255, 0.2)',
   overflow: 'hidden',
@@ -70,12 +71,13 @@ const StyledCard = styled(Card)(({ theme }) => ({
     left: 0,
     right: 0,
     height: 4,
-    background: 'linear-gradient(90deg, #667eea 0%, #764ba2 50%, #667eea 100%)',
+    background: 'linear-gradient(90deg, #E3A648 0%, #B97E26 50%, #E3A648 100%)',
   },
 }));
 
 const HeaderSection = styled(Box)(({ theme }) => ({
-  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  background: 'linear-gradient(180deg, #10131A 0%, #08090C 140%)',
+  border: '1px solid rgba(255,255,255,0.08)',
   borderRadius: 24,
   padding: theme.spacing(4),
   marginBottom: theme.spacing(3),
@@ -152,8 +154,8 @@ const ActionButton = styled(Button)(({ theme }) => ({
 
 const useStyles = makeStyles(theme => ({
   container: {
-    minHeight: '100vh',
-    background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+    minHeight: '100%',
+    background: 'transparent',
     padding: theme.spacing(3),
   },
   searchContainer: {
@@ -163,13 +165,13 @@ const useStyles = makeStyles(theme => ({
       background: 'rgba(255, 255, 255, 0.9)',
       backdropFilter: 'blur(10px)',
       '& fieldset': {
-        borderColor: 'rgba(102, 126, 234, 0.3)',
+        borderColor: 'rgba(227, 166, 72, 0.3)',
       },
       '&:hover fieldset': {
-        borderColor: 'rgba(102, 126, 234, 0.6)',
+        borderColor: 'rgba(227, 166, 72, 0.6)',
       },
       '&.Mui-focused fieldset': {
-        borderColor: '#667eea',
+        borderColor: '#E3A648',
       },
     },
   },
@@ -187,7 +189,7 @@ const useStyles = makeStyles(theme => ({
       fontWeight: 600,
       transition: 'all 0.3s ease',
       '&.Mui-selected': {
-        background: 'linear-gradient(45deg, #667eea, #764ba2)',
+        background: 'linear-gradient(45deg, #E3A648, #B97E26)',
         color: 'white',
       },
     },
@@ -226,7 +228,7 @@ const useStyles = makeStyles(theme => ({
   feedback: {
     marginTop: theme.spacing(2),
     padding: theme.spacing(3),
-    background: 'linear-gradient(135deg, rgba(103, 126, 234, 0.1), rgba(118, 75, 162, 0.1))',
+    background: 'linear-gradient(135deg, rgba(227, 166, 72, 0.1), rgba(118, 75, 162, 0.1))',
     backdropFilter: 'blur(10px)',
     borderRadius: 15,
     border: '1px solid rgba(255, 255, 255, 0.3)',
@@ -234,7 +236,7 @@ const useStyles = makeStyles(theme => ({
   score: {
     fontSize: '3rem',
     fontWeight: 700,
-    background: 'linear-gradient(45deg, #667eea, #764ba2)',
+    background: 'linear-gradient(45deg, #E3A648, #B97E26)',
     backgroundClip: 'text',
     WebkitBackgroundClip: 'text',
     WebkitTextFillColor: 'transparent',
@@ -557,7 +559,7 @@ function GradeAssignments() {
                     <Box
                       sx={{
                         width: '100%',
-                        bgcolor: 'rgba(102, 126, 234, 0.1)',
+                        bgcolor: 'rgba(227, 166, 72, 0.1)',
                         borderRadius: 1,
                         height: 8,
                         overflow: 'hidden',
@@ -567,7 +569,7 @@ function GradeAssignments() {
                         sx={{
                           width: `${(assignment.gradedSubmissions / assignment.totalSubmissions) * 100}%`,
                           height: '100%',
-                          background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)',
+                          background: 'linear-gradient(90deg, #E3A648 0%, #B97E26 100%)',
                           transition: 'width 0.3s ease',
                         }}
                       />
@@ -618,9 +620,9 @@ function GradeAssignments() {
                       startIcon={<GradeIcon />}
                       onClick={() => handleSelectAssignment(assignment)}
                       sx={{
-                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                        background: 'linear-gradient(135deg, #E3A648 0%, #B97E26 100%)',
                         '&:hover': {
-                          background: 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)',
+                          background: 'linear-gradient(135deg, #C68F32 0%, #8C5D17 100%)',
                         },
                       }}
                     >
@@ -630,11 +632,11 @@ function GradeAssignments() {
                       variant="outlined"
                       startIcon={<ViewIcon />}
                       sx={{
-                        borderColor: '#667eea',
-                        color: '#667eea',
+                        borderColor: '#E3A648',
+                        color: '#E3A648',
                         '&:hover': {
-                          backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                          borderColor: '#667eea',
+                          backgroundColor: 'rgba(227, 166, 72, 0.1)',
+                          borderColor: '#E3A648',
                         },
                       }}
                     >

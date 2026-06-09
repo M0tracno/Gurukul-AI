@@ -251,7 +251,7 @@ const FacultyCommunication = () => {
       <CardContent>
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
           <Typography variant="h6" fontWeight="bold">
-            📧 Inbox ({stats.unread} unread)
+            Inbox ({stats.unread} unread)
           </Typography>
           <Box>
             <Button
@@ -384,7 +384,7 @@ const FacultyCommunication = () => {
       <CardContent>
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
           <Typography variant="h6" fontWeight="bold">
-            📢 Course Announcements
+            Course Announcements
           </Typography>
           <Button
             variant="contained"
@@ -414,10 +414,10 @@ const FacultyCommunication = () => {
       <Grid size={{ xs: 12, md: 3 }}>
         <StyledCard>
           <CardContent sx={{ textAlign: 'center' }}>
-            <Avatar sx={{ mx: 'auto', mb: 2, bgcolor: '#667eea' }}>
+            <Avatar sx={{ mx: 'auto', mb: 2, bgcolor: '#E3A648' }}>
               <EmailIcon />
             </Avatar>
-            <Typography variant="h4" fontWeight="bold" color="#667eea">
+            <Typography variant="h4" fontWeight="bold" color="#E3A648">
               {stats.total}
             </Typography>
             <Typography variant="body2" color="textSecondary">
@@ -477,16 +477,16 @@ const FacultyCommunication = () => {
   return (
     <Box
       sx={{
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-        py: 3,
+        minHeight: '100%',
+        background: 'transparent',
+        py: 1,
       }}
     >
       <Container maxWidth="xl">
         {/* Header */}
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
           <Typography variant="h4" fontWeight="bold" color="primary">
-            💬 Faculty Communication Center
+            Communication
           </Typography>
         </Box>
 

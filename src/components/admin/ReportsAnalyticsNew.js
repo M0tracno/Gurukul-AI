@@ -44,7 +44,7 @@ import AdminService from '../../services/adminService';
 
 const StyledCard = styled(Card)(({ theme }) => ({
   height: '100%',
-  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  background: 'linear-gradient(135deg, #E5484D 0%, #B4282E 100%)',
   color: 'white',
   '& .MuiCardContent-root': {
     padding: theme.spacing(3),
@@ -240,7 +240,7 @@ const ReportsAnalyticsNew = () => {
             startIcon={<DownloadIcon />}
             onClick={handleExportReport}
             sx={{
-              background: 'linear-gradient(45deg, #667eea 30%, #764ba2 90%)',
+              background: 'linear-gradient(45deg, #E5484D 30%, #B4282E 90%)',
             }}
           >
             Export Report

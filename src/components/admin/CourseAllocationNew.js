@@ -214,7 +214,7 @@ const CourseAllocationNew = () => {
           startIcon={<AddIcon />}
           onClick={() => setOpenDialog(true)}
           sx={{
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            background: 'linear-gradient(135deg, #E5484D 0%, #B4282E 100%)',
             borderRadius: 2,
             px: 3,
             py: 1.5,
@@ -230,12 +230,12 @@ const CourseAllocationNew = () => {
           <Card
             sx={{
               borderRadius: 3,
-              background: 'linear-gradient(135deg, #667eea15 0%, #667eea05 100%)',
+              background: 'linear-gradient(135deg, #E5484D15 0%, #E5484D05 100%)',
             }}
           >
             <CardContent sx={{ textAlign: 'center', py: 3 }}>
-              <AssignmentIcon sx={{ fontSize: 48, color: '#667eea', mb: 2 }} />
-              <Typography variant="h4" sx={{ fontWeight: 700, color: '#667eea' }}>
+              <AssignmentIcon sx={{ fontSize: 48, color: '#E5484D', mb: 2 }} />
+              <Typography variant="h4" sx={{ fontWeight: 700, color: '#E5484D' }}>
                 {allocations.length}
               </Typography>
               <Typography variant="h6">Active Allocations</Typography>
@@ -247,12 +247,12 @@ const CourseAllocationNew = () => {
           <Card
             sx={{
               borderRadius: 3,
-              background: 'linear-gradient(135deg, #764ba215 0%, #764ba205 100%)',
+              background: 'linear-gradient(135deg, #B4282E15 0%, #B4282E05 100%)',
             }}
           >
             <CardContent sx={{ textAlign: 'center', py: 3 }}>
-              <SchoolIcon sx={{ fontSize: 48, color: '#764ba2', mb: 2 }} />
-              <Typography variant="h4" sx={{ fontWeight: 700, color: '#764ba2' }}>
+              <SchoolIcon sx={{ fontSize: 48, color: '#B4282E', mb: 2 }} />
+              <Typography variant="h4" sx={{ fontWeight: 700, color: '#B4282E' }}>
                 {courses.length}
               </Typography>
               <Typography variant="h6">Available Courses</Typography>
@@ -339,7 +339,7 @@ const CourseAllocationNew = () => {
                       </TableCell>
                       <TableCell>
                         <Box display="flex" alignItems="center">
-                          <Avatar sx={{ mr: 2, bgcolor: '#764ba2', width: 32, height: 32 }}>
+                          <Avatar sx={{ mr: 2, bgcolor: '#B4282E', width: 32, height: 32 }}>
                             <PersonIcon fontSize="small" />
                           </Avatar>
                           <Box>
@@ -541,7 +541,7 @@ const CourseAllocationNew = () => {
             onClick={handleCreateAllocation}
             variant="contained"
             disabled={!newAllocation.courseId || !newAllocation.facultyId}
-            sx={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
+            sx={{ background: 'linear-gradient(135deg, #E5484D 0%, #B4282E 100%)' }}
           >
             Create Allocation
           </Button>

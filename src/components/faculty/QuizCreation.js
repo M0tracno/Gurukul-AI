@@ -29,8 +29,8 @@ import {
 
 const useStyles = makeStyles(theme => ({
   container: {
-    minHeight: '100vh',
-    background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+    minHeight: '100%',
+    background: 'transparent',
     paddingTop: theme.spacing(3),
     paddingBottom: theme.spacing(3),
   },
@@ -474,7 +474,7 @@ function QuizCreation() {
     <Container className={classes.container}>
       <Paper className={classes.paper}>
         <Typography variant="h4" className={classes.title}>
-          Create AI-Generated Quiz ✨
+          Create AI-Generated Quiz
         </Typography>
         <Typography
           variant="body1"
@@ -705,7 +705,7 @@ function QuizCreation() {
                     <Typography className={classes.loadingText}>Generating AI Quiz...</Typography>
                   </div>
                 ) : (
-                  'GENERATE QUIZ WITH AI ✨'
+                  'Generate quiz with AI'
                 )}
               </Button>
               <div

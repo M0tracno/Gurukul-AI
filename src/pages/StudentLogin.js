@@ -11,10 +11,14 @@ import {
   CircularProgress,
   Fade,
 } from '@mui/material';
-import { Visibility, VisibilityOff, School as SchoolIcon } from '@mui/icons-material';
+import { Visibility, VisibilityOff, Person as PersonIcon } from '@mui/icons-material';
 import { useAuth } from '../auth/AuthContext';
 import { navigateToDashboard } from '../utils/navigationHelpers';
 import LoginLayout from '../components/auth/LoginLayout';
+import { authFieldSx, authButtonSx, authErrorAlertSx, authLinkSx } from '../components/auth/authStyles';
+import { ink } from '../theme/cinematic';
+
+const ACCENT = 'blue';
 
 function StudentLogin() {
   const navigate = useNavigate();
@@ -35,15 +39,12 @@ function StudentLogin() {
   const handleSubmit = async e => {
     e.preventDefault();
     if (loading) return;
-
     if (!email || !password) {
       setError('Please enter both email and password');
       return;
     }
-
     setLoading(true);
     setError('');
-
     try {
       await login(email, password, 'student');
       navigateToDashboard(navigate, 'student', { replace: true });
@@ -54,39 +55,24 @@ function StudentLogin() {
     }
   };
 
-  const accentColor = '#60a5fa';
-
   return (
     <LoginLayout
       title="Student Portal"
-      subtitle="Welcome back. Access your courses, track progress, and continue your learning journey."
-      icon={SchoolIcon}
-      color={accentColor}
-      backLink="/"
+      eyebrow="Student"
+      subtitle="Welcome back. Pick up your coursework, submissions, and progress where you left off."
+      icon={PersonIcon}
+      accent={ACCENT}
     >
-      <Typography
-        variant="h5"
-        sx={{ fontWeight: 600, color: 'rgba(255, 255, 255, 0.95)', mb: 0.5 }}
-      >
-        Sign In
+      <Typography variant="h5" sx={{ color: ink.primary, mb: 0.5 }}>
+        Sign in
       </Typography>
-      <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.4)', mb: 3 }}>
+      <Typography variant="body2" sx={{ color: ink.tertiary, mb: 3 }}>
         Enter your credentials to continue
       </Typography>
 
       {error && (
         <Fade in>
-          <Alert
-            severity="error"
-            sx={{
-              mb: 3,
-              background: 'rgba(248, 113, 113, 0.08)',
-              border: '1px solid rgba(248, 113, 113, 0.2)',
-              borderRadius: '12px',
-              color: 'rgba(255, 255, 255, 0.9)',
-              '& .MuiAlert-icon': { color: '#f87171' },
-            }}
-          >
+          <Alert severity="error" sx={authErrorAlertSx}>
             {error}
           </Alert>
         </Fade>
@@ -99,30 +85,15 @@ function StudentLogin() {
       >
         <TextField
           fullWidth
-          label="Email Address"
+          label="Email address"
           type="email"
           value={email}
           onChange={e => setEmail(e.target.value)}
           required
           autoComplete="email"
           variant="outlined"
-          sx={{
-            '& .MuiOutlinedInput-root': {
-              borderRadius: '12px',
-              background: 'rgba(255, 255, 255, 0.03)',
-              transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-              '& fieldset': { borderColor: 'rgba(255, 255, 255, 0.08)' },
-              '&:hover fieldset': { borderColor: `${accentColor}60` },
-              '&.Mui-focused fieldset': { borderColor: accentColor, borderWidth: '1.5px' },
-            },
-            '& .MuiInputLabel-root': {
-              color: 'rgba(255, 255, 255, 0.4)',
-              '&.Mui-focused': { color: accentColor },
-            },
-            '& .MuiOutlinedInput-input': { color: 'rgba(255, 255, 255, 0.9)' },
-          }}
+          sx={authFieldSx(ACCENT)}
         />
-
         <TextField
           fullWidth
           label="Password"
@@ -132,13 +103,14 @@ function StudentLogin() {
           required
           autoComplete="current-password"
           variant="outlined"
+          sx={authFieldSx(ACCENT)}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton
                   onClick={() => setShowPassword(!showPassword)}
                   edge="end"
-                  sx={{ color: 'rgba(255, 255, 255, 0.4)' }}
+                  sx={{ color: ink.tertiary }}
                   aria-label="toggle password visibility"
                 >
                   {showPassword ? <VisibilityOff /> : <Visibility />}
@@ -146,57 +118,15 @@ function StudentLogin() {
               </InputAdornment>
             ),
           }}
-          sx={{
-            '& .MuiOutlinedInput-root': {
-              borderRadius: '12px',
-              background: 'rgba(255, 255, 255, 0.03)',
-              transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-              '& fieldset': { borderColor: 'rgba(255, 255, 255, 0.08)' },
-              '&:hover fieldset': { borderColor: `${accentColor}60` },
-              '&.Mui-focused fieldset': { borderColor: accentColor, borderWidth: '1.5px' },
-            },
-            '& .MuiInputLabel-root': {
-              color: 'rgba(255, 255, 255, 0.4)',
-              '&.Mui-focused': { color: accentColor },
-            },
-            '& .MuiOutlinedInput-input': { color: 'rgba(255, 255, 255, 0.9)' },
-          }}
         />
-
-        <Button
-          type="submit"
-          fullWidth
-          disabled={loading || !email || !password}
-          sx={{
-            mt: 1,
-            py: 1.5,
-            borderRadius: '12px',
-            fontWeight: 600,
-            fontSize: '1rem',
-            textTransform: 'none',
-            background: `linear-gradient(135deg, ${accentColor} 0%, #3b82f6 100%)`,
-            color: '#ffffff',
-            boxShadow: `0 4px 20px ${accentColor}30`,
-            transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-            '&:hover': {
-              transform: 'translateY(-1px)',
-              boxShadow: `0 8px 30px ${accentColor}40`,
-              background: `linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%)`,
-            },
-            '&:disabled': {
-              background: 'rgba(255, 255, 255, 0.06)',
-              color: 'rgba(255, 255, 255, 0.3)',
-              boxShadow: 'none',
-            },
-          }}
-        >
+        <Button type="submit" fullWidth disabled={loading || !email || !password} sx={authButtonSx(ACCENT)}>
           {loading ? (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <CircularProgress size={18} sx={{ color: 'white' }} />
-              Signing in...
+              Signing in…
             </Box>
           ) : (
-            'Sign In'
+            'Sign in'
           )}
         </Button>
       </Box>
@@ -210,13 +140,7 @@ function StudentLogin() {
             navigate('/forgot-password');
           }}
           variant="body2"
-          sx={{
-            color: 'rgba(255, 255, 255, 0.4)',
-            textDecoration: 'none',
-            cursor: 'pointer',
-            transition: 'color 0.2s',
-            '&:hover': { color: accentColor },
-          }}
+          sx={authLinkSx(ACCENT)}
         >
           Forgot your password?
         </Typography>

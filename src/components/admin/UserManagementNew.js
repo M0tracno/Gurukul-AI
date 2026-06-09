@@ -389,7 +389,7 @@ const UserManagementNew = () => {
           startIcon={<AddIcon />}
           onClick={() => setOpenAddDialog(true)}
           sx={{
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            background: 'linear-gradient(135deg, #E5484D 0%, #B4282E 100%)',
             borderRadius: 2,
             px: 3,
             py: 1.5,
@@ -405,12 +405,12 @@ const UserManagementNew = () => {
           <Card
             sx={{
               borderRadius: 3,
-              background: 'linear-gradient(135deg, #667eea15 0%, #667eea05 100%)',
+              background: 'linear-gradient(135deg, #E5484D15 0%, #E5484D05 100%)',
             }}
           >
             <CardContent sx={{ textAlign: 'center', py: 3 }}>
-              <PersonIcon sx={{ fontSize: 48, color: '#667eea', mb: 2 }} />
-              <Typography variant="h4" sx={{ fontWeight: 700, color: '#667eea' }}>
+              <PersonIcon sx={{ fontSize: 48, color: '#E5484D', mb: 2 }} />
+              <Typography variant="h4" sx={{ fontWeight: 700, color: '#E5484D' }}>
                 {users.filter(u => u.role?.toLowerCase() === 'student').length}
               </Typography>
               <Typography variant="h6">Students</Typography>
@@ -422,12 +422,12 @@ const UserManagementNew = () => {
           <Card
             sx={{
               borderRadius: 3,
-              background: 'linear-gradient(135deg, #764ba215 0%, #764ba205 100%)',
+              background: 'linear-gradient(135deg, #B4282E15 0%, #B4282E05 100%)',
             }}
           >
             <CardContent sx={{ textAlign: 'center', py: 3 }}>
-              <SchoolIcon sx={{ fontSize: 48, color: '#764ba2', mb: 2 }} />
-              <Typography variant="h4" sx={{ fontWeight: 700, color: '#764ba2' }}>
+              <SchoolIcon sx={{ fontSize: 48, color: '#B4282E', mb: 2 }} />
+              <Typography variant="h4" sx={{ fontWeight: 700, color: '#B4282E' }}>
                 {users.filter(u => u.role?.toLowerCase() === 'faculty').length}
               </Typography>
               <Typography variant="h6">Faculty</Typography>
@@ -516,7 +516,7 @@ const UserManagementNew = () => {
                       <TableRow key={user.id} hover>
                         <TableCell>
                           <Box display="flex" alignItems="center">
-                            <Avatar sx={{ mr: 2, bgcolor: '#667eea' }}>
+                            <Avatar sx={{ mr: 2, bgcolor: '#E5484D' }}>
                               {getRoleIcon(user.role)}
                             </Avatar>
                             <Box>
@@ -741,7 +741,7 @@ const UserManagementNew = () => {
             variant="contained"
             startIcon={<SaveIcon />}
             disabled={loading || !newUser.firstName || !newUser.lastName || !newUser.email}
-            sx={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
+            sx={{ background: 'linear-gradient(135deg, #E5484D 0%, #B4282E 100%)' }}
           >
             {loading ? <CircularProgress size={20} /> : 'Create User'}
           </Button>
@@ -772,7 +772,7 @@ const UserManagementNew = () => {
           {generatedCredentials && (
             <Box>
               <Paper sx={{ p: 3, mb: 2, bgcolor: '#f8f9fa' }}>
-                <Typography variant="h6" sx={{ fontWeight: 600, mb: 2, color: '#667eea' }}>
+                <Typography variant="h6" sx={{ fontWeight: 600, mb: 2, color: '#E5484D' }}>
                   {generatedCredentials.user.role.charAt(0).toUpperCase() +
                     generatedCredentials.user.role.slice(1)}{' '}
                   Account
@@ -883,7 +883,7 @@ const UserManagementNew = () => {
               setGeneratedCredentials(null);
             }}
             variant="contained"
-            sx={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
+            sx={{ background: 'linear-gradient(135deg, #E5484D 0%, #B4282E 100%)' }}
           >
             Close
           </Button>

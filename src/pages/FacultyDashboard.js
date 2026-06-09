@@ -27,6 +27,9 @@ import { styled } from '@mui/material/styles';
 import UnifiedDashboardLayout from '../components/layout/UnifiedDashboardLayout';
 import useDashboard from '../hooks/useDashboard';
 import EnhancedFacultyService from '../services/enhancedFacultyService';
+import { accents, ink, surfaces } from '../theme/cinematic';
+
+const ACCENT = accents.amber;
 
 // Icons
 import {
@@ -56,36 +59,35 @@ import {
 // Styled components for modern design
 const StyledCard = styled(Card)(({ theme }) => ({
   borderRadius: 16,
-  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.6)',
-  transition: 'all 0.3s ease-in-out',
-  background: 'rgba(255, 255, 255, 0.03)',
-  backdropFilter: 'blur(10px)',
-  border: '1px solid rgba(255, 255, 255, 0.06)',
+  boxShadow: '0 26px 60px -34px rgba(0,0,0,0.9)',
+  transition: 'all 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
+  background: `linear-gradient(180deg, ${surfaces.paper} 0%, ${surfaces.base} 150%)`,
+  border: `1px solid ${surfaces.border}`,
   '&:hover': {
-    transform: 'translateY(-4px)',
-    boxShadow: '0 12px 40px rgba(0, 0, 0, 0.7)',
+    transform: 'translateY(-3px)',
+    borderColor: surfaces.borderStrong,
   },
 }));
 
 const StatCard = styled(Card)(({ theme, color }) => ({
   borderRadius: 16,
-  background: `linear-gradient(135deg, ${color}15 0%, ${color}25 100%)`,
-  border: `1px solid ${color}30`,
-  transition: 'all 0.3s ease',
+  background: `linear-gradient(180deg, ${surfaces.paper} 0%, ${surfaces.base} 150%)`,
+  border: `1px solid ${surfaces.border}`,
+  transition: 'all 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
   '&:hover': {
-    transform: 'translateY(-2px)',
-    boxShadow: `0 8px 25px ${color}20`,
+    transform: 'translateY(-3px)',
+    borderColor: `${color}55`,
+    boxShadow: `0 30px 60px -36px ${color}66`,
   },
 }));
 
 const DashboardHeader = styled(Box)(({ theme }) => ({
-  background:
-    'linear-gradient(135deg, rgba(167, 139, 250, 0.15) 0%, rgba(124, 58, 237, 0.15) 100%)',
-  borderRadius: 20,
-  padding: theme.spacing(3),
-  color: 'white',
+  background: `linear-gradient(180deg, ${surfaces.paper} 0%, ${surfaces.base} 140%)`,
+  borderRadius: 18,
+  padding: theme.spacing(3.5),
+  color: ink.primary,
   marginBottom: theme.spacing(3),
-  border: '1px solid rgba(167, 139, 250, 0.2)',
+  border: `1px solid ${surfaces.border}`,
 }));
 
 // Lazy load faculty components
@@ -259,28 +261,28 @@ const FacultyDashboard = () => {
         title: 'Total Courses',
         value: dashboardStats.totalCourses,
         icon: <CoursesIcon />,
-        color: '#a78bfa',
+        color: ACCENT.main,
         trend: '+2 this semester',
       },
       {
         title: 'Total Students',
         value: dashboardStats.totalStudents,
         icon: <StudentsIcon />,
-        color: '#34d399',
+        color: ACCENT.main,
         trend: `${dashboardStats.activeStudents} active`,
       },
       {
         title: 'Assignments',
         value: dashboardStats.totalAssignments,
         icon: <AssignmentIcon />,
-        color: '#fbbf24',
+        color: ACCENT.main,
         trend: `${dashboardStats.pendingGrades} pending`,
       },
       {
         title: 'Attendance Rate',
         value: `${dashboardStats.averageAttendance}%`,
         icon: <AttendanceIcon />,
-        color: '#60a5fa',
+        color: ACCENT.main,
         trend: '+2.3% this month',
       },
     ];
@@ -582,12 +584,13 @@ const FacultyDashboard = () => {
     <Box
       sx={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #0a0a0f 0%, #111118 50%, #0a0a1a 100%)',
+        background: surfaces.base,
       }}
     >
       {' '}
       <UnifiedDashboardLayout
-        title="Faculty Dashboard"
+        title="Faculty"
+        accent="amber"
         menuItems={menuItems}
         currentView={currentView}
         onViewChange={handleViewChange}

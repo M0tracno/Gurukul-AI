@@ -53,8 +53,9 @@ import EnhancedFacultyService from '../../services/enhancedFacultyService';
 // Styled components for modern design
 const StyledCard = styled(Card)(({ theme }) => ({
   borderRadius: 20,
-  background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
-  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
+  background: 'linear-gradient(180deg, #10131A 0%, #08090C 150%)',
+  border: '1px solid rgba(255,255,255,0.08)',
+  boxShadow: '0 26px 60px -34px rgba(0,0,0,0.9)',
   transition: 'all 0.3s ease-in-out',
   border: '1px solid rgba(255, 255, 255, 0.2)',
   overflow: 'hidden',
@@ -70,7 +71,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
     left: 0,
     right: 0,
     height: 4,
-    background: 'linear-gradient(90deg, #667eea 0%, #764ba2 50%, #667eea 100%)',
+    background: 'linear-gradient(90deg, #E3A648 0%, #B97E26 50%, #E3A648 100%)',
   },
 }));
 
@@ -123,7 +124,8 @@ const StatusChip = styled(Chip)(({ theme, status }) => ({
 }));
 
 const HeaderSection = styled(Box)(({ theme }) => ({
-  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  background: 'linear-gradient(180deg, #10131A 0%, #08090C 140%)',
+  border: '1px solid rgba(255,255,255,0.08)',
   borderRadius: 24,
   padding: theme.spacing(4),
   marginBottom: theme.spacing(3),
@@ -161,9 +163,9 @@ const StatsContainer = styled(Box)(({ theme }) => ({
 
 const StatCard = styled(Card)(({ theme }) => ({
   borderRadius: 16,
-  background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
-  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.06)',
-  border: '1px solid rgba(255, 255, 255, 0.8)',
+  background: 'linear-gradient(180deg, #10131A 0%, #08090C 150%)',
+  boxShadow: '0 26px 60px -34px rgba(0,0,0,0.9)',
+  border: '1px solid rgba(255,255,255,0.08)',
   transition: 'all 0.3s ease',
   '&:hover': {
     transform: 'translateY(-2px)',
@@ -188,7 +190,7 @@ const ActionButton = styled(IconButton)(({ theme }) => ({
   padding: theme.spacing(0.5),
   transition: 'all 0.2s ease',
   '&:hover': {
-    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+    backgroundColor: 'rgba(227, 166, 72, 0.1)',
     transform: 'scale(1.1)',
   },
 }));
@@ -196,8 +198,8 @@ const ActionButton = styled(IconButton)(({ theme }) => ({
 const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
-    minHeight: '100vh',
-    background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+    minHeight: '100%',
+    background: 'transparent',
     padding: theme.spacing(3),
   },
   searchContainer: {
@@ -207,13 +209,13 @@ const useStyles = makeStyles(theme => ({
       background: 'rgba(255, 255, 255, 0.9)',
       backdropFilter: 'blur(10px)',
       '& fieldset': {
-        borderColor: 'rgba(102, 126, 234, 0.3)',
+        borderColor: 'rgba(227, 166, 72, 0.3)',
       },
       '&:hover fieldset': {
-        borderColor: 'rgba(102, 126, 234, 0.6)',
+        borderColor: 'rgba(227, 166, 72, 0.6)',
       },
       '&.Mui-focused fieldset': {
-        borderColor: '#667eea',
+        borderColor: '#E3A648',
       },
     },
   },
@@ -409,9 +411,9 @@ const StudentList = () => {
         <StatCard sx={{ flex: 1, minWidth: 200 }}>
           <CardContent>
             <Box display="flex" alignItems="center" gap={2}>
-              <GroupIcon sx={{ fontSize: 32, color: '#667eea' }} />
+              <GroupIcon sx={{ fontSize: 32, color: '#E3A648' }} />
               <Box>
-                <Typography variant="h4" fontWeight="bold" color="#667eea">
+                <Typography variant="h4" fontWeight="bold" color="#E3A648">
                   {stats.total}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
@@ -491,9 +493,9 @@ const StudentList = () => {
           startIcon={<AddIcon />}
           sx={{
             borderRadius: 2,
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            background: 'linear-gradient(135deg, #E3A648 0%, #B97E26 100%)',
             '&:hover': {
-              background: 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)',
+              background: 'linear-gradient(135deg, #C68F32 0%, #8C5D17 100%)',
             },
           }}
         >
@@ -591,8 +593,8 @@ const StudentList = () => {
                               label={course}
                               size="small"
                               sx={{
-                                backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                                color: '#667eea',
+                                backgroundColor: 'rgba(227, 166, 72, 0.1)',
+                                color: '#E3A648',
                                 fontSize: '0.7rem',
                                 height: 24,
                               }}
@@ -603,8 +605,8 @@ const StudentList = () => {
                               label={`+${student.enrolledCourses.length - 3}`}
                               size="small"
                               sx={{
-                                backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                                color: '#667eea',
+                                backgroundColor: 'rgba(227, 166, 72, 0.1)',
+                                color: '#E3A648',
                                 fontSize: '0.7rem',
                                 height: 24,
                               }}

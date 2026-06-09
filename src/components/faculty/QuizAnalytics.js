@@ -85,8 +85,8 @@ ChartJS.register(
 const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
-    minHeight: '100vh',
-    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    minHeight: '100%',
+    background: 'transparent',
     padding: theme.spacing(3),
   },
   paper: {
@@ -100,7 +100,7 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     fontWeight: 700,
-    background: 'linear-gradient(45deg, #667eea, #764ba2)',
+    background: 'linear-gradient(45deg, #E3A648, #B97E26)',
     backgroundClip: 'text',
     WebkitBackgroundClip: 'text',
     WebkitTextFillColor: 'transparent',
@@ -126,18 +126,18 @@ const useStyles = makeStyles(theme => ({
   statCard: {
     height: '100%',
     background:
-      'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)',
+      'linear-gradient(135deg, rgba(227, 166, 72, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)',
     borderRadius: 16,
-    border: '1px solid rgba(102, 126, 234, 0.2)',
+    border: '1px solid rgba(227, 166, 72, 0.2)',
     transition: 'all 0.3s ease',
     '&:hover': {
       transform: 'translateY(-4px)',
-      boxShadow: '0 12px 40px rgba(102, 126, 234, 0.2)',
+      boxShadow: '0 12px 40px rgba(227, 166, 72, 0.2)',
     },
   },
   statIcon: {
     fontSize: '3rem',
-    color: '#667eea',
+    color: '#E3A648',
     marginBottom: theme.spacing(1),
   },
   statValue: {
@@ -185,18 +185,18 @@ const useStyles = makeStyles(theme => ({
       background: 'rgba(255, 255, 255, 0.9)',
       backdropFilter: 'blur(10px)',
       '& fieldset': {
-        borderColor: 'rgba(102, 126, 234, 0.3)',
+        borderColor: 'rgba(227, 166, 72, 0.3)',
       },
       '&:hover fieldset': {
-        borderColor: 'rgba(102, 126, 234, 0.6)',
+        borderColor: 'rgba(227, 166, 72, 0.6)',
       },
       '&.Mui-focused fieldset': {
-        borderColor: '#667eea',
+        borderColor: '#E3A648',
       },
     },
   },
   primaryButton: {
-    background: 'linear-gradient(45deg, #667eea, #764ba2)',
+    background: 'linear-gradient(45deg, #E3A648, #B97E26)',
     color: 'white',
     borderRadius: 12,
     textTransform: 'none',
@@ -205,9 +205,9 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(1),
     transition: 'all 0.3s ease',
     '&:hover': {
-      background: 'linear-gradient(45deg, #5a6fd8, #6a4190)',
+      background: 'linear-gradient(45deg, #C68F32, #8C5D17)',
       transform: 'translateY(-2px)',
-      boxShadow: '0 8px 25px rgba(102, 126, 234, 0.3)',
+      boxShadow: '0 8px 25px rgba(227, 166, 72, 0.3)',
     },
     '&:disabled': {
       opacity: 0.6,
@@ -219,13 +219,13 @@ const useStyles = makeStyles(theme => ({
     textTransform: 'none',
     fontWeight: 600,
     padding: theme.spacing(1.5, 3),
-    border: '2px solid #667eea',
-    color: '#667eea',
+    border: '2px solid #E3A648',
+    color: '#E3A648',
     transition: 'all 0.3s ease',
     '&:hover': {
-      background: 'rgba(102, 126, 234, 0.1)',
+      background: 'rgba(227, 166, 72, 0.1)',
       transform: 'translateY(-2px)',
-      boxShadow: '0 8px 25px rgba(102, 126, 234, 0.2)',
+      boxShadow: '0 8px 25px rgba(227, 166, 72, 0.2)',
     },
   },
   refreshButton: {
@@ -233,10 +233,10 @@ const useStyles = makeStyles(theme => ({
     minWidth: 48,
     width: 48,
     height: 48,
-    background: 'linear-gradient(45deg, #667eea, #764ba2)',
+    background: 'linear-gradient(45deg, #E3A648, #B97E26)',
     color: 'white',
     '&:hover': {
-      background: 'linear-gradient(45deg, #5a6fd8, #6a4190)',
+      background: 'linear-gradient(45deg, #C68F32, #8C5D17)',
       transform: 'rotate(180deg) scale(1.1)',
     },
   },
@@ -248,7 +248,7 @@ const useStyles = makeStyles(theme => ({
     overflow: 'hidden',
   },
   headerRow: {
-    background: 'linear-gradient(135deg, #667eea, #764ba2)',
+    background: 'linear-gradient(135deg, #E3A648, #B97E26)',
     '& .MuiTableCell-head': {
       color: 'white',
       fontWeight: 700,
@@ -263,7 +263,7 @@ const useStyles = makeStyles(theme => ({
     '& .MuiTableRow-root': {
       transition: 'all 0.3s ease',
       '&:hover': {
-        backgroundColor: 'rgba(102, 126, 234, 0.05)',
+        backgroundColor: 'rgba(227, 166, 72, 0.05)',
         transform: 'translateY(-1px)',
         boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)',
       },
@@ -654,7 +654,7 @@ const QuizAnalytics = () => {
     return (
       <div className={classes.root}>
         <div className={classes.loadingContainer}>
-          <CircularProgress size={60} style={{ color: '#667eea' }} />
+          <CircularProgress size={60} style={{ color: '#E3A648' }} />
         </div>
       </div>
     );
@@ -921,7 +921,7 @@ const QuizAnalytics = () => {
                               width: 40,
                               height: 40,
                               borderRadius: '50%',
-                              background: 'linear-gradient(45deg, #667eea, #764ba2)',
+                              background: 'linear-gradient(45deg, #E3A648, #B97E26)',
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
@@ -993,10 +993,10 @@ const QuizAnalytics = () => {
                             size="small"
                             onClick={() => setStudentDetailDialog({ open: true, student: attempt })}
                             style={{
-                              background: 'linear-gradient(45deg, #667eea, #764ba2)',
+                              background: 'linear-gradient(45deg, #E3A648, #B97E26)',
                               color: 'white',
                               '&:hover': {
-                                background: 'linear-gradient(45deg, #5a6fd8, #6a4190)',
+                                background: 'linear-gradient(45deg, #C68F32, #8C5D17)',
                               },
                             }}
                           >

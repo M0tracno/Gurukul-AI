@@ -213,18 +213,18 @@ const FacultyFeedback = () => {
       {/* Stats Cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <StatCard color="#667eea">
+          <StatCard color="#E3A648">
             <CardContent>
               <Box display="flex" alignItems="center" justifyContent="space-between">
                 <Box>
-                  <Typography variant="h4" fontWeight="bold" color="#667eea">
+                  <Typography variant="h4" fontWeight="bold" color="#E3A648">
                     {stats.total}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
                     Total Feedback
                   </Typography>
                 </Box>
-                <Avatar sx={{ bgcolor: '#667eea20', color: '#667eea' }}>
+                <Avatar sx={{ bgcolor: '#E3A64820', color: '#E3A648' }}>
                   <FeedbackIcon />
                 </Avatar>
               </Box>
@@ -295,7 +295,7 @@ const FacultyFeedback = () => {
         <CardContent>
           <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
             <Typography variant="h6" fontWeight="bold">
-              💬 Recent Feedback
+              Recent Feedback
             </Typography>
             <Box>
               <Button
@@ -396,7 +396,7 @@ const FacultyFeedback = () => {
         <StyledCard>
           <CardContent>
             <Typography variant="h6" gutterBottom>
-              📊 Feedback Trends
+              Feedback Trends
             </Typography>
             <Typography variant="body2" color="textSecondary">
               Course-wise feedback analysis and trends over time
@@ -408,7 +408,7 @@ const FacultyFeedback = () => {
         <StyledCard>
           <CardContent>
             <Typography variant="h6" gutterBottom>
-              📈 Improvement Areas
+              Improvement Areas
             </Typography>
             <Typography variant="body2" color="textSecondary">
               Identify areas for teaching improvement based on student feedback
@@ -422,16 +422,16 @@ const FacultyFeedback = () => {
   return (
     <Box
       sx={{
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-        py: 3,
+        minHeight: '100%',
+        background: 'transparent',
+        py: 1,
       }}
     >
       <Container maxWidth="xl">
         {/* Header */}
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
           <Typography variant="h4" fontWeight="bold" color="primary">
-            💬 Faculty Feedback System
+            Feedback
           </Typography>
         </Box>
 

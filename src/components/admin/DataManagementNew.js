@@ -179,7 +179,7 @@ const DataManagementNew = () => {
           startIcon={<BackupIcon />}
           onClick={() => setOpenBackupDialog(true)}
           sx={{
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            background: 'linear-gradient(135deg, #E5484D 0%, #B4282E 100%)',
             borderRadius: 2,
             px: 3,
             py: 1.5,
@@ -202,7 +202,7 @@ const DataManagementNew = () => {
                 <Box>
                   <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                     <Typography variant="body1">Total Storage Usage</Typography>
-                    <Typography variant="h6" sx={{ fontWeight: 600, color: '#667eea' }}>
+                    <Typography variant="h6" sx={{ fontWeight: 600, color: '#E5484D' }}>
                       {storageInfo.usedSpace} GB / {storageInfo.totalSpace} GB
                     </Typography>
                   </Box>
@@ -216,7 +216,7 @@ const DataManagementNew = () => {
                       mb: 3,
                       backgroundColor: '#f5f5f5',
                       '& .MuiLinearProgress-bar': {
-                        backgroundColor: getStoragePercentage() > 80 ? '#f44336' : '#667eea',
+                        backgroundColor: getStoragePercentage() > 80 ? '#f44336' : '#E5484D',
                         borderRadius: 6,
                       },
                     }}
@@ -225,7 +225,7 @@ const DataManagementNew = () => {
                   <Grid container spacing={2}>
                     <Grid size={{ xs: 6, sm: 3 }}>
                       <Box textAlign="center" p={2} sx={{ bgcolor: '#f8f9fa', borderRadius: 2 }}>
-                        <Typography variant="h6" sx={{ fontWeight: 600, color: '#667eea' }}>
+                        <Typography variant="h6" sx={{ fontWeight: 600, color: '#E5484D' }}>
                           {storageInfo.databaseSize} GB
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
@@ -236,7 +236,7 @@ const DataManagementNew = () => {
 
                     <Grid size={{ xs: 6, sm: 3 }}>
                       <Box textAlign="center" p={2} sx={{ bgcolor: '#f8f9fa', borderRadius: 2 }}>
-                        <Typography variant="h6" sx={{ fontWeight: 600, color: '#764ba2' }}>
+                        <Typography variant="h6" sx={{ fontWeight: 600, color: '#B4282E' }}>
                           {storageInfo.fileSize} GB
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
@@ -282,14 +282,14 @@ const DataManagementNew = () => {
               <List>
                 <ListItem component="div" sx={{ borderRadius: 2, mb: 1, cursor: 'pointer' }}>
                   <ListItemIcon>
-                    <BackupIcon sx={{ color: '#667eea' }} />
+                    <BackupIcon sx={{ color: '#E5484D' }} />
                   </ListItemIcon>
                   <ListItemText primary="Create Backup" secondary="Full system backup" />
                 </ListItem>
 
                 <ListItem component="div" sx={{ borderRadius: 2, mb: 1, cursor: 'pointer' }}>
                   <ListItemIcon>
-                    <CloudUploadIcon sx={{ color: '#764ba2' }} />
+                    <CloudUploadIcon sx={{ color: '#B4282E' }} />
                   </ListItemIcon>
                   <ListItemText primary="Export Data" secondary="Download system data" />
                 </ListItem>
@@ -489,13 +489,13 @@ const DataManagementNew = () => {
           <List>
             <ListItem>
               <ListItemIcon>
-                <StorageIcon sx={{ color: '#667eea' }} />
+                <StorageIcon sx={{ color: '#E5484D' }} />
               </ListItemIcon>
               <ListItemText primary="Database (45.6 GB)" />
             </ListItem>
             <ListItem>
               <ListItemIcon>
-                <CloudUploadIcon sx={{ color: '#764ba2' }} />
+                <CloudUploadIcon sx={{ color: '#B4282E' }} />
               </ListItemIcon>
               <ListItemText primary="User Files (234.8 GB)" />
             </ListItem>
@@ -520,7 +520,7 @@ const DataManagementNew = () => {
             onClick={handleCreateBackup}
             variant="contained"
             disabled={loading}
-            sx={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
+            sx={{ background: 'linear-gradient(135deg, #E5484D 0%, #B4282E 100%)' }}
           >
             {loading ? <CircularProgress size={20} /> : 'Create Backup'}
           </Button>

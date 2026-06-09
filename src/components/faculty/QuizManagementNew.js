@@ -233,18 +233,18 @@ const QuizManagement = () => {
       {/* Stats Cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <StatCard color="#667eea">
+          <StatCard color="#E3A648">
             <CardContent>
               <Box display="flex" alignItems="center" justifyContent="space-between">
                 <Box>
-                  <Typography variant="h4" fontWeight="bold" color="#667eea">
+                  <Typography variant="h4" fontWeight="bold" color="#E3A648">
                     {stats.total}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
                     Total Quizzes
                   </Typography>
                 </Box>
-                <Avatar sx={{ bgcolor: '#667eea20', color: '#667eea' }}>
+                <Avatar sx={{ bgcolor: '#E3A64820', color: '#E3A648' }}>
                   <QuizIcon />
                 </Avatar>
               </Box>
@@ -315,7 +315,7 @@ const QuizManagement = () => {
         <CardContent>
           <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
             <Typography variant="h6" fontWeight="bold">
-              📋 Quiz Management
+              Quiz Management
             </Typography>
             <Button
               variant="contained"
@@ -446,7 +446,7 @@ const QuizManagement = () => {
     <StyledCard>
       <CardContent>
         <Typography variant="h6" gutterBottom>
-          📚 Question Bank
+          Question Bank
         </Typography>
         <Typography variant="body2" color="textSecondary">
           Manage your question library for quizzes
@@ -465,7 +465,7 @@ const QuizManagement = () => {
     <StyledCard>
       <CardContent>
         <Typography variant="h6" gutterBottom>
-          📊 Quiz Analytics
+          Quiz Analytics
         </Typography>
         <Typography variant="body2" color="textSecondary">
           View detailed analytics and reports for your quizzes
@@ -477,16 +477,16 @@ const QuizManagement = () => {
   return (
     <Box
       sx={{
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-        py: 3,
+        minHeight: '100%',
+        background: 'transparent',
+        py: 1,
       }}
     >
       <Container maxWidth="xl">
         {/* Header */}
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
           <Typography variant="h4" fontWeight="bold" color="primary">
-            🎯 Quiz Management System
+            Quiz Management
           </Typography>
         </Box>
 

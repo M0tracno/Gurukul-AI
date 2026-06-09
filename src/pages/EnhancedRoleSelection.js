@@ -1,40 +1,49 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Container, Typography } from '@mui/material';
-import { School, Person, FamilyRestroom, AdminPanelSettings } from '@mui/icons-material';
+import { Box, Container, Typography, Stack } from '@mui/material';
+import {
+  School,
+  Person,
+  FamilyRestroom,
+  AdminPanelSettings,
+  ArrowForward,
+} from '@mui/icons-material';
+
+import CinematicBackground from '../components/common/CinematicBackground';
+import { accents, ink, surfaces, easing, fonts } from '../theme/cinematic';
 
 const roles = [
   {
     id: 'faculty',
     title: 'Faculty',
-    description: 'Manage courses, assessments, and empower students with intelligent tools.',
-    icon: Person,
+    description: 'Plan courses, grade with AI assistance, and keep every class moving.',
+    icon: School,
     path: '/faculty-login',
-    color: '#a78bfa',
+    accent: accents.amber,
   },
   {
     id: 'student',
     title: 'Student',
-    description: 'Access your courses, track progress, and unlock personalized learning paths.',
-    icon: School,
+    description: 'Access coursework, submit on time, and follow your own progress.',
+    icon: Person,
     path: '/student-login',
-    color: '#60a5fa',
+    accent: accents.blue,
   },
   {
     id: 'parent',
     title: 'Parent',
-    description: "Stay connected with your child's academic journey and real-time insights.",
+    description: "Stay close to your child's school day with real-time insight.",
     icon: FamilyRestroom,
     path: '/parent-login',
-    color: '#34d399',
+    accent: accents.teal,
   },
   {
     id: 'admin',
     title: 'Administrator',
-    description: 'Oversee operations, manage users, and access comprehensive analytics.',
+    description: 'Run the institution, manage users, and read the whole picture.',
     icon: AdminPanelSettings,
     path: '/admin-login',
-    color: '#f472b6',
+    accent: accents.crimson,
   },
 ];
 
@@ -47,214 +56,153 @@ function EnhancedRoleSelection() {
   }, []);
 
   return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        background: '#0a0a0f',
-        position: 'relative',
-        overflow: 'hidden',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        py: 6,
-      }}
-    >
-      {/* Animated gradient orbs */}
-      <Box
-        sx={{
-          position: 'absolute',
-          top: '-20%',
-          left: '-10%',
-          width: '500px',
-          height: '500px',
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(167, 139, 250, 0.15) 0%, transparent 70%)',
-          filter: 'blur(60px)',
-          animation: 'float1 12s ease-in-out infinite',
-          '@keyframes float1': {
-            '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
-            '50%': { transform: 'translate(60px, 40px) scale(1.1)' },
-          },
-        }}
-      />
-      <Box
-        sx={{
-          position: 'absolute',
-          bottom: '-15%',
-          right: '-10%',
-          width: '600px',
-          height: '600px',
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(96, 165, 250, 0.12) 0%, transparent 70%)',
-          filter: 'blur(60px)',
-          animation: 'float2 15s ease-in-out infinite',
-          '@keyframes float2': {
-            '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
-            '50%': { transform: 'translate(-50px, -30px) scale(1.05)' },
-          },
-        }}
-      />
-      <Box
-        sx={{
-          position: 'absolute',
-          top: '40%',
-          right: '20%',
-          width: '300px',
-          height: '300px',
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(244, 114, 182, 0.1) 0%, transparent 70%)',
-          filter: 'blur(50px)',
-          animation: 'float3 10s ease-in-out infinite',
-          '@keyframes float3': {
-            '0%, 100%': { transform: 'translate(0, 0)' },
-            '50%': { transform: 'translate(-30px, 20px)' },
-          },
-        }}
-      />
-
-      <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
-        {/* Header */}
-        <Box
-          sx={{
-            textAlign: 'center',
-            mb: 8,
-            opacity: visible ? 1 : 0,
-            transform: visible ? 'translateY(0)' : 'translateY(30px)',
-            transition: 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
-          }}
-        >
-          <Typography
-            variant="h2"
+    <CinematicBackground accent="blue">
+      <Container maxWidth="lg" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', py: 8 }}>
+        <Box sx={{ width: '100%' }}>
+          {/* Header */}
+          <Box
             sx={{
-              fontWeight: 700,
-              color: 'rgba(255, 255, 255, 0.95)',
-              mb: 2,
-              fontSize: { xs: '2rem', md: '2.75rem' },
-              letterSpacing: '-0.02em',
+              textAlign: 'center',
+              mb: { xs: 6, md: 9 },
+              opacity: visible ? 1 : 0,
+              transform: visible ? 'none' : 'translateY(24px)',
+              transition: `all 0.8s ${easing.premium}`,
             }}
           >
-            Choose Your Portal
-          </Typography>
-          <Typography
-            variant="h6"
-            sx={{
-              color: 'rgba(255, 255, 255, 0.5)',
-              fontWeight: 400,
-              fontSize: { xs: '1rem', md: '1.15rem' },
-            }}
-          >
-            Select your role to access the Gurukul AI platform
-          </Typography>
-        </Box>
-
-        {/* Role Cards Grid */}
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', lg: '1fr 1fr' },
-            gap: { xs: 3, md: 4 },
-            maxWidth: '900px',
-            mx: 'auto',
-          }}
-        >
-          {roles.map((role, index) => {
-            const IconComponent = role.icon;
-            return (
-              <Box
-                key={role.id}
-                onClick={() => navigate(role.path)}
+            <Stack direction="row" spacing={1.25} alignItems="center" justifyContent="center" sx={{ mb: 2.5 }}>
+              <Box sx={{ width: 28, height: 1, background: accents.blue.main, opacity: 0.8 }} />
+              <Typography
                 sx={{
-                  cursor: 'pointer',
-                  background: 'rgba(255, 255, 255, 0.03)',
-                  border: '1px solid rgba(255, 255, 255, 0.06)',
-                  borderRadius: '20px',
-                  padding: { xs: 3, md: 4 },
-                  backdropFilter: 'blur(10px)',
-                  transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
-                  opacity: visible ? 1 : 0,
-                  transform: visible ? 'translateY(0)' : 'translateY(40px)',
-                  transitionDelay: `${0.1 + index * 0.1}s`,
-                  '&:hover': {
-                    transform: 'translateY(-6px) scale(1.02)',
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    border: `1px solid ${role.color}40`,
-                    boxShadow: `0 20px 60px ${role.color}15, 0 0 40px ${role.color}08`,
-                  },
+                  fontFamily: fonts.body,
+                  color: accents.blue.main,
+                  fontSize: '0.72rem',
+                  fontWeight: 600,
+                  letterSpacing: '0.22em',
+                  textTransform: 'uppercase',
                 }}
               >
-                {/* Icon container with glow */}
+                Four doorways
+              </Typography>
+            </Stack>
+            <Typography variant="h2" sx={{ color: ink.primary, mb: 1.5, fontSize: { xs: '2rem', md: '2.8rem' } }}>
+              Choose your way in.
+            </Typography>
+            <Typography sx={{ color: ink.secondary, fontSize: { xs: '1rem', md: '1.1rem' }, maxWidth: 520, mx: 'auto' }}>
+              Pick the portal that matches your role on the Gurukul AI platform.
+            </Typography>
+          </Box>
+
+          {/* Role cards */}
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+              gap: { xs: 2.5, md: 3 },
+              maxWidth: 900,
+              mx: 'auto',
+            }}
+          >
+            {roles.map((role, index) => {
+              const Icon = role.icon;
+              return (
                 <Box
+                  key={role.id}
+                  onClick={() => navigate(role.path)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' || e.key === ' ') navigate(role.path);
+                  }}
                   sx={{
-                    width: 64,
-                    height: 64,
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    background: `${role.color}15`,
-                    border: `1px solid ${role.color}30`,
-                    mb: 3,
+                    cursor: 'pointer',
                     position: 'relative',
-                    '&::after': {
-                      content: '""',
-                      position: 'absolute',
-                      inset: -4,
-                      borderRadius: '50%',
-                      background: `radial-gradient(circle, ${role.color}20 0%, transparent 70%)`,
-                      filter: 'blur(8px)',
+                    overflow: 'hidden',
+                    p: { xs: 3, md: 4 },
+                    borderRadius: '18px',
+                    background: `linear-gradient(180deg, ${surfaces.paper} 0%, ${surfaces.base} 140%)`,
+                    border: `1px solid ${surfaces.border}`,
+                    opacity: visible ? 1 : 0,
+                    transform: visible ? 'none' : 'translateY(36px)',
+                    transition: `opacity 0.7s ${easing.premium} ${0.1 + index * 0.08}s, transform 0.7s ${easing.premium} ${0.1 + index * 0.08}s, border-color 0.4s ${easing.premium}, box-shadow 0.4s ${easing.premium}`,
+                    '&:hover': {
+                      transform: 'translateY(-4px)',
+                      borderColor: `rgba(${role.accent.rgb}, 0.5)`,
+                      boxShadow: `0 30px 70px -36px rgba(${role.accent.rgb}, 0.55)`,
+                      '& .role-go': { transform: 'translateX(4px)', opacity: 1 },
+                    },
+                    '&:focus-visible': {
+                      outline: `2px solid ${role.accent.main}`,
+                      outlineOffset: 2,
                     },
                   }}
                 >
-                  <IconComponent sx={{ fontSize: 28, color: role.color }} />
+                  <Box
+                    aria-hidden
+                    sx={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      height: 2,
+                      background: `linear-gradient(90deg, transparent, ${role.accent.main}, transparent)`,
+                      opacity: 0.7,
+                    }}
+                  />
+                  <Stack direction="row" spacing={2.5} alignItems="flex-start">
+                    <Box
+                      sx={{
+                        flexShrink: 0,
+                        width: 56,
+                        height: 56,
+                        borderRadius: '14px',
+                        display: 'grid',
+                        placeItems: 'center',
+                        background: role.accent.soft,
+                        border: `1px solid rgba(${role.accent.rgb}, 0.25)`,
+                        color: role.accent.light,
+                      }}
+                    >
+                      <Icon sx={{ fontSize: 26 }} />
+                    </Box>
+                    <Box sx={{ flexGrow: 1 }}>
+                      <Typography variant="h5" sx={{ color: ink.primary, mb: 0.75 }}>
+                        {role.title}
+                      </Typography>
+                      <Typography sx={{ color: ink.secondary, fontSize: '0.92rem', lineHeight: 1.6 }}>
+                        {role.description}
+                      </Typography>
+                      <Stack
+                        direction="row"
+                        spacing={0.75}
+                        alignItems="center"
+                        className="role-go"
+                        sx={{ mt: 2, color: role.accent.light, opacity: 0.75, transition: `all 0.4s ${easing.premium}` }}
+                      >
+                        <Typography sx={{ fontSize: '0.85rem', fontWeight: 600 }}>Continue</Typography>
+                        <ArrowForward sx={{ fontSize: 16 }} />
+                      </Stack>
+                    </Box>
+                  </Stack>
                 </Box>
+              );
+            })}
+          </Box>
 
-                <Typography
-                  variant="h5"
-                  sx={{
-                    fontWeight: 600,
-                    color: 'rgba(255, 255, 255, 0.95)',
-                    mb: 1,
-                    fontSize: '1.25rem',
-                  }}
-                >
-                  {role.title}
-                </Typography>
-
-                <Typography
-                  variant="body2"
-                  sx={{
-                    color: 'rgba(255, 255, 255, 0.5)',
-                    lineHeight: 1.6,
-                    fontSize: '0.9rem',
-                  }}
-                >
-                  {role.description}
-                </Typography>
-              </Box>
-            );
-          })}
-        </Box>
-
-        {/* Footer */}
-        <Box
-          sx={{
-            textAlign: 'center',
-            mt: 8,
-            opacity: visible ? 1 : 0,
-            transform: visible ? 'translateY(0)' : 'translateY(20px)',
-            transition: 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
-            transitionDelay: '0.6s',
-          }}
-        >
           <Typography
-            variant="body2"
-            sx={{ color: 'rgba(255, 255, 255, 0.3)', fontSize: '0.8rem' }}
+            sx={{
+              textAlign: 'center',
+              mt: 8,
+              color: ink.tertiary,
+              fontSize: '0.8rem',
+              opacity: visible ? 1 : 0,
+              transition: `opacity 0.8s ${easing.premium} 0.5s`,
+            }}
           >
-            © {new Date().getFullYear()} Gurukul AI · Transforming Education
+            © {new Date().getFullYear()} Gurukul AI
           </Typography>
         </Box>
       </Container>
-    </Box>
+    </CinematicBackground>
   );
 }
 
