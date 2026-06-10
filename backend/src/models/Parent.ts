@@ -20,6 +20,7 @@ export interface IParent extends Document {
   failedLoginAttempts: number;
   lockedUntil?: Date;
   deletedAt?: Date;
+  isDemo: boolean;
   createdAt: Date;
   updatedAt: Date;
 
@@ -120,6 +121,10 @@ const ParentSchema = new Schema<IParent>(
     deletedAt: {
       type: Date,
       default: null,
+    },
+    isDemo: {
+      type: Boolean,
+      default: false,
     },
   },
   {

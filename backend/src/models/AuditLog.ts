@@ -18,7 +18,15 @@ export type AuditAction =
   | 'role_modification'
   | 'failed_auth'
   | 'account_locked'
-  | 'admin_override';
+  | 'admin_override'
+  | 'account_created'
+  | 'account_updated'
+  | 'account_deactivated'
+  | 'account_reactivated'
+  | 'access_denied'
+  | 'parent_otp_login'
+  | 'otp_delivered'
+  | 'data_reset';
 
 export interface IAuditLog extends Document {
   timestamp: Date;
@@ -64,6 +72,14 @@ const AuditLogSchema = new Schema<IAuditLog>(
           'failed_auth',
           'account_locked',
           'admin_override',
+          'account_created',
+          'account_updated',
+          'account_deactivated',
+          'account_reactivated',
+          'access_denied',
+          'parent_otp_login',
+          'otp_delivered',
+          'data_reset',
         ],
         message: '{VALUE} is not a valid audit action',
       },

@@ -88,20 +88,24 @@ describe('TypingHandler', () => {
         }
       };
 
-      // Set up auth mocks for both connections before creating sockets
-      mockValidateAccessToken
-        .mockResolvedValueOnce({
-          userId: 'user-sender',
-          role: 'student',
-          iat: Math.floor(Date.now() / 1000),
-          exp: Math.floor(Date.now() / 1000) + 900,
-        })
-        .mockResolvedValueOnce({
-          userId: 'user-receiver',
-          role: 'teacher',
-          iat: Math.floor(Date.now() / 1000),
-          exp: Math.floor(Date.now() / 1000) + 900,
-        });
+      // Map token -> identity so each socket gets a deterministic identity
+      // regardless of the order in which the two parallel connections reach
+      // the server's auth middleware. (Order-based mockResolvedValueOnce made
+      // this test flaky: if the receiver's handshake authenticated first it
+      // would be assigned 'user-sender', and the broadcast would carry the
+      // wrong userId.)
+      const nowSec = Math.floor(Date.now() / 1000);
+      const identityByToken: Record<string, { userId: string; role: string }> = {
+        'sender-token': { userId: 'user-sender', role: 'student' },
+        'receiver-token': { userId: 'user-receiver', role: 'teacher' },
+      };
+      mockValidateAccessToken.mockImplementation(async (token: string) => {
+        const identity = identityByToken[token];
+        if (!identity) {
+          throw new Error(`Unexpected token in test: ${token}`);
+        }
+        return { ...identity, iat: nowSec, exp: nowSec + 900 };
+      });
 
       // Connect sender (user-sender)
       senderSocket = ioClient(`http://localhost:${serverPort}`, {

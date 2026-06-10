@@ -24,6 +24,23 @@ dotenv.config({ path: path.join(__dirname, '..', '.env') });
  * course code, parentId, the {student, course} pair, etc.) so re-running the
  * script never creates duplicate records (Requirement 6.5).
  *
+ * Demo-data marker (Requirements 10.1, 10.6):
+ *   Every document this script creates is flagged with `isDemo: true` so the
+ *   environment-guarded reset routine (resetDemoData) can target seed data via
+ *   `deleteMany({ isDemo: true })` without ever touching Real_Records. The
+ *   Student/Faculty/Parent/ParentStudentRelation models declare an explicit
+ *   `isDemo` field (default false); the remaining demo collections here use
+ *   `strict: false` schemas, so the `isDemo: true` marker still persists on the
+ *   inserted Course/Enrollment/Mark/Attendance/Message/SystemMetric documents.
+ *
+ *   This script seeds DEMO accounts only and intentionally stores well-known
+ *   demo plaintext passwords (bcrypt-hashed) for local sign-in. Real users are
+ *   NEVER onboarded here: real onboarding flows exclusively through the
+ *   admin-driven `secure-admin-user-management` create flows
+ *   (studentService/facultyService create → credentialService /
+ *   accountSetupService), which generate a credential or an emailed setup link
+ *   and never store a fabricated plaintext password for a real user (Req 10.6).
+ *
  * The script is plain ESM and runs via `node scripts/seedAllUsers.js`, so it
  * cannot import the TypeScript Mongoose models directly. Instead it declares
  * inline schemas that mirror the real models' field names and bind to the same
@@ -295,6 +312,7 @@ async function seed() {
         role: 'admin',
         isAdmin: true,
         active: true,
+        isDemo: true,
       })
     );
 
@@ -313,6 +331,7 @@ async function seed() {
         role: 'faculty',
         isAdmin: false,
         active: true,
+        isDemo: true,
       })
     );
 
@@ -331,6 +350,7 @@ async function seed() {
         role: 'faculty',
         isAdmin: false,
         active: true,
+        isDemo: true,
       })
     );
 
@@ -349,6 +369,7 @@ async function seed() {
         parentEmail: 'parent@gurukul.edu',
         parentPhone: '9876543210',
         active: true,
+        isDemo: true,
       })
     );
 
@@ -367,6 +388,7 @@ async function seed() {
         parentEmail: 'parent2@gurukul.edu',
         parentPhone: '9876543211',
         active: true,
+        isDemo: true,
       })
     );
 
@@ -384,6 +406,7 @@ async function seed() {
         relationToStudent: 'Father',
         isActive: true,
         isVerified: true,
+        isDemo: true,
       })
     );
 
@@ -401,6 +424,7 @@ async function seed() {
         relationToStudent: 'Mother',
         isActive: true,
         isVerified: true,
+        isDemo: true,
       })
     );
 
@@ -419,6 +443,7 @@ async function seed() {
           parentId: parent._id,
           studentId: student._id,
           isActive: true,
+          isDemo: true,
         })
       );
     }
@@ -439,6 +464,7 @@ async function seed() {
       credits: 4,
       maxStudents: 30,
       active: true,
+      isDemo: true,
     }));
 
     const cs201 = await upsert(Course, 'Course', { code: 'CS201' }, async () => ({
@@ -452,6 +478,7 @@ async function seed() {
       credits: 4,
       maxStudents: 30,
       active: true,
+      isDemo: true,
     }));
 
     const ma101 = await upsert(Course, 'Course', { code: 'MA101' }, async () => ({
@@ -465,6 +492,7 @@ async function seed() {
       credits: 3,
       maxStudents: 30,
       active: true,
+      isDemo: true,
     }));
 
     // ── Enrollments (each Student → at least one Course, Requirement 6.3) ─────
@@ -487,6 +515,7 @@ async function seed() {
           status: 'active',
           grade,
           finalScore,
+          isDemo: true,
         })
       );
       enrollments.push({ enrollment, student, course });
@@ -508,6 +537,7 @@ async function seed() {
             ...tmpl,
             feedback: 'Good effort — keep practicing.',
             aiGenerated: false,
+            isDemo: true,
           })
         );
       }
@@ -535,6 +565,7 @@ async function seed() {
             status,
             recordedBy: course.faculty,
             recordedAt: date,
+            isDemo: true,
           })
         );
       }
@@ -568,6 +599,7 @@ async function seed() {
           messageType: 'academic',
           priority: 'normal',
           deliveryStatus: 'delivered',
+          isDemo: true,
         })
       );
     }
@@ -593,7 +625,7 @@ async function seed() {
       // while still upserting by the stable `key` (no duplicate rows created).
       await SystemMetric.updateOne(
         { key: row.key },
-        { $set: { ...row, capturedAt: new Date() } },
+        { $set: { ...row, capturedAt: new Date(), isDemo: true } },
         { upsert: true }
       );
       note('SystemMetric', false);

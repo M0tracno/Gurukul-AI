@@ -10,3 +10,7 @@ export { default as metricsRoutes } from './metricsRoutes.js';
 export { default as healthRoutes } from './healthRoutes.js';
 export { default as studentMeRoutes } from './studentMeRoutes.js';
 export { default as parentMeRoutes } from './parentMeRoutes.js';
+export { default as accountSetupRoutes } from './accountSetupRoutes.js';
+export { default as parentLinkageRoutes } from './parentLinkageRoutes.js';
+export { default as facultyMeRoutes } from './facultyMeRoutes.js';
+export { default as adminDashboardRoutes } from './adminDashboardRoutes.js';

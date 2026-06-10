@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { authController } from '../controllers/authController.js';
 import { validateRequest } from '../middleware/validateRequest.js';
 import { authMiddleware } from '../middleware/authMiddleware.js';
+import { adminManagementRateLimit } from '../middleware/rateLimiter.js';
 
 const router = Router();
 
@@ -47,15 +48,14 @@ const parentLoginSchema = z.object({
   role: z.literal('parent').optional(),
 }).strict();
 
-const sendOtpSchema = z.object({
+const otpRequestSchema = z.object({
+  studentId: z.string().min(1, 'Student ID is required').trim(),
   phoneNumber: z.string().min(1, 'Phone number is required').trim(),
-  studentId: z.string().optional(),
 }).strict();
 
-const verifyOtpSchema = z.object({
-  phoneNumber: z.string().min(1, 'Phone number is required').trim(),
-  otp: z.string().min(6, 'OTP must be 6 digits').max(6, 'OTP must be 6 digits'),
-  otpId: z.string().min(1, 'OTP ID is required'),
+const otpVerifySchema = z.object({
+  challengeId: z.string().min(1, 'Challenge ID is required').trim(),
+  otp: z.string().regex(/^\d{6}$/, 'OTP must be 6 digits'),
 }).strict();
 
 // --- Routes ---
@@ -109,18 +109,20 @@ router.post(
   authController.parentLogin,
 );
 
-// POST /api/auth/parent/send-otp
+// POST /api/auth/parent/otp/request
 router.post(
-  '/parent/send-otp',
-  validateRequest({ body: sendOtpSchema }),
-  authController.sendOtp,
+  '/parent/otp/request',
+  ...adminManagementRateLimit,
+  validateRequest({ body: otpRequestSchema }),
+  authController.parentOtpRequest,
 );
 
-// POST /api/auth/parent/verify-otp
+// POST /api/auth/parent/otp/verify
 router.post(
-  '/parent/verify-otp',
-  validateRequest({ body: verifyOtpSchema }),
-  authController.verifyOtp,
+  '/parent/otp/verify',
+  ...adminManagementRateLimit,
+  validateRequest({ body: otpVerifySchema }),
+  authController.parentOtpVerify,
 );
 
 export default router;

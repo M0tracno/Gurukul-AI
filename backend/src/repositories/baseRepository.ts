@@ -36,10 +36,13 @@ export class BaseRepository<T extends Document> implements IBaseRepository<T> {
     if (includeDeleted) {
       return filter;
     }
-    return {
-      ...filter,
+    // Compose (AND) the caller's filter with the soft-delete predicate rather
+    // than spreading it in. Spreading would overwrite any `$or` the caller
+    // already set (e.g. search filters), silently dropping their constraints.
+    const softDelete = {
       $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
-    } as QueryFilter<T>;
+    };
+    return { $and: [filter, softDelete] } as QueryFilter<T>;
   }
 
   /**

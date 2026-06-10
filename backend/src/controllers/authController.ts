@@ -1,32 +1,17 @@
 import type { Request, Response } from 'express';
 import type { Document } from 'mongoose';
-import crypto from 'node:crypto';
 
 import { AppError } from '../middleware/errorHandler.js';
-import { success } from '../utils/envelope.js';
+import { success, failure } from '../utils/envelope.js';
 import { authTokenService } from '../services/authTokenService.js';
 import { passwordService } from '../services/passwordService.js';
+import { otpService } from '../services/otpService.js';
 import type { AuthenticatedRequest } from '../middleware/rbacMiddleware.js';
 import type { UserModelType } from '../services/authTokenService.js';
 import type { ModelName } from '../services/passwordService.js';
 import Student from '../models/Student.js';
 import Faculty from '../models/Faculty.js';
 import Parent from '../models/Parent.js';
-
-/**
- * In-memory OTP storage with TTL.
- * Key: otpId, Value: { otp, phoneNumber, expiresAt }
- */
-interface OtpEntry {
-  otp: string;
-  phoneNumber: string;
-  expiresAt: number;
-}
-
-const otpStore = new Map<string, OtpEntry>();
-
-/** OTP validity duration: 5 minutes */
-const OTP_TTL_MS = 5 * 60 * 1000;
 
 /**
  * Map the request body userType to internal model naming conventions.
@@ -52,6 +37,7 @@ interface AuthUser extends Document {
   firstName: string;
   lastName: string;
   password: string;
+  active?: boolean;
   matchPassword(enteredPassword: string): Promise<boolean>;
 }
 
@@ -124,6 +110,14 @@ export const authController = {
 
     if (!user) {
       throw AppError.unauthorized('Invalid email or password');
+    }
+
+    // Enforce the account `active` flag (Requirement 7.3, 7.4).
+    // A deactivated account must not be able to authenticate. Use the standard
+    // invalid-credentials message so account existence is not revealed, while
+    // surfacing a machine-readable ACCOUNT_INACTIVE code for clients that need it.
+    if (user.active === false) {
+      throw new AppError(401, 'ACCOUNT_INACTIVE', 'Invalid email or password');
     }
 
     const userId = user._id.toString();
@@ -337,103 +331,60 @@ export const authController = {
   },
 
   /**
-   * POST /api/auth/parent/send-otp
+   * POST /api/auth/parent/otp/request
    *
-   * Looks up a parent by phoneNumber, generates a 6-digit OTP,
-   * stores it in-memory with a 5-min TTL, and returns the otpId.
+   * Initiates the verified parent OTP login flow. Delegates entirely to
+   * `otpService.request`, which matches the submitted `(studentId, phoneNumber)`
+   * pair against an active `ParentStudentRelation`, and — only on a match —
+   * creates a hashed, single-use, time-limited challenge and dispatches the OTP
+   * via the SMS service.
+   *
+   * Anti-enumeration (Req 4.3, 4.4): the non-throttled path ALWAYS returns the
+   * same generic acknowledgement body and HTTP 200, whether or not the pair
+   * matched, so the response never reveals whether the student, phone, or
+   * linkage exists. The only divergent path is the resend throttle (Req 6.5),
+   * which is reachable only after a successful match and returns HTTP 429 with
+   * a body that reuses the same generic wording.
    */
-  async sendOtp(req: Request, res: Response): Promise<void> {
-    const { phoneNumber } = req.body as { phoneNumber: string; studentId?: string };
+  async parentOtpRequest(req: Request, res: Response): Promise<void> {
+    const { studentId, phoneNumber } = req.body as { studentId: string; phoneNumber: string };
 
-    // Look up parent by phone number
-    const parent = await Parent.findOne({ phoneNumber, deletedAt: null });
-
-    if (!parent) {
-      throw AppError.notFound('No parent found with this phone number');
-    }
-
-    // Generate 6-digit OTP and unique otpId
-    const otp = String(Math.floor(100000 + Math.random() * 900000));
-    const otpId = crypto.randomUUID();
-
-    // Store OTP with 5-minute TTL
-    otpStore.set(otpId, {
-      otp,
-      phoneNumber,
-      expiresAt: Date.now() + OTP_TTL_MS,
+    const result = await otpService.request(studentId, phoneNumber, {
+      ip: req.ip ?? 'unknown',
+      correlationId: req.correlationId,
     });
 
-    // In production, send the OTP via SMS here.
-    // For development, log it (remove in production).
-    if (process.env.NODE_ENV !== 'production') {
-      console.log(`[DEV] OTP for ${phoneNumber}: ${otp}`);
+    if (result.throttled) {
+      // Resend requested inside the minimum interval (Req 6.5). Reuse the
+      // generic acknowledgement wording so no extra information is leaked.
+      res.status(429).json(failure(result.acknowledgement.message));
+      return;
     }
 
-    res.status(200).json(success({
-      otpId,
-      message: 'OTP sent successfully',
-    }));
+    res.status(200).json(result.acknowledgement);
   },
 
   /**
-   * POST /api/auth/parent/verify-otp
+   * POST /api/auth/parent/otp/verify
    *
-   * Validates the OTP against the stored value. If valid, generates a token pair
-   * for the parent and returns it along with parent info.
+   * Completes the parent OTP login flow. Delegates to `otpService.verify`,
+   * which validates the submitted code against the active challenge, enforces
+   * expiry/attempt/single-use rules, and — on success — issues a parent token
+   * pair. Every failure path raises an `AppError` (401) that propagates to the
+   * global error handler with a constant body (Req 6.2).
    */
-  async verifyOtp(req: Request, res: Response): Promise<void> {
-    const { phoneNumber, otp, otpId } = req.body as { phoneNumber: string; otp: string; otpId: string };
+  async parentOtpVerify(req: Request, res: Response): Promise<void> {
+    const { challengeId, otp } = req.body as { challengeId: string; otp: string };
 
-    // Look up stored OTP entry
-    const entry = otpStore.get(otpId);
-
-    if (!entry) {
-      throw AppError.badRequest('Invalid or expired OTP');
-    }
-
-    // Check expiry
-    if (Date.now() > entry.expiresAt) {
-      otpStore.delete(otpId);
-      throw AppError.badRequest('OTP has expired');
-    }
-
-    // Validate phone number matches
-    if (entry.phoneNumber !== phoneNumber) {
-      throw AppError.badRequest('Invalid or expired OTP');
-    }
-
-    // Validate OTP value
-    if (entry.otp !== otp) {
-      throw AppError.badRequest('Invalid or expired OTP');
-    }
-
-    // OTP is valid — remove it (single use)
-    otpStore.delete(otpId);
-
-    // Look up the parent
-    const parent = await Parent.findOne({ phoneNumber, deletedAt: null });
-
-    if (!parent) {
-      throw AppError.notFound('Parent not found');
-    }
-
-    // Generate token pair
-    const tokens = await authTokenService.generateTokenPair(
-      parent._id.toString(),
-      'parent',
-      'Parent',
-    );
+    const tokens = await otpService.verify(challengeId, otp, {
+      ip: req.ip ?? 'unknown',
+      correlationId: req.correlationId,
+    });
 
     res.status(200).json(success({
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,
-      parent: {
-        id: parent._id.toString(),
-        firstName: parent.firstName,
-        lastName: parent.lastName,
-        phoneNumber: parent.phoneNumber,
-        role: 'parent',
-      },
+      role: 'parent',
     }));
   },
 };

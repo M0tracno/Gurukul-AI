@@ -48,6 +48,10 @@ import {
   healthRoutes,
   studentMeRoutes,
   parentMeRoutes,
+  accountSetupRoutes,
+  parentLinkageRoutes,
+  facultyMeRoutes,
+  adminDashboardRoutes,
 } from './routes/index.js';
 
 // Rate limiter configuration
@@ -270,6 +274,20 @@ app.use('/api/marks', markRoutes);
 // Student & Parent self-service routes
 app.use('/api/students', studentMeRoutes);
 app.use('/api/parents', parentMeRoutes);
+
+// Faculty (teacher) self-service routes — mounted after facultyRoutes so the
+// admin-management faculty routes take precedence; `/me/*` paths never collide.
+app.use('/api/faculty', facultyMeRoutes);
+
+// Public account-setup route (no auth — the setup token is the credential).
+// express.json() is already applied globally above.
+app.use('/api/account-setup', accountSetupRoutes);
+
+// Admin-only parent-child linkage management (Requirement 7).
+app.use('/api/admin/parent-linkages', parentLinkageRoutes);
+
+// Admin dashboard summary (Requirements 2.1, 3.1).
+app.use('/api/admin', adminDashboardRoutes);
 
 // Modernized v1 API routes
 app.use('/api/v1/grading', gradingRoutes);

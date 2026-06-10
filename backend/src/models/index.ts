@@ -12,6 +12,8 @@ export { default as AuditLog } from './AuditLog.js';
 export { default as Assessment } from './Assessment.js';
 export { default as Submission } from './Submission.js';
 export { default as PTM } from './PTM.js';
+export { default as OtpChallenge } from './OtpChallenge.js';
+export { default as ParentStudentRelation } from './ParentStudentRelation.js';
 
 export type { IStudent } from './Student.js';
 export type { IFaculty } from './Faculty.js';
@@ -42,3 +44,5 @@ export type {
   GradingStatus,
 } from './Submission.js';
 export type { IPTM, PTMStatus } from './PTM.js';
+export type { IOtpChallenge } from './OtpChallenge.js';
+export type { IParentStudentRelation } from './ParentStudentRelation.js';

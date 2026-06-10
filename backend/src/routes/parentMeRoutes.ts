@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 
+import { dashboardController } from '../controllers/dashboardController.js';
 import { parentMeController } from '../controllers/parentMeController.js';
 import { authMiddleware } from '../middleware/authMiddleware.js';
 import { requireRoles } from '../middleware/rbacMiddleware.js';
@@ -51,6 +52,14 @@ router.get(
   requireRoles('parent'),
   validateRequest({ params: childIdParamSchema, query: dateRangeQuerySchema }),
   parentMeController.getChildAttendance,
+);
+
+// GET /me/dashboard - Get parent's dashboard summary (linked children)
+router.get(
+  '/me/dashboard',
+  authMiddleware,
+  requireRoles('parent'),
+  dashboardController.getParentDashboard,
 );
 
 export default router;
