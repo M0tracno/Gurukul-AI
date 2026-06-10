@@ -1,4 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import {
+  Add as AddIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+  Visibility as ViewIcon,
+  Person as PersonIcon,
+  School as SchoolIcon,
+  FamilyRestroom as FamilyIcon,
+  Email as EmailIcon,
+  Phone as PhoneIcon,
+  Badge as BadgeIcon,
+  Key as KeyIcon,
+  Save as SaveIcon,
+  Cancel as CancelIcon,
+} from '@mui/icons-material';
 import {
   Box,
   Grid,
@@ -38,21 +52,8 @@ import {
   ListItemText,
   ListItemIcon,
 } from '@mui/material';
-import {
-  Add as AddIcon,
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-  Visibility as ViewIcon,
-  Person as PersonIcon,
-  School as SchoolIcon,
-  FamilyRestroom as FamilyIcon,
-  Email as EmailIcon,
-  Phone as PhoneIcon,
-  Badge as BadgeIcon,
-  Key as KeyIcon,
-  Save as SaveIcon,
-  Cancel as CancelIcon,
-} from '@mui/icons-material';
+import React, { useState, useEffect } from 'react';
+
 import AdminService from '../../services/adminService';
 
 const UserManagementNew = () => {
@@ -107,7 +108,7 @@ const UserManagementNew = () => {
       setLoading(true);
       const result = await AdminService.getUsers();
       if (result.success) {
-        setUsers(result.data.users || []);
+        setUsers(Array.isArray(result.data) ? result.data : result.data?.users || []);
       } else {
         showNotification('Error loading users', 'error');
       }

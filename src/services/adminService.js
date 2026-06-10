@@ -112,13 +112,58 @@ class AdminService {
   }
   /**
    * User Management APIs
+   *
+   * The backend exposes admin/teacher list endpoints for faculty and students
+   * (GET /api/faculty and GET /api/students), each returning the standard
+   * envelope `{ success, data: [...], meta }`. There is currently NO admin
+   * parents-list endpoint (`/api/parents` only serves parent self-service
+   * `/me/*` routes), so parents are not fetched here. Each sub-fetch is handled
+   * defensively so a failure in one does not drop the others.
    */
   async getUsers() {
+    // Normalize a raw account record into a common user shape tagged with role.
+    const normalize = (record, role) => ({
+      ...record,
+      id: record._id || record.id,
+      role,
+      firstName: record.firstName,
+      lastName: record.lastName,
+      email: record.email,
+      active: record.active !== undefined ? record.active : true,
+      // Role-specific identifiers (only the relevant one is present).
+      ...(role === 'faculty' && { employeeId: record.employeeId }),
+      ...(role === 'student' && { studentId: record.studentId }),
+      ...(role === 'parent' && { parentId: record.parentId || record._id || record.id }),
+    });
+
+    // Pull the array payload out of the envelope, tolerating a few shapes.
+    const extractList = response => {
+      if (Array.isArray(response)) return response;
+      if (Array.isArray(response?.data)) return response.data;
+      if (Array.isArray(response?.items)) return response.items;
+      if (Array.isArray(response?.data?.items)) return response.data.items;
+      return [];
+    };
+
+    const fetchRole = async (endpoint, role) => {
+      try {
+        const response = await this.databaseService.fetchWithAuth(endpoint);
+        return extractList(response).map(record => normalize(record, role));
+      } catch (error) {
+        console.error(`Error fetching ${role} users:`, error);
+        return [];
+      }
+    };
+
     try {
-      const response = await this.databaseService.fetchWithAuth('/api/admin/auth/users');
+      const [faculty, students] = await Promise.all([
+        fetchRole('/api/faculty', 'faculty'),
+        fetchRole('/api/students', 'student'),
+      ]);
+
       return {
         success: true,
-        data: response.users || response,
+        data: [...students, ...faculty],
       };
     } catch (error) {
       console.error('Error fetching users:', error);

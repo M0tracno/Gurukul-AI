@@ -1,4 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import {
+  Schedule as ScheduleIcon,
+  TrendingUp as TrendingUpIcon,
+  Add as AddIcon,
+  Edit as EditIcon,
+  People as PeopleIcon,
+  Assignment as AssignmentIcon,
+  Quiz as QuizIcon,
+  School as SchoolIcon,
+  AccessTime as TimeIcon,
+  Star as StarIcon,
+} from '@mui/icons-material';
 import {
   Avatar,
   Box,
@@ -19,19 +30,9 @@ import {
   LinearProgress,
   Badge,
 } from '@mui/material';
-import {
-  Schedule as ScheduleIcon,
-  TrendingUp as TrendingUpIcon,
-  Add as AddIcon,
-  Edit as EditIcon,
-  People as PeopleIcon,
-  Assignment as AssignmentIcon,
-  Quiz as QuizIcon,
-  School as SchoolIcon,
-  AccessTime as TimeIcon,
-  Star as StarIcon,
-} from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
+import React, { useState, useEffect } from 'react';
+
 import EnhancedFacultyService from '../../services/enhancedFacultyService';
 
 // Styled components for modern design
@@ -39,7 +40,6 @@ const StyledCard = styled(Card)(({ theme }) => ({
   height: '100%',
   borderRadius: 20,
   background: 'linear-gradient(180deg, #10131A 0%, #08090C 150%)',
-  border: '1px solid rgba(255,255,255,0.08)',
   boxShadow: '0 26px 60px -34px rgba(0,0,0,0.9)',
   transition: 'all 0.3s ease-in-out',
   border: '1px solid rgba(255, 255, 255, 0.2)',
@@ -99,15 +99,44 @@ const FacultyCourses = () => {
         setLoading(true);
         const result = await EnhancedFacultyService.getCourses();
         if (result.success) {
+          const formatSchedule = schedule => {
+            if (Array.isArray(schedule)) {
+              if (schedule.length === 0) return 'Not scheduled';
+              return schedule
+                .map(slot =>
+                  [slot.day, [slot.startTime, slot.endTime].filter(Boolean).join('-')]
+                    .filter(Boolean)
+                    .join(' ')
+                )
+                .filter(Boolean)
+                .join(', ');
+            }
+            return schedule || 'Not scheduled';
+          };
+
+          const computeProgress = course => {
+            // Prefer an explicit, finite progress value from the backend.
+            if (Number.isFinite(course.progress)) {
+              return Math.max(0, Math.min(100, Math.round(course.progress)));
+            }
+            // Only fall back to the assignment/quiz formula when both inputs
+            // are finite numbers; otherwise show 0% (never NaN%).
+            if (Number.isFinite(course.assignments) && Number.isFinite(course.quizzes)) {
+              const computed = (course.assignments + course.quizzes) * 10;
+              return Math.max(0, Math.min(100, Math.round(computed)));
+            }
+            return 0;
+          };
+
           const formattedCourses = result.data.map(course => ({
             id: course.id,
-            name: course.name,
+            name: course.title || course.name,
             code: course.code,
-            students: course.enrolledStudents,
-            schedule: course.schedule,
-            assignments: course.assignments,
-            quizzes: course.quizzes,
-            progress: Math.round((course.assignments + course.quizzes) * 10), // Mock progress calculation
+            students: Number.isFinite(course.enrolledStudents) ? course.enrolledStudents : 0,
+            schedule: formatSchedule(course.schedule),
+            assignments: Number.isFinite(course.assignments) ? course.assignments : 0,
+            quizzes: Number.isFinite(course.quizzes) ? course.quizzes : 0,
+            progress: computeProgress(course),
           }));
           setCourses(formattedCourses);
         } else {
@@ -461,12 +490,12 @@ const FacultyCourses = () => {
                       Course Progress
                     </Typography>
                     <Typography variant="body2" fontWeight="bold" color="primary">
-                      {course.progress}%
+                      {Number.isFinite(course.progress) ? course.progress : 0}%
                     </Typography>
                   </Box>
                   <LinearProgress
                     variant="determinate"
-                    value={course.progress}
+                    value={Number.isFinite(course.progress) ? course.progress : 0}
                     sx={{
                       height: 8,
                       borderRadius: 4,
