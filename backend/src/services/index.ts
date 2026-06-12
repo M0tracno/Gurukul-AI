@@ -75,6 +75,13 @@ export type { MarkFilters } from './markService.js';
 export { auditService, AuditService } from './auditService.js';
 export type { AuditEventParams, AuditRecordEntry, IAuditService } from './auditService.js';
 
+export { feedbackService, FeedbackService } from './feedbackService.js';
+export type {
+  SubmitFeedbackInput,
+  FeedbackDTO,
+  FeedbackReplyDTO,
+} from './feedbackService.js';
+
 export { adminOverrideService, AdminOverrideService } from './adminOverrideService.js';
 export type { AdminOverrideParams } from './adminOverrideService.js';
 
@@ -110,6 +117,9 @@ export type {
 
 export { parentLinkageService, ParentLinkageService } from './parentLinkageService.js';
 export type { LinkageDTO } from './parentLinkageService.js';
+
+export { quizAnalyticsService, QuizAnalyticsService } from './quizAnalyticsService.js';
+export type { QuizAnalytics, AssessmentAnalytics } from './quizAnalyticsService.js';
 
 export { facultyMeService, FacultyMeService } from './facultyMeService.js';
 export type {

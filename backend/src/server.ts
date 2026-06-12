@@ -47,11 +47,14 @@ import {
   metricsRoutes,
   healthRoutes,
   studentMeRoutes,
+  parentRoutes,
   parentMeRoutes,
   accountSetupRoutes,
   parentLinkageRoutes,
   facultyMeRoutes,
   adminDashboardRoutes,
+  messageRoutes,
+  feedbackRoutes,
 } from './routes/index.js';
 
 // Rate limiter configuration
@@ -271,8 +274,20 @@ app.use('/api/enrollment', enrollmentRoutes);
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/marks', markRoutes);
 
+// Messaging REST API (Requirements 1–5, 12). Complements the Socket.IO
+// realtime layer: REST owns conversation history and CRUD.
+app.use('/api/messages', messageRoutes);
+
+// Feedback REST API (Requirements 6–9, 12). Students/parents submit and list
+// their own feedback; teachers list received feedback, reply, and request it.
+app.use('/api/feedback', feedbackRoutes);
+
 // Student & Parent self-service routes
 app.use('/api/students', studentMeRoutes);
+// Admin-management parents list — mounted BEFORE parentMeRoutes so
+// GET /api/parents resolves to the admin list and never collides with the
+// /api/parents/me/* self-service paths (Requirement 10.8).
+app.use('/api/parents', parentRoutes);
 app.use('/api/parents', parentMeRoutes);
 
 // Faculty (teacher) self-service routes — mounted after facultyRoutes so the

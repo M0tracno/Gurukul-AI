@@ -14,6 +14,7 @@ export { default as Submission } from './Submission.js';
 export { default as PTM } from './PTM.js';
 export { default as OtpChallenge } from './OtpChallenge.js';
 export { default as ParentStudentRelation } from './ParentStudentRelation.js';
+export { default as Feedback } from './Feedback.js';
 
 export type { IStudent } from './Student.js';
 export type { IFaculty } from './Faculty.js';
@@ -46,3 +47,9 @@ export type {
 export type { IPTM, PTMStatus } from './PTM.js';
 export type { IOtpChallenge } from './OtpChallenge.js';
 export type { IParentStudentRelation } from './ParentStudentRelation.js';
+export type {
+  IFeedback,
+  IFeedbackModel,
+  IFeedbackReply,
+} from './Feedback.js';
+export { RATING_MIN, RATING_MAX, COMMENT_MAX_LENGTH } from './Feedback.js';

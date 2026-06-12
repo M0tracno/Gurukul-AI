@@ -26,7 +26,12 @@ export type AuditAction =
   | 'access_denied'
   | 'parent_otp_login'
   | 'otp_delivered'
-  | 'data_reset';
+  | 'data_reset'
+  | 'feedback_submitted'
+  | 'feedback_replied'
+  | 'feedback_requested'
+  | 'message_sent'
+  | 'message_deleted';
 
 export interface IAuditLog extends Document {
   timestamp: Date;
@@ -80,6 +85,11 @@ const AuditLogSchema = new Schema<IAuditLog>(
           'parent_otp_login',
           'otp_delivered',
           'data_reset',
+          'feedback_submitted',
+          'feedback_replied',
+          'feedback_requested',
+          'message_sent',
+          'message_deleted',
         ],
         message: '{VALUE} is not a valid audit action',
       },

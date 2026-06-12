@@ -20,6 +20,14 @@ export interface EnvelopeMeta {
   page?: number;
   limit?: number;
   total?: number;
+  /**
+   * Distinguishes a Conversation that exists but has no viewable (non-deleted)
+   * messages (`true`) from a `conversationId` that matches no message at all
+   * (`false`). Carried by the message-thread endpoint only.
+   *
+   * @see Requirement 2.7
+   */
+  conversationExists?: boolean;
 }
 
 /**

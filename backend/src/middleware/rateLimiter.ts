@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from 'express';
 import rateLimit, { ipKeyGenerator } from 'express-rate-limit';
 
 import { auditService } from '../services/auditService.js';
+import { failure } from '../utils/envelope.js';
 import { logger } from '../utils/logger.js';
 import type { AuthenticatedRequest } from './rbacMiddleware.js';
 
@@ -138,3 +139,30 @@ export function failedAuthAuditLogger(
 export const adminManagementRateLimit: Array<
   (req: Request, res: Response, next: NextFunction) => void
 > = [failedAuthAuditLogger, adminRateLimiter];
+
+/** Window/limit for general-purpose write (mutation) endpoints. */
+const WRITE_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
+const WRITE_MAX_REQUESTS = 60; // write requests per IP per window
+
+/**
+ * General-purpose, source-IP keyed rate limiter for write (mutation)
+ * endpoints introduced by this feature — messaging `POST`/`DELETE`, feedback
+ * `POST`, etc. (Requirements 3.7, 5.7, 12.8).
+ *
+ * Unlike {@link adminRateLimiter}, this counts *all* requests (successful and
+ * failed) so that bursts of writes from a single source are throttled
+ * regardless of outcome. On breach it responds with HTTP 429 and the canonical
+ * failure {@link ErrorEnvelope} so clients handle it uniformly. Apply it ahead
+ * of `authMiddleware` on the specific write routes that need it (order:
+ * `Rate_Limiter → auth → rbac → validate → controller`).
+ */
+export const writeRateLimit = rateLimit({
+  windowMs: WRITE_WINDOW_MS,
+  limit: WRITE_MAX_REQUESTS,
+  standardHeaders: true,
+  legacyHeaders: false,
+  // Key by source IP, normalising IPv6 addresses into a subnet so a single
+  // client cannot trivially rotate addresses to evade the limit.
+  keyGenerator: (req: Request): string => ipKeyGenerator(resolveIp(req)),
+  message: failure('Too many requests, please try again later'),
+});

@@ -13,6 +13,57 @@ class ParentService {
     this.baseUrl = env.API_URL;
   }
   /**
+   * Admin: fetch the paginated parents list from the Admin Parents API.
+   *
+   * Mirrors the faculty/student admin list fetches used by AdminService:
+   * it goes through the shared DatabaseService client (same base URL and
+   * Bearer auth header) and unwraps the standard success envelope
+   * `{ success, data, meta: { page, limit, total } }`.
+   *
+   * On a failure envelope, HTTP error, or network error this resolves to a
+   * friendly error result with an empty list and a generic message, never
+   * exposing internal error details (Req 13.6).
+   *
+   * @param {{ page?: number, limit?: number, search?: string }} [params]
+   * @returns {Promise<{ success: boolean, data: Array, meta?: object, error?: string }>}
+   */
+  async getAdminParents(params = {}) {
+    try {
+      const query = new URLSearchParams();
+      if (params.page != null) query.set('page', String(params.page));
+      if (params.limit != null) query.set('limit', String(params.limit));
+      if (params.search) query.set('search', params.search);
+      const qs = query.toString();
+      const endpoint = `/api/parents${qs ? `?${qs}` : ''}`;
+
+      const response = await this.databaseService.fetchWithAuth(endpoint);
+
+      // Unwrap the standard success envelope, tolerating a few shapes.
+      const data = Array.isArray(response)
+        ? response
+        : Array.isArray(response?.data)
+          ? response.data
+          : Array.isArray(response?.data?.items)
+            ? response.data.items
+            : [];
+
+      return {
+        success: true,
+        data,
+        meta: response?.meta || null,
+      };
+    } catch (error) {
+      // Log internally but surface a friendly, detail-free result to callers.
+      console.error('Error fetching admin parents list:', error);
+      return {
+        success: false,
+        error: 'Unable to load parents right now. Please try again.',
+        data: [],
+      };
+    }
+  }
+
+  /**
    * Get parent profile information
    */ async getParentProfile() {
     try {

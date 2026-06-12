@@ -1,4 +1,5 @@
 import DatabaseService from './databaseService';
+import ParentService from './parentService';
 
 /**
  * AdminService - Handles all admin-related API operations
@@ -113,12 +114,15 @@ class AdminService {
   /**
    * User Management APIs
    *
-   * The backend exposes admin/teacher list endpoints for faculty and students
-   * (GET /api/faculty and GET /api/students), each returning the standard
-   * envelope `{ success, data: [...], meta }`. There is currently NO admin
-   * parents-list endpoint (`/api/parents` only serves parent self-service
-   * `/me/*` routes), so parents are not fetched here. Each sub-fetch is handled
-   * defensively so a failure in one does not drop the others.
+   * The backend exposes admin list endpoints for faculty, students, and
+   * parents: GET /api/faculty, GET /api/students, and GET /api/parents, each
+   * returning the standard envelope `{ success, data: [...], meta }`. Faculty
+   * and students are fetched directly through the shared DatabaseService
+   * client; parents go through ParentService.getAdminParents (which uses the
+   * same client/auth pattern and unwraps the envelope). Each sub-fetch is
+   * handled defensively so a failure in one does not drop the others, and any
+   * partial failure surfaces a friendly, detail-free error to the caller
+   * (Req 13.4, 13.6).
    */
   async getUsers() {
     // Normalize a raw account record into a common user shape tagged with role.
@@ -148,22 +152,37 @@ class AdminService {
     const fetchRole = async (endpoint, role) => {
       try {
         const response = await this.databaseService.fetchWithAuth(endpoint);
-        return extractList(response).map(record => normalize(record, role));
+        return { records: extractList(response).map(record => normalize(record, role)), ok: true };
       } catch (error) {
         console.error(`Error fetching ${role} users:`, error);
-        return [];
+        return { records: [], ok: false };
       }
     };
 
+    // Parents are fetched via ParentService so the admin parents wiring lives
+    // alongside the other parent API calls; map its result into the same shape.
+    const fetchParents = async () => {
+      const result = await ParentService.getAdminParents();
+      const records = result.success && Array.isArray(result.data) ? result.data : [];
+      return { records: records.map(record => normalize(record, 'parent')), ok: result.success };
+    };
+
     try {
-      const [faculty, students] = await Promise.all([
+      const [faculty, students, parents] = await Promise.all([
         fetchRole('/api/faculty', 'faculty'),
         fetchRole('/api/students', 'student'),
+        fetchParents(),
       ]);
+
+      const anyFailed = !faculty.ok || !students.ok || !parents.ok;
 
       return {
         success: true,
-        data: [...students, ...faculty],
+        data: [...students.records, ...faculty.records, ...parents.records],
+        // Friendly, detail-free message when one or more lists failed to load.
+        ...(anyFailed && {
+          error: 'Some user records could not be loaded. Please refresh to try again.',
+        }),
       };
     } catch (error) {
       console.error('Error fetching users:', error);

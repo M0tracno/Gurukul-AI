@@ -273,4 +273,190 @@ describe('AuthorizationService', () => {
       }
     });
   });
+
+  describe('assertConversationParticipant', () => {
+    const facultyId = new mongoose.Types.ObjectId();
+    const parentId = new mongoose.Types.ObjectId();
+    const message = {
+      senderId: parentId,
+      senderModel: 'Parent' as const,
+      recipientId: facultyId,
+      recipientModel: 'Faculty' as const,
+    };
+
+    it('should not throw for admin', () => {
+      expect(() => {
+        service.assertConversationParticipant('any-id', 'admin', message);
+      }).not.toThrow();
+    });
+
+    it('should not throw when the teacher is the recipient', () => {
+      expect(() => {
+        service.assertConversationParticipant(facultyId.toString(), 'teacher', message);
+      }).not.toThrow();
+    });
+
+    it('should not throw when the parent is the sender', () => {
+      expect(() => {
+        service.assertConversationParticipant(parentId.toString(), 'parent', message);
+      }).not.toThrow();
+    });
+
+    it('should throw 403 when the user is not a participant', () => {
+      const outsider = new mongoose.Types.ObjectId().toString();
+      try {
+        service.assertConversationParticipant(outsider, 'teacher', message);
+        throw new Error('expected to throw');
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect((error as AppErrorInstance).statusCode).toBe(403);
+        expect((error as AppErrorInstance).message).toContain('participant');
+      }
+    });
+
+    it('should throw 403 when the id matches but the role-to-model mapping does not', () => {
+      // A parent sharing the faculty recipient's raw id must not be treated as a participant.
+      try {
+        service.assertConversationParticipant(facultyId.toString(), 'parent', message);
+        throw new Error('expected to throw');
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect((error as AppErrorInstance).statusCode).toBe(403);
+      }
+    });
+  });
+
+  describe('assertMessageRecipient', () => {
+    const facultyId = new mongoose.Types.ObjectId();
+    const message = {
+      recipientId: facultyId,
+      recipientModel: 'Faculty' as const,
+    };
+
+    it('should not throw for admin', () => {
+      expect(() => {
+        service.assertMessageRecipient('any-id', 'admin', message);
+      }).not.toThrow();
+    });
+
+    it('should not throw when the user is the recipient', () => {
+      expect(() => {
+        service.assertMessageRecipient(facultyId.toString(), 'teacher', message);
+      }).not.toThrow();
+    });
+
+    it('should throw 403 when the user is not the recipient', () => {
+      const other = new mongoose.Types.ObjectId().toString();
+      try {
+        service.assertMessageRecipient(other, 'teacher', message);
+        throw new Error('expected to throw');
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect((error as AppErrorInstance).statusCode).toBe(403);
+        expect((error as AppErrorInstance).message).toContain('recipient');
+      }
+    });
+
+    it('should throw 403 for the sender who is not the recipient', () => {
+      // Recipient-only: even a conversation participant who only sent the message cannot mark it read.
+      try {
+        service.assertMessageRecipient(facultyId.toString(), 'parent', message);
+        throw new Error('expected to throw');
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect((error as AppErrorInstance).statusCode).toBe(403);
+      }
+    });
+  });
+
+  describe('assertMessageParticipant', () => {
+    const facultyId = new mongoose.Types.ObjectId();
+    const parentId = new mongoose.Types.ObjectId();
+    const message = {
+      senderId: parentId,
+      senderModel: 'Parent' as const,
+      recipientId: facultyId,
+      recipientModel: 'Faculty' as const,
+    };
+
+    it('should not throw for admin', () => {
+      expect(() => {
+        service.assertMessageParticipant('any-id', 'admin', message);
+      }).not.toThrow();
+    });
+
+    it('should not throw for the sender', () => {
+      expect(() => {
+        service.assertMessageParticipant(parentId.toString(), 'parent', message);
+      }).not.toThrow();
+    });
+
+    it('should not throw for the recipient', () => {
+      expect(() => {
+        service.assertMessageParticipant(facultyId.toString(), 'teacher', message);
+      }).not.toThrow();
+    });
+
+    it('should throw 403 for a non-participant', () => {
+      const outsider = new mongoose.Types.ObjectId().toString();
+      try {
+        service.assertMessageParticipant(outsider, 'parent', message);
+        throw new Error('expected to throw');
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect((error as AppErrorInstance).statusCode).toBe(403);
+        expect((error as AppErrorInstance).message).toContain('delete');
+      }
+    });
+  });
+
+  describe('assertFeedbackTarget', () => {
+    const teacherId = new mongoose.Types.ObjectId();
+
+    it('should not throw for admin', () => {
+      expect(() => {
+        service.assertFeedbackTarget('any-id', 'admin', {
+          targetType: 'teacher',
+          targetId: teacherId,
+        });
+      }).not.toThrow();
+    });
+
+    it('should not throw when the feedback targets the authenticated teacher', () => {
+      expect(() => {
+        service.assertFeedbackTarget(teacherId.toString(), 'teacher', {
+          targetType: 'teacher',
+          targetId: teacherId,
+        });
+      }).not.toThrow();
+    });
+
+    it('should throw 403 when the feedback targets a different teacher', () => {
+      const otherTeacher = new mongoose.Types.ObjectId();
+      try {
+        service.assertFeedbackTarget(teacherId.toString(), 'teacher', {
+          targetType: 'teacher',
+          targetId: otherTeacher,
+        });
+        throw new Error('expected to throw');
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect((error as AppErrorInstance).statusCode).toBe(403);
+        expect((error as AppErrorInstance).message).toContain('addressed to you');
+      }
+    });
+
+    it('should throw 403 when the feedback targets a course rather than the teacher', () => {
+      try {
+        service.assertFeedbackTarget(teacherId.toString(), 'teacher', {
+          targetType: 'course',
+          targetId: teacherId,
+        });
+        throw new Error('expected to throw');
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect((error as AppErrorInstance).statusCode).toBe(403);
+      }
+    });
+  });
 });

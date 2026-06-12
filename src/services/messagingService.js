@@ -210,10 +210,11 @@ class MessagingService {
 
   /**
    * Send a message
+   * POST /api/messages — returns the canonical success envelope { success, data }.
    */
   async sendMessage(messageData) {
     try {
-      const response = await this.makeAuthenticatedRequest(`${this.apiURL}/send`, {
+      const response = await this.makeAuthenticatedRequest(`${this.apiURL}`, {
         method: 'POST',
         body: JSON.stringify(messageData),
       });
@@ -265,6 +266,7 @@ class MessagingService {
 
   /**
    * Get all conversations for current user
+   * GET /api/messages/conversations — returns { success, data: ConversationSummary[], meta }.
    */
   async getConversations(page = 1, limit = 20) {
     try {
@@ -280,7 +282,8 @@ class MessagingService {
       return {
         success: true,
         data: response.data,
-        pagination: response.pagination,
+        meta: response.meta,
+        pagination: response.meta || response.pagination,
       };
     } catch (error) {
       console.error('Error getting conversations:', error);
@@ -288,7 +291,41 @@ class MessagingService {
         success: false,
         error: error.message,
         data: [],
+        meta: null,
         pagination: null,
+      };
+    }
+  }
+
+  /**
+   * Get a single conversation thread by conversationId.
+   * GET /api/messages/conversations/:conversationId — returns
+   * { success, data: MessageDTO[], meta: { page, limit, total, conversationExists } }.
+   */
+  async getConversationThread(conversationId, page = 1, limit = 50) {
+    try {
+      const queryParams = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+      });
+
+      const response = await this.makeAuthenticatedRequest(
+        `${this.apiURL}/conversations/${encodeURIComponent(conversationId)}?${queryParams}`
+      );
+
+      return {
+        success: true,
+        data: response.data,
+        meta: response.meta,
+        conversationExists: response.meta ? response.meta.conversationExists : undefined,
+      };
+    } catch (error) {
+      console.error('Error getting conversation thread:', error);
+      return {
+        success: false,
+        error: error.message,
+        data: [],
+        meta: null,
       };
     }
   }
@@ -324,11 +361,12 @@ class MessagingService {
 
   /**
    * Mark message as read
+   * PATCH /api/messages/:messageId/read
    */
   async markAsRead(messageId) {
     try {
       const response = await this.makeAuthenticatedRequest(`${this.apiURL}/${messageId}/read`, {
-        method: 'PUT',
+        method: 'PATCH',
       });
 
       return {
@@ -337,6 +375,28 @@ class MessagingService {
       };
     } catch (error) {
       console.error('Error marking message as read:', error);
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  }
+
+  /**
+   * Delete a message (soft delete)
+   * DELETE /api/messages/:messageId
+   */
+  async deleteMessage(messageId) {
+    try {
+      await this.makeAuthenticatedRequest(`${this.apiURL}/${messageId}`, {
+        method: 'DELETE',
+      });
+
+      return {
+        success: true,
+      };
+    } catch (error) {
+      console.error('Error deleting message:', error);
       return {
         success: false,
         error: error.message,

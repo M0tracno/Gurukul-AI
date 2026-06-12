@@ -144,6 +144,7 @@ async function seedTestDatabase() {
   await ParentStudentRelation.create({
     parentId: parent._id,
     studentId: student._id,
+    linkagePhone: parent.phoneNumber,
     isActive: true,
   });
 

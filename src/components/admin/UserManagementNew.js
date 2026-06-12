@@ -109,6 +109,10 @@ const UserManagementNew = () => {
       const result = await AdminService.getUsers();
       if (result.success) {
         setUsers(Array.isArray(result.data) ? result.data : result.data?.users || []);
+        // Surface a friendly, detail-free message if some lists failed to load.
+        if (result.error) {
+          showNotification(result.error, 'warning');
+        }
       } else {
         showNotification('Error loading users', 'error');
       }

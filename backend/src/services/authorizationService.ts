@@ -2,10 +2,42 @@ import mongoose from 'mongoose';
 
 import { AppError } from '../middleware/errorHandler.js';
 import type { UserRole } from '../types/common.js';
+import type { IMessage } from '../models/Message.js';
 import Course from '../models/Course.js';
 import Enrollment from '../models/Enrollment.js';
 import { auditService } from './auditService.js';
 import { redactSecrets, type AuditContext } from '../utils/auditContext.js';
+
+/**
+ * The two participant models a {@link Message} can reference. Messaging is
+ * strictly between a Parent and a Faculty member, so a participant is always
+ * identified by the pair `(id, model)`.
+ */
+type MessageParticipantModel = 'Parent' | 'Faculty';
+
+/**
+ * Minimal shape of a sender on a loaded Message document. Methods accept the
+ * already-loaded record (rather than re-querying) so the service layer keeps
+ * control over the required check ordering (existence-before-ownership for
+ * delete in Req 5.9 vs. ownership-before-existence for mark-read in Req 4.3).
+ */
+type MessageSender = Pick<IMessage, 'senderId' | 'senderModel'>;
+
+/** Minimal shape of a recipient on a loaded Message document. */
+type MessageRecipient = Pick<IMessage, 'recipientId' | 'recipientModel'>;
+
+/** Minimal shape of both participants on a loaded Message document. */
+type MessageParticipants = MessageSender & MessageRecipient;
+
+/**
+ * Minimal shape of a loaded Feedback document needed to authorize a reply.
+ * Declared structurally so the AuthorizationService does not depend on the
+ * Feedback model directly.
+ */
+interface FeedbackTarget {
+  targetType: 'teacher' | 'course';
+  targetId: unknown;
+}
 
 /**
  * Service-level authorization for data isolation.
@@ -182,6 +214,171 @@ export class AuthorizationService {
    */
   isAdmin(role: UserRole): boolean {
     return role === 'admin';
+  }
+
+  /**
+   * Verify that a parent or faculty member is a participant of a Conversation
+   * before any thread content is returned (Req 2.2, 2.3).
+   *
+   * A Conversation is strictly between one Parent and one Faculty member about
+   * one Student, so every Message sharing a `conversationId` has the same
+   * participant pair. The caller therefore passes any single Message from the
+   * Conversation (loaded including soft-deleted messages) and this method
+   * verifies the authenticated user is that message's sender or recipient.
+   * This still rejects with 403 when the Conversation exists but contains no
+   * viewable (non-deleted) messages (Req 2.3). Existence vs. non-existence of
+   * the Conversation itself is handled by the caller (Req 2.6).
+   *
+   * @param ctx - Optional audit context for the requestor; see
+   *   {@link AuthorizationService.assertStudentOwnership} (Req 8.3).
+   */
+  assertConversationParticipant(
+    userId: string,
+    role: UserRole,
+    message: MessageParticipants,
+    ctx?: AuditContext,
+  ): void {
+    if (this.isAdmin(role)) {
+      return;
+    }
+
+    if (!this.isMessageParticipant(userId, role, message)) {
+      this.recordScopeDenial(ctx, 'conversation', undefined);
+      throw AppError.forbidden(
+        'You are not a participant in this conversation',
+      );
+    }
+  }
+
+  /**
+   * Verify that the authenticated user is the recipient of a Message before a
+   * mark-as-read update is applied (Req 4.2).
+   *
+   * The caller passes the loaded Message so it can evaluate this authorization
+   * check before message-existence handling when required (Req 4.3).
+   *
+   * @param ctx - Optional audit context for the requestor; see
+   *   {@link AuthorizationService.assertStudentOwnership} (Req 8.3).
+   */
+  assertMessageRecipient(
+    userId: string,
+    role: UserRole,
+    message: MessageRecipient,
+    ctx?: AuditContext,
+  ): void {
+    if (this.isAdmin(role)) {
+      return;
+    }
+
+    const model = this.messageModelForRole(role);
+    const isRecipient =
+      model !== null &&
+      message.recipientModel === model &&
+      String(message.recipientId) === userId;
+
+    if (!isRecipient) {
+      this.recordScopeDenial(ctx, 'message', undefined);
+      throw AppError.forbidden(
+        'Only the recipient can mark this message as read',
+      );
+    }
+  }
+
+  /**
+   * Verify that the authenticated user is the sender or recipient of a Message
+   * before a soft-delete is applied (Req 5.2).
+   *
+   * @param ctx - Optional audit context for the requestor; see
+   *   {@link AuthorizationService.assertStudentOwnership} (Req 8.3).
+   */
+  assertMessageParticipant(
+    userId: string,
+    role: UserRole,
+    message: MessageParticipants,
+    ctx?: AuditContext,
+  ): void {
+    if (this.isAdmin(role)) {
+      return;
+    }
+
+    if (!this.isMessageParticipant(userId, role, message)) {
+      this.recordScopeDenial(ctx, 'message', undefined);
+      throw AppError.forbidden(
+        'Only the sender or recipient can delete this message',
+      );
+    }
+  }
+
+  /**
+   * Verify that a Feedback document is addressed to the authenticated faculty
+   * member before a reply is persisted (Req 9.2, 9.3).
+   *
+   * The caller loads the Feedback document first (returning 404 when it does
+   * not exist, Req 9.4) and passes it here; only feedback whose `targetType`
+   * is `teacher` and whose `targetId` is the authenticated user is authorized.
+   *
+   * @param ctx - Optional audit context for the requestor; see
+   *   {@link AuthorizationService.assertStudentOwnership} (Req 8.3).
+   */
+  assertFeedbackTarget(
+    userId: string,
+    role: UserRole,
+    feedback: FeedbackTarget,
+    ctx?: AuditContext,
+  ): void {
+    if (this.isAdmin(role)) {
+      return;
+    }
+
+    const isTarget =
+      feedback.targetType === 'teacher' &&
+      String(feedback.targetId) === userId;
+
+    if (!isTarget) {
+      this.recordScopeDenial(ctx, 'feedback', String(feedback.targetId));
+      throw AppError.forbidden(
+        'You can only reply to feedback addressed to you',
+      );
+    }
+  }
+
+  /**
+   * Map an authenticated user's role to the participant model used on Message
+   * documents. Faculty members (`teacher`/`faculty`) map to `Faculty` and
+   * parents map to `Parent`; any other role has no messaging participant model.
+   */
+  private messageModelForRole(role: UserRole): MessageParticipantModel | null {
+    if (role === 'teacher' || role === 'faculty') {
+      return 'Faculty';
+    }
+    if (role === 'parent') {
+      return 'Parent';
+    }
+    return null;
+  }
+
+  /**
+   * Determine whether the authenticated user is the sender or recipient of a
+   * Message, matching both the identifier and the role-to-model mapping so a
+   * parent and faculty member sharing an id can never be confused.
+   */
+  private isMessageParticipant(
+    userId: string,
+    role: UserRole,
+    message: MessageParticipants,
+  ): boolean {
+    const model = this.messageModelForRole(role);
+    if (model === null) {
+      return false;
+    }
+
+    const isSender =
+      message.senderModel === model && String(message.senderId) === userId;
+    const isRecipient =
+      message.recipientModel === model &&
+      String(message.recipientId) === userId;
+
+    return isSender || isRecipient;
   }
 
   /**

@@ -365,15 +365,25 @@ class FacultyService {
   // ============ ENHANCED QUIZ MANAGEMENT METHODS ============
 
   /**
-   * Get comprehensive quiz analytics
+   * Get comprehensive quiz analytics for faculty
+   * Fetches aggregated analytics across all of the authenticated faculty's assessments
    */
   async getQuizAnalytics(quizId = null, timeRange = 'all') {
     try {
       const endpoint = quizId
         ? `/api/quizzes/${quizId}/analytics?timeRange=${timeRange}`
-        : `/api/faculty/quiz-analytics?timeRange=${timeRange}`;
+        : `/api/faculty/me/quiz-analytics?timeRange=${timeRange}`;
 
       const response = await this.databaseService.fetchWithAuth(endpoint);
+      
+      // Unwrap the standard success envelope { success: true, data, meta? }
+      if (response && response.success && response.data) {
+        return {
+          success: true,
+          data: response.data,
+        };
+      }
+      
       return {
         success: true,
         data: response,

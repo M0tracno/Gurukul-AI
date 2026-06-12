@@ -80,4 +80,12 @@ router.get(
   facultyMeController.getDashboard,
 );
 
+// GET /api/faculty/me/quiz-analytics — aggregate/per-assessment quiz analytics.
+router.get(
+  '/me/quiz-analytics',
+  authMiddleware,
+  requireRoles('teacher', 'admin'),
+  facultyMeController.getQuizAnalytics,
+);
+
 export default router;
