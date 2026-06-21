@@ -9,12 +9,7 @@
  * Validates: Requirements 5.2, 5.7
  */
 
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  type UseQueryOptions,
-} from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, type UseQueryOptions } from '@tanstack/react-query';
 import { apiClient } from '../services/apiClient';
 import { queryKeys } from './queryKeys';
 import type { PaginationParams, PaginatedResponse } from '../types';
@@ -76,10 +71,7 @@ export function useEnrollments(
 }
 
 /** Fetch a single enrollment by ID */
-export function useEnrollment(
-  id: string,
-  options?: Partial<UseQueryOptions<Enrollment>>
-) {
+export function useEnrollment(id: string, options?: Partial<UseQueryOptions<Enrollment>>) {
   return useQuery({
     queryKey: queryKeys.enrollment.detail(id),
     queryFn: () => apiClient<Enrollment>(`/api/v1/enrollments/${id}`),
@@ -97,8 +89,7 @@ export function useEnrollmentsByStudent(
 ) {
   return useQuery({
     queryKey: queryKeys.enrollment.byStudent(studentId),
-    queryFn: () =>
-      apiClient<Enrollment[]>(`/api/v1/enrollments/student/${studentId}`),
+    queryFn: () => apiClient<Enrollment[]>(`/api/v1/enrollments/student/${studentId}`),
     staleTime: ENROLLMENT_STALE_TIME,
     gcTime: ENROLLMENT_GC_TIME,
     enabled: !!studentId,
@@ -113,8 +104,7 @@ export function useEnrollmentsByCourse(
 ) {
   return useQuery({
     queryKey: queryKeys.enrollment.byCourse(courseId),
-    queryFn: () =>
-      apiClient<Enrollment[]>(`/api/v1/enrollments/course/${courseId}`),
+    queryFn: () => apiClient<Enrollment[]>(`/api/v1/enrollments/course/${courseId}`),
     staleTime: ENROLLMENT_STALE_TIME,
     gcTime: ENROLLMENT_GC_TIME,
     enabled: !!courseId,
@@ -153,7 +143,7 @@ export function useUpdateEnrollment(id: string) {
   return useMutation({
     mutationFn: (data: UpdateEnrollmentInput) =>
       apiClient<Enrollment>(`/api/v1/enrollments/${id}`, { method: 'PUT', body: data }),
-    onSuccess: (updatedEnrollment) => {
+    onSuccess: updatedEnrollment => {
       queryClient.invalidateQueries({ queryKey: queryKeys.enrollment.lists() });
       queryClient.setQueryData(queryKeys.enrollment.detail(id), updatedEnrollment);
       if (updatedEnrollment.studentId) {
@@ -175,8 +165,7 @@ export function useDeleteEnrollment() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) =>
-      apiClient<void>(`/api/v1/enrollments/${id}`, { method: 'DELETE' }),
+    mutationFn: (id: string) => apiClient<void>(`/api/v1/enrollments/${id}`, { method: 'DELETE' }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.enrollment.all });
       queryClient.invalidateQueries({ queryKey: queryKeys.students.lists() });

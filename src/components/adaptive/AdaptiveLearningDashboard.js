@@ -1,29 +1,51 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Line, Radar, Doughnut } from 'react-chartjs-2';
 import AdaptiveLearningService from '../../services/AdaptiveLearningService';
-import { Alert, Avatar, Badge, Box, Button, Card, CardContent, Chip, CircularProgress, Divider, Grid, LinearProgress, List, ListItem, ListItemIcon, ListItemText, Paper, Tab, Tabs, Typography, toLocaleString } from '@mui/material';
+import {
+  Alert,
+  Avatar,
+  Badge,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  CircularProgress,
+  Divider,
+  Grid,
+  LinearProgress,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Paper,
+  Tab,
+  Tabs,
+  Typography,
+  toLocaleString,
+} from '@mui/material';
 import { Timeline } from '@mui/lab';
-import { 
-  School, 
-  AutoAwesome, 
-  Refresh, 
-  Psychology, 
-  Speed, 
-  Timeline as TimelineIcon, 
-  Analytics, 
-  GpsFixed, 
-  Lightbulb, 
-  Star, 
-  Warning, 
-  BookmarkBorder, 
-  CheckCircle, 
-  Insights, 
-  GraphicEq 
+import {
+  School,
+  AutoAwesome,
+  Refresh,
+  Psychology,
+  Speed,
+  Timeline as TimelineIcon,
+  Analytics,
+  GpsFixed,
+  Lightbulb,
+  Star,
+  Warning,
+  BookmarkBorder,
+  CheckCircle,
+  Insights,
+  GraphicEq,
 } from '@mui/icons-material';
 
 // Phase 3B: Adaptive Learning Dashboard
 // Analytics and insights for personalized learning
-import { 
+import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
@@ -34,7 +56,7 @@ import {
   Legend,
   RadialLinearScale,
   BarElement,
-  ArcElement
+  ArcElement,
 } from 'chart.js';
 
 // Register Chart.js components
@@ -51,49 +73,58 @@ ChartJS.register(
   ArcElement
 );
 
-const AdaptiveLearningDashboard = ({ 
-  studentId, 
-  onPathSelect,
-  onContentAdapt 
-}) => {
+const AdaptiveLearningDashboard = ({ studentId, onPathSelect, onContentAdapt }) => {
   // State management
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState(0);  const [learningProfile, setLearningProfile] = useState(null);
+  const [activeTab, setActiveTab] = useState(0);
+  const [learningProfile, setLearningProfile] = useState(null);
   // const [learningInsights, setLearningInsights] = useState(null); // TODO: Use for insights display
   const [learningPaths, setLearningPaths] = useState([]);
   const [adaptationHistory, setAdaptationHistory] = useState([]);
   const [error, setError] = useState(null);
-    // Services
-  const [adaptiveService, setAdaptiveService] = useState(null);  // Callback functions
-  const handleProfileUpdate = useCallback((data) => {
-    if (data.studentId === studentId) {
-      setLearningProfile(data.profile);
-    }
-  }, [studentId]);
+  // Services
+  const [adaptiveService, setAdaptiveService] = useState(null); // Callback functions
+  const handleProfileUpdate = useCallback(
+    data => {
+      if (data.studentId === studentId) {
+        setLearningProfile(data.profile);
+      }
+    },
+    [studentId]
+  );
 
-  const handlePathGenerated = useCallback((data) => {
-    if (data.studentId === studentId) {
-      setLearningPaths(prev => [...prev, data.path]);
-    }
-  }, [studentId]);
+  const handlePathGenerated = useCallback(
+    data => {
+      if (data.studentId === studentId) {
+        setLearningPaths(prev => [...prev, data.path]);
+      }
+    },
+    [studentId]
+  );
 
-  const handleContentAdapted = useCallback((data) => {
-    if (data.studentId === studentId) {
-      setAdaptationHistory(prev => [...prev, {
-        timestamp: new Date(),
-        contentId: data.contentId,
-        adaptationType: data.adaptationType,
-        effectiveness: data.effectiveness
-      }]);
-    }
-  }, [studentId]);
+  const handleContentAdapted = useCallback(
+    data => {
+      if (data.studentId === studentId) {
+        setAdaptationHistory(prev => [
+          ...prev,
+          {
+            timestamp: new Date(),
+            contentId: data.contentId,
+            adaptationType: data.adaptationType,
+            effectiveness: data.effectiveness,
+          },
+        ]);
+      }
+    },
+    [studentId]
+  );
 
   const initializeService = useCallback(async () => {
     try {
       const service = new AdaptiveLearningService();
       await service.initialize();
       setAdaptiveService(service);
-      
+
       // Setup event listeners
       service.on('profileUpdated', handleProfileUpdate);
       service.on('pathGenerated', handlePathGenerated);
@@ -106,7 +137,7 @@ const AdaptiveLearningDashboard = ({
 
   const loadStudentData = useCallback(async () => {
     if (!adaptiveService || !studentId) return;
-    
+
     try {
       setLoading(true);
 
@@ -120,29 +151,40 @@ const AdaptiveLearningDashboard = ({
           learningPreferences: {
             visualLearner: true,
             practiceOriented: true,
-            challengeLevel: 'medium'
+            challengeLevel: 'medium',
           },
-          performanceHistory: []
+          performanceHistory: [],
         });
       }
 
       setLearningProfile(profile);
-      
+
       // Generate and set learning paths
-      const paths = await adaptiveService.generateLearningPaths(studentId, ['Mathematics', 'Science']);
+      const paths = await adaptiveService.generateLearningPaths(studentId, [
+        'Mathematics',
+        'Science',
+      ]);
       setLearningPaths(paths);
-      
+
       // Get adaptation history
       const history = adaptiveService.adaptationHistory.get(studentId) || [];
       setAdaptationHistory(history);
-      
+
       setLoading(false);
     } catch (error) {
       console.error('Failed to load student data:', error);
       setError(error.message);
       setLoading(false);
     }
-  }, [adaptiveService, studentId, setLoading, setLearningProfile, setLearningPaths, setAdaptationHistory, setError]);
+  }, [
+    adaptiveService,
+    studentId,
+    setLoading,
+    setLearningProfile,
+    setLearningPaths,
+    setAdaptationHistory,
+    setError,
+  ]);
 
   useEffect(() => {
     initializeService();
@@ -151,9 +193,17 @@ const AdaptiveLearningDashboard = ({
   useEffect(() => {
     if (adaptiveService && studentId) {
       loadStudentData();
-    }  }, [adaptiveService, studentId, loadStudentData, handleProfileUpdate, handlePathGenerated, handleContentAdapted]);
+    }
+  }, [
+    adaptiveService,
+    studentId,
+    loadStudentData,
+    handleProfileUpdate,
+    handlePathGenerated,
+    handleContentAdapted,
+  ]);
 
-  const generateNewLearningPath = async (subject) => {
+  const generateNewLearningPath = async subject => {
     try {
       const path = await adaptiveService.generateLearningPath(studentId, subject);
       if (onPathSelect) {
@@ -178,16 +228,16 @@ const AdaptiveLearningDashboard = ({
         data: [65, 75, 80, 85],
         borderColor: 'rgb(75, 192, 192)',
         backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        tension: 0.1
+        tension: 0.1,
       },
       {
         label: 'Engagement Level',
         data: [70, 78, 85, 82],
         borderColor: 'rgb(255, 99, 132)',
         backgroundColor: 'rgba(255, 99, 132, 0.2)',
-        tension: 0.1
-      }
-    ]
+        tension: 0.1,
+      },
+    ],
   };
 
   const learningStyleData = {
@@ -200,17 +250,17 @@ const AdaptiveLearningDashboard = ({
           'rgba(255, 99, 132, 0.2)',
           'rgba(54, 162, 235, 0.2)',
           'rgba(255, 205, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)'
+          'rgba(75, 192, 192, 0.2)',
         ],
         borderColor: [
           'rgba(255, 99, 132, 1)',
           'rgba(54, 162, 235, 1)',
           'rgba(255, 205, 86, 1)',
-          'rgba(75, 192, 192, 1)'
+          'rgba(75, 192, 192, 1)',
         ],
-        borderWidth: 1
-      }
-    ]
+        borderWidth: 1,
+      },
+    ],
   };
 
   const difficultyDistribution = {
@@ -218,14 +268,9 @@ const AdaptiveLearningDashboard = ({
     datasets: [
       {
         data: [15, 45, 30, 10],
-        backgroundColor: [
-          '#4CAF50',
-          '#FF9800',
-          '#F44336',
-          '#9C27B0'
-        ]
-      }
-    ]
+        backgroundColor: ['#4CAF50', '#FF9800', '#F44336', '#9C27B0'],
+      },
+    ],
   };
 
   if (loading) {
@@ -241,11 +286,14 @@ const AdaptiveLearningDashboard = ({
 
   if (error) {
     return (
-      <Alert severity="error" action={
-        <Button color="inherit" size="small" onClick={refreshData}>
-          Retry
-        </Button>
-      }>
+      <Alert
+        severity="error"
+        action={
+          <Button color="inherit" size="small" onClick={refreshData}>
+            Retry
+          </Button>
+        }
+      >
         {error}
       </Alert>
     );
@@ -253,23 +301,19 @@ const AdaptiveLearningDashboard = ({
 
   return (
     <Box sx={{ p: 3 }}>
-      {/* Header */}      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+      {/* Header */}{' '}
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
         <Typography variant="h4" component="h1">
           <AutoAwesome sx={{ mr: 1, verticalAlign: 'middle' }} />
           Adaptive Learning Dashboard
         </Typography>
-        <Button
-          variant="outlined"
-          startIcon={<Refresh />}
-          onClick={refreshData}
-        >
+        <Button variant="outlined" startIcon={<Refresh />} onClick={refreshData}>
           Refresh Data
         </Button>
       </Box>
-
       {/* Learning Profile Overview */}
       <Grid container spacing={3} mb={3}>
-        <Grid size={{xs:12,md:3}}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <Card>
             <CardContent>
               <Box display="flex" alignItems="center" mb={2}>
@@ -278,9 +322,9 @@ const AdaptiveLearningDashboard = ({
                 </Avatar>
                 <Typography variant="h6">Learning Style</Typography>
               </Box>
-              <Chip 
-                label={learningProfile?.learningStyle || 'Mixed'} 
-                color="primary" 
+              <Chip
+                label={learningProfile?.learningStyle || 'Mixed'}
+                color="primary"
                 sx={{ mb: 1 }}
               />
               <Typography variant="body2" color="textSecondary">
@@ -290,7 +334,7 @@ const AdaptiveLearningDashboard = ({
           </Card>
         </Grid>
 
-        <Grid size={{xs:12,md:3}}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <Card>
             <CardContent>
               <Box display="flex" alignItems="center" mb={2}>
@@ -299,9 +343,9 @@ const AdaptiveLearningDashboard = ({
                 </Avatar>
                 <Typography variant="h6">Current Level</Typography>
               </Box>
-              <Chip 
-                label={learningProfile?.currentLevel || 'Intermediate'} 
-                color="success" 
+              <Chip
+                label={learningProfile?.currentLevel || 'Intermediate'}
+                color="success"
                 sx={{ mb: 1 }}
               />
               <Typography variant="body2" color="textSecondary">
@@ -311,9 +355,11 @@ const AdaptiveLearningDashboard = ({
           </Card>
         </Grid>
 
-        <Grid size={{xs:12,md:3}}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <Card>
-            <CardContent>              <Box display="flex" alignItems="center" mb={2}>
+            <CardContent>
+              {' '}
+              <Box display="flex" alignItems="center" mb={2}>
                 <Avatar sx={{ bgcolor: 'warning.main', mr: 2 }}>
                   <TimelineIcon />
                 </Avatar>
@@ -329,7 +375,7 @@ const AdaptiveLearningDashboard = ({
           </Card>
         </Grid>
 
-        <Grid size={{xs:12,md:3}}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <Card>
             <CardContent>
               <Box display="flex" alignItems="center" mb={2}>
@@ -348,26 +394,25 @@ const AdaptiveLearningDashboard = ({
           </Card>
         </Grid>
       </Grid>
-
       {/* Tabs */}
       <Paper sx={{ width: '100%', mb: 3 }}>
         <Tabs
           value={activeTab}
           onChange={(e, newValue) => setActiveTab(newValue)}
           variant="scrollable"
-          scrollButtons="auto"        >
+          scrollButtons="auto"
+        >
           <Tab label="Learning Analytics" icon={<Analytics />} />
           <Tab label="Personalized Paths" icon={<GpsFixed />} />
           <Tab label="Adaptation History" icon={<AutoAwesome />} />
           <Tab label="Recommendations" icon={<Lightbulb />} />
         </Tabs>
       </Paper>
-
       {/* Tab Content */}
       {activeTab === 0 && (
         <Grid container spacing={3}>
           {/* Learning Progress Chart */}
-          <Grid size={{xs:12,md:8}}>
+          <Grid size={{ xs: 12, md: 8 }}>
             <Card>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
@@ -379,7 +424,7 @@ const AdaptiveLearningDashboard = ({
           </Grid>
 
           {/* Learning Style Radar */}
-          <Grid size={{xs:12,md:4}}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <Card>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
@@ -391,7 +436,7 @@ const AdaptiveLearningDashboard = ({
           </Grid>
 
           {/* Difficulty Distribution */}
-          <Grid size={{xs:12,md:6}}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Card>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
@@ -403,7 +448,7 @@ const AdaptiveLearningDashboard = ({
           </Grid>
 
           {/* Strengths and Weaknesses */}
-          <Grid size={{xs:12,md:6}}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Card>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
@@ -415,11 +460,11 @@ const AdaptiveLearningDashboard = ({
                     Strengths
                   </Typography>
                   {learningProfile?.strengths?.map((strength, index) => (
-                    <Chip 
+                    <Chip
                       key={index}
-                      label={strength} 
-                      size="small" 
-                      color="success" 
+                      label={strength}
+                      size="small"
+                      color="success"
                       variant="outlined"
                       sx={{ mr: 1, mb: 1 }}
                     />
@@ -431,11 +476,11 @@ const AdaptiveLearningDashboard = ({
                     Areas for Improvement
                   </Typography>
                   {learningProfile?.weaknesses?.map((weakness, index) => (
-                    <Chip 
+                    <Chip
                       key={index}
-                      label={weakness} 
-                      size="small" 
-                      color="warning" 
+                      label={weakness}
+                      size="small"
+                      color="warning"
                       variant="outlined"
                       sx={{ mr: 1, mb: 1 }}
                     />
@@ -446,15 +491,15 @@ const AdaptiveLearningDashboard = ({
           </Grid>
         </Grid>
       )}
-
       {activeTab === 1 && (
         <Grid container spacing={3}>
           {/* Active Learning Paths */}
-          <Grid size={{xs:12,md:8}}>
+          <Grid size={{ xs: 12, md: 8 }}>
             <Card>
               <CardContent>
                 <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                  <Typography variant="h6">Active Learning Paths</Typography>                  <Button
+                  <Typography variant="h6">Active Learning Paths</Typography>{' '}
+                  <Button
                     variant="contained"
                     startIcon={<GpsFixed />}
                     onClick={() => generateNewLearningPath('mathematics')}
@@ -462,7 +507,7 @@ const AdaptiveLearningDashboard = ({
                     Generate New Path
                   </Button>
                 </Box>
-                
+
                 {learningPaths.length === 0 ? (
                   <Alert severity="info">
                     No active learning paths. Generate a personalized path to get started!
@@ -483,9 +528,9 @@ const AdaptiveLearningDashboard = ({
                                   {path.modules.length} modules • {path.estimatedDuration} minutes
                                 </Typography>
                                 <Box mt={1}>
-                                  <LinearProgress 
-                                    variant="determinate" 
-                                    value={65} 
+                                  <LinearProgress
+                                    variant="determinate"
+                                    value={65}
                                     sx={{ height: 8, borderRadius: 4 }}
                                   />
                                   <Typography variant="caption" color="textSecondary">
@@ -496,8 +541,8 @@ const AdaptiveLearningDashboard = ({
                             }
                           />
                           <Badge badgeContent="Active" color="success">
-                            <Button 
-                              variant="outlined" 
+                            <Button
+                              variant="outlined"
                               size="small"
                               onClick={() => onPathSelect && onPathSelect(path)}
                             >
@@ -515,35 +560,33 @@ const AdaptiveLearningDashboard = ({
           </Grid>
 
           {/* Path Recommendations */}
-          <Grid size={{xs:12,md:4}}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <Card>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
                   Recommended Subjects
                 </Typography>
                 <List dense>
-                  {['Mathematics', 'Science', 'Programming', 'Language Arts', 'History'].map((subject) => (
-                    <ListItem 
-                      key={subject}
-                      button
-                      onClick={() => generateNewLearningPath(subject.toLowerCase())}
-                    >
-                      <ListItemIcon>
-                        <BookmarkBorder />
-                      </ListItemIcon>
-                      <ListItemText 
-                        primary={subject}
-                        secondary="Personalized path available"
-                      />
-                    </ListItem>
-                  ))}
+                  {['Mathematics', 'Science', 'Programming', 'Language Arts', 'History'].map(
+                    subject => (
+                      <ListItem
+                        key={subject}
+                        button
+                        onClick={() => generateNewLearningPath(subject.toLowerCase())}
+                      >
+                        <ListItemIcon>
+                          <BookmarkBorder />
+                        </ListItemIcon>
+                        <ListItemText primary={subject} secondary="Personalized path available" />
+                      </ListItem>
+                    )
+                  )}
                 </List>
               </CardContent>
             </Card>
           </Grid>
         </Grid>
       )}
-
       {activeTab === 2 && (
         <Card>
           <CardContent>
@@ -552,12 +595,15 @@ const AdaptiveLearningDashboard = ({
             </Typography>
             {adaptationHistory.length === 0 ? (
               <Alert severity="info">
-                No adaptations recorded yet. Adaptations will appear here as you interact with content.
+                No adaptations recorded yet. Adaptations will appear here as you interact with
+                content.
               </Alert>
             ) : (
               <List>
                 {adaptationHistory.map((adaptation, index) => (
-                  <React.Fragment key={index}>                <ListItem>
+                  <React.Fragment key={index}>
+                    {' '}
+                    <ListItem>
                       <ListItemIcon>
                         <AutoAwesome color="primary" />
                       </ListItemIcon>
@@ -570,7 +616,7 @@ const AdaptiveLearningDashboard = ({
                             </Typography>
                             <Box mt={1}>
                               {adaptation.adaptations.map((adapt, i) => (
-                                <Chip 
+                                <Chip
                                   key={i}
                                   label={adapt.type}
                                   size="small"
@@ -591,11 +637,10 @@ const AdaptiveLearningDashboard = ({
           </CardContent>
         </Card>
       )}
-
       {activeTab === 3 && (
         <Grid container spacing={3}>
           {/* AI Recommendations */}
-          <Grid size={{xs:12,md:6}}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Card>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
@@ -636,9 +681,11 @@ const AdaptiveLearningDashboard = ({
           </Grid>
 
           {/* Study Schedule Optimization */}
-          <Grid size={{xs:12,md:6}}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Card>
-              <CardContent>                <Typography variant="h6" gutterBottom>
+              <CardContent>
+                {' '}
+                <Typography variant="h6" gutterBottom>
                   <TimelineIcon sx={{ verticalAlign: 'middle', mr: 1 }} />
                   Optimized Study Schedule
                 </Typography>
@@ -675,4 +722,3 @@ const AdaptiveLearningDashboard = ({
 };
 
 export default AdaptiveLearningDashboard;
-

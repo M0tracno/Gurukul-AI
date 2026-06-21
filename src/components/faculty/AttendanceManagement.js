@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Close as CloseIcon, 
-  History as HistoryIcon, 
+import {
+  Close as CloseIcon,
+  History as HistoryIcon,
   Save as SaveIcon,
   School as SchoolIcon,
   People as PeopleIcon,
@@ -10,7 +10,7 @@ import {
   Schedule as ScheduleIcon,
   Analytics as AnalyticsIcon,
   TrendingUp as TrendingUpIcon,
-  Refresh as RefreshIcon
+  Refresh as RefreshIcon,
 } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 import makeStyles from '../../utils/makeStylesCompat';
@@ -18,45 +18,45 @@ import { useDatabase } from '../../hooks/useDatabase';
 import EnhancedFacultyService from '../../services/enhancedFacultyService';
 import { format } from 'date-fns';
 
-import { 
-  Alert, 
-  Box, 
-  Button, 
+import {
+  Alert,
+  Box,
+  Button,
   Card,
   CardContent,
   Chip,
-  CircularProgress, 
-  Dialog, 
-  DialogActions, 
-  DialogContent, 
-  DialogTitle, 
-  FormControl, 
-  Grid, 
-  IconButton, 
-  InputLabel, 
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  Grid,
+  IconButton,
+  InputLabel,
   LinearProgress,
-  MenuItem, 
-  Paper, 
-  Select, 
-  Snackbar, 
+  MenuItem,
+  Paper,
+  Select,
+  Snackbar,
   Table,
   TableBody,
   TableCell,
-  TableContainer, 
-  TableHead, 
-  TableRow, 
-  TextField, 
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField,
   Typography,
   Tooltip,
-  Badge
+  Badge,
 } from '@mui/material';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
     minHeight: '100vh',
-    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    padding: theme.spacing(3)
+    background: 'linear-gradient(135deg, #E3A648 0%, #B97E26 100%)',
+    padding: theme.spacing(3),
   },
   paper: {
     padding: theme.spacing(4),
@@ -65,11 +65,11 @@ const useStyles = makeStyles((theme) => ({
     background: 'rgba(255, 255, 255, 0.95)',
     backdropFilter: 'blur(20px)',
     border: '1px solid rgba(255, 255, 255, 0.2)',
-    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
   },
   title: {
     fontWeight: 700,
-    background: 'linear-gradient(45deg, #667eea, #764ba2)',
+    background: 'linear-gradient(45deg, #E3A648, #B97E26)',
     backgroundClip: 'text',
     WebkitBackgroundClip: 'text',
     WebkitTextFillColor: 'transparent',
@@ -77,37 +77,38 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(3),
     display: 'flex',
     alignItems: 'center',
-    gap: theme.spacing(2)
+    gap: theme.spacing(2),
   },
   statsContainer: {
-    marginBottom: theme.spacing(4)
+    marginBottom: theme.spacing(4),
   },
   statCard: {
     height: '100%',
-    background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)',
+    background:
+      'linear-gradient(135deg, rgba(227, 166, 72, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)',
     borderRadius: 16,
-    border: '1px solid rgba(102, 126, 234, 0.2)',
+    border: '1px solid rgba(227, 166, 72, 0.2)',
     transition: 'all 0.3s ease',
     '&:hover': {
       transform: 'translateY(-4px)',
-      boxShadow: '0 12px 40px rgba(102, 126, 234, 0.2)'
-    }
+      boxShadow: '0 12px 40px rgba(227, 166, 72, 0.2)',
+    },
   },
   statIcon: {
     fontSize: '3rem',
-    color: '#667eea',
-    marginBottom: theme.spacing(1)
+    color: '#E3A648',
+    marginBottom: theme.spacing(1),
   },
   statValue: {
     fontSize: '2rem',
     fontWeight: 700,
-    color: '#2c3e50'
+    color: '#2c3e50',
   },
   statLabel: {
     fontSize: '0.875rem',
     color: '#7f8c8d',
     textTransform: 'uppercase',
-    letterSpacing: '0.5px'
+    letterSpacing: '0.5px',
   },
   formControl: {
     margin: theme.spacing(1),
@@ -117,22 +118,22 @@ const useStyles = makeStyles((theme) => ({
       background: 'rgba(255, 255, 255, 0.9)',
       backdropFilter: 'blur(10px)',
       '& fieldset': {
-        borderColor: 'rgba(102, 126, 234, 0.3)'
+        borderColor: 'rgba(227, 166, 72, 0.3)',
       },
       '&:hover fieldset': {
-        borderColor: 'rgba(102, 126, 234, 0.6)'
+        borderColor: 'rgba(227, 166, 72, 0.6)',
       },
       '&.Mui-focused fieldset': {
-        borderColor: '#667eea'
-      }
-    }
+        borderColor: '#E3A648',
+      },
+    },
   },
   dateField: {
     '& .MuiOutlinedInput-root': {
       borderRadius: 12,
       background: 'rgba(255, 255, 255, 0.9)',
-      backdropFilter: 'blur(10px)'
-    }
+      backdropFilter: 'blur(10px)',
+    },
   },
   tableContainer: {
     marginTop: theme.spacing(3),
@@ -140,58 +141,58 @@ const useStyles = makeStyles((theme) => ({
     background: 'rgba(255, 255, 255, 0.9)',
     backdropFilter: 'blur(10px)',
     border: '1px solid rgba(255, 255, 255, 0.3)',
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   headerRow: {
-    background: 'linear-gradient(135deg, #667eea, #764ba2)',
+    background: 'linear-gradient(135deg, #E3A648, #B97E26)',
     '& .MuiTableCell-head': {
       color: 'white',
       fontWeight: 700,
-      fontSize: '1rem'
-    }
+      fontSize: '1rem',
+    },
   },
   modernTable: {
     '& .MuiTableCell-root': {
       borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
-      padding: theme.spacing(2)
+      padding: theme.spacing(2),
     },
     '& .MuiTableRow-root': {
       transition: 'all 0.3s ease',
       '&:hover': {
-        backgroundColor: 'rgba(102, 126, 234, 0.05)',
+        backgroundColor: 'rgba(227, 166, 72, 0.05)',
         transform: 'translateY(-1px)',
-        boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
-      }
-    }
+        boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)',
+      },
+    },
   },
   statusCell: {
     minWidth: 150,
     '& .MuiFormControl-root': {
       '& .MuiOutlinedInput-root': {
         borderRadius: 10,
-        background: 'rgba(255, 255, 255, 0.8)'
-      }
-    }
+        background: 'rgba(255, 255, 255, 0.8)',
+      },
+    },
   },
   attendanceChip: {
     fontWeight: 600,
     borderRadius: 20,
-    padding: theme.spacing(0.5, 1.5)
+    padding: theme.spacing(0.5, 1.5),
   },
   presentChip: {
     background: 'linear-gradient(45deg, #4caf50, #45a049)',
-    color: 'white'
+    color: 'white',
   },
   absentChip: {
     background: 'linear-gradient(45deg, #f44336, #d32f2f)',
-    color: 'white'
+    color: 'white',
   },
   lateChip: {
     background: 'linear-gradient(45deg, #ff9800, #f57c00)',
-    color: 'white'
+    color: 'white',
   },
   primaryButton: {
-    background: 'linear-gradient(45deg, #667eea, #764ba2)',
+    background: 'linear-gradient(45deg, #E3A648, #B97E26)',
     color: 'white',
     borderRadius: 12,
     textTransform: 'none',
@@ -200,14 +201,14 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(1),
     transition: 'all 0.3s ease',
     '&:hover': {
-      background: 'linear-gradient(45deg, #5a6fd8, #6a4190)',
+      background: 'linear-gradient(45deg, #C68F32, #8C5D17)',
       transform: 'translateY(-2px)',
-      boxShadow: '0 8px 25px rgba(102, 126, 234, 0.3)'
+      boxShadow: '0 8px 25px rgba(227, 166, 72, 0.3)',
     },
     '&:disabled': {
       opacity: 0.6,
-      transform: 'none'
-    }
+      transform: 'none',
+    },
   },
   secondaryButton: {
     borderRadius: 12,
@@ -215,100 +216,106 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 600,
     padding: theme.spacing(1.5, 3),
     marginLeft: theme.spacing(1),
-    border: '2px solid #667eea',
-    color: '#667eea',
+    border: '2px solid #E3A648',
+    color: '#E3A648',
     transition: 'all 0.3s ease',
     '&:hover': {
-      background: 'rgba(102, 126, 234, 0.1)',
+      background: 'rgba(227, 166, 72, 0.1)',
       transform: 'translateY(-2px)',
-      boxShadow: '0 8px 25px rgba(102, 126, 234, 0.2)'
-    }
+      boxShadow: '0 8px 25px rgba(227, 166, 72, 0.2)',
+    },
   },
   refreshButton: {
     borderRadius: '50%',
     minWidth: 48,
     width: 48,
     height: 48,
-    background: 'linear-gradient(45deg, #667eea, #764ba2)',
+    background: 'linear-gradient(45deg, #E3A648, #B97E26)',
     color: 'white',
     '&:hover': {
-      background: 'linear-gradient(45deg, #5a6fd8, #6a4190)',
-      transform: 'rotate(180deg) scale(1.1)'
-    }
+      background: 'linear-gradient(45deg, #C68F32, #8C5D17)',
+      transform: 'rotate(180deg) scale(1.1)',
+    },
   },
   attendancePercentage: {
     fontSize: '1.5rem',
     fontWeight: 700,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   percentageGood: {
     color: '#4caf50',
     background: 'linear-gradient(45deg, #4caf50, #45a049)',
     backgroundClip: 'text',
     WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent'
+    WebkitTextFillColor: 'transparent',
   },
   percentageWarning: {
     color: '#ff9800',
     background: 'linear-gradient(45deg, #ff9800, #f57c00)',
     backgroundClip: 'text',
     WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent'
+    WebkitTextFillColor: 'transparent',
   },
   percentageBad: {
     color: '#f44336',
     background: 'linear-gradient(45deg, #f44336, #d32f2f)',
     backgroundClip: 'text',
     WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent'
+    WebkitTextFillColor: 'transparent',
   },
   noDataContainer: {
     textAlign: 'center',
     padding: theme.spacing(6),
     '& .MuiTypography-root': {
       color: theme.palette.text.secondary,
-      fontWeight: 500
-    }
+      fontWeight: 500,
+    },
   },
   emptyStateIcon: {
     fontSize: '4rem',
     color: theme.palette.text.secondary,
-    marginBottom: theme.spacing(2)
+    marginBottom: theme.spacing(2),
   },
   modernDialog: {
     '& .MuiDialog-paper': {
       borderRadius: 20,
       background: 'rgba(255, 255, 255, 0.95)',
       backdropFilter: 'blur(20px)',
-      border: '1px solid rgba(255, 255, 255, 0.2)'
-    }
+      border: '1px solid rgba(255, 255, 255, 0.2)',
+    },
   },
   sectionHeader: {
     fontWeight: 600,
     marginBottom: theme.spacing(2),
     fontSize: '1.25rem',
-    color: '#2c3e50'
+    color: '#2c3e50',
   },
   historyTable: {
     borderRadius: 12,
     overflow: 'hidden',
-    marginTop: theme.spacing(2)
+    marginTop: theme.spacing(2),
   },
   progressBar: {
     borderRadius: 10,
     height: 8,
-    marginTop: theme.spacing(1)
-  }
+    marginTop: theme.spacing(1),
+  },
 }));
 
 const AttendanceManagement = () => {
   const theme = useTheme();
   const classes = useStyles();
   const {
-    loading, error,
-    getAllCourses, getMyTeachingCourses, getStudentsByClass,
-    recordAttendance, updateAttendance, getAttendance, getCourseAttendance,
-    getStudentAttendancePercentage
+    loading,
+    error,
+    getAllCourses,
+    getMyTeachingCourses,
+    getStudentsByClass,
+    recordAttendance,
+    updateAttendance,
+    getAttendance,
+    getCourseAttendance,
+    getStudentAttendancePercentage,
   } = useDatabase();
   // Enhanced Faculty Service instance (use the exported singleton)
   const enhancedFacultyService = EnhancedFacultyService;
@@ -329,7 +336,7 @@ const AttendanceManagement = () => {
     totalStudents: 0,
     presentToday: 0,
     absentToday: 0,
-    attendanceRate: 0
+    attendanceRate: 0,
   });
 
   // Fetch courses taught by faculty
@@ -338,7 +345,7 @@ const AttendanceManagement = () => {
       try {
         // Try multiple sources for course data
         let result = await getMyTeachingCourses();
-        
+
         // Fallback to enhanced service if database service fails
         if (!result.success || !result.data || result.data.length === 0) {
           const enhancedResult = await enhancedFacultyService.getCourses();
@@ -356,9 +363,27 @@ const AttendanceManagement = () => {
         } else {
           // Fallback to mock data
           const mockCourses = [
-            { id: 'CS101', name: 'Introduction to Computer Science', code: 'CS101', classId: '10', section: 'A' },
-            { id: 'CS201', name: 'Data Structures & Algorithms', code: 'CS201', classId: '11', section: 'B' },
-            { id: 'CS301', name: 'Software Engineering', code: 'CS301', classId: '12', section: 'A' }
+            {
+              id: 'CS101',
+              name: 'Introduction to Computer Science',
+              code: 'CS101',
+              classId: '10',
+              section: 'A',
+            },
+            {
+              id: 'CS201',
+              name: 'Data Structures & Algorithms',
+              code: 'CS201',
+              classId: '11',
+              section: 'B',
+            },
+            {
+              id: 'CS301',
+              name: 'Software Engineering',
+              code: 'CS301',
+              classId: '12',
+              section: 'A',
+            },
           ];
           setCourses(mockCourses);
           if (!selectedCourse) {
@@ -370,7 +395,7 @@ const AttendanceManagement = () => {
         setSnackbar({
           open: true,
           message: 'Error loading courses. Using sample data.',
-          severity: 'warning'
+          severity: 'warning',
         });
       }
     };
@@ -388,7 +413,7 @@ const AttendanceManagement = () => {
             totalStudents: stats.data.totalStudents || 108,
             presentToday: Math.floor((stats.data.totalStudents || 108) * 0.85), // Mock 85% attendance
             absentToday: Math.floor((stats.data.totalStudents || 108) * 0.15),
-            attendanceRate: stats.data.attendanceRate || 85
+            attendanceRate: stats.data.attendanceRate || 85,
           });
         }
       } catch (error) {
@@ -410,14 +435,14 @@ const AttendanceManagement = () => {
 
         // Try database service first
         let result = await getStudentsByClass(course.classId, course.section);
-        
+
         // Fallback to enhanced service
         if (!result.success || !result.data || result.data.length === 0) {
           const enhancedResult = await enhancedFacultyService.getStudents();
           if (enhancedResult.success) {
             // Filter students by course
-            const filteredStudents = enhancedResult.data.filter(student => 
-              student.courses && student.courses.includes(selectedCourse)
+            const filteredStudents = enhancedResult.data.filter(
+              student => student.courses && student.courses.includes(selectedCourse)
             );
             result = { success: true, data: filteredStudents };
           }
@@ -425,7 +450,7 @@ const AttendanceManagement = () => {
 
         if (result.success && result.data && result.data.length > 0) {
           setStudents(result.data);
-          
+
           // Initialize attendance with default values
           const newAttendance = {};
           result.data.forEach(student => {
@@ -448,10 +473,10 @@ const AttendanceManagement = () => {
             { id: 'S1005', firstName: 'Daniel', lastName: 'Miller', rollNumber: 'CS2024005' },
             { id: 'S1006', firstName: 'Olivia', lastName: 'Martinez', rollNumber: 'CS2024006' },
             { id: 'S1007', firstName: 'James', lastName: 'Anderson', rollNumber: 'CS2024007' },
-            { id: 'S1008', firstName: 'Isabella', lastName: 'Garcia', rollNumber: 'CS2024008' }
+            { id: 'S1008', firstName: 'Isabella', lastName: 'Garcia', rollNumber: 'CS2024008' },
           ];
           setStudents(mockStudents);
-          
+
           const newAttendance = {};
           mockStudents.forEach(student => {
             newAttendance[student.id] = 'present';
@@ -463,7 +488,7 @@ const AttendanceManagement = () => {
         setSnackbar({
           open: true,
           message: 'Error loading students. Using sample data.',
-          severity: 'warning'
+          severity: 'warning',
         });
       }
     };
@@ -485,8 +510,8 @@ const AttendanceManagement = () => {
       if (selectedCourse) {
         const studentsResult = await enhancedFacultyService.getStudents();
         if (studentsResult.success) {
-          const filteredStudents = studentsResult.data.filter(student => 
-            student.courses && student.courses.includes(selectedCourse)
+          const filteredStudents = studentsResult.data.filter(
+            student => student.courses && student.courses.includes(selectedCourse)
           );
           setStudents(filteredStudents);
         }
@@ -499,21 +524,21 @@ const AttendanceManagement = () => {
           totalStudents: stats.data.totalStudents || 108,
           presentToday: Math.floor((stats.data.totalStudents || 108) * 0.85),
           absentToday: Math.floor((stats.data.totalStudents || 108) * 0.15),
-          attendanceRate: stats.data.attendanceRate || 85
+          attendanceRate: stats.data.attendanceRate || 85,
         });
       }
 
       setSnackbar({
         open: true,
         message: 'Data refreshed successfully',
-        severity: 'success'
+        severity: 'success',
       });
     } catch (error) {
       console.error('Error refreshing data:', error);
       setSnackbar({
         open: true,
         message: 'Error refreshing data',
-        severity: 'error'
+        severity: 'error',
       });
     } finally {
       setRefreshing(false);
@@ -523,7 +548,7 @@ const AttendanceManagement = () => {
   // Calculate attendance statistics for current selection
   const calculateAttendanceStats = () => {
     if (!students.length) return { present: 0, absent: 0, late: 0, percentage: 0 };
-    
+
     const present = Object.values(attendance).filter(status => status === 'present').length;
     const absent = Object.values(attendance).filter(status => status === 'absent').length;
     const late = Object.values(attendance).filter(status => status === 'late').length;
@@ -536,12 +561,12 @@ const AttendanceManagement = () => {
   const currentStats = calculateAttendanceStats();
 
   // Handle course change
-  const handleCourseChange = (event) => {
+  const handleCourseChange = event => {
     setSelectedCourse(event.target.value);
   };
 
   // Handle date change
-  const handleDateChange = (event) => {
+  const handleDateChange = event => {
     setAttendanceDate(event.target.value);
   };
 
@@ -549,7 +574,7 @@ const AttendanceManagement = () => {
   const handleAttendanceChange = (studentId, status) => {
     setAttendance(prev => ({
       ...prev,
-      [studentId]: status
+      [studentId]: status,
     }));
   };
 
@@ -559,7 +584,7 @@ const AttendanceManagement = () => {
       setSnackbar({
         open: true,
         message: 'Please select a course and date',
-        severity: 'error'
+        severity: 'error',
       });
       return;
     }
@@ -580,7 +605,7 @@ const AttendanceManagement = () => {
           courseId: selectedCourse,
           date: attendanceDate,
           facultyId: 'current-faculty-id', // In a real app, use logged-in faculty ID
-          studentRecords: attendance
+          studentRecords: attendance,
         });
       }
 
@@ -588,13 +613,13 @@ const AttendanceManagement = () => {
         setSnackbar({
           open: true,
           message: 'Attendance saved successfully',
-          severity: 'success'
+          severity: 'success',
         });
       } else {
         setSnackbar({
           open: true,
           message: 'Failed to save attendance: ' + (result.error || 'Unknown error'),
-          severity: 'error'
+          severity: 'error',
         });
       }
     } catch (error) {
@@ -602,7 +627,7 @@ const AttendanceManagement = () => {
       setSnackbar({
         open: true,
         message: 'Error saving attendance: ' + error.message,
-        severity: 'error'
+        severity: 'error',
       });
     } finally {
       setSaving(false);
@@ -620,7 +645,7 @@ const AttendanceManagement = () => {
       setSnackbar({
         open: true,
         message: 'Please select a course first',
-        severity: 'warning'
+        severity: 'warning',
       });
       return;
     }
@@ -643,7 +668,7 @@ const AttendanceManagement = () => {
               absent: Math.floor(Math.random() * 5),
               late: Math.floor(Math.random() * 3),
               totalClasses: 25,
-              percentage: Math.floor(Math.random() * 30) + 70
+              percentage: Math.floor(Math.random() * 30) + 70,
             };
           }
         }
@@ -653,12 +678,39 @@ const AttendanceManagement = () => {
       } else {
         // Mock data for history
         const mockHistory = [
-          { date: '2024-06-10', studentRecords: { S1001: 'present', S1002: 'present', S1003: 'absent', S1004: 'present', S1005: 'late' } },
-          { date: '2024-06-09', studentRecords: { S1001: 'present', S1002: 'absent', S1003: 'present', S1004: 'present', S1005: 'present' } },
-          { date: '2024-06-08', studentRecords: { S1001: 'late', S1002: 'present', S1003: 'present', S1004: 'absent', S1005: 'present' } }
+          {
+            date: '2024-06-10',
+            studentRecords: {
+              S1001: 'present',
+              S1002: 'present',
+              S1003: 'absent',
+              S1004: 'present',
+              S1005: 'late',
+            },
+          },
+          {
+            date: '2024-06-09',
+            studentRecords: {
+              S1001: 'present',
+              S1002: 'absent',
+              S1003: 'present',
+              S1004: 'present',
+              S1005: 'present',
+            },
+          },
+          {
+            date: '2024-06-08',
+            studentRecords: {
+              S1001: 'late',
+              S1002: 'present',
+              S1003: 'present',
+              S1004: 'absent',
+              S1005: 'present',
+            },
+          },
         ];
         setAttendanceHistory(mockHistory);
-        
+
         // Mock stats
         const stats = {};
         for (const student of students) {
@@ -667,11 +719,11 @@ const AttendanceManagement = () => {
             absent: Math.floor(Math.random() * 5),
             late: Math.floor(Math.random() * 3),
             totalClasses: 25,
-            percentage: Math.floor(Math.random() * 30) + 70
+            percentage: Math.floor(Math.random() * 30) + 70,
           };
         }
         setAttendanceStats(stats);
-        
+
         setHistoryDialogOpen(true);
       }
     } catch (error) {
@@ -679,13 +731,13 @@ const AttendanceManagement = () => {
       setSnackbar({
         open: true,
         message: 'Error fetching attendance history: ' + error.message,
-        severity: 'error'
+        severity: 'error',
       });
     }
   };
 
   // Get attendance percentage color
-  const getPercentageColor = (percentage) => {
+  const getPercentageColor = percentage => {
     if (percentage >= 75) return classes.percentageGood;
     if (percentage >= 60) return classes.percentageWarning;
     return classes.percentageBad;
@@ -695,7 +747,7 @@ const AttendanceManagement = () => {
     <div className={classes.root}>
       {/* Statistics Dashboard */}
       <Grid container spacing={3} className={classes.statsContainer}>
-        <Grid size={{xs:12,md:3}}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <Card className={classes.statCard}>
             <CardContent style={{ textAlign: 'center' }}>
               <PeopleIcon className={classes.statIcon} />
@@ -708,7 +760,7 @@ const AttendanceManagement = () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid size={{xs:12,md:3}}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <Card className={classes.statCard}>
             <CardContent style={{ textAlign: 'center' }}>
               <CheckCircleIcon className={classes.statIcon} style={{ color: '#4caf50' }} />
@@ -721,7 +773,7 @@ const AttendanceManagement = () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid size={{xs:12,md:3}}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <Card className={classes.statCard}>
             <CardContent style={{ textAlign: 'center' }}>
               <CancelIcon className={classes.statIcon} style={{ color: '#f44336' }} />
@@ -734,7 +786,7 @@ const AttendanceManagement = () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid size={{xs:12,md:3}}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <Card className={classes.statCard}>
             <CardContent style={{ textAlign: 'center' }}>
               <TrendingUpIcon className={classes.statIcon} style={{ color: '#ff9800' }} />
@@ -744,9 +796,9 @@ const AttendanceManagement = () => {
               <Typography variant="caption" className={classes.statLabel}>
                 Attendance Rate
               </Typography>
-              <LinearProgress 
-                variant="determinate" 
-                value={dashboardStats.attendanceRate} 
+              <LinearProgress
+                variant="determinate"
+                value={dashboardStats.attendanceRate}
                 className={classes.progressBar}
                 style={{ backgroundColor: 'rgba(255, 152, 0, 0.2)' }}
               />
@@ -762,7 +814,7 @@ const AttendanceManagement = () => {
             Attendance Management
           </Typography>
           <Tooltip title="Refresh Data">
-            <IconButton 
+            <IconButton
               className={classes.refreshButton}
               onClick={handleRefreshData}
               disabled={refreshing}
@@ -773,7 +825,7 @@ const AttendanceManagement = () => {
         </Box>
 
         <Grid container spacing={3}>
-          <Grid size={{xs:12,md:6}}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <FormControl className={classes.formControl} fullWidth>
               <InputLabel id="course-select-label">Select Course</InputLabel>
               <Select
@@ -783,17 +835,20 @@ const AttendanceManagement = () => {
                 onChange={handleCourseChange}
                 disabled={loading}
               >
-                <MenuItem value=""><em>None</em></MenuItem>
-                {courses.map((course) => (
+                <MenuItem value="">
+                  <em>None</em>
+                </MenuItem>
+                {courses.map(course => (
                   <MenuItem key={course.id} value={course.id}>
-                    {course.name} ({course.code}) - {course.classId}{course.section}
+                    {course.name} ({course.code}) - {course.classId}
+                    {course.section}
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
           </Grid>
 
-          <Grid size={{xs:12,md:6}}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Box display="flex" alignItems="center">
               <TextField
                 id="attendance-date"
@@ -803,7 +858,7 @@ const AttendanceManagement = () => {
                 onChange={handleDateChange}
                 className={classes.dateField}
                 InputLabelProps={{
-                  shrink: true
+                  shrink: true,
                 }}
                 disabled={loading || !selectedCourse}
               />
@@ -823,13 +878,13 @@ const AttendanceManagement = () => {
 
         {/* Current Attendance Statistics */}
         {selectedCourse && students.length > 0 && (
-          <Card style={{ margin: '20px 0', background: 'rgba(102, 126, 234, 0.05)' }}>
+          <Card style={{ margin: '20px 0', background: 'rgba(227, 166, 72, 0.05)' }}>
             <CardContent>
               <Typography variant="h6" style={{ marginBottom: 16, color: '#2c3e50' }}>
                 Current Session Statistics
               </Typography>
               <Grid container spacing={2}>
-                <Grid size={{xs:3}}>
+                <Grid size={{ xs: 3 }}>
                   <Box textAlign="center">
                     <Typography variant="h5" style={{ color: '#4caf50', fontWeight: 700 }}>
                       {currentStats.present}
@@ -837,7 +892,7 @@ const AttendanceManagement = () => {
                     <Typography variant="caption">Present</Typography>
                   </Box>
                 </Grid>
-                <Grid size={{xs:3}}>
+                <Grid size={{ xs: 3 }}>
                   <Box textAlign="center">
                     <Typography variant="h5" style={{ color: '#f44336', fontWeight: 700 }}>
                       {currentStats.absent}
@@ -845,7 +900,7 @@ const AttendanceManagement = () => {
                     <Typography variant="caption">Absent</Typography>
                   </Box>
                 </Grid>
-                <Grid size={{xs:3}}>
+                <Grid size={{ xs: 3 }}>
                   <Box textAlign="center">
                     <Typography variant="h5" style={{ color: '#ff9800', fontWeight: 700 }}>
                       {currentStats.late}
@@ -853,9 +908,12 @@ const AttendanceManagement = () => {
                     <Typography variant="caption">Late</Typography>
                   </Box>
                 </Grid>
-                <Grid size={{xs:3}}>
+                <Grid size={{ xs: 3 }}>
                   <Box textAlign="center">
-                    <Typography variant="h5" className={getPercentageColor(currentStats.percentage)}>
+                    <Typography
+                      variant="h5"
+                      className={getPercentageColor(currentStats.percentage)}
+                    >
                       {currentStats.percentage}%
                     </Typography>
                     <Typography variant="caption">Attendance Rate</Typography>
@@ -881,13 +939,15 @@ const AttendanceManagement = () => {
             <TableContainer component={Paper} className={classes.tableContainer}>
               <Table className={classes.modernTable}>
                 <TableHead className={classes.headerRow}>
-                  <TableRow><TableCell>Student ID</TableCell>
+                  <TableRow>
+                    <TableCell>Student ID</TableCell>
                     <TableCell>Name</TableCell>
                     <TableCell>Attendance Status</TableCell>
-                    <TableCell>Status Badge</TableCell></TableRow>
+                    <TableCell>Status Badge</TableCell>
+                  </TableRow>
                 </TableHead>
                 <TableBody>
-                  {students.map((student) => (
+                  {students.map(student => (
                     <TableRow key={student.id}>
                       <TableCell>
                         <Typography variant="subtitle2" style={{ fontWeight: 600 }}>
@@ -896,21 +956,22 @@ const AttendanceManagement = () => {
                       </TableCell>
                       <TableCell>
                         <Box display="flex" alignItems="center">
-                          <Box 
+                          <Box
                             style={{
                               width: 40,
                               height: 40,
                               borderRadius: '50%',
-                              background: 'linear-gradient(45deg, #667eea, #764ba2)',
+                              background: 'linear-gradient(45deg, #E3A648, #B97E26)',
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
                               color: 'white',
                               fontWeight: 600,
-                              marginRight: 12
+                              marginRight: 12,
                             }}
                           >
-                            {student.firstName.charAt(0)}{student.lastName.charAt(0)}
+                            {student.firstName.charAt(0)}
+                            {student.lastName.charAt(0)}
                           </Box>
                           <Typography variant="body1">
                             {student.firstName} {student.lastName}
@@ -921,7 +982,7 @@ const AttendanceManagement = () => {
                         <FormControl fullWidth>
                           <Select
                             value={attendance[student.id] || 'present'}
-                            onChange={(e) => handleAttendanceChange(student.id, e.target.value)}
+                            onChange={e => handleAttendanceChange(student.id, e.target.value)}
                           >
                             <MenuItem value="present">Present</MenuItem>
                             <MenuItem value="absent">Absent</MenuItem>
@@ -933,17 +994,24 @@ const AttendanceManagement = () => {
                         <Chip
                           label={attendance[student.id] || 'present'}
                           className={`${classes.attendanceChip} ${
-                            attendance[student.id] === 'present' ? classes.presentChip :
-                            attendance[student.id] === 'late' ? classes.lateChip :
-                            classes.absentChip
+                            attendance[student.id] === 'present'
+                              ? classes.presentChip
+                              : attendance[student.id] === 'late'
+                                ? classes.lateChip
+                                : classes.absentChip
                           }`}
                           icon={
-                            attendance[student.id] === 'present' ? <CheckCircleIcon /> :
-                            attendance[student.id] === 'late' ? <ScheduleIcon /> :
-                            <CancelIcon />
+                            attendance[student.id] === 'present' ? (
+                              <CheckCircleIcon />
+                            ) : attendance[student.id] === 'late' ? (
+                              <ScheduleIcon />
+                            ) : (
+                              <CancelIcon />
+                            )
                           }
                         />
-                      </TableCell></TableRow>
+                      </TableCell>
+                    </TableRow>
                   ))}
                 </TableBody>
               </Table>
@@ -964,9 +1032,7 @@ const AttendanceManagement = () => {
         ) : selectedCourse ? (
           <Box className={classes.noDataContainer}>
             <PeopleIcon className={classes.emptyStateIcon} />
-            <Typography variant="h6">
-              No students found for this course
-            </Typography>
+            <Typography variant="h6">No students found for this course</Typography>
             <Typography variant="body2" style={{ marginTop: 8 }}>
               Please check if students are enrolled in this course or try refreshing the data.
             </Typography>
@@ -974,9 +1040,7 @@ const AttendanceManagement = () => {
         ) : (
           <Box className={classes.noDataContainer}>
             <SchoolIcon className={classes.emptyStateIcon} />
-            <Typography variant="h6">
-              Select a course to manage attendance
-            </Typography>
+            <Typography variant="h6">Select a course to manage attendance</Typography>
             <Typography variant="body2" style={{ marginTop: 8 }}>
               Choose a course from the dropdown to view and manage student attendance.
             </Typography>
@@ -1008,18 +1072,24 @@ const AttendanceManagement = () => {
               <TableContainer component={Paper} className={classes.historyTable}>
                 <Table size="small" className={classes.modernTable}>
                   <TableHead className={classes.headerRow}>
-                    <TableRow><TableCell>Date</TableCell>
+                    <TableRow>
+                      <TableCell>Date</TableCell>
                       <TableCell>Present</TableCell>
                       <TableCell>Absent</TableCell>
                       <TableCell>Late</TableCell>
                       <TableCell>Total</TableCell>
-                      <TableCell>Rate</TableCell></TableRow>
+                      <TableCell>Rate</TableCell>
+                    </TableRow>
                   </TableHead>
                   <TableBody>
-                    {attendanceHistory.map((record) => {
+                    {attendanceHistory.map(record => {
                       const studentRecords = record.studentRecords || {};
-                      const present = Object.values(studentRecords).filter(s => s === 'present').length;
-                      const absent = Object.values(studentRecords).filter(s => s === 'absent').length;
+                      const present = Object.values(studentRecords).filter(
+                        s => s === 'present'
+                      ).length;
+                      const absent = Object.values(studentRecords).filter(
+                        s => s === 'absent'
+                      ).length;
                       const late = Object.values(studentRecords).filter(s => s === 'late').length;
                       const total = Object.keys(studentRecords).length;
                       const rate = total > 0 ? Math.round((present / total) * 100) : 0;
@@ -1027,13 +1097,18 @@ const AttendanceManagement = () => {
                       return (
                         <TableRow key={record.date}>
                           <TableCell>{record.date}</TableCell>
-                          <TableCell style={{ color: '#4caf50', fontWeight: 600 }}>{present}</TableCell>
-                          <TableCell style={{ color: '#f44336', fontWeight: 600 }}>{absent}</TableCell>
-                          <TableCell style={{ color: '#ff9800', fontWeight: 600 }}>{late}</TableCell>
+                          <TableCell style={{ color: '#4caf50', fontWeight: 600 }}>
+                            {present}
+                          </TableCell>
+                          <TableCell style={{ color: '#f44336', fontWeight: 600 }}>
+                            {absent}
+                          </TableCell>
+                          <TableCell style={{ color: '#ff9800', fontWeight: 600 }}>
+                            {late}
+                          </TableCell>
                           <TableCell>{total}</TableCell>
-                          <TableCell className={getPercentageColor(rate)}>
-                            {rate}%
-                          </TableCell></TableRow>
+                          <TableCell className={getPercentageColor(rate)}>{rate}%</TableCell>
+                        </TableRow>
                       );
                     })}
                   </TableBody>
@@ -1046,52 +1121,66 @@ const AttendanceManagement = () => {
               <TableContainer component={Paper} className={classes.historyTable}>
                 <Table size="small" className={classes.modernTable}>
                   <TableHead className={classes.headerRow}>
-                    <TableRow><TableCell>Student</TableCell>
+                    <TableRow>
+                      <TableCell>Student</TableCell>
                       <TableCell>Present</TableCell>
                       <TableCell>Absent</TableCell>
                       <TableCell>Late</TableCell>
                       <TableCell>Total Classes</TableCell>
-                      <TableCell>Attendance %</TableCell></TableRow>
+                      <TableCell>Attendance %</TableCell>
+                    </TableRow>
                   </TableHead>
                   <TableBody>
-                    {students.map((student) => {
+                    {students.map(student => {
                       const stats = attendanceStats[student.id] || {
-                        present: 0, absent: 0, late: 0, totalClasses: 0, percentage: 0
+                        present: 0,
+                        absent: 0,
+                        late: 0,
+                        totalClasses: 0,
+                        percentage: 0,
                       };
 
                       return (
                         <TableRow key={student.id}>
                           <TableCell>
                             <Box display="flex" alignItems="center">
-                              <Box 
+                              <Box
                                 style={{
                                   width: 32,
                                   height: 32,
                                   borderRadius: '50%',
-                                  background: 'linear-gradient(45deg, #667eea, #764ba2)',
+                                  background: 'linear-gradient(45deg, #E3A648, #B97E26)',
                                   display: 'flex',
                                   alignItems: 'center',
                                   justifyContent: 'center',
                                   color: 'white',
                                   fontSize: '0.8rem',
                                   fontWeight: 600,
-                                  marginRight: 8
+                                  marginRight: 8,
                                 }}
                               >
-                                {student.firstName.charAt(0)}{student.lastName.charAt(0)}
+                                {student.firstName.charAt(0)}
+                                {student.lastName.charAt(0)}
                               </Box>
                               <Typography variant="body2">
                                 {student.firstName} {student.lastName}
                               </Typography>
                             </Box>
                           </TableCell>
-                          <TableCell style={{ color: '#4caf50', fontWeight: 600 }}>{stats.present}</TableCell>
-                          <TableCell style={{ color: '#f44336', fontWeight: 600 }}>{stats.absent}</TableCell>
-                          <TableCell style={{ color: '#ff9800', fontWeight: 600 }}>{stats.late}</TableCell>
+                          <TableCell style={{ color: '#4caf50', fontWeight: 600 }}>
+                            {stats.present}
+                          </TableCell>
+                          <TableCell style={{ color: '#f44336', fontWeight: 600 }}>
+                            {stats.absent}
+                          </TableCell>
+                          <TableCell style={{ color: '#ff9800', fontWeight: 600 }}>
+                            {stats.late}
+                          </TableCell>
                           <TableCell>{stats.totalClasses}</TableCell>
                           <TableCell className={getPercentageColor(stats.percentage)}>
                             {stats.percentage}%
-                          </TableCell></TableRow>
+                          </TableCell>
+                        </TableRow>
                       );
                     })}
                   </TableBody>
@@ -1101,9 +1190,7 @@ const AttendanceManagement = () => {
           ) : (
             <Box className={classes.noDataContainer}>
               <AnalyticsIcon className={classes.emptyStateIcon} />
-              <Typography variant="h6">
-                No attendance records found
-              </Typography>
+              <Typography variant="h6">No attendance records found</Typography>
               <Typography variant="body2" style={{ marginTop: 8 }}>
                 Start taking attendance to see historical data and analytics.
               </Typography>
@@ -1111,10 +1198,7 @@ const AttendanceManagement = () => {
           )}
         </DialogContent>
         <DialogActions>
-          <Button
-            onClick={() => setHistoryDialogOpen(false)}
-            className={classes.secondaryButton}
-          >
+          <Button onClick={() => setHistoryDialogOpen(false)} className={classes.secondaryButton}>
             Close
           </Button>
         </DialogActions>
@@ -1139,4 +1223,4 @@ const AttendanceManagement = () => {
   );
 };
 
-export default AttendanceManagement;
+export default AttendanceManagement;

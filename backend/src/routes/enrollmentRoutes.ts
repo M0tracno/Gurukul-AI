@@ -2,11 +2,9 @@ import { Router } from 'express';
 import { z } from 'zod';
 
 import { enrollmentController } from '../controllers/enrollmentController.js';
+import { authMiddleware } from '../middleware/authMiddleware.js';
+import { adminOnly, requireRoles } from '../middleware/rbacMiddleware.js';
 import { validateRequest } from '../middleware/validateRequest.js';
-
-// Placeholder auth/RBAC middleware — being built in parallel (Task 4.4, 4.5)
-// import { authenticate } from '../middleware/authMiddleware.js';
-// import { requireRoles } from '../middleware/rbacMiddleware.js';
 
 const router = Router();
 
@@ -47,8 +45,8 @@ const updateEnrollmentBodySchema = z.object({
 // GET /api/v1/enrollments
 router.get(
   '/',
-  // authenticate,
-  // requireRoles(['admin', 'teacher']),
+  authMiddleware,
+  requireRoles('admin', 'teacher'),
   validateRequest({ query: enrollmentListQuerySchema }),
   enrollmentController.getAll,
 );
@@ -56,7 +54,8 @@ router.get(
 // GET /api/v1/enrollments/:id
 router.get(
   '/:id',
-  // authenticate,
+  authMiddleware,
+  requireRoles('admin', 'teacher'),
   validateRequest({ params: idParamsSchema }),
   enrollmentController.getById,
 );
@@ -64,8 +63,8 @@ router.get(
 // POST /api/v1/enrollments
 router.post(
   '/',
-  // authenticate,
-  // requireRoles(['admin', 'teacher']),
+  authMiddleware,
+  adminOnly,
   validateRequest({ body: createEnrollmentBodySchema }),
   enrollmentController.create,
 );
@@ -73,8 +72,8 @@ router.post(
 // PUT /api/v1/enrollments/:id
 router.put(
   '/:id',
-  // authenticate,
-  // requireRoles(['admin', 'teacher']),
+  authMiddleware,
+  adminOnly,
   validateRequest({ params: idParamsSchema, body: updateEnrollmentBodySchema }),
   enrollmentController.update,
 );
@@ -82,8 +81,8 @@ router.put(
 // DELETE /api/v1/enrollments/:id
 router.delete(
   '/:id',
-  // authenticate,
-  // requireRoles(['admin']),
+  authMiddleware,
+  adminOnly,
   validateRequest({ params: idParamsSchema }),
   enrollmentController.remove,
 );

@@ -5,7 +5,6 @@ import DatabaseService from './databaseService';
  * Handles all API calls specific to student functionality
  */
 
-
 class StudentService {
   constructor() {
     this.databaseService = DatabaseService;
@@ -19,13 +18,13 @@ class StudentService {
       const response = await this.databaseService.fetchWithAuth(`/api/students/${studentId}`);
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error fetching student profile:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -35,17 +34,19 @@ class StudentService {
    */
   async getEnrolledCourses(studentId) {
     try {
-      const response = await this.databaseService.fetchWithAuth(`/api/students/${studentId}/courses`);
+      const response = await this.databaseService.fetchWithAuth(
+        `/api/students/${studentId}/courses`
+      );
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error fetching enrolled courses:', error);
       return {
         success: false,
         error: error.message,
-        data: []
+        data: [],
       };
     }
   }
@@ -55,17 +56,19 @@ class StudentService {
    */
   async getAssignments(studentId) {
     try {
-      const response = await this.databaseService.fetchWithAuth(`/api/students/${studentId}/assignments`);
+      const response = await this.databaseService.fetchWithAuth(
+        `/api/students/${studentId}/assignments`
+      );
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error fetching assignments:', error);
       return {
         success: false,
         error: error.message,
-        data: []
+        data: [],
       };
     }
   }
@@ -75,17 +78,19 @@ class StudentService {
    */
   async getGrades(studentId) {
     try {
-      const response = await this.databaseService.fetchWithAuth(`/api/students/${studentId}/grades`);
+      const response = await this.databaseService.fetchWithAuth(
+        `/api/students/${studentId}/grades`
+      );
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error fetching grades:', error);
       return {
         success: false,
         error: error.message,
-        data: []
+        data: [],
       };
     }
   }
@@ -95,17 +100,19 @@ class StudentService {
    */
   async getFeedback(studentId) {
     try {
-      const response = await this.databaseService.fetchWithAuth(`/api/students/${studentId}/feedback`);
+      const response = await this.databaseService.fetchWithAuth(
+        `/api/students/${studentId}/feedback`
+      );
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error fetching feedback:', error);
       return {
         success: false,
         error: error.message,
-        data: []
+        data: [],
       };
     }
   }
@@ -115,17 +122,19 @@ class StudentService {
    */
   async getQuizzes(studentId) {
     try {
-      const response = await this.databaseService.fetchWithAuth(`/api/students/${studentId}/quizzes`);
+      const response = await this.databaseService.fetchWithAuth(
+        `/api/students/${studentId}/quizzes`
+      );
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error fetching quizzes:', error);
       return {
         success: false,
         error: error.message,
-        data: []
+        data: [],
       };
     }
   }
@@ -135,21 +144,21 @@ class StudentService {
    */
   async getAttendance(studentId, courseId = null) {
     try {
-      const endpoint = courseId 
+      const endpoint = courseId
         ? `/api/students/${studentId}/attendance?courseId=${courseId}`
         : `/api/students/${studentId}/attendance`;
-      
+
       const response = await this.databaseService.fetchWithAuth(endpoint);
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error fetching attendance:', error);
       return {
         success: false,
         error: error.message,
-        data: []
+        data: [],
       };
     }
   }
@@ -163,18 +172,18 @@ class StudentService {
         `/api/students/${studentId}/assignments/${assignmentId}/submit`,
         {
           method: 'POST',
-          body: JSON.stringify(submissionData)
+          body: JSON.stringify(submissionData),
         }
       );
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error submitting assignment:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -188,18 +197,18 @@ class StudentService {
         `/api/students/${studentId}/quizzes/${quizId}/submit`,
         {
           method: 'POST',
-          body: JSON.stringify({ answers })
+          body: JSON.stringify({ answers }),
         }
       );
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error submitting quiz:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -209,10 +218,12 @@ class StudentService {
    */
   async getDashboardSummary(studentId) {
     try {
-      const response = await this.databaseService.fetchWithAuth(`/api/students/${studentId}/dashboard`);
+      const response = await this.databaseService.fetchWithAuth(
+        `/api/students/${studentId}/dashboard`
+      );
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error fetching dashboard summary:', error);
@@ -225,15 +236,11 @@ class StudentService {
           pendingAssignments: 0,
           courses: [],
           recentFeedback: [],
-          upcomingQuizzes: []
-        }
+          upcomingQuizzes: [],
+        },
       };
     }
   }
 }
 
 export default new StudentService();
-
-
-
-

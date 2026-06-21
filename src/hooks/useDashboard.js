@@ -8,13 +8,13 @@ import env from '../config/env';
 
 // Log imports to verify they're correctly exported
 console.log({
-  securityHelpers: typeof securityHelpers !== 'undefined' 
+  securityHelpers: typeof securityHelpers !== 'undefined',
 });
 
 // Base API URL
 const API_BASE_URL = `${env.API_URL}/api`;
 
-export const useDashboard = (userType) => {
+export const useDashboard = userType => {
   const { currentUser, userRole } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -29,7 +29,7 @@ export const useDashboard = (userType) => {
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': token ? `Bearer ${token}` : '',
+          Authorization: token ? `Bearer ${token}` : '',
           ...options.headers,
         },
         ...options,
@@ -50,7 +50,8 @@ export const useDashboard = (userType) => {
   const loadDashboardData = async () => {
     try {
       setLoading(true);
-      setError(null);      let dashboardData = {};
+      setError(null);
+      let dashboardData = {};
 
       switch (userType) {
         case 'admin':
@@ -205,7 +206,7 @@ export const useDashboard = (userType) => {
   };
 
   // Handle view changes
-  const handleViewChange = (newView) => {
+  const handleViewChange = newView => {
     setCurrentView(newView);
     // Log analytics
     try {
@@ -234,25 +235,29 @@ export const useDashboard = (userType) => {
 
   // Auto-refresh every 5 minutes
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (currentView === 'dashboard') {
-        loadDashboardData();
-      }
-    }, 5 * 60 * 1000); // 5 minutes
+    const interval = setInterval(
+      () => {
+        if (currentView === 'dashboard') {
+          loadDashboardData();
+        }
+      },
+      5 * 60 * 1000
+    ); // 5 minutes
 
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentView]);return {
+  }, [currentView]);
+  return {
     loading,
     error,
     stats,
     notifications,
     currentView,
     handleViewChange,
-    refreshData,    apiCall,
+    refreshData,
+    apiCall,
   };
 };
 
 // Adding default export to maintain compatibility with existing code
 export default useDashboard;
-

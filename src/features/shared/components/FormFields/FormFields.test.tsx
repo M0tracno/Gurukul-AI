@@ -20,9 +20,7 @@ import { RadioGroupField } from './RadioGroupField';
 import { SwitchField } from './SwitchField';
 
 function renderWithTheme(ui: React.ReactElement) {
-  return render(
-    <ThemeProvider theme={lightTheme}>{ui}</ThemeProvider>,
-  );
+  return render(<ThemeProvider theme={lightTheme}>{ui}</ThemeProvider>);
 }
 
 describe('TextField', () => {
@@ -32,17 +30,13 @@ describe('TextField', () => {
   });
 
   it('sets aria-invalid when error is true', () => {
-    renderWithTheme(
-      <TextField label="Email" id="email" error helperText="Invalid email" />,
-    );
+    renderWithTheme(<TextField label="Email" id="email" error helperText="Invalid email" />);
     const input = screen.getByLabelText('Email');
     expect(input).toHaveAttribute('aria-invalid', 'true');
   });
 
   it('associates helper text via aria-describedby', () => {
-    renderWithTheme(
-      <TextField label="Name" id="name" helperText="Enter your full name" />,
-    );
+    renderWithTheme(<TextField label="Name" id="name" helperText="Enter your full name" />);
     expect(screen.getByText('Enter your full name')).toBeInTheDocument();
   });
 
@@ -72,9 +66,7 @@ describe('SelectField', () => {
   ];
 
   it('renders with label', () => {
-    renderWithTheme(
-      <SelectField id="role" fieldLabel="Role" options={options} value="" />,
-    );
+    renderWithTheme(<SelectField id="role" fieldLabel="Role" options={options} value="" />);
     expect(screen.getByLabelText('Role')).toBeInTheDocument();
   });
 
@@ -86,22 +78,14 @@ describe('SelectField', () => {
         options={options}
         value=""
         helperText="Select your role"
-      />,
+      />
     );
     const helperText = screen.getByText('Select your role');
     expect(helperText).toHaveAttribute('id', 'role-helper-text');
   });
 
   it('sets aria-invalid when error is true', () => {
-    renderWithTheme(
-      <SelectField
-        id="role"
-        fieldLabel="Role"
-        options={options}
-        value=""
-        error
-      />,
-    );
+    renderWithTheme(<SelectField id="role" fieldLabel="Role" options={options} value="" error />);
     const select = screen.getByLabelText('Role');
     expect(select).toHaveAttribute('aria-invalid', 'true');
   });
@@ -110,13 +94,7 @@ describe('SelectField', () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
     renderWithTheme(
-      <SelectField
-        id="role"
-        fieldLabel="Role"
-        options={options}
-        value=""
-        onChange={onChange}
-      />,
+      <SelectField id="role" fieldLabel="Role" options={options} value="" onChange={onChange} />
     );
 
     await user.click(screen.getByLabelText('Role'));
@@ -129,18 +107,14 @@ describe('SelectField', () => {
 
 describe('CheckboxField', () => {
   it('renders with label', () => {
-    renderWithTheme(
-      <CheckboxField id="agree" label="I agree to terms" />,
-    );
+    renderWithTheme(<CheckboxField id="agree" label="I agree to terms" />);
     expect(screen.getByLabelText('I agree to terms')).toBeInTheDocument();
   });
 
   it('can be toggled via keyboard', async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
-    renderWithTheme(
-      <CheckboxField id="agree" label="I agree" onChange={onChange} />,
-    );
+    renderWithTheme(<CheckboxField id="agree" label="I agree" onChange={onChange} />);
 
     const checkbox = screen.getByRole('checkbox');
     await user.tab();
@@ -152,23 +126,14 @@ describe('CheckboxField', () => {
 
   it('shows helper text', () => {
     renderWithTheme(
-      <CheckboxField
-        id="newsletter"
-        label="Subscribe"
-        helperText="We send weekly updates"
-      />,
+      <CheckboxField id="newsletter" label="Subscribe" helperText="We send weekly updates" />
     );
     expect(screen.getByText('We send weekly updates')).toBeInTheDocument();
   });
 
   it('associates error helper text via aria-describedby', () => {
     renderWithTheme(
-      <CheckboxField
-        id="terms"
-        label="Accept terms"
-        error
-        helperText="You must accept"
-      />,
+      <CheckboxField id="terms" label="Accept terms" error helperText="You must accept" />
     );
     const checkbox = screen.getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-describedby', 'terms-helper-text');
@@ -184,22 +149,14 @@ describe('RadioGroupField', () => {
 
   it('renders with fieldset legend', () => {
     renderWithTheme(
-      <RadioGroupField
-        id="time-preference"
-        fieldLabel="Preferred Time"
-        options={options}
-      />,
+      <RadioGroupField id="time-preference" fieldLabel="Preferred Time" options={options} />
     );
     expect(screen.getByText('Preferred Time')).toBeInTheDocument();
   });
 
   it('renders all radio options', () => {
     renderWithTheme(
-      <RadioGroupField
-        id="time-preference"
-        fieldLabel="Preferred Time"
-        options={options}
-      />,
+      <RadioGroupField id="time-preference" fieldLabel="Preferred Time" options={options} />
     );
     expect(screen.getAllByRole('radio')).toHaveLength(3);
   });
@@ -213,7 +170,7 @@ describe('RadioGroupField', () => {
         fieldLabel="Preferred Time"
         options={options}
         onChange={onChange}
-      />,
+      />
     );
 
     const firstRadio = screen.getByLabelText('Morning');
@@ -230,7 +187,7 @@ describe('RadioGroupField', () => {
         options={options}
         error
         helperText="Please select a time"
-      />,
+      />
     );
     expect(screen.getByText('Please select a time')).toBeInTheDocument();
   });
@@ -238,16 +195,12 @@ describe('RadioGroupField', () => {
 
 describe('SwitchField', () => {
   it('renders with label', () => {
-    renderWithTheme(
-      <SwitchField id="notifications" label="Enable notifications" />,
-    );
+    renderWithTheme(<SwitchField id="notifications" label="Enable notifications" />);
     expect(screen.getByLabelText('Enable notifications')).toBeInTheDocument();
   });
 
   it('has role="switch" on the input', () => {
-    renderWithTheme(
-      <SwitchField id="dark-mode" label="Dark mode" />,
-    );
+    renderWithTheme(<SwitchField id="dark-mode" label="Dark mode" />);
     const switchInput = screen.getByRole('switch');
     expect(switchInput).toBeInTheDocument();
   });
@@ -255,9 +208,7 @@ describe('SwitchField', () => {
   it('can be toggled via keyboard', async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
-    renderWithTheme(
-      <SwitchField id="toggle" label="Toggle feature" onChange={onChange} />,
-    );
+    renderWithTheme(<SwitchField id="toggle" label="Toggle feature" onChange={onChange} />);
 
     const switchInput = screen.getByRole('switch');
     await user.tab();
@@ -269,11 +220,7 @@ describe('SwitchField', () => {
 
   it('shows helper text', () => {
     renderWithTheme(
-      <SwitchField
-        id="auto-save"
-        label="Auto-save"
-        helperText="Saves every 30 seconds"
-      />,
+      <SwitchField id="auto-save" label="Auto-save" helperText="Saves every 30 seconds" />
     );
     expect(screen.getByText('Saves every 30 seconds')).toBeInTheDocument();
   });

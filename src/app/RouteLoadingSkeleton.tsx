@@ -109,7 +109,7 @@ export function RouteLoadingSkeleton({ label }: RouteLoadingSkeletonProps) {
               marginBottom: '2rem',
             }}
           >
-            {[1, 2, 3].map((i) => (
+            {[1, 2, 3].map(i => (
               <div
                 key={i}
                 style={{
@@ -127,7 +127,7 @@ export function RouteLoadingSkeleton({ label }: RouteLoadingSkeletonProps) {
 
           {/* Table-like rows */}
           <SkeletonBlock width="100%" height="2.5rem" marginBottom="0.25rem" />
-          {[1, 2, 3, 4, 5].map((i) => (
+          {[1, 2, 3, 4, 5].map(i => (
             <SkeletonBlock key={i} width="100%" height="3rem" marginBottom="0.25rem" />
           ))}
         </div>
@@ -143,4 +143,3 @@ export function RouteLoadingSkeleton({ label }: RouteLoadingSkeletonProps) {
     </div>
   );
 }
-

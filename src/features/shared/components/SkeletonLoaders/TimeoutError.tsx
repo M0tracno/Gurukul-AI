@@ -38,18 +38,11 @@ export function TimeoutError({
         textAlign: 'center',
       }}
     >
-      <ErrorOutlineIcon
-        sx={{ fontSize: 56, color: 'warning.main', mb: 2 }}
-        aria-hidden="true"
-      />
+      <ErrorOutlineIcon sx={{ fontSize: 56, color: 'warning.main', mb: 2 }} aria-hidden="true" />
       <Typography variant="h6" component="h2" gutterBottom>
         Request Timed Out
       </Typography>
-      <Typography
-        variant="body2"
-        color="text.secondary"
-        sx={{ maxWidth: 400, mb: 3 }}
-      >
+      <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 400, mb: 3 }}>
         {message}
       </Typography>
       <Button

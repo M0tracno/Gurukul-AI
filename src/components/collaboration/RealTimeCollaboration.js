@@ -3,27 +3,47 @@ import { motion, AnimatePresence } from 'framer-motion';
 import RealtimeService from '../../services/RealtimeService';
 import { useAuth } from '../../auth/AuthContext';
 import { formatDistanceToNow } from 'date-fns';
-import { Alert, Avatar, Badge, Box, Button, Card, CardActions, CardContent, Chip, Divider, Drawer, IconButton, List, ListItem, ListItemAvatar, Menu, MenuItem, Paper, Snackbar, TextField, Toolbar, Tooltip, Typography } from '@mui/material';
-import { 
-  PushPin, 
-  MoreVert, 
-  People, 
-  Mic, 
+import {
+  Alert,
+  Avatar,
+  Badge,
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  Chip,
+  Divider,
+  Drawer,
+  IconButton,
+  List,
+  ListItem,
+  ListItemAvatar,
+  Menu,
+  MenuItem,
+  Paper,
+  Snackbar,
+  TextField,
+  Toolbar,
+  Tooltip,
+  Typography,
+} from '@mui/material';
+import {
+  PushPin,
+  MoreVert,
+  People,
+  Mic,
   MicOff,
-  Videocam, 
-  VideocamOff, 
-  ScreenShare, 
-  Chat, 
-  Close, 
-  Send, 
-  Delete
+  Videocam,
+  VideocamOff,
+  ScreenShare,
+  Chat,
+  Close,
+  Send,
+  Delete,
 } from '@mui/icons-material';
 
-const RealTimeCollaboration = ({
-  roomId, 
-  roomType = 'study_group', 
-  maxParticipants = 10 
-}) => {
+const RealTimeCollaboration = ({ roomId, roomType = 'study_group', maxParticipants = 10 }) => {
   const { currentUser } = useAuth();
   const [connected, setConnected] = useState(false);
   const [participants, setParticipants] = useState([]);
@@ -38,7 +58,7 @@ const RealTimeCollaboration = ({
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [selectedMessage, setSelectedMessage] = useState(null);
   const [notification, setNotification] = useState(null);
-  
+
   const messagesEndRef = useRef(null);
   const typingTimeoutRef = useRef(null);
 
@@ -65,7 +85,7 @@ const RealTimeCollaboration = ({
         userId: currentUser.uid,
         userName: currentUser.displayName || currentUser.email,
         userRole: currentUser.role || 'participant',
-        roomType
+        roomType,
       });
 
       // Set up event listeners
@@ -86,45 +106,45 @@ const RealTimeCollaboration = ({
     }
   };
 
-  const handleUserJoined = (user) => {
+  const handleUserJoined = user => {
     setParticipants(prev => [...prev.filter(p => p.id !== user.id), user]);
     showNotification(`${user.name} joined the room`, 'info');
   };
 
-  const handleUserLeft = (user) => {
+  const handleUserLeft = user => {
     setParticipants(prev => prev.filter(p => p.id !== user.id));
     showNotification(`${user.name} left the room`, 'info');
   };
 
-  const handleMessageReceived = (message) => {
+  const handleMessageReceived = message => {
     setMessages(prev => [...prev, message]);
-    
+
     if (message.userId !== currentUser.uid) {
       showNotification(`New message from ${message.userName}`, 'info');
     }
   };
 
-  const handleUserTyping = (user) => {
+  const handleUserTyping = user => {
     if (user.id !== currentUser.uid) {
       setTyping(prev => [...prev.filter(u => u.id !== user.id), user]);
     }
   };
 
-  const handleUserStoppedTyping = (user) => {
+  const handleUserStoppedTyping = user => {
     setTyping(prev => prev.filter(u => u.id !== user.id));
   };
 
-  const handleMessagePinned = (message) => {
+  const handleMessagePinned = message => {
     setPinnedMessages(prev => [...prev, message]);
     showNotification('Message pinned', 'info');
   };
 
-  const handleMessageUnpinned = (messageId) => {
+  const handleMessageUnpinned = messageId => {
     setPinnedMessages(prev => prev.filter(m => m.id !== messageId));
     showNotification('Message unpinned', 'info');
   };
 
-  const handleRoomStateChanged = (state) => {
+  const handleRoomStateChanged = state => {
     // Handle room state changes (e.g., recording started, screen sharing)
     console.log('Room state changed:', state);
   };
@@ -136,7 +156,7 @@ const RealTimeCollaboration = ({
       await RealtimeService.sendMessage(roomId, {
         content: newMessage.trim(),
         type: 'text',
-        timestamp: new Date()
+        timestamp: new Date(),
       });
 
       setNewMessage('');
@@ -147,17 +167,17 @@ const RealTimeCollaboration = ({
     }
   };
 
-  const handleTyping = (text) => {
+  const handleTyping = text => {
     setNewMessage(text);
-    
+
     if (text.trim()) {
       RealtimeService.startTyping(roomId);
-      
+
       // Clear existing timeout
       if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current);
       }
-      
+
       // Set timeout to stop typing
       typingTimeoutRef.current = setTimeout(() => {
         stopTyping();
@@ -217,7 +237,7 @@ const RealTimeCollaboration = ({
     }
   };
 
-  const pinMessage = async (message) => {
+  const pinMessage = async message => {
     try {
       await RealtimeService.pinMessage(roomId, message.id);
       setMenuAnchor(null);
@@ -227,7 +247,7 @@ const RealTimeCollaboration = ({
     }
   };
 
-  const unpinMessage = async (messageId) => {
+  const unpinMessage = async messageId => {
     try {
       await RealtimeService.unpinMessage(roomId, messageId);
     } catch (error) {
@@ -236,7 +256,7 @@ const RealTimeCollaboration = ({
     }
   };
 
-  const deleteMessage = async (messageId) => {
+  const deleteMessage = async messageId => {
     try {
       await RealtimeService.deleteMessage(roomId, messageId);
       setMessages(prev => prev.filter(m => m.id !== messageId));
@@ -258,7 +278,7 @@ const RealTimeCollaboration = ({
 
   const MessageItem = ({ message }) => {
     const isOwnMessage = message.userId === currentUser.uid;
-    
+
     return (
       <motion.div
         initial={{ opacity: 0, y: 10 }}
@@ -269,22 +289,21 @@ const RealTimeCollaboration = ({
           sx={{
             flexDirection: isOwnMessage ? 'row-reverse' : 'row',
             alignItems: 'flex-start',
-            py: 1
+            py: 1,
           }}
         >
-          <ListItemAvatar sx={{ 
-            minWidth: isOwnMessage ? '56px' : 'auto',
-            ml: isOwnMessage ? 1 : 0,
-            mr: isOwnMessage ? 0 : 1
-          }}>
-            <Avatar 
-              src={message.userAvatar} 
-              sx={{ width: 32, height: 32 }}
-            >
+          <ListItemAvatar
+            sx={{
+              minWidth: isOwnMessage ? '56px' : 'auto',
+              ml: isOwnMessage ? 1 : 0,
+              mr: isOwnMessage ? 0 : 1,
+            }}
+          >
+            <Avatar src={message.userAvatar} sx={{ width: 32, height: 32 }}>
               {message.userName?.charAt(0)}
             </Avatar>
           </ListItemAvatar>
-          
+
           <Paper
             elevation={1}
             sx={{
@@ -293,7 +312,7 @@ const RealTimeCollaboration = ({
               bgcolor: isOwnMessage ? 'primary.main' : 'background.paper',
               color: isOwnMessage ? 'primary.contrastText' : 'text.primary',
               borderRadius: 2,
-              position: 'relative'
+              position: 'relative',
             }}
           >
             {!isOwnMessage && (
@@ -301,23 +320,19 @@ const RealTimeCollaboration = ({
                 {message.userName}
               </Typography>
             )}
-            
-            <Typography variant="body2">
-              {message.content}
-            </Typography>
-            
+
+            <Typography variant="body2">{message.content}</Typography>
+
             <Box display="flex" justifyContent="space-between" alignItems="center" mt={0.5}>
               <Typography variant="caption" sx={{ opacity: 0.7 }}>
                 {formatDistanceToNow(new Date(message.timestamp), { addSuffix: true })}
               </Typography>
-              
-              {message.pinned && (
-                <PushPin fontSize="small" sx={{ opacity: 0.7 }} />
-              )}
-              
+
+              {message.pinned && <PushPin fontSize="small" sx={{ opacity: 0.7 }} />}
+
               <IconButton
                 size="small"
-                onClick={(e) => {
+                onClick={e => {
                   setSelectedMessage(message);
                   setMenuAnchor(e.currentTarget);
                 }}
@@ -334,7 +349,7 @@ const RealTimeCollaboration = ({
 
   const TypingIndicator = () => {
     if (typing.length === 0) return null;
-    
+
     return (
       <motion.div
         initial={{ opacity: 0, y: 10 }}
@@ -343,7 +358,7 @@ const RealTimeCollaboration = ({
       >
         <Box sx={{ p: 2, fontStyle: 'italic', color: 'text.secondary' }}>
           <Typography variant="body2">
-            {typing.map(user => user.name).join(', ')} 
+            {typing.map(user => user.name).join(', ')}
             {typing.length === 1 ? ' is' : ' are'} typing...
           </Typography>
         </Box>
@@ -356,45 +371,38 @@ const RealTimeCollaboration = ({
       {/* Header */}
       <Paper elevation={2} sx={{ p: 2, zIndex: 1 }}>
         <Box display="flex" justifyContent="space-between" alignItems="center">
-          <Typography variant="h6">
-            Collaboration Room
-          </Typography>
-          
+          <Typography variant="h6">Collaboration Room</Typography>
+
           <Box display="flex" alignItems="center" gap={1}>
             {/* Connection Status */}
-            <Chip 
+            <Chip
               label={connected ? 'Connected' : 'Disconnected'}
               color={connected ? 'success' : 'error'}
               size="small"
             />
-            
+
             {/* Participants Count */}
-            <Chip 
-              icon={<People />}
-              label={participants.length}
-              color="primary"
-              size="small"
-            />
-            
+            <Chip icon={<People />} label={participants.length} color="primary" size="small" />
+
             {/* Media Controls */}
             <Tooltip title={audioEnabled ? 'Mute' : 'Unmute'}>
               <IconButton onClick={toggleAudio} color={audioEnabled ? 'primary' : 'default'}>
                 {audioEnabled ? <Mic /> : <MicOff />}
               </IconButton>
             </Tooltip>
-            
+
             <Tooltip title={videoEnabled ? 'Turn off camera' : 'Turn on camera'}>
               <IconButton onClick={toggleVideo} color={videoEnabled ? 'primary' : 'default'}>
                 {videoEnabled ? <Videocam /> : <VideocamOff />}
               </IconButton>
             </Tooltip>
-            
+
             <Tooltip title={screenSharing ? 'Stop sharing' : 'Share screen'}>
               <IconButton onClick={toggleScreenShare} color={screenSharing ? 'primary' : 'default'}>
                 <ScreenShare />
               </IconButton>
             </Tooltip>
-            
+
             {/* Chat Toggle */}
             <Tooltip title="Toggle chat">
               <IconButton onClick={() => setChatOpen(!chatOpen)}>
@@ -411,7 +419,9 @@ const RealTimeCollaboration = ({
       <Box sx={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
         {/* Video/Content Area */}
         <Box sx={{ flex: 1, p: 2 }}>
-          <Paper sx={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Paper
+            sx={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          >
             <Typography variant="h6" color="textSecondary">
               Video/Screen Share Area
             </Typography>
@@ -429,8 +439,8 @@ const RealTimeCollaboration = ({
             '& .MuiDrawer-paper': {
               width: 400,
               position: 'relative',
-              height: '100%'
-            }
+              height: '100%',
+            },
           }}
         >
           <Toolbar>
@@ -441,7 +451,7 @@ const RealTimeCollaboration = ({
               <Close />
             </IconButton>
           </Toolbar>
-          
+
           <Divider />
 
           {/* Pinned Messages */}
@@ -453,9 +463,7 @@ const RealTimeCollaboration = ({
               {pinnedMessages.map(message => (
                 <Card key={message.id} sx={{ mb: 1 }}>
                   <CardContent sx={{ py: 1 }}>
-                    <Typography variant="body2">
-                      {message.content}
-                    </Typography>
+                    <Typography variant="body2">{message.content}</Typography>
                   </CardContent>
                   <CardActions sx={{ py: 0.5 }}>
                     <Button size="small" onClick={() => unpinMessage(message.id)}>
@@ -477,11 +485,11 @@ const RealTimeCollaboration = ({
                 ))}
               </AnimatePresence>
             </List>
-            
+
             <AnimatePresence>
               <TypingIndicator />
             </AnimatePresence>
-            
+
             <div ref={messagesEndRef} />
           </Box>
 
@@ -492,8 +500,10 @@ const RealTimeCollaboration = ({
                 fullWidth
                 placeholder="Type a message..."
                 value={newMessage}
-                onChange={(e) => handleTyping(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), sendMessage())}
+                onChange={e => handleTyping(e.target.value)}
+                onKeyPress={e =>
+                  e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), sendMessage())
+                }
                 multiline
                 maxRows={3}
                 variant="outlined"
@@ -513,18 +523,14 @@ const RealTimeCollaboration = ({
       </Box>
 
       {/* Context Menu */}
-      <Menu
-        anchorEl={menuAnchor}
-        open={Boolean(menuAnchor)}
-        onClose={() => setMenuAnchor(null)}
-      >
+      <Menu anchorEl={menuAnchor} open={Boolean(menuAnchor)} onClose={() => setMenuAnchor(null)}>
         {selectedMessage && !selectedMessage.pinned && (
           <MenuItem onClick={() => pinMessage(selectedMessage)}>
             <PushPin sx={{ mr: 1 }} />
             Pin Message
           </MenuItem>
         )}
-        
+
         {selectedMessage?.userId === currentUser.uid && (
           <MenuItem onClick={() => deleteMessage(selectedMessage.id)}>
             <Delete sx={{ mr: 1 }} />
@@ -541,8 +547,8 @@ const RealTimeCollaboration = ({
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
       >
         {notification && (
-          <Alert 
-            onClose={() => setNotification(null)} 
+          <Alert
+            onClose={() => setNotification(null)}
             severity={notification.severity}
             sx={{ width: '100%' }}
           >
@@ -555,4 +561,3 @@ const RealTimeCollaboration = ({
 };
 
 export default RealTimeCollaboration;
-

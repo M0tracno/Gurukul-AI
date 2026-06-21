@@ -26,12 +26,12 @@ Gurukul AI serves four user roles — **Teacher**, **Student**, **Parent**, and 
 
 ## Tech Stack
 
-| Layer | Technologies |
-|-------|-------------|
+| Layer        | Technologies                                                                                           |
+| ------------ | ------------------------------------------------------------------------------------------------------ |
 | **Frontend** | React 18, Vite 6, TypeScript, MUI 7, TanStack React Query 5, Socket.IO Client, Framer Motion, Recharts |
-| **Backend** | Express 5, TypeScript, Mongoose / MongoDB 7, BullMQ / Redis 7, Socket.IO, JWT Auth, Zod validation |
-| **Testing** | Jest 30 (backend), Vitest 3 (frontend), Playwright (E2E), fast-check (property-based), k6 (load) |
-| **DevOps** | Docker, Docker Compose, GitHub Actions, Nginx, Sentry, Winston logging |
+| **Backend**  | Express 5, TypeScript, Mongoose / MongoDB 7, BullMQ / Redis 7, Socket.IO, JWT Auth, Zod validation     |
+| **Testing**  | Jest 30 (backend), Vitest 3 (frontend), Playwright (E2E), fast-check (property-based), k6 (load)       |
+| **DevOps**   | Docker, Docker Compose, GitHub Actions, Nginx, Sentry, Winston logging                                 |
 
 ---
 
@@ -91,6 +91,7 @@ docker compose up
 ```
 
 Services will be available at:
+
 - **Frontend:** http://localhost:3000
 - **Backend API:** http://localhost:5000
 - **Nginx (unified):** http://localhost:80
@@ -124,26 +125,26 @@ Frontend runs on `http://localhost:3000` with API proxy to the backend at port 5
 
 ### Frontend (`.env.local`)
 
-| Variable | Description |
-|----------|-------------|
-| `VITE_API_URL` | Backend API base URL |
-| `VITE_SOCKET_URL` | WebSocket URL for real-time features |
-| `VITE_FIREBASE_*` | Firebase project credentials |
-| `VITE_GEMINI_API_KEY` | Google Gemini API key |
-| `VITE_SENTRY_DSN` | Sentry error reporting DSN |
-| `VITE_FORCE_DEMO_MODE` | Run with mock data (no backend) |
+| Variable               | Description                          |
+| ---------------------- | ------------------------------------ |
+| `VITE_API_URL`         | Backend API base URL                 |
+| `VITE_SOCKET_URL`      | WebSocket URL for real-time features |
+| `VITE_FIREBASE_*`      | Firebase project credentials         |
+| `VITE_GEMINI_API_KEY`  | Google Gemini API key                |
+| `VITE_SENTRY_DSN`      | Sentry error reporting DSN           |
+| `VITE_FORCE_DEMO_MODE` | Run with mock data (no backend)      |
 
 ### Backend (`backend/.env`)
 
-| Variable | Description |
-|----------|-------------|
-| `PORT` | Server port (default: 5000) |
-| `MONGO_URI` | MongoDB connection string |
-| `REDIS_HOST` / `REDIS_PORT` | Redis connection details |
-| `JWT_SECRET` | Token signing secret |
-| `GEMINI_API_KEY` | Google Gemini for AI grading |
-| `SMTP_*` | Email service configuration |
-| `LOG_LEVEL` | Logging verbosity (debug/info/warn/error) |
+| Variable                    | Description                               |
+| --------------------------- | ----------------------------------------- |
+| `PORT`                      | Server port (default: 5000)               |
+| `MONGO_URI`                 | MongoDB connection string                 |
+| `REDIS_HOST` / `REDIS_PORT` | Redis connection details                  |
+| `JWT_SECRET`                | Token signing secret                      |
+| `GEMINI_API_KEY`            | Google Gemini for AI grading              |
+| `SMTP_*`                    | Email service configuration               |
+| `LOG_LEVEL`                 | Logging verbosity (debug/info/warn/error) |
 
 See [`.env.example`](.env.example) and [`backend/.env.example`](backend/.env.example) for all available options.
 
@@ -196,33 +197,33 @@ gurukul-ai/
 
 ### Frontend
 
-| Script | Description |
-|--------|-------------|
-| `npm run dev` | Start Vite dev server (port 3000) |
-| `npm run build` | Type-check + production build |
-| `npm run preview` | Preview production build locally |
-| `npm run lint` | ESLint with zero-warning policy |
-| `npm run lint:fix` | Auto-fix lint issues |
-| `npm run format` | Format with Prettier |
-| `npm run type-check` | TypeScript type checking |
-| `npm test` | Run Vitest unit tests |
-| `npm run test:coverage` | Tests with coverage report |
-| `npm run test:pbt` | Property-based tests (fast-check) |
-| `npm run test:e2e` | Playwright E2E tests |
-| `npm run test:visual` | Visual regression tests |
+| Script                  | Description                       |
+| ----------------------- | --------------------------------- |
+| `npm run dev`           | Start Vite dev server (port 3000) |
+| `npm run build`         | Type-check + production build     |
+| `npm run preview`       | Preview production build locally  |
+| `npm run lint`          | ESLint with zero-warning policy   |
+| `npm run lint:fix`      | Auto-fix lint issues              |
+| `npm run format`        | Format with Prettier              |
+| `npm run type-check`    | TypeScript type checking          |
+| `npm test`              | Run Vitest unit tests             |
+| `npm run test:coverage` | Tests with coverage report        |
+| `npm run test:pbt`      | Property-based tests (fast-check) |
+| `npm run test:e2e`      | Playwright E2E tests              |
+| `npm run test:visual`   | Visual regression tests           |
 
 ### Backend
 
-| Script | Description |
-|--------|-------------|
-| `npm run dev` | Start with hot-reload (tsx watch) |
-| `npm run build` | Compile TypeScript to `dist/` |
-| `npm start` | Run compiled production build |
-| `npm test` | Run Jest unit tests |
-| `npm run test:pbt` | Property-based tests |
-| `npm run test:coverage` | Tests with coverage report |
-| `npm run seed:admin` | Seed initial admin user |
-| `npm run pre-deploy` | Pre-deployment checks |
+| Script                  | Description                       |
+| ----------------------- | --------------------------------- |
+| `npm run dev`           | Start with hot-reload (tsx watch) |
+| `npm run build`         | Compile TypeScript to `dist/`     |
+| `npm start`             | Run compiled production build     |
+| `npm test`              | Run Jest unit tests               |
+| `npm run test:pbt`      | Property-based tests              |
+| `npm run test:coverage` | Tests with coverage report        |
+| `npm run seed:admin`    | Seed initial admin user           |
+| `npm run pre-deploy`    | Pre-deployment checks             |
 
 ---
 
@@ -270,6 +271,7 @@ The E2E suite covers Chromium, Firefox, WebKit, and mobile viewports (Pixel 5, i
 Deployment is handled via Docker and GitHub Actions CI/CD pipelines. See [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) for full instructions.
 
 The pipeline includes:
+
 - Lint + type-check gates
 - Unit and property-based test suites
 - Docker image build and push

@@ -3,6 +3,133 @@ import mongoose from 'mongoose';
 import type { UserRole } from '../types/common.js';
 import Course from '../models/Course.js';
 import Enrollment from '../models/Enrollment.js';
+import { failure, type ErrorEnvelope } from '../utils/envelope.js';
+
+// ─── Channel Type Definitions (Requirement 16.1) ─────────────────────────────
+
+/**
+ * The three supported channel types per Requirement 16.1.
+ * Each channel type restricts participation to exactly two role types.
+ */
+export type ChannelType = 'parent_teacher' | 'teacher_student' | 'teacher_admin';
+
+/**
+ * Mapping from channel type to the pair of user roles permitted on that channel.
+ */
+export const CHANNEL_ROLE_PAIRS: Record<ChannelType, [UserRole, UserRole]> = {
+  parent_teacher: ['parent', 'teacher'],
+  teacher_student: ['teacher', 'student'],
+  teacher_admin: ['teacher', 'admin'],
+};
+
+/**
+ * All valid channel types as an array for iteration/validation.
+ */
+export const ALL_CHANNEL_TYPES: ChannelType[] = ['parent_teacher', 'teacher_student', 'teacher_admin'];
+
+/**
+ * Determines the channel type for a conversation between two roles.
+ * Returns undefined if no valid channel exists for the role pair.
+ */
+export function resolveChannelType(roleA: UserRole, roleB: UserRole): ChannelType | undefined {
+  // Normalize 'faculty' to 'teacher' for channel resolution
+  const normA = roleA === 'faculty' ? 'teacher' : roleA;
+  const normB = roleB === 'faculty' ? 'teacher' : roleB;
+
+  for (const [channelType, [r1, r2]] of Object.entries(CHANNEL_ROLE_PAIRS)) {
+    if ((normA === r1 && normB === r2) || (normA === r2 && normB === r1)) {
+      return channelType as ChannelType;
+    }
+  }
+  return undefined;
+}
+
+/**
+ * Checks whether a given role is permitted on a given channel type.
+ */
+function isRolePermittedOnChannel(role: UserRole, channelType: ChannelType): boolean {
+  const normalizedRole = role === 'faculty' ? 'teacher' : role;
+  const [r1, r2] = CHANNEL_ROLE_PAIRS[channelType];
+  return normalizedRole === r1 || normalizedRole === r2;
+}
+
+// ─── canJoin / canPost (Requirement 16.3) ─────────────────────────────────────
+
+/**
+ * Result of a channel access check (canJoin/canPost).
+ * When `allowed` is false, `errorEnvelope` contains a 403-shaped Error_Envelope.
+ */
+export interface ChannelAccessResult {
+  allowed: boolean;
+  errorEnvelope?: ErrorEnvelope;
+  reason?: string;
+}
+
+/**
+ * Determines if a user is authorized to JOIN a channel.
+ * Violations produce a 403 Error_Envelope per Requirement 16.3.
+ *
+ * @param userRole - The role of the user attempting to join
+ * @param channelType - The channel type being joined
+ * @returns ChannelAccessResult with allowed status and optional error
+ */
+export function canJoin(userRole: UserRole, channelType: ChannelType): ChannelAccessResult {
+  if (!ALL_CHANNEL_TYPES.includes(channelType)) {
+    return {
+      allowed: false,
+      reason: `Invalid channel type: ${channelType}`,
+      errorEnvelope: failure(`Invalid channel type: ${channelType}`),
+    };
+  }
+
+  if (!isRolePermittedOnChannel(userRole, channelType)) {
+    const [r1, r2] = CHANNEL_ROLE_PAIRS[channelType];
+    return {
+      allowed: false,
+      reason: `Role '${userRole}' is not permitted on channel '${channelType}'. Allowed roles: ${r1}, ${r2}`,
+      errorEnvelope: failure(
+        `Access denied: role '${userRole}' cannot join '${channelType}' channel`,
+        [{ field: 'channel', reason: `Only ${r1} and ${r2} roles are permitted` }]
+      ),
+    };
+  }
+
+  return { allowed: true };
+}
+
+/**
+ * Determines if a user is authorized to POST a message on a channel.
+ * Violations produce a 403 Error_Envelope per Requirement 16.3.
+ *
+ * @param userRole - The role of the user attempting to post
+ * @param channelType - The channel type being posted to
+ * @returns ChannelAccessResult with allowed status and optional error
+ */
+export function canPost(userRole: UserRole, channelType: ChannelType): ChannelAccessResult {
+  if (!ALL_CHANNEL_TYPES.includes(channelType)) {
+    return {
+      allowed: false,
+      reason: `Invalid channel type: ${channelType}`,
+      errorEnvelope: failure(`Invalid channel type: ${channelType}`),
+    };
+  }
+
+  if (!isRolePermittedOnChannel(userRole, channelType)) {
+    const [r1, r2] = CHANNEL_ROLE_PAIRS[channelType];
+    return {
+      allowed: false,
+      reason: `Role '${userRole}' is not permitted to post on channel '${channelType}'. Allowed roles: ${r1}, ${r2}`,
+      errorEnvelope: failure(
+        `Access denied: role '${userRole}' cannot post on '${channelType}' channel`,
+        [{ field: 'channel', reason: `Only ${r1} and ${r2} roles may post` }]
+      ),
+    };
+  }
+
+  return { allowed: true };
+}
+
+// ─── Existing Messaging Permission Validation ─────────────────────────────────
 
 /**
  * Result of a messaging permission check.

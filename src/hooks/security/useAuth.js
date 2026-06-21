@@ -8,7 +8,6 @@ import securityCoordinator from '../../services/security/securityCoordinator';
  * Provides React hooks for advanced authentication features
  */
 
-
 export const useAuth = () => {
   const { user, setUser } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
@@ -36,25 +35,28 @@ export const useAuth = () => {
     }
   }, [user]);
 
-  const login = useCallback(async (credentials) => {
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const result = await advancedAuthService.authenticate(credentials);
-      setUser(result.user);
-      return result;
-    } catch (err) {
-      setError(err.message);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [setUser]);
+  const login = useCallback(
+    async credentials => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const result = await advancedAuthService.authenticate(credentials);
+        setUser(result.user);
+        return result;
+      } catch (err) {
+        setError(err.message);
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [setUser]
+  );
 
   const logout = useCallback(async () => {
     setLoading(true);
-    
+
     try {
       await advancedAuthService.logout();
       setUser(null);
@@ -70,7 +72,7 @@ export const useAuth = () => {
 
   const extendSession = useCallback(async () => {
     if (!user) return;
-    
+
     try {
       await advancedAuthService.extendSession(user.uid);
       const session = await advancedAuthService.getCurrentSession(user.uid);
@@ -83,7 +85,7 @@ export const useAuth = () => {
 
   const checkSecurityStatus = useCallback(async () => {
     if (!user) return null;
-    
+
     try {
       return await securityCoordinator.getSecurityStatus(user.uid);
     } catch (err) {
@@ -103,10 +105,10 @@ export const useAuth = () => {
     extendSession,
     checkSecurityStatus,
     isAuthenticated: !!user,
-    isSessionExpiring: sessionInfo?.expiresAt && new Date(sessionInfo.expiresAt) - new Date() < 300000, // 5 minutes
-    isHighRisk: riskScore > 70
+    isSessionExpiring:
+      sessionInfo?.expiresAt && new Date(sessionInfo.expiresAt) - new Date() < 300000, // 5 minutes
+    isHighRisk: riskScore > 70,
   };
 };
 
 export default useAuth;
-

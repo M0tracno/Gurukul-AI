@@ -37,7 +37,7 @@ import {
   ListItemAvatar,
   Divider,
   IconButton,
-  Tooltip
+  Tooltip,
 } from '@mui/material';
 import {
   Feedback as FeedbackIcon,
@@ -51,10 +51,11 @@ import {
   School as SchoolIcon,
   Assignment as AssignmentIcon,
   BarChart as BarChartIcon,
-  Refresh as RefreshIcon
+  Refresh as RefreshIcon,
 } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 import EnhancedFacultyService from '../../services/enhancedFacultyService';
+import FeedbackService from '../../services/feedbackService';
 
 // Styled components
 const StyledCard = styled(Card)(({ theme }) => ({
@@ -81,9 +82,33 @@ const StatCard = styled(Card)(({ theme, color }) => ({
   },
 }));
 
+/**
+ * Map a FeedbackDTO returned by the Feedback API to the shape this UI renders.
+ * The API intentionally omits author identity, so received feedback is shown
+ * without a student name (anonymized) and "replied" is derived from replies.
+ */
+const normalizeFeedback = dto => ({
+  id: dto.id,
+  rating: dto.rating,
+  message: dto.comment,
+  targetType: dto.targetType,
+  studentName: dto.authorRole === 'parent' ? 'Parent' : 'Student',
+  anonymous: false,
+  replied: Array.isArray(dto.replies) && dto.replies.length > 0,
+  replies: dto.replies || [],
+  timestamp: dto.createdAt ? new Date(dto.createdAt).toLocaleString() : '',
+});
+
 const FacultyFeedback = () => {
   const [currentTab, setCurrentTab] = useState(0);
   const [feedbacks, setFeedbacks] = useState([]);
+  const [feedbackStats, setFeedbackStats] = useState({
+    total: 0,
+    positive: 0,
+    needsAttention: 0,
+    averageRating: 0,
+  });
+  const [loadError, setLoadError] = useState('');
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'info' });
@@ -95,7 +120,7 @@ const FacultyFeedback = () => {
     courseId: '',
     subject: '',
     message: '',
-    anonymous: false
+    anonymous: false,
   });
 
   useEffect(() => {
@@ -104,6 +129,7 @@ const FacultyFeedback = () => {
 
   const loadData = async () => {
     setLoading(true);
+    setLoadError('');
     try {
       // Load courses
       const coursesResult = await EnhancedFacultyService.getCourses();
@@ -111,15 +137,21 @@ const FacultyFeedback = () => {
         setCourses(coursesResult.data);
       }
 
-      // Load feedback
-      const feedbackResult = await EnhancedFacultyService.getFeedback();
+      // Load received feedback and aggregate stats from the Feedback API
+      const feedbackResult = await FeedbackService.getReceivedFeedback();
       if (feedbackResult.success) {
-        setFeedbacks(feedbackResult.data);
+        setFeedbacks(feedbackResult.data.map(normalizeFeedback));
+        setFeedbackStats(feedbackResult.stats);
+        showSnackbar('Feedback data loaded successfully', 'success');
+      } else {
+        setFeedbacks([]);
+        setFeedbackStats({ total: 0, positive: 0, needsAttention: 0, averageRating: 0 });
+        setLoadError("We couldn't load your feedback right now. Please try again.");
+        showSnackbar('Unable to load feedback right now', 'error');
       }
-
-      showSnackbar('Feedback data loaded successfully', 'success');
     } catch (error) {
       console.error('Error loading feedback data:', error);
+      setLoadError("We couldn't load your feedback right now. Please try again.");
       showSnackbar('Error loading feedback data', 'error');
     } finally {
       setLoading(false);
@@ -130,7 +162,7 @@ const FacultyFeedback = () => {
     setCurrentTab(newValue);
   };
 
-  const handleReply = (feedback) => {
+  const handleReply = feedback => {
     setSelectedFeedback(feedback);
     setReplyDialog(true);
   };
@@ -175,7 +207,7 @@ const FacultyFeedback = () => {
           courseId: '',
           subject: '',
           message: '',
-          anonymous: false
+          anonymous: false,
         });
       }
     } catch (error) {
@@ -195,13 +227,11 @@ const FacultyFeedback = () => {
   };
 
   const getFeedbackStats = () => {
-    const total = feedbacks.length;
-    const positive = feedbacks.filter(f => f.rating >= 4).length;
-    const negative = feedbacks.filter(f => f.rating <= 2).length;
+    const total = feedbackStats.total || 0;
+    const positive = feedbackStats.positive || 0;
+    const negative = feedbackStats.needsAttention || 0;
     const pending = feedbacks.filter(f => !f.replied).length;
-    const averageRating = feedbacks.length > 0 
-      ? feedbacks.reduce((sum, f) => sum + f.rating, 0) / feedbacks.length 
-      : 0;
+    const averageRating = feedbackStats.averageRating || 0;
 
     return { total, positive, negative, pending, averageRating };
   };
@@ -211,28 +241,37 @@ const FacultyFeedback = () => {
   // Feedback Overview Tab
   const FeedbackOverviewTab = () => (
     <Box>
+      {loadError && (
+        <Alert severity="error" sx={{ mb: 3 }} action={
+          <Button color="inherit" size="small" startIcon={<RefreshIcon />} onClick={loadData}>
+            Retry
+          </Button>
+        }>
+          {loadError}
+        </Alert>
+      )}
       {/* Stats Cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid size={{xs:12,sm:6,md:3}}>
-          <StatCard color="#667eea">
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <StatCard color="#E3A648">
             <CardContent>
               <Box display="flex" alignItems="center" justifyContent="space-between">
                 <Box>
-                  <Typography variant="h4" fontWeight="bold" color="#667eea">
+                  <Typography variant="h4" fontWeight="bold" color="#E3A648">
                     {stats.total}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
                     Total Feedback
                   </Typography>
                 </Box>
-                <Avatar sx={{ bgcolor: '#667eea20', color: '#667eea' }}>
+                <Avatar sx={{ bgcolor: '#E3A64820', color: '#E3A648' }}>
                   <FeedbackIcon />
                 </Avatar>
               </Box>
             </CardContent>
           </StatCard>
         </Grid>
-        <Grid size={{xs:12,sm:6,md:3}}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <StatCard color="#4CAF50">
             <CardContent>
               <Box display="flex" alignItems="center" justifyContent="space-between">
@@ -251,7 +290,7 @@ const FacultyFeedback = () => {
             </CardContent>
           </StatCard>
         </Grid>
-        <Grid size={{xs:12,sm:6,md:3}}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <StatCard color="#F44336">
             <CardContent>
               <Box display="flex" alignItems="center" justifyContent="space-between">
@@ -270,7 +309,7 @@ const FacultyFeedback = () => {
             </CardContent>
           </StatCard>
         </Grid>
-        <Grid size={{xs:12,sm:6,md:3}}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <StatCard color="#FF9800">
             <CardContent>
               <Box display="flex" alignItems="center" justifyContent="space-between">
@@ -296,7 +335,7 @@ const FacultyFeedback = () => {
         <CardContent>
           <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
             <Typography variant="h6" fontWeight="bold">
-              💬 Recent Feedback
+              Recent Feedback
             </Typography>
             <Box>
               <Button
@@ -336,8 +375,8 @@ const FacultyFeedback = () => {
                             {feedback.anonymous ? 'Anonymous Student' : feedback.studentName}
                           </Typography>
                           <Rating value={feedback.rating} readOnly size="small" />
-                          <Chip 
-                            label={courses.find(c => c.id === feedback.courseId)?.code || 'Unknown'} 
+                          <Chip
+                            label={feedback.targetType === 'course' ? 'Course' : 'Teacher'}
                             size="small"
                             color="primary"
                             variant="outlined"
@@ -353,20 +392,15 @@ const FacultyFeedback = () => {
                             {feedback.timestamp}
                           </Typography>
                           {feedback.replied && (
-                            <Chip 
-                              label="Replied" 
-                              size="small" 
-                              color="success" 
-                              sx={{ ml: 1 }}
-                            />
+                            <Chip label="Replied" size="small" color="success" sx={{ ml: 1 }} />
                           )}
                         </Box>
                       }
                     />
                     <Box>
                       <Tooltip title="Reply to feedback">
-                        <IconButton 
-                          color="primary" 
+                        <IconButton
+                          color="primary"
                           onClick={() => handleReply(feedback)}
                           disabled={feedback.replied}
                         >
@@ -398,11 +432,11 @@ const FacultyFeedback = () => {
   // Analytics Tab
   const AnalyticsTab = () => (
     <Grid container spacing={3}>
-      <Grid size={{xs:12,md:6}}>
+      <Grid size={{ xs: 12, md: 6 }}>
         <StyledCard>
           <CardContent>
             <Typography variant="h6" gutterBottom>
-              📊 Feedback Trends
+              Feedback Trends
             </Typography>
             <Typography variant="body2" color="textSecondary">
               Course-wise feedback analysis and trends over time
@@ -410,11 +444,11 @@ const FacultyFeedback = () => {
           </CardContent>
         </StyledCard>
       </Grid>
-      <Grid size={{xs:12,md:6}}>
+      <Grid size={{ xs: 12, md: 6 }}>
         <StyledCard>
           <CardContent>
             <Typography variant="h6" gutterBottom>
-              📈 Improvement Areas
+              Improvement Areas
             </Typography>
             <Typography variant="body2" color="textSecondary">
               Identify areas for teaching improvement based on student feedback
@@ -426,16 +460,18 @@ const FacultyFeedback = () => {
   );
 
   return (
-    <Box sx={{ 
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-      py: 3
-    }}>
+    <Box
+      sx={{
+        minHeight: '100%',
+        background: 'transparent',
+        py: 1,
+      }}
+    >
       <Container maxWidth="xl">
         {/* Header */}
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
           <Typography variant="h4" fontWeight="bold" color="primary">
-            💬 Faculty Feedback System
+            Feedback
           </Typography>
         </Box>
 
@@ -458,12 +494,7 @@ const FacultyFeedback = () => {
         {currentTab === 1 && <AnalyticsTab />}
 
         {/* Reply Dialog */}
-        <Dialog
-          open={replyDialog}
-          onClose={() => setReplyDialog(false)}
-          maxWidth="md"
-          fullWidth
-        >
+        <Dialog open={replyDialog} onClose={() => setReplyDialog(false)} maxWidth="md" fullWidth>
           <DialogTitle>Reply to Feedback</DialogTitle>
           <DialogContent>
             {selectedFeedback && (
@@ -472,9 +503,7 @@ const FacultyFeedback = () => {
                   Original Feedback:
                 </Typography>
                 <Paper sx={{ p: 2, mb: 2, bgcolor: 'grey.50' }}>
-                  <Typography variant="body2">
-                    {selectedFeedback.message}
-                  </Typography>
+                  <Typography variant="body2">{selectedFeedback.message}</Typography>
                   <Box display="flex" alignItems="center" mt={1}>
                     <Rating value={selectedFeedback.rating} readOnly size="small" />
                     <Typography variant="caption" sx={{ ml: 1 }}>
@@ -485,7 +514,7 @@ const FacultyFeedback = () => {
                 <TextField
                   label="Your Reply"
                   value={replyText}
-                  onChange={(e) => setReplyText(e.target.value)}
+                  onChange={e => setReplyText(e.target.value)}
                   fullWidth
                   multiline
                   rows={4}
@@ -495,14 +524,8 @@ const FacultyFeedback = () => {
             )}
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setReplyDialog(false)}>
-              Cancel
-            </Button>
-            <Button
-              onClick={sendReply}
-              variant="contained"
-              disabled={loading || !replyText.trim()}
-            >
+            <Button onClick={() => setReplyDialog(false)}>Cancel</Button>
+            <Button onClick={sendReply} variant="contained" disabled={loading || !replyText.trim()}>
               Send Reply
             </Button>
           </DialogActions>
@@ -518,15 +541,17 @@ const FacultyFeedback = () => {
           <DialogTitle>Request Student Feedback</DialogTitle>
           <DialogContent>
             <Grid container spacing={2} sx={{ mt: 1 }}>
-              <Grid size={{xs:12}}>
+              <Grid size={{ xs: 12 }}>
                 <FormControl fullWidth required>
                   <InputLabel>Course</InputLabel>
                   <Select
                     value={feedbackRequest.courseId}
-                    onChange={(e) => setFeedbackRequest({ ...feedbackRequest, courseId: e.target.value })}
+                    onChange={e =>
+                      setFeedbackRequest({ ...feedbackRequest, courseId: e.target.value })
+                    }
                     label="Course"
                   >
-                    {courses.map((course) => (
+                    {courses.map(course => (
                       <MenuItem key={course.id} value={course.id}>
                         {course.code} - {course.name}
                       </MenuItem>
@@ -534,21 +559,25 @@ const FacultyFeedback = () => {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid size={{xs:12}}>
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   label="Subject"
                   value={feedbackRequest.subject}
-                  onChange={(e) => setFeedbackRequest({ ...feedbackRequest, subject: e.target.value })}
+                  onChange={e =>
+                    setFeedbackRequest({ ...feedbackRequest, subject: e.target.value })
+                  }
                   fullWidth
                   required
                   placeholder="e.g., Mid-semester Course Feedback"
                 />
               </Grid>
-              <Grid size={{xs:12}}>
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   label="Message to Students"
                   value={feedbackRequest.message}
-                  onChange={(e) => setFeedbackRequest({ ...feedbackRequest, message: e.target.value })}
+                  onChange={e =>
+                    setFeedbackRequest({ ...feedbackRequest, message: e.target.value })
+                  }
                   fullWidth
                   multiline
                   rows={4}
@@ -558,14 +587,8 @@ const FacultyFeedback = () => {
             </Grid>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setRequestFeedbackDialog(false)}>
-              Cancel
-            </Button>
-            <Button
-              onClick={requestFeedback}
-              variant="contained"
-              disabled={loading}
-            >
+            <Button onClick={() => setRequestFeedbackDialog(false)}>Cancel</Button>
+            <Button onClick={requestFeedback} variant="contained" disabled={loading}>
               Send Request
             </Button>
           </DialogActions>
@@ -578,11 +601,7 @@ const FacultyFeedback = () => {
           onClose={handleSnackbarClose}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         >
-          <Alert 
-            onClose={handleSnackbarClose} 
-            severity={snackbar.severity}
-            sx={{ width: '100%' }}
-          >
+          <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: '100%' }}>
             {snackbar.message}
           </Alert>
         </Snackbar>
@@ -591,4 +610,4 @@ const FacultyFeedback = () => {
   );
 };
 
-export default FacultyFeedback;
+export default FacultyFeedback;

@@ -38,11 +38,11 @@ export function ResponsiveContainer({
         width: '100%',
         // Responsive padding using breakpoints
         px: {
-          xs: theme.spacing(2),  // 8px at 320px+
-          sm: theme.spacing(3),  // 12px at 600px+
-          md: theme.spacing(4),  // 16px at 900px+
-          lg: theme.spacing(6),  // 24px at 1200px+
-          xl: theme.spacing(8),  // 32px at 1536px+
+          xs: theme.spacing(2), // 8px at 320px+
+          sm: theme.spacing(3), // 12px at 600px+
+          md: theme.spacing(4), // 16px at 900px+
+          lg: theme.spacing(6), // 24px at 1200px+
+          xl: theme.spacing(8), // 32px at 1536px+
         },
         py: {
           xs: theme.spacing(2),

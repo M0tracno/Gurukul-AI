@@ -5,44 +5,45 @@
 
 class SecurityService {
   constructor() {
-    this.isInitialized = false;    this.securityPolicies = {
+    this.isInitialized = false;
+    this.securityPolicies = {
       csp: {
         'default-src': ["'self'"],
         'script-src': [
-          "'self'", 
-          "'unsafe-inline'", 
-          "'unsafe-eval'", 
-          'https://*.googleapis.com', 
-          'https://*.googletagmanager.com', 
-          'https://*.google-analytics.com'
+          "'self'",
+          "'unsafe-inline'",
+          "'unsafe-eval'",
+          'https://*.googleapis.com',
+          'https://*.googletagmanager.com',
+          'https://*.google-analytics.com',
         ],
         'script-src-elem': [
-          "'self'", 
+          "'self'",
           "'unsafe-inline'",
           'https://*.googleapis.com',
           'https://*.googletagmanager.com',
-          'https://*.google-analytics.com'
+          'https://*.google-analytics.com',
         ],
         'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
         'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:'],
         'img-src': ["'self'", 'data:', 'https:'],
         'connect-src': [
-          "'self'", 
-          'http://localhost:*', 
-          'https://localhost:*', 
+          "'self'",
+          'http://localhost:*',
+          'https://localhost:*',
           'https://*.onrender.com',
-          'https://*.googleapis.com', 
-          'https://*.google-analytics.com', 
+          'https://*.googleapis.com',
+          'https://*.google-analytics.com',
           'https://www.google-analytics.com',
-          'wss://*.onrender.com'
+          'wss://*.onrender.com',
         ],
         'frame-src': ["'none'"],
         'object-src': ["'none'"],
         'base-uri': ["'self'"],
-        'form-action': ["'self'"]
-      }
+        'form-action': ["'self'"],
+      },
     };
-    
+
     // Bind event handler for proper cleanup
     this.handleSecurityViolation = this.handleSecurityViolation.bind(this);
   }
@@ -59,7 +60,7 @@ class SecurityService {
       this.setupClickjackingProtection();
       this.setupReferrerPolicy();
       this.monitorSecurityViolations();
-      
+
       this.isInitialized = true;
       console.log('🔒 Security Service initialized successfully');
     } catch (error) {
@@ -146,7 +147,7 @@ class SecurityService {
       violatedDirective: event.violatedDirective,
       originalPolicy: event.originalPolicy,
       sourceFile: event.sourceFile,
-      lineNumber: event.lineNumber
+      lineNumber: event.lineNumber,
     });
 
     // Report to monitoring service in production
@@ -253,7 +254,7 @@ class SecurityService {
       hasLowerCase: /[a-z]/.test(password),
       hasNumbers: /\d/.test(password),
       hasSpecialChars: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password),
-      noCommonPatterns: !/^(password|123456|qwerty)/i.test(password)
+      noCommonPatterns: !/^(password|123456|qwerty)/i.test(password),
     };
 
     const score = Object.values(requirements).filter(Boolean).length;
@@ -263,7 +264,7 @@ class SecurityService {
       score,
       strength,
       requirements,
-      isValid: score >= 4
+      isValid: score >= 4,
     };
   }
 
@@ -292,7 +293,7 @@ class SecurityService {
           name: 'PBKDF2',
           salt,
           iterations: 100000,
-          hash: 'SHA-256'
+          hash: 'SHA-256',
         },
         keyMaterial,
         { name: 'AES-GCM', length: 256 },
@@ -307,11 +308,13 @@ class SecurityService {
         encoder.encode(JSON.stringify(data))
       );
 
-      return btoa(JSON.stringify({
-        encrypted: Array.from(new Uint8Array(encrypted)),
-        iv: Array.from(iv),
-        salt: Array.from(salt)
-      }));
+      return btoa(
+        JSON.stringify({
+          encrypted: Array.from(new Uint8Array(encrypted)),
+          iv: Array.from(iv),
+          salt: Array.from(salt),
+        })
+      );
     } catch (error) {
       console.error('Encryption failed:', error);
       return btoa(JSON.stringify(data)); // Fallback
@@ -348,7 +351,7 @@ class SecurityService {
           name: 'PBKDF2',
           salt: new Uint8Array(data.salt),
           iterations: 100000,
-          hash: 'SHA-256'
+          hash: 'SHA-256',
         },
         keyMaterial,
         { name: 'AES-GCM', length: 256 },
@@ -376,13 +379,16 @@ class SecurityService {
     const requests = new Map();
 
     return {
-      check: (identifier) => {
+      check: identifier => {
         const now = Date.now();
         const windowStart = now - windowMs;
 
         // Clean old requests
         for (const [key, timestamps] of requests.entries()) {
-          requests.set(key, timestamps.filter(time => time > windowStart));
+          requests.set(
+            key,
+            timestamps.filter(time => time > windowStart)
+          );
           if (requests.get(key).length === 0) {
             requests.delete(key);
           }
@@ -399,10 +405,10 @@ class SecurityService {
         requests.set(identifier, userRequests);
         return true; // Allowed
       },
-      
-      reset: (identifier) => {
+
+      reset: identifier => {
         requests.delete(identifier);
-      }
+      },
     };
   }
 
@@ -415,20 +421,20 @@ class SecurityService {
       sessionStorage.setItem(key, encryptedValue);
     },
 
-    getItem: async (key) => {
+    getItem: async key => {
       const encryptedValue = sessionStorage.getItem(key);
       if (!encryptedValue) return null;
       return await this.decryptData(encryptedValue, key);
     },
 
-    removeItem: (key) => {
+    removeItem: key => {
       sessionStorage.removeItem(key);
     },
 
     clear: () => {
       sessionStorage.clear();
-    }
-  };  /**
+    },
+  }; /**
    * Cleanup security service
    */
   cleanup() {
@@ -437,10 +443,10 @@ class SecurityService {
       if (typeof document !== 'undefined') {
         document.removeEventListener('securitypolicyviolation', this.handleSecurityViolation);
       }
-      
+
       // Reset initialization state
       this.isInitialized = false;
-      
+
       console.log('🔒 Security Service cleaned up successfully');
     } catch (error) {
       console.error('❌ Failed to cleanup Security Service:', error);
@@ -457,7 +463,7 @@ class SecurityService {
       cspEnabled: !!document.querySelector('meta[http-equiv="Content-Security-Policy"]'),
       xssProtectionEnabled: !!document.querySelector('meta[http-equiv="X-XSS-Protection"]'),
       frameOptionsEnabled: !!document.querySelector('meta[http-equiv="X-Frame-Options"]'),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 }
@@ -466,4 +472,3 @@ class SecurityService {
 const securityService = new SecurityService();
 
 export default securityService;
-

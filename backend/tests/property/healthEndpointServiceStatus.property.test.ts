@@ -22,7 +22,7 @@ jest.unstable_mockModule('mongoose', () => ({
       readyState: 1,
       db: {
         admin: () => ({
-          ping: jest.fn().mockResolvedValue({ ok: 1 }),
+          ping: jest.fn<() => Promise<{ ok: number }>>().mockResolvedValue({ ok: 1 }),
         }),
       },
     },

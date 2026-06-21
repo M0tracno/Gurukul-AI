@@ -11,13 +11,13 @@ export const usePWA = () => {
   useEffect(() => {
     // Register service worker
     registerServiceWorker();
-    
+
     // Setup PWA event listeners
     setupPWAEventListeners();
-    
+
     // Setup online/offline detection
     setupNetworkDetection();
-    
+
     return () => {
       // Cleanup event listeners
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -30,16 +30,16 @@ export const usePWA = () => {
     if ('serviceWorker' in navigator) {
       try {
         const registration = await navigator.serviceWorker.register('/sw.js', {
-          scope: '/'
+          scope: '/',
         });
-        
+
         setRegistration(registration);
         console.log('Service Worker registered successfully:', registration);
 
         // Check for updates
         registration.addEventListener('updatefound', () => {
           const newWorker = registration.installing;
-          
+
           if (newWorker) {
             newWorker.addEventListener('statechange', () => {
               if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
@@ -51,14 +51,13 @@ export const usePWA = () => {
         });
 
         // Handle service worker messages
-        navigator.serviceWorker.addEventListener('message', (event) => {
+        navigator.serviceWorker.addEventListener('message', event => {
           console.log('Message from service worker:', event.data);
-          
+
           if (event.data && event.data.type === 'UPDATE_AVAILABLE') {
             setUpdateAvailable(true);
           }
         });
-
       } catch (error) {
         console.error('Service Worker registration failed:', error);
       }
@@ -68,24 +67,24 @@ export const usePWA = () => {
   const setupPWAEventListeners = () => {
     // Install prompt handling
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    
+
     // App installed handling
-    window.addEventListener('appinstalled', (event) => {
+    window.addEventListener('appinstalled', event => {
       console.log('PWA was installed successfully');
       setIsInstallable(false);
       setDeferredPrompt(null);
-      
+
       // Track installation analytics
       if (window.gtag) {
         window.gtag('event', 'pwa_installed', {
           event_category: 'PWA',
-          event_label: 'Installation'
+          event_label: 'Installation',
         });
       }
     });
   };
 
-  const handleBeforeInstallPrompt = (event) => {
+  const handleBeforeInstallPrompt = event => {
     console.log('PWA install prompt available');
     event.preventDefault();
     setDeferredPrompt(event);
@@ -100,7 +99,7 @@ export const usePWA = () => {
   const handleOnline = () => {
     setIsOffline(false);
     console.log('Application is online');
-    
+
     // Notify service worker
     if (registration && registration.active) {
       registration.active.postMessage({ type: 'NETWORK_ONLINE' });
@@ -110,7 +109,7 @@ export const usePWA = () => {
   const handleOffline = () => {
     setIsOffline(true);
     console.log('Application is offline');
-    
+
     // Notify service worker
     if (registration && registration.active) {
       registration.active.postMessage({ type: 'NETWORK_OFFLINE' });
@@ -126,27 +125,26 @@ export const usePWA = () => {
     try {
       // Show install prompt
       deferredPrompt.prompt();
-      
+
       // Wait for user response
       const { outcome } = await deferredPrompt.userChoice;
-      
+
       console.log(`User ${outcome} the install prompt`);
-      
+
       if (outcome === 'accepted') {
         setIsInstallable(false);
-        
+
         // Track successful installation prompt
         if (window.gtag) {
           window.gtag('event', 'pwa_install_prompt_accepted', {
             event_category: 'PWA',
-            event_label: 'Install Prompt'
+            event_label: 'Install Prompt',
           });
         }
       }
-      
+
       setDeferredPrompt(null);
       return outcome === 'accepted';
-      
     } catch (error) {
       console.error('Error installing PWA:', error);
       return false;
@@ -156,7 +154,7 @@ export const usePWA = () => {
   const updateServiceWorker = () => {
     if (registration && registration.waiting) {
       registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-      
+
       // Reload page after update
       window.location.reload();
     }
@@ -185,7 +183,7 @@ export const usePWA = () => {
         vibrate: options.vibrate || [200, 100, 200],
         data: options.data || {},
         actions: options.actions || [],
-        ...options
+        ...options,
       });
     } else if ('Notification' in window && Notification.permission === 'granted') {
       new Notification(title, options);
@@ -199,7 +197,7 @@ export const usePWA = () => {
         effectiveType: connection.effectiveType,
         downlink: connection.downlink,
         rtt: connection.rtt,
-        saveData: connection.saveData
+        saveData: connection.saveData,
       };
     }
     return null;
@@ -212,7 +210,7 @@ export const usePWA = () => {
         return {
           quota: estimate.quota,
           usage: estimate.usage,
-          usageDetails: estimate.usageDetails
+          usageDetails: estimate.usageDetails,
         };
       } catch (error) {
         console.error('Error getting storage estimate:', error);
@@ -226,20 +224,17 @@ export const usePWA = () => {
     try {
       if ('caches' in window) {
         const cacheNames = await caches.keys();
-        await Promise.all(
-          cacheNames.map(cacheName => caches.delete(cacheName))
-        );
+        await Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
         console.log('All caches cleared');
       }
-      
+
       if (registration) {
         await registration.unregister();
         console.log('Service worker unregistered');
       }
-      
+
       // Reload page
       window.location.reload();
-      
     } catch (error) {
       console.error('Error clearing app cache:', error);
     }
@@ -251,17 +246,17 @@ export const usePWA = () => {
     isOffline,
     updateAvailable,
     registration,
-    
+
     // Actions
     installPWA,
     updateServiceWorker,
     requestNotificationPermission,
     showNotification,
     clearAppCache,
-    
+
     // Utilities
     getNetworkInfo,
-    getCacheStorageUsage
+    getCacheStorageUsage,
   };
 };
 
@@ -274,11 +269,9 @@ export const PWAStatus = ({ className = '' }) => {
   return (
     <div className={`pwa-status ${className}`}>
       {isOffline && (
-        <div className="offline-indicator">
-          🔌 You're offline - Some features may be limited
-        </div>
+        <div className="offline-indicator">🔌 You're offline - Some features may be limited</div>
       )}
-      
+
       {updateAvailable && (
         <div className="update-indicator">
           <span>🔄 New version available!</span>
@@ -296,11 +289,7 @@ export const PWAInstallButton = ({ children, className = '', ...props }) => {
   if (!isInstallable) return null;
 
   return (
-    <button 
-      className={`pwa-install-button ${className}`}
-      onClick={installPWA}
-      {...props}
-    >
+    <button className={`pwa-install-button ${className}`} onClick={installPWA} {...props}>
       {children || '📱 Install App'}
     </button>
   );
@@ -319,7 +308,7 @@ export const useNetworkStatus = () => {
           effectiveType: connection.effectiveType,
           downlink: connection.downlink,
           rtt: connection.rtt,
-          saveData: connection.saveData
+          saveData: connection.saveData,
         });
       }
     };
@@ -339,7 +328,7 @@ export const useNetworkStatus = () => {
 
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
-    
+
     if ('connection' in navigator) {
       navigator.connection.addEventListener('change', handleConnectionChange);
     }
@@ -350,7 +339,7 @@ export const useNetworkStatus = () => {
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
-      
+
       if ('connection' in navigator) {
         navigator.connection.removeEventListener('change', handleConnectionChange);
       }
@@ -361,4 +350,3 @@ export const useNetworkStatus = () => {
 };
 
 export default usePWA;
-

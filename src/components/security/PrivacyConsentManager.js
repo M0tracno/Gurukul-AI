@@ -29,10 +29,11 @@ import {
   Switch,
   Typography,
   Tooltip,
-  Badge
+  Badge,
 } from '@mui/material';
 import {
-  PrivacyTip as PrivacyIcon,  ExpandMore as ExpandMoreIcon,
+  PrivacyTip as PrivacyIcon,
+  ExpandMore as ExpandMoreIcon,
   Info as InfoIcon,
   Warning as WarningIcon,
   CheckCircle as CheckIcon,
@@ -49,7 +50,7 @@ import {
   Share as ShareIcon,
   Storage as StorageIcon,
   Shield as SecurityIcon,
-  Update as UpdateIcon
+  Update as UpdateIcon,
 } from '@mui/icons-material';
 
 /**
@@ -59,7 +60,7 @@ import {
  * with GDPR, FERPA, COPPA, and CCPA compliance features
  */
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   dialog: {
     '& .MuiDialog-paper': {
       minWidth: 800,
@@ -215,12 +216,12 @@ const PrivacyConsentManager = ({ open, onClose, userType = 'student' }) => {
         'Account management and authentication',
         'Course enrollment and academic record keeping',
         'Communication for educational purposes',
-        'Security and fraud prevention'
+        'Security and fraud prevention',
       ],
       dataTypes: ['Personal Information', 'Academic Records', 'Authentication Data'],
       legalBasis: 'Legitimate Interest / Contract Performance',
       retentionPeriod: 'Duration of educational relationship + 7 years',
-      compliance: ['FERPA', 'GDPR']
+      compliance: ['FERPA', 'GDPR'],
     },
     {
       id: 'analytics',
@@ -232,12 +233,12 @@ const PrivacyConsentManager = ({ open, onClose, userType = 'student' }) => {
         'Learning performance analysis',
         'Personalized content recommendations',
         'Educational research and improvement',
-        'Usage pattern analysis'
+        'Usage pattern analysis',
       ],
       dataTypes: ['Learning Data', 'Behavioral Data', 'Performance Metrics'],
       legalBasis: 'Consent',
       retentionPeriod: '3 years after graduation',
-      compliance: ['GDPR', 'FERPA']
+      compliance: ['GDPR', 'FERPA'],
     },
     {
       id: 'marketing',
@@ -249,12 +250,12 @@ const PrivacyConsentManager = ({ open, onClose, userType = 'student' }) => {
         'Educational program promotions',
         'Newsletter and updates',
         'Event invitations',
-        'Alumni communications'
+        'Alumni communications',
       ],
       dataTypes: ['Contact Information', 'Preferences', 'Engagement Data'],
       legalBasis: 'Consent',
       retentionPeriod: 'Until withdrawal of consent',
-      compliance: ['GDPR', 'CCPA']
+      compliance: ['GDPR', 'CCPA'],
     },
     {
       id: 'third_party',
@@ -266,12 +267,12 @@ const PrivacyConsentManager = ({ open, onClose, userType = 'student' }) => {
         'Learning management system integration',
         'External assessment platforms',
         'Career services and job placement',
-        'Alumni network services'
+        'Alumni network services',
       ],
       dataTypes: ['Academic Records', 'Contact Information', 'Career Data'],
       legalBasis: 'Consent',
       retentionPeriod: 'Duration of service partnership',
-      compliance: ['FERPA', 'GDPR']
+      compliance: ['FERPA', 'GDPR'],
     },
     {
       id: 'research',
@@ -283,13 +284,13 @@ const PrivacyConsentManager = ({ open, onClose, userType = 'student' }) => {
         'Educational effectiveness research',
         'Anonymized learning pattern studies',
         'Academic outcome improvement',
-        'Institutional research'
+        'Institutional research',
       ],
       dataTypes: ['Anonymized Learning Data', 'Academic Performance', 'Demographics'],
       legalBasis: 'Consent',
       retentionPeriod: '10 years (anonymized)',
-      compliance: ['GDPR', 'FERPA', 'IRB Guidelines']
-    }
+      compliance: ['GDPR', 'FERPA', 'IRB Guidelines'],
+    },
   ];
 
   // User rights based on compliance frameworks
@@ -300,7 +301,7 @@ const PrivacyConsentManager = ({ open, onClose, userType = 'student' }) => {
       description: 'Request a copy of all personal data we hold about you',
       icon: <ViewIcon />,
       frameworks: ['GDPR', 'CCPA'],
-      action: 'requestDataAccess'
+      action: 'requestDataAccess',
     },
     {
       id: 'rectification',
@@ -308,7 +309,7 @@ const PrivacyConsentManager = ({ open, onClose, userType = 'student' }) => {
       description: 'Request correction of inaccurate or incomplete data',
       icon: <EditIcon />,
       frameworks: ['GDPR', 'FERPA'],
-      action: 'requestDataCorrection'
+      action: 'requestDataCorrection',
     },
     {
       id: 'erasure',
@@ -316,7 +317,7 @@ const PrivacyConsentManager = ({ open, onClose, userType = 'student' }) => {
       description: 'Request deletion of personal data (subject to legal requirements)',
       icon: <DeleteIcon />,
       frameworks: ['GDPR', 'CCPA'],
-      action: 'requestDataDeletion'
+      action: 'requestDataDeletion',
     },
     {
       id: 'portability',
@@ -324,7 +325,7 @@ const PrivacyConsentManager = ({ open, onClose, userType = 'student' }) => {
       description: 'Receive your data in a structured, machine-readable format',
       icon: <DownloadIcon />,
       frameworks: ['GDPR'],
-      action: 'requestDataPortability'
+      action: 'requestDataPortability',
     },
     {
       id: 'restriction',
@@ -332,8 +333,8 @@ const PrivacyConsentManager = ({ open, onClose, userType = 'student' }) => {
       description: 'Limit how we process your personal data',
       icon: <CancelIcon />,
       frameworks: ['GDPR'],
-      action: 'requestProcessingRestriction'
-    }
+      action: 'requestProcessingRestriction',
+    },
   ];
 
   useEffect(() => {
@@ -368,8 +369,8 @@ const PrivacyConsentManager = ({ open, onClose, userType = 'student' }) => {
           categoryId,
           granted,
           timestamp: new Date().toISOString(),
-          userAgent: navigator.userAgent
-        })
+          userAgent: navigator.userAgent,
+        }),
       });
 
       if (response.ok) {
@@ -378,8 +379,8 @@ const PrivacyConsentManager = ({ open, onClose, userType = 'student' }) => {
           [categoryId]: {
             granted,
             timestamp: new Date().toISOString(),
-            method: 'user_interface'
-          }
+            method: 'user_interface',
+          },
         }));
       }
     } catch (error) {
@@ -387,15 +388,15 @@ const PrivacyConsentManager = ({ open, onClose, userType = 'student' }) => {
     }
   };
 
-  const handleUserRightRequest = async (rightType) => {
+  const handleUserRightRequest = async rightType => {
     try {
       const response = await fetch('/api/privacy/user-rights', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           rightType,
-          requestTimestamp: new Date().toISOString()
-        })
+          requestTimestamp: new Date().toISOString(),
+        }),
       });
 
       if (response.ok) {
@@ -407,7 +408,7 @@ const PrivacyConsentManager = ({ open, onClose, userType = 'student' }) => {
     }
   };
 
-  const getDataTypeChipClass = (dataType) => {
+  const getDataTypeChipClass = dataType => {
     if (dataType.includes('Personal') || dataType.includes('Contact')) {
       return classes.personalDataChip;
     } else if (dataType.includes('Sensitive') || dataType.includes('Biometric')) {
@@ -418,13 +419,18 @@ const PrivacyConsentManager = ({ open, onClose, userType = 'student' }) => {
     return '';
   };
 
-  const getComplianceBadgeClass = (framework) => {
+  const getComplianceBadgeClass = framework => {
     switch (framework) {
-      case 'GDPR': return classes.gdprBadge;
-      case 'FERPA': return classes.ferpaBadge;
-      case 'COPPA': return classes.coppaBadge;
-      case 'CCPA': return classes.ccpaBadge;
-      default: return '';
+      case 'GDPR':
+        return classes.gdprBadge;
+      case 'FERPA':
+        return classes.ferpaBadge;
+      case 'COPPA':
+        return classes.coppaBadge;
+      case 'CCPA':
+        return classes.ccpaBadge;
+      default:
+        return '';
     }
   };
 
@@ -454,10 +460,22 @@ const PrivacyConsentManager = ({ open, onClose, userType = 'student' }) => {
             Compliance Status
           </Typography>
           <Box>
-            <Chip label="GDPR Compliant" className={`${classes.complianceBadge} ${classes.gdprBadge}`} />
-            <Chip label="FERPA Compliant" className={`${classes.complianceBadge} ${classes.ferpaBadge}`} />
-            <Chip label="COPPA Compliant" className={`${classes.complianceBadge} ${classes.coppaBadge}`} />
-            <Chip label="CCPA Compliant" className={`${classes.complianceBadge} ${classes.ccpaBadge}`} />
+            <Chip
+              label="GDPR Compliant"
+              className={`${classes.complianceBadge} ${classes.gdprBadge}`}
+            />
+            <Chip
+              label="FERPA Compliant"
+              className={`${classes.complianceBadge} ${classes.ferpaBadge}`}
+            />
+            <Chip
+              label="COPPA Compliant"
+              className={`${classes.complianceBadge} ${classes.coppaBadge}`}
+            />
+            <Chip
+              label="CCPA Compliant"
+              className={`${classes.complianceBadge} ${classes.ccpaBadge}`}
+            />
           </Box>
         </Box>
 
@@ -479,7 +497,7 @@ const PrivacyConsentManager = ({ open, onClose, userType = 'student' }) => {
           Data Processing Consents
         </Typography>
 
-        {consentCategories.map((category) => (
+        {consentCategories.map(category => (
           <Card key={category.id} className={classes.consentCard}>
             <CardContent>
               <Box className={classes.consentHeader}>
@@ -489,19 +507,22 @@ const PrivacyConsentManager = ({ open, onClose, userType = 'student' }) => {
                     <Typography variant="h6">
                       {category.title}
                       {category.required && (
-                        <Chip label="Required" size="small" color="error" style={{ marginLeft: 8 }} />
+                        <Chip
+                          label="Required"
+                          size="small"
+                          color="error"
+                          style={{ marginLeft: 8 }}
+                        />
                       )}
                     </Typography>
-                    <Typography color="textSecondary">
-                      {category.description}
-                    </Typography>
+                    <Typography color="textSecondary">{category.description}</Typography>
                   </Box>
                 </Box>
                 <FormControlLabel
                   control={
                     <Switch
                       checked={consents[category.id]?.granted || category.required}
-                      onChange={(e) => handleConsentChange(category.id, e.target.checked)}
+                      onChange={e => handleConsentChange(category.id, e.target.checked)}
                       disabled={category.required}
                       color="primary"
                     />
@@ -520,7 +541,7 @@ const PrivacyConsentManager = ({ open, onClose, userType = 'student' }) => {
                 </AccordionSummary>
                 <AccordionDetails>
                   <Grid container spacing={2}>
-                    <Grid size={{xs:12,md:6}}>
+                    <Grid size={{ xs: 12, md: 6 }}>
                       <Typography variant="subtitle2" gutterBottom>
                         Processing Purposes:
                       </Typography>
@@ -532,7 +553,7 @@ const PrivacyConsentManager = ({ open, onClose, userType = 'student' }) => {
                         ))}
                       </List>
                     </Grid>
-                    <Grid size={{xs:12,md:6}}>
+                    <Grid size={{ xs: 12, md: 6 }}>
                       <Typography variant="subtitle2" gutterBottom>
                         Data Types:
                       </Typography>
@@ -569,12 +590,10 @@ const PrivacyConsentManager = ({ open, onClose, userType = 'student' }) => {
         </Typography>
 
         <Paper className={classes.rightsList}>
-          {userDataRights.map((right) => (
+          {userDataRights.map(right => (
             <React.Fragment key={right.id}>
               <ListItem>
-                <ListItemIcon>
-                  {right.icon}
-                </ListItemIcon>
+                <ListItemIcon>{right.icon}</ListItemIcon>
                 <ListItemText
                   primary={right.title}
                   secondary={
@@ -583,7 +602,7 @@ const PrivacyConsentManager = ({ open, onClose, userType = 'student' }) => {
                         {right.description}
                       </Typography>
                       <Box style={{ marginTop: 4 }}>
-                        {right.frameworks.map((framework) => (
+                        {right.frameworks.map(framework => (
                           <Chip
                             key={framework}
                             label={framework}
@@ -615,9 +634,9 @@ const PrivacyConsentManager = ({ open, onClose, userType = 'student' }) => {
         {Object.values(consents).some(consent => !consent.granted) && (
           <Alert severity="warning" className={classes.withdrawalWarning}>
             <Typography variant="body2">
-              <strong>Note:</strong> Withdrawing consent for certain data processing activities may limit
-              your access to educational services. Required consents cannot be withdrawn while maintaining
-              an active account.
+              <strong>Note:</strong> Withdrawing consent for certain data processing activities may
+              limit your access to educational services. Required consents cannot be withdrawn while
+              maintaining an active account.
             </Typography>
           </Alert>
         )}
@@ -640,4 +659,3 @@ const PrivacyConsentManager = ({ open, onClose, userType = 'student' }) => {
 };
 
 export default PrivacyConsentManager;
-

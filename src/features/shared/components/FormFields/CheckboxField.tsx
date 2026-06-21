@@ -21,8 +21,7 @@ import {
   useTheme,
 } from '@mui/material';
 
-export interface CheckboxFieldProps
-  extends Omit<MuiCheckboxProps, 'id'> {
+export interface CheckboxFieldProps extends Omit<MuiCheckboxProps, 'id'> {
   /** The label text for the checkbox */
   label: string;
   /** Unique ID for accessibility */
@@ -34,10 +33,7 @@ export interface CheckboxFieldProps
 }
 
 export const CheckboxField = forwardRef<HTMLButtonElement, CheckboxFieldProps>(
-  function CheckboxField(
-    { label, id, helperText, error, sx, ...props },
-    ref,
-  ) {
+  function CheckboxField({ label, id, helperText, error, sx, ...props }, ref) {
     const theme = useTheme();
     const helperId = helperText ? `${id}-helper-text` : undefined;
 
@@ -96,5 +92,5 @@ export const CheckboxField = forwardRef<HTMLButtonElement, CheckboxFieldProps>(
         )}
       </FormControl>
     );
-  },
+  }
 );

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 
+import { dashboardController } from '../controllers/dashboardController.js';
 import { studentMeController } from '../controllers/studentMeController.js';
 import { authMiddleware } from '../middleware/authMiddleware.js';
 import { requireRoles } from '../middleware/rbacMiddleware.js';
@@ -37,6 +38,14 @@ router.get(
   requireRoles('student'),
   validateRequest({ query: dateRangeQuerySchema }),
   studentMeController.getMyAttendance,
+);
+
+// GET /me/dashboard - Get student's dashboard summary (scoped to self)
+router.get(
+  '/me/dashboard',
+  authMiddleware,
+  requireRoles('student'),
+  dashboardController.getStudentDashboard,
 );
 
 export default router;

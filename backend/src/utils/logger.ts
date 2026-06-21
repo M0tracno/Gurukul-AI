@@ -19,13 +19,13 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const _loggerFilename = fileURLToPath(import.meta.url);
+const _loggerDirname = path.dirname(_loggerFilename);
 
 // ─── Configuration ─────────────────────────────────────────────────────────────
 
 const LOG_LEVEL = process.env.LOG_LEVEL || (process.env.NODE_ENV === 'production' ? 'info' : 'debug');
-const LOG_DIR = process.env.LOG_DIR || path.resolve(__dirname, '..', '..', 'logs');
+const LOG_DIR = process.env.LOG_DIR || path.resolve(_loggerDirname, '..', '..', 'logs');
 const LOG_RETENTION_DAYS = process.env.LOG_RETENTION_DAYS || '30d';
 const LOG_MAX_FILE_SIZE = process.env.LOG_MAX_FILE_SIZE || '20m';
 const LOG_COMPRESS = process.env.LOG_COMPRESS !== 'false';

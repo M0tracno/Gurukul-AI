@@ -10,25 +10,33 @@
  * **Validates: Requirements 4.4**
  */
 
+import { jest, describe, it, expect } from '@jest/globals';
 import * as fc from 'fast-check';
 import type { Request, Response, NextFunction } from 'express';
 
-import { authMiddleware } from '../../src/middleware/authMiddleware.js';
-import { requireRoles } from '../../src/middleware/rbacMiddleware.js';
-import { AppError } from '../../src/middleware/errorHandler.js';
-import { authTokenService } from '../../src/services/authTokenService.js';
-import type { UserRole } from '../../src/types/common.js';
-
-// Mock the authTokenService
-jest.mock('../../src/services/authTokenService.js', () => ({
-  authTokenService: {
-    validateAccessToken: jest.fn(),
+// Mock logger to avoid import.meta.url issues in ts-jest
+jest.mock('../../src/utils/logger.js', () => ({
+  logger: {
+    warn: jest.fn(),
+    error: jest.fn(),
+    info: jest.fn(),
+    debug: jest.fn(),
   },
 }));
 
-const mockValidateAccessToken = authTokenService.validateAccessToken as jest.MockedFunction<
-  typeof authTokenService.validateAccessToken
->;
+// Mock the authTokenService with unstable_mockModule for ESM compatibility
+const mockValidateAccessToken = jest.fn<() => Promise<unknown>>();
+jest.unstable_mockModule('../../src/services/authTokenService.js', () => ({
+  authTokenService: {
+    validateAccessToken: mockValidateAccessToken,
+  },
+}));
+
+const { authMiddleware } = await import('../../src/middleware/authMiddleware.js');
+const { requireRoles } = await import('../../src/middleware/rbacMiddleware.js');
+const { AppError } = await import('../../src/middleware/errorHandler.js');
+import type { AppError as AppErrorType } from '../../src/middleware/errorHandler.js';
+import type { UserRole } from '../../src/types/common.js';
 
 function createMockRequest(headers: Record<string, string> = {}, user?: { userId: string; role: UserRole }): Request {
   const req = { headers } as unknown as Request;
@@ -117,11 +125,11 @@ describe('Property 10: Authentication Status Codes', () => {
 
           const req = createMockRequest(headers);
 
-          let error: AppError | null = null;
+          let error: AppErrorType | null = null;
           try {
             await authMiddleware(req, createMockResponse(), mockNext);
           } catch (err) {
-            error = err as AppError;
+            error = err as AppErrorType;
           }
 
           // Must throw an error
@@ -151,11 +159,11 @@ describe('Property 10: Authentication Status Codes', () => {
 
             const req = createMockRequest({ authorization: `Bearer ${tokenValue}` });
 
-            let error: AppError | null = null;
+            let error: AppErrorType | null = null;
             try {
               await authMiddleware(req, createMockResponse(), mockNext);
             } catch (err) {
-              error = err as AppError;
+              error = err as AppErrorType;
             }
 
             expect(error).not.toBeNull();
@@ -187,11 +195,11 @@ describe('Property 10: Authentication Status Codes', () => {
             const middleware = requireRoles(...allowedRoles);
             const req = createMockRequest({}, { userId, role: userRole });
 
-            let error: AppError | null = null;
+            let error: AppErrorType | null = null;
             try {
               middleware(req, createMockResponse(), mockNext);
             } catch (err) {
-              error = err as AppError;
+              error = err as AppErrorType;
             }
 
             // Must throw an error
@@ -255,12 +263,12 @@ describe('Property 10: Authentication Status Codes', () => {
           // Request has no Authorization header
           const req = createMockRequest({});
 
-          let error: AppError | null = null;
+          let error: AppErrorType | null = null;
           try {
             // authMiddleware runs first in the chain
             await authMiddleware(req, createMockResponse(), mockNext);
           } catch (err) {
-            error = err as AppError;
+            error = err as AppErrorType;
           }
 
           // Must get 401 from authMiddleware (before RBAC even runs)

@@ -5,7 +5,6 @@ import CryptoJS from 'crypto-js';
  * Provides utility functions for data encryption, decryption, and secure storage
  */
 
-
 /**
  * Configuration for encryption
  */
@@ -15,7 +14,7 @@ const ENCRYPTION_CONFIG = {
   ivSize: 128,
   iterations: 10000,
   mode: CryptoJS.mode.CBC,
-  padding: CryptoJS.pad.Pkcs7
+  padding: CryptoJS.pad.Pkcs7,
 };
 
 /**
@@ -25,15 +24,15 @@ export const deriveKey = (password, salt = null) => {
   if (!salt) {
     salt = CryptoJS.lib.WordArray.random(16);
   }
-  
+
   const key = CryptoJS.PBKDF2(password, salt, {
     keySize: ENCRYPTION_CONFIG.keySize / 32,
-    iterations: ENCRYPTION_CONFIG.iterations
+    iterations: ENCRYPTION_CONFIG.iterations,
   });
-  
+
   return {
     key,
-    salt: salt.toString()
+    salt: salt.toString(),
   };
 };
 
@@ -44,7 +43,7 @@ export const encryptData = (data, password = null, key = null) => {
   try {
     let encryptionKey;
     let salt = null;
-    
+
     if (key) {
       encryptionKey = key;
     } else if (password) {
@@ -54,22 +53,22 @@ export const encryptData = (data, password = null, key = null) => {
     } else {
       throw new Error('Either password or key must be provided');
     }
-    
+
     const iv = CryptoJS.lib.WordArray.random(ENCRYPTION_CONFIG.ivSize / 8);
-    
+
     const encrypted = CryptoJS.AES.encrypt(JSON.stringify(data), encryptionKey, {
       iv: iv,
       mode: ENCRYPTION_CONFIG.mode,
-      padding: ENCRYPTION_CONFIG.padding
+      padding: ENCRYPTION_CONFIG.padding,
     });
-    
+
     return {
       encrypted: encrypted.toString(),
       iv: iv.toString(),
       salt: salt,
       algorithm: ENCRYPTION_CONFIG.algorithm,
       keySize: ENCRYPTION_CONFIG.keySize,
-      iterations: ENCRYPTION_CONFIG.iterations
+      iterations: ENCRYPTION_CONFIG.iterations,
     };
   } catch (error) {
     console.error('Encryption error:', error);
@@ -83,32 +82,32 @@ export const encryptData = (data, password = null, key = null) => {
 export const decryptData = (encryptedData, password = null, key = null) => {
   try {
     const { encrypted, iv, salt, iterations = ENCRYPTION_CONFIG.iterations } = encryptedData;
-    
+
     let decryptionKey;
-    
+
     if (key) {
       decryptionKey = key;
     } else if (password && salt) {
       decryptionKey = CryptoJS.PBKDF2(password, salt, {
         keySize: ENCRYPTION_CONFIG.keySize / 32,
-        iterations: iterations
+        iterations: iterations,
       });
     } else {
       throw new Error('Either key or password with salt must be provided');
     }
-    
+
     const decrypted = CryptoJS.AES.decrypt(encrypted, decryptionKey, {
       iv: CryptoJS.enc.Hex.parse(iv),
       mode: ENCRYPTION_CONFIG.mode,
-      padding: ENCRYPTION_CONFIG.padding
+      padding: ENCRYPTION_CONFIG.padding,
     });
-    
+
     const decryptedString = decrypted.toString(CryptoJS.enc.Utf8);
-    
+
     if (!decryptedString) {
       throw new Error('Failed to decrypt data - invalid key or corrupted data');
     }
-    
+
     return JSON.parse(decryptedString);
   } catch (error) {
     console.error('Decryption error:', error);
@@ -131,29 +130,29 @@ export const secureStorage = {
       return false;
     }
   },
-  
+
   getItem: (key, password = null) => {
     try {
       const stored = localStorage.getItem(key);
       if (!stored) return null;
-      
+
       const encryptedData = JSON.parse(stored);
       const storageKey = password || getStorageKey();
-      
+
       return decryptData(encryptedData, storageKey);
     } catch (error) {
       console.error('Secure storage get error:', error);
       return null;
     }
   },
-  
-  removeItem: (key) => {
+
+  removeItem: key => {
     localStorage.removeItem(key);
   },
-  
+
   clear: () => {
     localStorage.clear();
-  }
+  },
 };
 
 /**
@@ -162,12 +161,12 @@ export const secureStorage = {
 const getStorageKey = () => {
   const keyName = '__secure_storage_key__';
   let key = sessionStorage.getItem(keyName);
-  
+
   if (!key) {
     key = CryptoJS.lib.WordArray.random(32).toString();
     sessionStorage.setItem(keyName, key);
   }
-  
+
   return key;
 };
 
@@ -178,16 +177,16 @@ export const hashData = (data, salt = null) => {
   if (!salt) {
     salt = CryptoJS.lib.WordArray.random(16);
   }
-  
+
   const hash = CryptoJS.PBKDF2(data, salt, {
     keySize: 256 / 32,
-    iterations: 10000
+    iterations: 10000,
   });
-  
+
   return {
     hash: hash.toString(),
     salt: salt.toString(),
-    combined: `${salt.toString()}:${hash.toString()}`
+    combined: `${salt.toString()}:${hash.toString()}`,
   };
 };
 
@@ -199,9 +198,9 @@ export const verifyHashedData = (data, hashedData) => {
     const { salt, hash } = hashedData;
     const computedHash = CryptoJS.PBKDF2(data, salt, {
       keySize: 256 / 32,
-      iterations: 10000
+      iterations: 10000,
     });
-    
+
     return computedHash.toString() === hash;
   } catch (error) {
     console.error('Hash verification error:', error);
@@ -214,11 +213,10 @@ export const verifyHashedData = (data, hashedData) => {
  */
 export const generateSecureToken = (length = 32, type = 'hex') => {
   const randomBytes = CryptoJS.lib.WordArray.random(length);
-  
+
   switch (type) {
     case 'base64':
-      return CryptoJS.enc.Base64.stringify(randomBytes)
-        .replace(/[+=]/g, ''); // Remove padding    case 'base64url':
+      return CryptoJS.enc.Base64.stringify(randomBytes).replace(/[+=]/g, ''); // Remove padding    case 'base64url':
       return CryptoJS.enc.Base64.stringify(randomBytes)
         .replace(/\+/g, '-')
         .replace(/\//g, '_')
@@ -243,26 +241,29 @@ export const generateSecureToken = (length = 32, type = 'hex') => {
 export const encryptFile = async (file, password) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    
-    reader.onload = (event) => {
+
+    reader.onload = event => {
       try {
         const arrayBuffer = event.target.result;
         const wordArray = CryptoJS.lib.WordArray.create(arrayBuffer);
-        
-        const encrypted = encryptData({
-          content: wordArray.toString(),
-          name: file.name,
-          type: file.type,
-          size: file.size,
-          lastModified: file.lastModified
-        }, password);
-        
+
+        const encrypted = encryptData(
+          {
+            content: wordArray.toString(),
+            name: file.name,
+            type: file.type,
+            size: file.size,
+            lastModified: file.lastModified,
+          },
+          password
+        );
+
         resolve(encrypted);
       } catch (error) {
         reject(error);
       }
     };
-    
+
     reader.onerror = () => reject(new Error('Failed to read file'));
     reader.readAsArrayBuffer(file);
   });
@@ -274,16 +275,16 @@ export const encryptFile = async (file, password) => {
 export const decryptFile = (encryptedFileData, password) => {
   try {
     const decrypted = decryptData(encryptedFileData, password);
-    
+
     const wordArray = CryptoJS.enc.Hex.parse(decrypted.content);
     const arrayBuffer = wordArrayToArrayBuffer(wordArray);
-    
+
     return {
       arrayBuffer,
       name: decrypted.name,
       type: decrypted.type,
       size: decrypted.size,
-      lastModified: decrypted.lastModified
+      lastModified: decrypted.lastModified,
     };
   } catch (error) {
     throw new Error('Failed to decrypt file');
@@ -293,16 +294,16 @@ export const decryptFile = (encryptedFileData, password) => {
 /**
  * Convert WordArray to ArrayBuffer
  */
-const wordArrayToArrayBuffer = (wordArray) => {
+const wordArrayToArrayBuffer = wordArray => {
   const arrayBuffer = new ArrayBuffer(wordArray.sigBytes);
   const uint8Array = new Uint8Array(arrayBuffer);
-  
+
   for (let i = 0; i < wordArray.sigBytes; i++) {
     const wordIndex = Math.floor(i / 4);
     const byteIndex = i % 4;
     uint8Array[i] = (wordArray.words[wordIndex] >>> (24 - byteIndex * 8)) & 0xff;
   }
-  
+
   return arrayBuffer;
 };
 
@@ -316,12 +317,12 @@ export const createEncryptedBackup = (userData, password) => {
     userInfo: {
       id: userData.id,
       email: userData.email,
-      role: userData.role
+      role: userData.role,
     },
     data: userData,
-    checksum: CryptoJS.SHA256(JSON.stringify(userData)).toString()
+    checksum: CryptoJS.SHA256(JSON.stringify(userData)).toString(),
   };
-  
+
   return encryptData(backup, password);
 };
 
@@ -331,24 +332,24 @@ export const createEncryptedBackup = (userData, password) => {
 export const restoreFromEncryptedBackup = (encryptedBackup, password) => {
   try {
     const backup = decryptData(encryptedBackup, password);
-    
+
     // Verify checksum
     const computedChecksum = CryptoJS.SHA256(JSON.stringify(backup.data)).toString();
     if (computedChecksum !== backup.checksum) {
       throw new Error('Backup data integrity check failed');
     }
-    
+
     return {
       success: true,
       data: backup.data,
       version: backup.version,
       timestamp: backup.timestamp,
-      userInfo: backup.userInfo
+      userInfo: backup.userInfo,
     };
   } catch (error) {
     return {
       success: false,
-      error: error.message
+      error: error.message,
     };
   }
 };
@@ -361,10 +362,10 @@ export const generateKeyPair = () => {
   // In production, use proper cryptographic libraries
   const privateKey = CryptoJS.lib.WordArray.random(32);
   const publicKey = CryptoJS.SHA256(privateKey);
-  
+
   return {
     privateKey: privateKey.toString(),
-    publicKey: publicKey.toString()
+    publicKey: publicKey.toString(),
   };
 };
 
@@ -374,11 +375,11 @@ export const generateKeyPair = () => {
 export const createDigitalSignature = (data, privateKey) => {
   const message = typeof data === 'string' ? data : JSON.stringify(data);
   const signature = CryptoJS.HmacSHA256(message, privateKey);
-  
+
   return {
     data: message,
     signature: signature.toString(),
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 };
 
@@ -405,6 +406,5 @@ export default {
   generateKeyPair,
   createDigitalSignature,
   verifyDigitalSignature,
-  deriveKey
+  deriveKey,
 };
-

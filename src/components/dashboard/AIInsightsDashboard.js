@@ -20,10 +20,10 @@ import {
   Paper,
   Accordion,
   AccordionSummary,
-  AccordionDetails
+  AccordionDetails,
 } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
+import {
   School,
   TrendingUp,
   Refresh,
@@ -37,7 +37,7 @@ import {
   Star,
   PersonalVideo,
   Analytics,
-  ExpandMore
+  ExpandMore,
 } from '@mui/icons-material';
 import EnhancedAIService from '../../services/EnhancedAIService';
 import AdvancedAnalyticsService from '../../services/AdvancedAnalyticsService';
@@ -72,7 +72,7 @@ const AIInsightsDashboard = ({ userId }) => {
         progressRate: 78,
         progressTrend: -2.1,
         completionRate: 92,
-        completionTrend: 8.7
+        completionTrend: 8.7,
       });
 
       setRecommendations([
@@ -84,30 +84,27 @@ const AIInsightsDashboard = ({ userId }) => {
           subject: 'Mathematics',
           estimatedTime: 30,
           priority: 'high',
-          relevanceScore: 4
-        }
+          relevanceScore: 4,
+        },
       ]);
 
       setLearningPath({
         title: 'Science Track - Advanced Level',
         completionPercentage: 65,
-        nextSteps: [
-          { title: 'Complete Physics Lab', estimatedTime: '2 hours', completed: false }
-        ]
+        nextSteps: [{ title: 'Complete Physics Lab', estimatedTime: '2 hours', completed: false }],
       });
 
       setAnalytics({
         performanceMetrics: { averageScore: 87, timeSpent: 245, streak: 12 },
-        learningPatterns: { 
-          optimalTimes: ['9:00 AM', '2:00 PM'], 
+        learningPatterns: {
+          optimalTimes: ['9:00 AM', '2:00 PM'],
           preferredStyle: 'Visual',
-          strengths: ['Problem Solving', 'Critical Thinking']
+          strengths: ['Problem Solving', 'Critical Thinking'],
         },
         suggestions: [
-          { title: 'Improve Focus Time', description: 'Try studying in 25-minute sessions' }
-        ]
+          { title: 'Improve Focus Time', description: 'Try studying in 25-minute sessions' },
+        ],
       });
-
     } catch (error) {
       console.error('Error loading dashboard data:', error);
       setError('Failed to load dashboard data. Please try again.');
@@ -128,9 +125,7 @@ const AIInsightsDashboard = ({ userId }) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay }}
     >
-      <Card sx={{ height: '100%', position: 'relative', overflow: 'visible' }}>
-        {children}
-      </Card>
+      <Card sx={{ height: '100%', position: 'relative', overflow: 'visible' }}>{children}</Card>
     </motion.div>
   );
 
@@ -167,11 +162,14 @@ const AIInsightsDashboard = ({ userId }) => {
 
   if (error) {
     return (
-      <Alert severity="error" action={
-        <Button color="inherit" size="small" onClick={loadDashboardData}>
-          Retry
-        </Button>
-      }>
+      <Alert
+        severity="error"
+        action={
+          <Button color="inherit" size="small" onClick={loadDashboardData}>
+            Retry
+          </Button>
+        }
+      >
         {error}
       </Alert>
     );
@@ -189,7 +187,7 @@ const AIInsightsDashboard = ({ userId }) => {
       </Box>
 
       <Grid container spacing={3} mb={4}>
-        <Grid size={{xs:12,sm:6,md:3}}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <InsightCard
             title="Learning Score"
             value={insights?.learningScore || 85}
@@ -197,7 +195,7 @@ const AIInsightsDashboard = ({ userId }) => {
             color="primary"
           />
         </Grid>
-        <Grid size={{xs:12,sm:6,md:3}}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <InsightCard
             title="Engagement Level"
             value={insights?.engagementLevel || 'High'}
@@ -205,7 +203,7 @@ const AIInsightsDashboard = ({ userId }) => {
             color="secondary"
           />
         </Grid>
-        <Grid size={{xs:12,sm:6,md:3}}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <InsightCard
             title="Progress Rate"
             value={`${insights?.progressRate || 78}%`}
@@ -213,7 +211,7 @@ const AIInsightsDashboard = ({ userId }) => {
             color="success"
           />
         </Grid>
-        <Grid size={{xs:12,sm:6,md:3}}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <InsightCard
             title="Completion Rate"
             value={`${insights?.completionRate || 92}%`}
@@ -224,7 +222,7 @@ const AIInsightsDashboard = ({ userId }) => {
       </Grid>
 
       <Grid container spacing={3}>
-        <Grid size={{xs:12,md:6}}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <AnimatedCard delay={0.1}>
             <CardContent>
               <Box display="flex" alignItems="center" mb={2}>
@@ -232,7 +230,7 @@ const AIInsightsDashboard = ({ userId }) => {
                 <Typography variant="h6">AI Recommendations</Typography>
               </Box>
               <List>
-                {recommendations.map((rec) => (
+                {recommendations.map(rec => (
                   <ListItem key={rec.id} sx={{ borderRadius: 1, mb: 1 }}>
                     <ListItemAvatar>
                       <Avatar sx={{ bgcolor: 'info.main' }}>
@@ -247,7 +245,7 @@ const AIInsightsDashboard = ({ userId }) => {
           </AnimatedCard>
         </Grid>
 
-        <Grid size={{xs:12,md:6}}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <AnimatedCard delay={0.2}>
             <CardContent>
               <Box display="flex" alignItems="center" mb={2}>
@@ -259,16 +257,16 @@ const AIInsightsDashboard = ({ userId }) => {
                   <Typography variant="body1" fontWeight="medium" mb={2}>
                     {learningPath.title}
                   </Typography>
-                  <LinearProgress 
-                    variant="determinate" 
-                    value={learningPath.completionPercentage} 
+                  <LinearProgress
+                    variant="determinate"
+                    value={learningPath.completionPercentage}
                     sx={{ mb: 2, height: 8, borderRadius: 4 }}
                   />
                   <Typography variant="body2" color="textSecondary">
                     {learningPath.completionPercentage}% Complete
                   </Typography>
                 </Box>
-                            )}
+              )}
             </CardContent>
           </AnimatedCard>
         </Grid>
@@ -278,4 +276,3 @@ const AIInsightsDashboard = ({ userId }) => {
 };
 
 export default AIInsightsDashboard;
-

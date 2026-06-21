@@ -1,8 +1,9 @@
 import { createTheme } from '@mui/material/styles';
 
 // Create a theme that uses our custom LinkBehavior component
-const createCustomTheme = (LinkBehavior) => {
-  return createTheme({    palette: {
+const createCustomTheme = LinkBehavior => {
+  return createTheme({
+    palette: {
       primary: {
         main: '#667eea', // Beautiful gradient blue
         light: '#9ca3f7',
@@ -51,7 +52,7 @@ const createCustomTheme = (LinkBehavior) => {
         primary: '#2d3436',
         secondary: '#636e72',
         hint: '#aaa',
-      }
+      },
     },
     typography: {
       fontFamily: [
@@ -92,9 +93,11 @@ const createCustomTheme = (LinkBehavior) => {
         textTransform: 'none',
         fontWeight: 500,
       },
-    },    shape: {
+    },
+    shape: {
       borderRadius: 8,
-    },    shadows: [
+    },
+    shadows: [
       'none', // 0
       '0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12)', // 1
       '0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12)', // 2
@@ -119,7 +122,7 @@ const createCustomTheme = (LinkBehavior) => {
       '0px 10px 13px -6px rgba(0,0,0,0.2),0px 21px 33px 3px rgba(0,0,0,0.14),0px 8px 40px 7px rgba(0,0,0,0.12)', // 21
       '0px 10px 14px -6px rgba(0,0,0,0.2),0px 22px 35px 3px rgba(0,0,0,0.14),0px 8px 42px 7px rgba(0,0,0,0.12)', // 22
       '0px 11px 14px -7px rgba(0,0,0,0.2),0px 23px 36px 3px rgba(0,0,0,0.14),0px 9px 44px 8px rgba(0,0,0,0.12)', // 23
-      '0px 11px 15px -7px rgba(0,0,0,0.2),0px 24px 38px 3px rgba(0,0,0,0.14),0px 9px 46px 8px rgba(0,0,0,0.12)' // 24
+      '0px 11px 15px -7px rgba(0,0,0,0.2),0px 24px 38px 3px rgba(0,0,0,0.14),0px 9px 46px 8px rgba(0,0,0,0.12)', // 24
     ],
     components: {
       // Use our custom LinkBehavior for all MuiLink components
@@ -133,7 +136,8 @@ const createCustomTheme = (LinkBehavior) => {
         defaultProps: {
           disableRipple: false, // Keep ripple effect
         },
-      },      MuiButton: {
+      },
+      MuiButton: {
         defaultProps: {
           disableElevation: false,
         },
@@ -167,7 +171,8 @@ const createCustomTheme = (LinkBehavior) => {
             },
           },
         },
-      },      MuiPaper: {
+      },
+      MuiPaper: {
         defaultProps: {
           elevation: 1,
         },
@@ -268,7 +273,8 @@ const createCustomTheme = (LinkBehavior) => {
         defaultProps: {
           arrow: true,
         },
-      },      MuiCssBaseline: {
+      },
+      MuiCssBaseline: {
         styleOverrides: {
           '*, *::before, *::after': {
             boxSizing: 'border-box',
@@ -284,15 +290,11 @@ const createCustomTheme = (LinkBehavior) => {
           a: {
             textDecoration: 'none',
             color: '#3a86ff',
-          }
-        }
+          },
+        },
       },
     },
   });
 };
 
 export default createCustomTheme;
-
-
-
-

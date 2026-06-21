@@ -15,8 +15,7 @@ import { securityHeadersMiddleware, httpsRedirectMiddleware } from './middleware
 import { payloadTooLargeHandler, fieldSizeLimitMiddleware } from './middleware/requestSizeLimits.js';
 import { performanceMonitorMiddleware } from './middleware/performanceMonitor.js';
 import { globalErrorHandler, notFoundHandler } from './middleware/errorHandler.js';
-import { authMiddleware } from './middleware/authMiddleware.js';
-import { requireRoles } from './middleware/rbacMiddleware.js';
+import { success } from './utils/envelope.js';
 
 // ESM __dirname equivalent
 const __filename = fileURLToPath(import.meta.url);
@@ -48,7 +47,14 @@ import {
   metricsRoutes,
   healthRoutes,
   studentMeRoutes,
+  parentRoutes,
   parentMeRoutes,
+  accountSetupRoutes,
+  parentLinkageRoutes,
+  facultyMeRoutes,
+  adminDashboardRoutes,
+  messageRoutes,
+  feedbackRoutes,
 } from './routes/index.js';
 
 // Rate limiter configuration
@@ -132,141 +138,11 @@ mountSwaggerDocs(app);
 
 // Welcome route
 app.get('/', (_req, res) => {
-  res.send('Welcome to the Teacher Assistant API');
+  res.json(success({ message: 'Welcome to the Teacher Assistant API' }));
 });
 
-// Health check route (legacy)
-app.get('/api/health-check', (_req, res) => {
-  res.status(200).json({ status: 'ok', message: 'API is running' });
-});
-
-// Reset seed passwords (fixes double-hashing from previous seed)
-app.get('/api/reset-seed-passwords', async (_req, res) => {
-  try {
-    const mongoose = await import('mongoose');
-    const FacultyModel = mongoose.default.models.Faculty;
-    const StudentModel = mongoose.default.models.Student;
-    const results: string[] = [];
-
-    // Update via findOne + save to trigger the pre-save hook correctly
-    // We need to set password as plain text so the hook hashes it once
-    const admin = await FacultyModel?.findOne({ email: 'admin@gurukul.edu' });
-    if (admin) {
-      admin.password = 'Admin@2024';
-      admin.markModified('password');
-      await admin.save();
-      results.push('✅ Admin password reset');
-    }
-
-    const teacher = await FacultyModel?.findOne({ email: 'teacher@gurukul.edu' });
-    if (teacher) {
-      teacher.password = 'Teacher@2024';
-      teacher.markModified('password');
-      await teacher.save();
-      results.push('✅ Teacher password reset');
-    }
-
-    const student = await StudentModel?.findOne({ email: 'student@gurukul.edu' });
-    if (student) {
-      student.password = 'Student@2024';
-      student.markModified('password');
-      await student.save();
-      results.push('✅ Student password reset');
-    }
-
-    res.json({ success: true, results });
-  } catch (e) {
-    res.status(500).json({ error: e instanceof Error ? e.message : String(e) });
-  }
-});
-app.get('/api/debug-users', async (_req, res) => {
-  try {
-    const bcrypt = await import('bcryptjs');
-    const mongoose = await import('mongoose');
-    const FacultyModel = mongoose.default.models.Faculty;
-    if (!FacultyModel) {
-      res.json({ error: 'Faculty model not registered' });
-      return;
-    }
-
-    const admin = await FacultyModel.findOne({ email: 'admin@gurukul.edu' }).select('+password');
-    if (!admin) {
-      const allFaculty = await FacultyModel.find({}).select('email role').lean();
-      res.json({ error: 'Admin not found in DB', allFaculty });
-      return;
-    }
-
-    const hasPassword = !!admin.password;
-    const passwordMatch = hasPassword ? await bcrypt.default.compare('Admin@2024', admin.password) : false;
-
-    res.json({
-      found: true,
-      email: admin.email,
-      role: admin.role,
-      hasPassword,
-      passwordLength: admin.password?.length,
-      passwordMatch,
-      id: admin._id.toString(),
-    });
-  } catch (e) {
-    res.status(500).json({ error: e instanceof Error ? e.message : String(e) });
-  }
-});
-
-// One-time seed endpoint — creates initial users, call via browser
-// GET /api/seed-initial — no auth required, idempotent (skips existing)
-app.get('/api/seed-initial', async (_req, res) => {
-  try {
-    const bcrypt = await import('bcryptjs');
-    const mongoose = await import('mongoose');
-
-    // Use already-registered models (from the compiled TS code)
-    const FacultyModel = mongoose.default.models.Faculty || mongoose.default.model('Faculty',
-      new mongoose.default.Schema({ firstName: String, lastName: String, email: { type: String, unique: true }, password: String, employeeId: String, department: String, role: { type: String, default: 'faculty' }, isActive: { type: Boolean, default: true } }, { timestamps: true, strict: false })
-    );
-
-    const StudentModel = mongoose.default.models.Student || mongoose.default.model('Student',
-      new mongoose.default.Schema({ firstName: String, lastName: String, email: { type: String, unique: true }, password: String, studentId: { type: String, unique: true }, grade: String, active: { type: Boolean, default: true }, parentPhone: String }, { timestamps: true, strict: false })
-    );
-
-    const ParentModel = mongoose.default.models.Parent || mongoose.default.model('Parent',
-      new mongoose.default.Schema({ parentId: String, firstName: String, lastName: String, phoneNumber: String, email: String, phone: String, studentIds: [{ type: mongoose.default.Schema.Types.ObjectId }], isActive: { type: Boolean, default: true }, isVerified: { type: Boolean, default: true }, relationToStudent: String }, { timestamps: true, strict: false })
-    );
-
-    const results: string[] = [];
-    const SALT = 12;
-
-    // Admin — store plain password, the model's pre-save hook will hash it
-    if (!(await FacultyModel.findOne({ email: 'admin@gurukul.edu' }))) {
-      await FacultyModel.create({ firstName: 'Krishna', lastName: 'Admin', email: 'admin@gurukul.edu', password: 'Admin@2024', employeeId: 'ADM001', department: 'Administration', role: 'admin', isActive: true });
-      results.push('✅ Admin created: admin@gurukul.edu / Admin@2024');
-    } else results.push('⏭️ Admin exists');
-
-    // Faculty
-    if (!(await FacultyModel.findOne({ email: 'teacher@gurukul.edu' }))) {
-      await FacultyModel.create({ firstName: 'Dronacharya', lastName: 'Singh', email: 'teacher@gurukul.edu', password: 'Teacher@2024', employeeId: 'FAC001', department: 'Computer Science', role: 'faculty', isActive: true });
-      results.push('✅ Faculty created: teacher@gurukul.edu / Teacher@2024');
-    } else results.push('⏭️ Faculty exists');
-
-    // Student
-    let studentDoc = await StudentModel.findOne({ email: 'student@gurukul.edu' });
-    if (!studentDoc) {
-      studentDoc = await StudentModel.create({ firstName: 'Arjun', lastName: 'Sharma', email: 'student@gurukul.edu', password: 'Student@2024', studentId: 'STU001', grade: '10', active: true, parentPhone: '9876543210' });
-      results.push('✅ Student created: student@gurukul.edu / Student@2024');
-    } else results.push('⏭️ Student exists');
-
-    // Parent
-    if (!(await ParentModel.findOne({ phoneNumber: '9876543210' }))) {
-      await ParentModel.create({ parentId: 'PAR001', firstName: 'Rajesh', lastName: 'Sharma', phoneNumber: '9876543210', email: 'parent@gurukul.edu', studentIds: [studentDoc._id], isActive: true, isVerified: true, relationToStudent: 'Father' });
-      results.push('✅ Parent created: phone 9876543210 / Student ID: STU001');
-    } else results.push('⏭️ Parent exists');
-
-    res.json({ success: true, results });
-  } catch (error) {
-    const msg = error instanceof Error ? error.message : String(error);
-    res.status(500).json({ success: false, error: msg });
-  }
-});
+// Legacy health check removed (superseded by /health endpoint — Requirement 3.3)
+// Debug endpoints (reset-seed-passwords, debug-users, seed-initial) removed as dead code — Requirement 3.3
 
 logger.info('Using MongoDB database exclusively');
 
@@ -398,9 +274,35 @@ app.use('/api/enrollment', enrollmentRoutes);
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/marks', markRoutes);
 
+// Messaging REST API (Requirements 1–5, 12). Complements the Socket.IO
+// realtime layer: REST owns conversation history and CRUD.
+app.use('/api/messages', messageRoutes);
+
+// Feedback REST API (Requirements 6–9, 12). Students/parents submit and list
+// their own feedback; teachers list received feedback, reply, and request it.
+app.use('/api/feedback', feedbackRoutes);
+
 // Student & Parent self-service routes
 app.use('/api/students', studentMeRoutes);
+// Admin-management parents list — mounted BEFORE parentMeRoutes so
+// GET /api/parents resolves to the admin list and never collides with the
+// /api/parents/me/* self-service paths (Requirement 10.8).
+app.use('/api/parents', parentRoutes);
 app.use('/api/parents', parentMeRoutes);
+
+// Faculty (teacher) self-service routes — mounted after facultyRoutes so the
+// admin-management faculty routes take precedence; `/me/*` paths never collide.
+app.use('/api/faculty', facultyMeRoutes);
+
+// Public account-setup route (no auth — the setup token is the credential).
+// express.json() is already applied globally above.
+app.use('/api/account-setup', accountSetupRoutes);
+
+// Admin-only parent-child linkage management (Requirement 7).
+app.use('/api/admin/parent-linkages', parentLinkageRoutes);
+
+// Admin dashboard summary (Requirements 2.1, 3.1).
+app.use('/api/admin', adminDashboardRoutes);
 
 // Modernized v1 API routes
 app.use('/api/v1/grading', gradingRoutes);
@@ -411,73 +313,8 @@ app.use('/health', healthRoutes);
 // Prometheus-compatible metrics endpoint
 app.use('/', metricsRoutes);
 
-// Debug routes endpoint - secured with authentication and admin role
-// Only available in non-production environments
-if (process.env.NODE_ENV !== 'production') {
-  app.get('/debug-routes', authMiddleware, requireRoles('admin'), (_req, res) => {
-    const routes: Array<{ method: string; path: string }> = [];
-
-    function split(thing: string | { fast_slash?: boolean }): string[] {
-      if (typeof thing === 'string') {
-        return thing.split('/');
-      } else if ((thing as { fast_slash?: boolean }).fast_slash) {
-        return [''];
-      } else {
-        const match = thing
-          .toString()
-          .replace('\\/?', '')
-          .replace('(?=\\/|$)', '$')
-          .match(/^\^\\(\/(?:[^/\\()[\]\\?+*]*\\[^][^\\()[\]]*)*)/);
-        return match ? match[1].replace(/\\(.)/g, '$1').split('/') : ['<complex>'];
-      }
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    function print(currentPath: string[], layer: any) {
-      if (layer.route) {
-        layer.route.stack.forEach((l: unknown) => print(currentPath.concat(split(layer.route.path)), l));
-      } else if (layer.name === 'router' && layer.handle?.stack) {
-        layer.handle.stack.forEach((l: unknown) =>
-          print(
-            currentPath.concat(
-              split(layer.regexp.source.replace('\\/?(?=\\/|$)', '').replace('\\^\\', '').replace('\\$', '')),
-            ),
-            l,
-          ),
-        );
-      } else if (layer.method) {
-        routes.push({
-          method: layer.method.toUpperCase(),
-          path: currentPath
-            .concat(split(layer.regexp.source.replace('\\/?(?=\\/|$)', '').replace('\\^\\', '').replace('\\$', '')))
-            .filter(Boolean)
-            .join('/'),
-        });
-      }
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (app as any)._router.stack.forEach((layer: unknown) => print([], layer));
-
-    res.json(routes);
-  });
-}
-
-// Add debug route before the 404 handler
-if (process.env.NODE_ENV !== 'production') {
-  app.get('/api/debug-config', authMiddleware, requireRoles('admin'), (_req, res) => {
-    res.json({
-      dbType: 'mongodb',
-      isMongoDb: true,
-      envDbType: process.env.DB_TYPE,
-      availableRoutes: {
-        auth: !!authRoutes,
-        faculty: !!facultyRoutes,
-        student: !!studentRoutes,
-      },
-    });
-  });
-}
+// Debug routes (/debug-routes, /api/debug-config) removed — superseded by
+// buildRouteMap utility (Requirement 3.3, 3.4)
 
 // 404 handler for undefined routes
 app.use(notFoundHandler);

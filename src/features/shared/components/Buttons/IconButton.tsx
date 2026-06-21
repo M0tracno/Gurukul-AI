@@ -28,53 +28,51 @@ export interface IconButtonProps extends Omit<MuiIconButtonProps, 'aria-label'> 
   loading?: boolean;
 }
 
-export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
-  function IconButton(
-    { 'aria-label': ariaLabel, tooltip, loading = false, disabled, children, sx, ...props },
-    ref,
-  ) {
-    const theme = useTheme();
-    const isDisabled = disabled || loading;
-    const tooltipText = tooltip ?? ariaLabel;
+export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(function IconButton(
+  { 'aria-label': ariaLabel, tooltip, loading = false, disabled, children, sx, ...props },
+  ref
+) {
+  const theme = useTheme();
+  const isDisabled = disabled || loading;
+  const tooltipText = tooltip ?? ariaLabel;
 
-    const button = (
-      <MuiIconButton
-        ref={ref}
-        aria-label={ariaLabel}
-        aria-busy={loading || undefined}
-        disabled={isDisabled}
-        sx={{
-          // Minimum touch target 44x44 (WCAG 2.5.5)
-          minWidth: '44px',
-          minHeight: '44px',
-          // Micro-animation (< 200ms)
-          transition: 'transform 150ms ease-in-out, background-color 150ms ease-in-out',
-          '&:active:not(:disabled)': {
-            transform: 'scale(0.9)',
-          },
-          // Visible focus indicator
-          '&:focus-visible': {
-            outline: `3px solid ${theme.palette.primary.main}`,
-            outlineOffset: '2px',
-            borderRadius: '50%',
-          },
-          ...sx,
-        }}
-        {...props}
-      >
-        {children}
-      </MuiIconButton>
+  const button = (
+    <MuiIconButton
+      ref={ref}
+      aria-label={ariaLabel}
+      aria-busy={loading || undefined}
+      disabled={isDisabled}
+      sx={{
+        // Minimum touch target 44x44 (WCAG 2.5.5)
+        minWidth: '44px',
+        minHeight: '44px',
+        // Micro-animation (< 200ms)
+        transition: 'transform 150ms ease-in-out, background-color 150ms ease-in-out',
+        '&:active:not(:disabled)': {
+          transform: 'scale(0.9)',
+        },
+        // Visible focus indicator
+        '&:focus-visible': {
+          outline: `3px solid ${theme.palette.primary.main}`,
+          outlineOffset: '2px',
+          borderRadius: '50%',
+        },
+        ...sx,
+      }}
+      {...props}
+    >
+      {children}
+    </MuiIconButton>
+  );
+
+  // Wrap in tooltip for additional context
+  if (tooltipText && !isDisabled) {
+    return (
+      <Tooltip title={tooltipText} arrow>
+        {button}
+      </Tooltip>
     );
+  }
 
-    // Wrap in tooltip for additional context
-    if (tooltipText && !isDisabled) {
-      return (
-        <Tooltip title={tooltipText} arrow>
-          {button}
-        </Tooltip>
-      );
-    }
-
-    return button;
-  },
-);
+  return button;
+});

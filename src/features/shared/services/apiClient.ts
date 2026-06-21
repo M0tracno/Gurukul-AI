@@ -35,7 +35,10 @@ interface RequestOptions {
 /**
  * Build URL with query parameters.
  */
-function buildUrl(endpoint: string, params?: Record<string, string | number | boolean | undefined>): string {
+function buildUrl(
+  endpoint: string,
+  params?: Record<string, string | number | boolean | undefined>
+): string {
   const url = new URL(`${API_BASE_URL}${endpoint}`);
   if (params) {
     Object.entries(params).forEach(([key, value]) => {
@@ -74,7 +77,11 @@ export async function apiClient<T>(endpoint: string, options: RequestOptions = {
   });
 
   if (!response.ok) {
-    let errorBody: { error?: string; message?: string; details?: Array<{ field: string; value: unknown; reason: string }> } = {
+    let errorBody: {
+      error?: string;
+      message?: string;
+      details?: Array<{ field: string; value: unknown; reason: string }>;
+    } = {
       error: 'UNKNOWN_ERROR',
       message: 'An unexpected error occurred',
     };

@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Box,
-  Container,
-  Typography,
-  IconButton,
-} from '@mui/material';
+import { Box, Container, Typography, Stack } from '@mui/material';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
+
+import CinematicBackground from '../common/CinematicBackground';
+import { accents, ink, surfaces, easing, fonts } from '../../theme/cinematic';
 
 /**
  * Shared cinematic login layout for all portal login pages.
@@ -14,76 +12,36 @@ import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
  * Props:
  * - title: string — Portal title (e.g., "Faculty Portal")
  * - subtitle: string — Brief tagline
- * - icon: React element — MUI icon component
- * - color: string — Accent color (hex)
- * - children: ReactNode — Login form content
- * - backLink: string — Route to navigate back (defaults to '/')
+ * - icon: React component — MUI icon
+ * - accent: 'blue' | 'amber' | 'teal' | 'crimson' — role signature accent
+ * - eyebrow: string — small kicker above the title (defaults to title words)
+ * - children: ReactNode — login form content
+ * - backLink: string — route for the back link (defaults to '/role-select')
+ * - backLabel: string — back link label (defaults to 'Back to roles')
  */
-const LoginLayout = ({ title, subtitle, icon: Icon, color = '#a78bfa', children, backLink = '/' }) => {
+const LoginLayout = ({
+  title,
+  subtitle,
+  icon: Icon,
+  accent = 'blue',
+  eyebrow,
+  children,
+  backLink = '/role-select',
+  backLabel = 'Back to roles',
+}) => {
   const navigate = useNavigate();
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    setVisible(true);
-  }, []);
+  const a = accents[accent] || accents.blue;
 
   return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        background: '#0a0a0f',
-        position: 'relative',
-        overflow: 'hidden',
-        display: 'flex',
-        alignItems: 'center',
-      }}
-    >
-      {/* Animated gradient orb */}
-      <Box
-        sx={{
-          position: 'absolute',
-          top: '-20%',
-          left: '-15%',
-          width: '600px',
-          height: '600px',
-          borderRadius: '50%',
-          background: `radial-gradient(circle, ${color}18 0%, transparent 70%)`,
-          filter: 'blur(80px)',
-          animation: 'orbFloat 14s ease-in-out infinite',
-          '@keyframes orbFloat': {
-            '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
-            '50%': { transform: 'translate(40px, 30px) scale(1.1)' },
-          },
-        }}
-      />
-      <Box
-        sx={{
-          position: 'absolute',
-          bottom: '-20%',
-          right: '-10%',
-          width: '500px',
-          height: '500px',
-          borderRadius: '50%',
-          background: `radial-gradient(circle, ${color}10 0%, transparent 70%)`,
-          filter: 'blur(60px)',
-          animation: 'orbFloat2 18s ease-in-out infinite',
-          '@keyframes orbFloat2': {
-            '0%, 100%': { transform: 'translate(0, 0)' },
-            '50%': { transform: 'translate(-30px, -20px) scale(1.05)' },
-          },
-        }}
-      />
-
+    <CinematicBackground accent={accent}>
       <Container
         maxWidth="lg"
         sx={{
-          position: 'relative',
-          zIndex: 1,
+          minHeight: '100vh',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          minHeight: '100vh',
-          py: 4,
+          py: 6,
         }}
       >
         <Box
@@ -91,70 +49,71 @@ const LoginLayout = ({ title, subtitle, icon: Icon, color = '#a78bfa', children,
             display: 'flex',
             flexDirection: { xs: 'column', md: 'row' },
             alignItems: 'center',
-            justifyContent: 'center',
-            gap: { xs: 4, md: 8 },
+            gap: { xs: 5, md: 10 },
             width: '100%',
-            maxWidth: '1000px',
+            maxWidth: 980,
           }}
         >
-          {/* Left side: Branding */}
-          <Box
-            sx={{
-              flex: 1,
-              textAlign: { xs: 'center', md: 'left' },
-              opacity: visible ? 1 : 0,
-              transform: visible ? 'translateX(0)' : 'translateX(-30px)',
-              transition: 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
-            }}
-          >
-            {/* Icon */}
+          {/* Left — branding */}
+          <Box sx={{ flex: 1, textAlign: { xs: 'center', md: 'left' } }}>
+            <Stack
+              direction="row"
+              spacing={1.25}
+              alignItems="center"
+              justifyContent={{ xs: 'center', md: 'flex-start' }}
+              sx={{ mb: 2.5 }}
+            >
+              <Box sx={{ width: 28, height: 1, background: a.main, opacity: 0.8 }} />
+              <Typography
+                sx={{
+                  fontFamily: fonts.body,
+                  color: a.main,
+                  fontSize: '0.72rem',
+                  fontWeight: 600,
+                  letterSpacing: '0.22em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                {eyebrow || 'Gurukul AI'}
+              </Typography>
+            </Stack>
+
             {Icon && (
               <Box
                 sx={{
-                  width: 72,
-                  height: 72,
-                  borderRadius: '50%',
+                  width: 60,
+                  height: 60,
+                  borderRadius: '16px',
                   display: 'inline-flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  background: `${color}15`,
-                  border: `1px solid ${color}30`,
+                  background: a.soft,
+                  border: `1px solid rgba(${a.rgb}, 0.25)`,
+                  color: a.light,
                   mb: 3,
-                  position: 'relative',
-                  '&::after': {
-                    content: '""',
-                    position: 'absolute',
-                    inset: -6,
-                    borderRadius: '50%',
-                    background: `radial-gradient(circle, ${color}20 0%, transparent 70%)`,
-                    filter: 'blur(10px)',
-                  },
                 }}
               >
-                <Icon sx={{ fontSize: 32, color }} />
+                <Icon sx={{ fontSize: 28 }} />
               </Box>
             )}
 
             <Typography
-              variant="h3"
+              variant="h2"
               sx={{
-                fontWeight: 700,
-                color: 'rgba(255, 255, 255, 0.95)',
+                color: ink.primary,
                 mb: 1.5,
-                fontSize: { xs: '1.75rem', md: '2.25rem' },
-                letterSpacing: '-0.02em',
+                fontSize: { xs: '2rem', md: '2.6rem' },
               }}
             >
               {title}
             </Typography>
 
             <Typography
-              variant="body1"
               sx={{
-                color: 'rgba(255, 255, 255, 0.5)',
+                color: ink.secondary,
                 fontSize: '1.05rem',
-                lineHeight: 1.6,
-                maxWidth: '360px',
+                lineHeight: 1.65,
+                maxWidth: 380,
                 mx: { xs: 'auto', md: 0 },
               }}
             >
@@ -162,86 +121,77 @@ const LoginLayout = ({ title, subtitle, icon: Icon, color = '#a78bfa', children,
             </Typography>
           </Box>
 
-          {/* Right side: Form card */}
-          <Box
-            sx={{
-              flex: 1,
-              maxWidth: '420px',
-              width: '100%',
-              opacity: visible ? 1 : 0,
-              transform: visible ? 'translateY(0)' : 'translateY(30px)',
-              transition: 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
-              transitionDelay: '0.15s',
-            }}
-          >
+          {/* Right — form panel */}
+          <Box sx={{ flex: 1, maxWidth: 430, width: '100%' }}>
             <Box
               sx={{
-                background: 'rgba(255, 255, 255, 0.03)',
-                border: '1px solid rgba(255, 255, 255, 0.06)',
-                borderRadius: '24px',
-                padding: { xs: 3, md: 4 },
-                backdropFilter: 'blur(20px)',
-                transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-                '&:hover': {
-                  border: '1px solid rgba(255, 255, 255, 0.12)',
-                  boxShadow: `0 0 40px ${color}08`,
-                },
+                position: 'relative',
+                overflow: 'hidden',
+                background: `linear-gradient(180deg, ${surfaces.paper} 0%, ${surfaces.base} 140%)`,
+                border: `1px solid ${surfaces.border}`,
+                borderRadius: '22px',
+                p: { xs: 3, md: 4 },
+                boxShadow: '0 30px 80px -40px rgba(0,0,0,0.9)',
               }}
             >
+              {/* top accent hairline */}
+              <Box
+                aria-hidden
+                sx={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: 2,
+                  background: `linear-gradient(90deg, transparent, ${a.main}, transparent)`,
+                  opacity: 0.7,
+                }}
+              />
               {children}
             </Box>
 
-            {/* Back link */}
-            <Box
-              sx={{
-                textAlign: 'center',
-                mt: 3,
-                opacity: visible ? 1 : 0,
-                transition: 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
-                transitionDelay: '0.4s',
-              }}
-            >
-              <IconButton
+            <Box sx={{ textAlign: 'center', mt: 3 }}>
+              <Box
+                component="button"
+                type="button"
                 onClick={() => navigate(backLink)}
                 sx={{
-                  color: 'rgba(255, 255, 255, 0.4)',
-                  fontSize: '0.85rem',
-                  borderRadius: '12px',
-                  px: 2,
-                  py: 1,
+                  display: 'inline-flex',
+                  alignItems: 'center',
                   gap: 1,
-                  transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-                  '&:hover': {
-                    color: 'rgba(255, 255, 255, 0.8)',
-                    background: 'rgba(255, 255, 255, 0.04)',
-                  },
+                  border: 'none',
+                  background: 'transparent',
+                  color: ink.tertiary,
+                  cursor: 'pointer',
+                  px: 1.5,
+                  py: 1,
+                  borderRadius: '10px',
+                  transition: `all 0.3s ${easing.premium}`,
+                  '&:hover': { color: ink.primary, background: 'rgba(255,255,255,0.04)' },
                 }}
               >
                 <ArrowBackIcon sx={{ fontSize: 18 }} />
-                <Typography variant="body2" sx={{ fontSize: '0.85rem' }}>
-                  Back to roles
-                </Typography>
-              </IconButton>
+                <Typography sx={{ fontSize: '0.85rem' }}>{backLabel}</Typography>
+              </Box>
             </Box>
           </Box>
         </Box>
       </Container>
 
-      {/* Gurukul AI Watermark */}
       <Typography
         sx={{
           position: 'absolute',
           bottom: 24,
           left: 24,
-          fontSize: '0.75rem',
-          color: 'rgba(255,255,255,0.15)',
-          fontWeight: 500,
-          letterSpacing: '0.1em',
+          fontSize: '0.72rem',
+          color: 'rgba(255,255,255,0.16)',
+          fontWeight: 600,
+          letterSpacing: '0.2em',
         }}
       >
         GURUKUL AI
       </Typography>
-    </Box>
+    </CinematicBackground>
   );
 };
 

@@ -28,7 +28,9 @@ jest.mock('../components/common/LazyLoader');
 jest.mock('../components/monitoring/SystemMonitor');
 jest.mock('../components/monitoring/ProductionMonitor', () => {
   return function MockProductionMonitor(props) {
-    return <div data-testid="production-monitor">Production Monitor Mock - {JSON.stringify(props)}</div>;
+    return (
+      <div data-testid="production-monitor">Production Monitor Mock - {JSON.stringify(props)}</div>
+    );
   };
 });
 jest.mock('../components/analytics/EnhancedAnalytics');
@@ -90,7 +92,7 @@ const mockSecurityUtils = {
   },
   SecurityValidator: {
     validateInput: jest.fn(() => ({ isValid: true })),
-    sanitizeInput: jest.fn((input) => input),
+    sanitizeInput: jest.fn(input => input),
   },
 };
 
@@ -98,7 +100,7 @@ const mockSecurityUtils = {
 beforeAll(() => {
   // Mock performance APIs
   performanceTestUtils.mockPerformanceAPIs();
-  
+
   // Mock security APIs
   securityTestUtils.mockSecurityAPIs();
 
@@ -131,9 +133,7 @@ const TestWrapper = ({ children }) => {
       <ThemeProvider theme={theme}>
         <AuthProvider>
           <CustomThemeProvider>
-            <NotificationProvider>
-              {children}
-            </NotificationProvider>
+            <NotificationProvider>{children}</NotificationProvider>
           </CustomThemeProvider>
         </AuthProvider>
       </ThemeProvider>
@@ -148,7 +148,7 @@ describe('AdminDashboard Component', () => {
   beforeEach(() => {
     // Reset all mocks
     jest.clearAllMocks();
-    
+
     // Setup mock implementations
     require('../hooks/usePerformance').usePerformanceMetrics.mockImplementation(
       mockPerformanceHooks.usePerformanceMetrics
@@ -213,7 +213,7 @@ describe('AdminDashboard Component', () => {
   describe('Performance Testing', () => {
     test('component renders within performance threshold', async () => {
       const startTime = performance.now();
-      
+
       await act(async () => {
         render(
           <TestWrapper>
@@ -221,10 +221,10 @@ describe('AdminDashboard Component', () => {
           </TestWrapper>
         );
       });
-      
+
       const endTime = performance.now();
       const renderTime = endTime - startTime;
-      
+
       // Should render within 100ms for good user experience
       expect(renderTime).toBeLessThan(100);
     });
@@ -276,7 +276,7 @@ describe('AdminDashboard Component', () => {
           </TestWrapper>
         );
         renders.push(unmount);
-        
+
         // Unmount immediately
         unmount();
       }
@@ -324,7 +324,7 @@ describe('AdminDashboard Component', () => {
 
       for (const input of inputs) {
         fireEvent.change(input, { target: { value: xssPayload } });
-        
+
         // Check that script tags are not rendered
         expect(container.innerHTML).not.toContain('<script>');
       }
@@ -358,12 +358,12 @@ describe('AdminDashboard Component', () => {
       );
 
       const forms = container.querySelectorAll('form');
-      
+
       forms.forEach(form => {
         const csrfInputs = form.querySelectorAll('input[name*="csrf"], input[name*="token"]');
         // Either CSRF inputs should be present or the form should be read-only
         const isReadOnly = form.querySelector('input[readonly], textarea[readonly]');
-        
+
         if (!isReadOnly) {
           expect(csrfInputs.length).toBeGreaterThan(0);
         }
@@ -432,11 +432,11 @@ describe('AdminDashboard Component', () => {
       );
 
       const buttons = container.querySelectorAll('button');
-      
+
       buttons.forEach(button => {
         const styles = window.getComputedStyle(button);
         const minHeight = parseInt(styles.minHeight) || parseInt(styles.height);
-        
+
         // Touch targets should be at least 44px (Apple) or 48px (Material Design)
         if (minHeight > 0) {
           expect(minHeight).toBeGreaterThanOrEqual(44);
@@ -448,7 +448,8 @@ describe('AdminDashboard Component', () => {
   describe('Data Management', () => {
     test('loads dashboard data on mount', async () => {
       // Mock successful API calls
-      global.fetch = jest.fn()
+      global.fetch = jest
+        .fn()
         .mockResolvedValueOnce({
           ok: true,
           json: () => Promise.resolve({ students: [] }),
@@ -503,10 +504,13 @@ describe('AdminDashboard Component', () => {
       );
 
       // Should show loading indicator
-      await waitFor(() => {
-        const loadingElements = screen.queryAllByRole('progressbar');
-        expect(loadingElements.length).toBeGreaterThan(0);
-      }, { timeout: 1000 });
+      await waitFor(
+        () => {
+          const loadingElements = screen.queryAllByRole('progressbar');
+          expect(loadingElements.length).toBeGreaterThan(0);
+        },
+        { timeout: 1000 }
+      );
     });
   });
 
@@ -521,10 +525,11 @@ describe('AdminDashboard Component', () => {
       });
 
       // Look for analytics-related elements
-      const analyticsSection = screen.getByTestId('analytics-section') || 
-                              screen.getByText(/analytics/i) ||
-                              screen.getByText(/dashboard/i);
-      
+      const analyticsSection =
+        screen.getByTestId('analytics-section') ||
+        screen.getByText(/analytics/i) ||
+        screen.getByText(/dashboard/i);
+
       expect(analyticsSection).toBeInTheDocument();
     });
 
@@ -569,7 +574,7 @@ describe('AdminDashboard Component', () => {
       );
 
       const focusableElements = screen.getAllByRole('button');
-      
+
       if (focusableElements.length > 0) {
         // Test tab navigation
         focusableElements[0].focus();
@@ -654,22 +659,21 @@ describe('AdminDashboard Integration Tests', () => {
     };
 
     // Mock API responses
-    global.fetch = jest.fn()
+    global.fetch = jest
+      .fn()
       .mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve({ 
-          students: [
-            { id: 1, name: 'John Doe', email: 'john@test.com' }
-          ] 
-        }),
+        json: () =>
+          Promise.resolve({
+            students: [{ id: 1, name: 'John Doe', email: 'john@test.com' }],
+          }),
       })
       .mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve({ 
-          teachers: [
-            { id: 1, name: 'Jane Smith', email: 'jane@test.com' }
-          ] 
-        }),
+        json: () =>
+          Promise.resolve({
+            teachers: [{ id: 1, name: 'Jane Smith', email: 'jane@test.com' }],
+          }),
       });
 
     await act(async () => {
@@ -689,7 +693,7 @@ describe('AdminDashboard Integration Tests', () => {
     const navButtons = screen.getAllByRole('button');
     if (navButtons.length > 0) {
       fireEvent.click(navButtons[0]);
-      
+
       // Should not crash
       expect(screen.getByRole('main')).toBeInTheDocument();
     }
@@ -718,7 +722,7 @@ describe('AdminDashboard Performance Benchmarks', () => {
     // Performance assertions
     expect(endTime - startTime).toBeLessThan(200); // Should render in under 200ms
     expect(report.summary.averageRenderTime).toBeLessThan(50); // Average render under 50ms
-    
+
     console.log('Performance Report:', report);
   });
 });
@@ -727,7 +731,7 @@ describe('AdminDashboard Performance Benchmarks', () => {
 describe('AdminDashboard Security Audit', () => {
   test('comprehensive security audit', async () => {
     const tester = new SecurityTester();
-    
+
     const auditResults = await tester.runSecurityAudit(AdminDashboard, {
       inputSelectors: ['input[type="text"]', 'textarea'],
       testXSS: true,
@@ -743,4 +747,3 @@ describe('AdminDashboard Security Audit', () => {
     console.log('Security Audit Results:', auditResults);
   });
 });
-

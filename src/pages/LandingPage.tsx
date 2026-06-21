@@ -1,21 +1,18 @@
 /**
- * Cinematic Landing Page for Gurukul AI
+ * Cinematic Landing Page — Gurukul AI
  *
- * Dark, minimal, premium design inspired by cinematic sports websites
- * adapted for the education domain. Features glassmorphism cards,
- * animated gradient orbs, and scroll-driven reveals.
+ * Dark, filmic, single-accent design. A lit "set" (CinematicBackground)
+ * carries depth via directional glow, grain, and vignette; the Bricolage
+ * Grotesque display face and editorial layout do the rest. One accent leads
+ * each section (neutral blue), with per-role accent tints only on the
+ * doorway cards.
  */
 
 import { useEffect, useRef, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import {
-  Box,
-  Typography,
-  Button,
-  Container,
-  Grid,
-  Stack,
-} from '@mui/material';
+import { Box, Typography, Button, Container, Grid, Stack } from '@mui/material';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import InsightsIcon from '@mui/icons-material/Insights';
@@ -24,73 +21,67 @@ import PersonIcon from '@mui/icons-material/Person';
 import FamilyRestroomIcon from '@mui/icons-material/FamilyRestroom';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
-// ---------------------------------------------------------------------------
-// Constants
-// ---------------------------------------------------------------------------
+import CinematicBackground from '../components/common/CinematicBackground';
+import { accents, ink, surfaces, easing } from '../theme/cinematic';
 
-const FONT_FAMILY = 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-
-const GLASS_STYLE = {
-  background: 'rgba(255, 255, 255, 0.03)',
-  backdropFilter: 'blur(12px)',
-  border: '1px solid rgba(255, 255, 255, 0.08)',
-  borderRadius: '16px',
-};
+// ---------------------------------------------------------------------------
+// Content
+// ---------------------------------------------------------------------------
 
 const features = [
   {
-    icon: <AutoAwesomeIcon sx={{ fontSize: 32, color: '#a78bfa' }} />,
-    title: 'AI Grading',
+    icon: <AutoAwesomeIcon sx={{ fontSize: 26 }} />,
+    title: 'AI grading that explains itself',
     description:
-      'Intelligent assessment powered by generative AI. Grade assignments faster with contextual feedback and rubric alignment.',
+      'Score assignments against your own rubric and return contextual feedback in seconds — you stay the editor, the model does the first pass.',
   },
   {
-    icon: <ChatBubbleOutlineIcon sx={{ fontSize: 32, color: '#60a5fa' }} />,
-    title: 'Real-Time Chat',
+    icon: <ChatBubbleOutlineIcon sx={{ fontSize: 26 }} />,
+    title: 'Conversations, not inboxes',
     description:
-      'Instant messaging between teachers, students, and parents. Threaded conversations with file sharing and notifications.',
+      'Threaded messaging between teachers, students, and parents with delivery you can trust — files, typing presence, and offline catch-up included.',
   },
   {
-    icon: <InsightsIcon sx={{ fontSize: 32, color: '#34d399' }} />,
-    title: 'Analytics Dashboard',
+    icon: <InsightsIcon sx={{ fontSize: 26 }} />,
+    title: 'Signals before they become problems',
     description:
-      'Comprehensive academic insights with visual charts, trend analysis, and predictive performance indicators.',
+      'Attendance, grades, and engagement read as a single trend line, so a slipping student is a quiet nudge — not a term-end surprise.',
   },
 ];
 
 const roles = [
   {
-    icon: <SchoolIcon sx={{ fontSize: 40 }} />,
+    icon: <SchoolIcon sx={{ fontSize: 30 }} />,
     title: 'Teacher',
-    description: 'Manage classes, grade assignments, and track student progress.',
+    description: 'Plan, grade, and keep every class moving.',
     path: '/faculty-login',
-    color: '#a78bfa',
+    accent: accents.amber,
   },
   {
-    icon: <PersonIcon sx={{ fontSize: 40 }} />,
+    icon: <PersonIcon sx={{ fontSize: 30 }} />,
     title: 'Student',
-    description: 'Access courses, submit work, and view your academic journey.',
+    description: 'Coursework, submissions, and your progress.',
     path: '/student-login',
-    color: '#60a5fa',
+    accent: accents.blue,
   },
   {
-    icon: <FamilyRestroomIcon sx={{ fontSize: 40 }} />,
+    icon: <FamilyRestroomIcon sx={{ fontSize: 30 }} />,
     title: 'Parent',
-    description: 'Stay connected with your child\'s academic performance.',
+    description: "Stay close to your child's school day.",
     path: '/parent-login',
-    color: '#34d399',
+    accent: accents.teal,
   },
   {
-    icon: <AdminPanelSettingsIcon sx={{ fontSize: 40 }} />,
+    icon: <AdminPanelSettingsIcon sx={{ fontSize: 30 }} />,
     title: 'Admin',
-    description: 'Oversee institutional operations and manage users.',
+    description: 'Run the institution from one console.',
     path: '/admin-login',
-    color: '#f472b6',
+    accent: accents.crimson,
   },
 ];
 
 // ---------------------------------------------------------------------------
-// useScrollReveal — Intersection Observer hook for scroll-driven animations
+// useScrollReveal — Intersection Observer for scroll-driven reveals
 // ---------------------------------------------------------------------------
 
 function useScrollReveal(threshold = 0.15) {
@@ -100,7 +91,6 @@ function useScrollReveal(threshold = 0.15) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -108,9 +98,8 @@ function useScrollReveal(threshold = 0.15) {
           observer.unobserve(el);
         }
       },
-      { threshold },
+      { threshold }
     );
-
     observer.observe(el);
     return () => observer.disconnect();
   }, [threshold]);
@@ -119,184 +108,138 @@ function useScrollReveal(threshold = 0.15) {
 }
 
 // ---------------------------------------------------------------------------
-// Section Components
+// Small building blocks
+// ---------------------------------------------------------------------------
+
+function Eyebrow({ children, color = accents.blue.main }: { children: string; color?: string }) {
+  return (
+    <Stack direction="row" spacing={1.25} alignItems="center" justifyContent="inherit">
+      <Box sx={{ width: 28, height: 1, background: color, opacity: 0.8 }} />
+      <Typography
+        variant="overline"
+        sx={{ color, fontSize: '0.72rem', letterSpacing: '0.22em' }}
+      >
+        {children}
+      </Typography>
+    </Stack>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Sections
 // ---------------------------------------------------------------------------
 
 function HeroSection() {
   const [mounted, setMounted] = useState(false);
-
   useEffect(() => {
-    const timer = setTimeout(() => setMounted(true), 100);
-    return () => clearTimeout(timer);
+    const t = setTimeout(() => setMounted(true), 80);
+    return () => clearTimeout(t);
   }, []);
 
+  const rise = (delay: number) => ({
+    opacity: mounted ? 1 : 0,
+    transform: mounted ? 'translateY(0)' : 'translateY(24px)',
+    transition: `opacity 0.9s ${easing.premium} ${delay}s, transform 0.9s ${easing.premium} ${delay}s`,
+  });
+
   return (
-    <Box
-      sx={{
-        position: 'relative',
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        overflow: 'hidden',
-        background: 'linear-gradient(135deg, #0a0a0f 0%, #0d1117 50%, #0a0a1a 100%)',
-      }}
-    >
-      {/* Animated gradient orb */}
-      <Box
+    <CinematicBackground accent="blue">
+      <Container
+        maxWidth="md"
         sx={{
-          position: 'absolute',
-          top: '20%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: { xs: '300px', md: '600px' },
-          height: { xs: '300px', md: '600px' },
-          borderRadius: '50%',
-          background:
-            'radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.08) 40%, transparent 70%)',
-          filter: 'blur(60px)',
-          animation: 'orbFloat 8s ease-in-out infinite',
-          '@keyframes orbFloat': {
-            '0%, 100%': { transform: 'translate(-50%, -50%) scale(1)' },
-            '50%': { transform: 'translate(-50%, -50%) scale(1.1)' },
-          },
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          textAlign: 'center',
+          py: 10,
         }}
-      />
+      >
+        <Box sx={{ ...rise(0), display: 'flex', justifyContent: 'center', mb: 3 }}>
+          <Eyebrow>Intelligent Education Platform</Eyebrow>
+        </Box>
 
-      {/* Secondary orb */}
-      <Box
-        sx={{
-          position: 'absolute',
-          bottom: '15%',
-          right: '10%',
-          width: { xs: '150px', md: '300px' },
-          height: { xs: '150px', md: '300px' },
-          borderRadius: '50%',
-          background:
-            'radial-gradient(circle, rgba(52, 211, 153, 0.1) 0%, transparent 60%)',
-          filter: 'blur(40px)',
-          animation: 'orbFloat2 10s ease-in-out infinite',
-          '@keyframes orbFloat2': {
-            '0%, 100%': { transform: 'scale(1) translateY(0)' },
-            '50%': { transform: 'scale(1.15) translateY(-20px)' },
-          },
-        }}
-      />
-
-      <Container maxWidth="md" sx={{ position: 'relative', zIndex: 1, textAlign: 'center' }}>
         <Typography
           variant="h1"
           sx={{
-            fontFamily: FONT_FAMILY,
-            fontWeight: 700,
-            fontSize: { xs: '2.5rem', sm: '3.5rem', md: '4.5rem' },
-            lineHeight: 1.1,
-            color: '#fff',
+            fontSize: { xs: '2.8rem', sm: '3.8rem', md: '4.75rem' },
+            color: ink.primary,
+            maxWidth: 900,
             mb: 3,
-            opacity: mounted ? 1 : 0,
-            transform: mounted ? 'translateY(0)' : 'translateY(30px)',
-            transition: 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
+            ...rise(0.08),
           }}
         >
-          Empowering The
-          <br />
-          <Box
-            component="span"
-            sx={{
-              background: 'linear-gradient(135deg, #a78bfa, #60a5fa, #34d399)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-            }}
-          >
-            Future Of Education
+          The operating system for{' '}
+          <Box component="span" sx={{ color: accents.blue.light }}>
+            modern teaching
           </Box>
+          .
         </Typography>
 
         <Typography
-          variant="h6"
           sx={{
-            fontFamily: FONT_FAMILY,
-            fontWeight: 400,
-            fontSize: { xs: '1rem', md: '1.2rem' },
-            color: 'rgba(255, 255, 255, 0.6)',
-            maxWidth: '600px',
-            mx: 'auto',
+            fontSize: { xs: '1.05rem', md: '1.2rem' },
+            color: ink.secondary,
+            maxWidth: 620,
             mb: 5,
             lineHeight: 1.7,
-            opacity: mounted ? 1 : 0,
-            transform: mounted ? 'translateY(0)' : 'translateY(20px)',
-            transition: 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s',
+            ...rise(0.16),
           }}
         >
-          Advanced tools for teachers, students, and parents. AI-powered grading,
-          real-time messaging, and comprehensive academic management.
+          AI grading, real-time messaging, and analytics in one calm, fast workspace —
+          for teachers, students, parents, and administrators.
         </Typography>
 
-        <Stack
-          direction={{ xs: 'column', sm: 'row' }}
-          spacing={2}
-          justifyContent="center"
-          sx={{
-            opacity: mounted ? 1 : 0,
-            transform: mounted ? 'translateY(0)' : 'translateY(20px)',
-            transition: 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s',
-          }}
-        >
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ ...rise(0.24) }}>
           <Button
             component={RouterLink}
             to="/role-select"
             variant="contained"
             size="large"
-            sx={{
-              fontFamily: FONT_FAMILY,
-              fontWeight: 600,
-              px: 4,
-              py: 1.5,
-              borderRadius: '12px',
-              background: '#fff',
-              color: '#0a0a0f',
-              textTransform: 'none',
-              fontSize: '1rem',
-              '&:hover': {
-                background: 'rgba(255, 255, 255, 0.9)',
-                transform: 'translateY(-2px)',
-                boxShadow: '0 8px 25px rgba(255, 255, 255, 0.15)',
-              },
-              transition: 'all 0.3s ease',
-            }}
+            endIcon={<ArrowForwardIcon />}
+            sx={{ px: 3.5, py: 1.5, fontSize: '1rem' }}
           >
-            Get Started
+            Enter the platform
           </Button>
           <Button
             variant="outlined"
             size="large"
-            onClick={() => {
-              document.getElementById('features-section')?.scrollIntoView({ behavior: 'smooth' });
-            }}
-            sx={{
-              fontFamily: FONT_FAMILY,
-              fontWeight: 500,
-              px: 4,
-              py: 1.5,
-              borderRadius: '12px',
-              borderColor: 'rgba(255, 255, 255, 0.2)',
-              color: 'rgba(255, 255, 255, 0.8)',
-              textTransform: 'none',
-              fontSize: '1rem',
-              '&:hover': {
-                borderColor: 'rgba(255, 255, 255, 0.5)',
-                background: 'rgba(255, 255, 255, 0.05)',
-                transform: 'translateY(-2px)',
-              },
-              transition: 'all 0.3s ease',
-            }}
+            onClick={() =>
+              document.getElementById('features-section')?.scrollIntoView({ behavior: 'smooth' })
+            }
+            sx={{ px: 3.5, py: 1.5, fontSize: '1rem' }}
           >
-            Learn More
+            See what's inside
           </Button>
         </Stack>
+
+        <Box
+          sx={{
+            ...rise(0.5),
+            mt: { xs: 7, md: 10 },
+            color: ink.tertiary,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          <Typography variant="overline" sx={{ fontSize: '0.65rem', letterSpacing: '0.2em' }}>
+            Scroll
+          </Typography>
+          <KeyboardArrowDownIcon
+            sx={{
+              animation: 'floatY 2.4s ease-in-out infinite',
+              '@keyframes floatY': {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(6px)' },
+              },
+              '@media (prefers-reduced-motion: reduce)': { animation: 'none' },
+            }}
+          />
+        </Box>
       </Container>
-    </Box>
+    </CinematicBackground>
   );
 }
 
@@ -307,88 +250,82 @@ function FeaturesSection() {
     <Box
       id="features-section"
       ref={ref}
-      sx={{
-        py: { xs: 10, md: 14 },
-        background: '#0a0a0f',
-        position: 'relative',
-      }}
+      sx={{ py: { xs: 10, md: 16 }, background: surfaces.base }}
     >
       <Container maxWidth="lg">
-        <Typography
-          variant="h3"
-          sx={{
-            fontFamily: FONT_FAMILY,
-            fontWeight: 700,
-            fontSize: { xs: '2rem', md: '2.8rem' },
-            color: '#fff',
-            textAlign: 'center',
-            mb: 2,
-            opacity: isVisible ? 1 : 0,
-            transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
-            transition: 'all 0.7s cubic-bezier(0.16, 1, 0.3, 1)',
-          }}
-        >
-          Powerful Features
-        </Typography>
-        <Typography
-          sx={{
-            fontFamily: FONT_FAMILY,
-            color: 'rgba(255, 255, 255, 0.5)',
-            textAlign: 'center',
-            mb: 8,
-            fontSize: '1.1rem',
-            opacity: isVisible ? 1 : 0,
-            transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
-            transition: 'all 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.1s',
-          }}
-        >
-          Everything you need to run a modern classroom
-        </Typography>
+        <Box sx={{ mb: { xs: 6, md: 9 }, maxWidth: 680 }}>
+          <Box sx={{ mb: 2.5 }}>
+            <Eyebrow>Capabilities</Eyebrow>
+          </Box>
+          <Typography
+            variant="h2"
+            sx={{
+              color: ink.primary,
+              opacity: isVisible ? 1 : 0,
+              transform: isVisible ? 'none' : 'translateY(24px)',
+              transition: `all 0.8s ${easing.premium}`,
+            }}
+          >
+            Everything the school day needs — and nothing it doesn't.
+          </Typography>
+        </Box>
 
-        <Grid container spacing={3}>
+        <Stack divider={<Box sx={{ height: 1, background: surfaces.border }} />} spacing={0}>
           {features.map((feature, index) => (
-            <Grid size={{ xs: 12, md: 4 }} key={feature.title}>
-              <Box
-                sx={{
-                  ...GLASS_STYLE,
-                  p: 4,
-                  height: '100%',
-                  opacity: isVisible ? 1 : 0,
-                  transform: isVisible ? 'translateY(0)' : 'translateY(40px)',
-                  transition: `all 0.7s cubic-bezier(0.16, 1, 0.3, 1) ${0.2 + index * 0.1}s`,
-                  '&:hover': {
-                    background: 'rgba(255, 255, 255, 0.06)',
-                    border: '1px solid rgba(255, 255, 255, 0.12)',
-                    transform: 'translateY(-4px)',
-                  },
-                }}
-              >
-                <Box sx={{ mb: 2 }}>{feature.icon}</Box>
+            <Grid
+              container
+              key={feature.title}
+              spacing={{ xs: 2, md: 6 }}
+              sx={{
+                py: { xs: 4, md: 5 },
+                alignItems: 'flex-start',
+                opacity: isVisible ? 1 : 0,
+                transform: isVisible ? 'none' : 'translateY(32px)',
+                transition: `all 0.8s ${easing.premium} ${0.1 + index * 0.12}s`,
+              }}
+            >
+              <Grid size={{ xs: 12, md: 5 }}>
+                <Stack direction="row" spacing={2.5} alignItems="center">
+                  <Typography
+                    sx={{
+                      fontFamily: "'Bricolage Grotesque', sans-serif",
+                      fontSize: '1.5rem',
+                      fontWeight: 700,
+                      color: accents.blue.main,
+                      minWidth: 44,
+                    }}
+                  >
+                    {String(index + 1).padStart(2, '0')}
+                  </Typography>
+                  <Box
+                    sx={{
+                      color: accents.blue.light,
+                      display: 'grid',
+                      placeItems: 'center',
+                      width: 44,
+                      height: 44,
+                      borderRadius: '12px',
+                      border: `1px solid ${surfaces.border}`,
+                      background: accents.blue.soft,
+                    }}
+                  >
+                    {feature.icon}
+                  </Box>
+                  <Typography variant="h4" sx={{ color: ink.primary }}>
+                    {feature.title}
+                  </Typography>
+                </Stack>
+              </Grid>
+              <Grid size={{ xs: 12, md: 7 }}>
                 <Typography
-                  variant="h6"
-                  sx={{
-                    fontFamily: FONT_FAMILY,
-                    fontWeight: 600,
-                    color: '#fff',
-                    mb: 1.5,
-                  }}
-                >
-                  {feature.title}
-                </Typography>
-                <Typography
-                  sx={{
-                    fontFamily: FONT_FAMILY,
-                    color: 'rgba(255, 255, 255, 0.5)',
-                    fontSize: '0.95rem',
-                    lineHeight: 1.7,
-                  }}
+                  sx={{ color: ink.secondary, fontSize: '1.05rem', lineHeight: 1.75, pt: { md: 0.5 } }}
                 >
                   {feature.description}
                 </Typography>
-              </Box>
+              </Grid>
             </Grid>
           ))}
-        </Grid>
+        </Stack>
       </Container>
     </Box>
   );
@@ -400,102 +337,94 @@ function RolesSection() {
   return (
     <Box
       ref={ref}
-      sx={{
-        py: { xs: 10, md: 14 },
-        background: 'linear-gradient(180deg, #0a0a0f 0%, #0d1117 100%)',
-      }}
+      sx={{ py: { xs: 10, md: 16 }, background: `linear-gradient(180deg, ${surfaces.base} 0%, ${surfaces.default} 100%)` }}
     >
       <Container maxWidth="lg">
-        <Typography
-          variant="h3"
-          sx={{
-            fontFamily: FONT_FAMILY,
-            fontWeight: 700,
-            fontSize: { xs: '2rem', md: '2.8rem' },
-            color: '#fff',
-            textAlign: 'center',
-            mb: 2,
-            opacity: isVisible ? 1 : 0,
-            transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
-            transition: 'all 0.7s cubic-bezier(0.16, 1, 0.3, 1)',
-          }}
-        >
-          Choose Your Role
-        </Typography>
-        <Typography
-          sx={{
-            fontFamily: FONT_FAMILY,
-            color: 'rgba(255, 255, 255, 0.5)',
-            textAlign: 'center',
-            mb: 8,
-            fontSize: '1.1rem',
-            opacity: isVisible ? 1 : 0,
-            transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
-            transition: 'all 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.1s',
-          }}
-        >
-          Select your role to get started
-        </Typography>
+        <Box sx={{ mb: { xs: 6, md: 9 }, textAlign: 'center' }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2.5 }}>
+            <Eyebrow>Four doorways</Eyebrow>
+          </Box>
+          <Typography variant="h2" sx={{ color: ink.primary }}>
+            Choose your way in.
+          </Typography>
+        </Box>
 
-        <Grid container spacing={3} justifyContent="center">
+        <Grid container spacing={2.5} justifyContent="center">
           {roles.map((role, index) => (
             <Grid size={{ xs: 12, sm: 6, md: 3 }} key={role.title}>
               <Box
                 component={RouterLink}
                 to={role.path}
                 sx={{
-                  ...GLASS_STYLE,
-                  p: 4,
                   display: 'flex',
                   flexDirection: 'column',
-                  alignItems: 'center',
-                  textAlign: 'center',
-                  textDecoration: 'none',
                   height: '100%',
+                  p: 3.5,
+                  textDecoration: 'none',
+                  borderRadius: '16px',
+                  background: `linear-gradient(180deg, ${surfaces.paper} 0%, ${surfaces.base} 140%)`,
+                  border: `1px solid ${surfaces.border}`,
+                  position: 'relative',
+                  overflow: 'hidden',
                   opacity: isVisible ? 1 : 0,
-                  transform: isVisible ? 'translateY(0)' : 'translateY(40px)',
-                  transition: `all 0.7s cubic-bezier(0.16, 1, 0.3, 1) ${0.2 + index * 0.1}s`,
-                  cursor: 'pointer',
+                  transform: isVisible ? 'none' : 'translateY(36px)',
+                  transition: `opacity 0.7s ${easing.premium} ${0.15 + index * 0.1}s, transform 0.7s ${easing.premium} ${0.15 + index * 0.1}s, border-color 0.4s ${easing.premium}, box-shadow 0.4s ${easing.premium}`,
                   '&:hover': {
-                    background: 'rgba(255, 255, 255, 0.06)',
-                    border: `1px solid ${role.color}40`,
-                    transform: 'translateY(-6px) scale(1.02)',
-                    boxShadow: `0 20px 40px ${role.color}15`,
+                    transform: 'translateY(-4px)',
+                    borderColor: `rgba(${role.accent.rgb}, 0.5)`,
+                    boxShadow: `0 30px 60px -34px rgba(${role.accent.rgb}, 0.5)`,
+                    '& .role-arrow': { transform: 'translateX(4px)', opacity: 1 },
                   },
                 }}
               >
+                {/* top accent line */}
                 <Box
                   sx={{
-                    color: role.color,
-                    mb: 2,
-                    p: 1.5,
-                    borderRadius: '12px',
-                    background: `${role.color}10`,
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: 2,
+                    background: `linear-gradient(90deg, transparent, ${role.accent.main}, transparent)`,
+                    opacity: 0.7,
+                  }}
+                />
+                <Box
+                  sx={{
+                    color: role.accent.light,
+                    width: 52,
+                    height: 52,
+                    display: 'grid',
+                    placeItems: 'center',
+                    borderRadius: '14px',
+                    background: role.accent.soft,
+                    border: `1px solid rgba(${role.accent.rgb}, 0.25)`,
+                    mb: 2.5,
                   }}
                 >
                   {role.icon}
                 </Box>
-                <Typography
-                  variant="h6"
-                  sx={{
-                    fontFamily: FONT_FAMILY,
-                    fontWeight: 600,
-                    color: '#fff',
-                    mb: 1,
-                  }}
-                >
+                <Typography variant="h5" sx={{ color: ink.primary, mb: 0.75 }}>
                   {role.title}
                 </Typography>
-                <Typography
-                  sx={{
-                    fontFamily: FONT_FAMILY,
-                    color: 'rgba(255, 255, 255, 0.45)',
-                    fontSize: '0.9rem',
-                    lineHeight: 1.6,
-                  }}
-                >
+                <Typography sx={{ color: ink.secondary, fontSize: '0.92rem', lineHeight: 1.6, flexGrow: 1 }}>
                   {role.description}
                 </Typography>
+                <Stack
+                  direction="row"
+                  spacing={0.75}
+                  alignItems="center"
+                  className="role-arrow"
+                  sx={{
+                    mt: 2.5,
+                    color: role.accent.light,
+                    opacity: 0.75,
+                    transition: `all 0.4s ${easing.premium}`,
+                  }}
+                >
+                  <Typography sx={{ fontSize: '0.85rem', fontWeight: 600 }}>Sign in</Typography>
+                  <ArrowForwardIcon sx={{ fontSize: 16 }} />
+                </Stack>
               </Box>
             </Grid>
           ))}
@@ -505,135 +434,98 @@ function RolesSection() {
   );
 }
 
-function FooterSection() {
+function ClosingSection() {
   const { ref, isVisible } = useScrollReveal(0.1);
 
   return (
-    <Box
-      ref={ref}
-      sx={{
-        py: { xs: 8, md: 10 },
-        background: '#0a0a0f',
-        borderTop: '1px solid rgba(255, 255, 255, 0.05)',
-      }}
-    >
-      <Container maxWidth="md">
+    <Box ref={ref} sx={{ background: surfaces.default, borderTop: `1px solid ${surfaces.border}` }}>
+      <Container maxWidth="md" sx={{ py: { xs: 10, md: 14 } }}>
         <Box
           sx={{
-            ...GLASS_STYLE,
-            p: { xs: 4, md: 6 },
+            position: 'relative',
+            overflow: 'hidden',
+            borderRadius: '24px',
+            border: `1px solid ${surfaces.border}`,
+            background: `linear-gradient(180deg, ${surfaces.paper} 0%, ${surfaces.base} 120%)`,
+            p: { xs: 5, md: 8 },
             textAlign: 'center',
             opacity: isVisible ? 1 : 0,
-            transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
-            transition: 'all 0.7s cubic-bezier(0.16, 1, 0.3, 1)',
+            transform: isVisible ? 'none' : 'translateY(28px)',
+            transition: `all 0.8s ${easing.premium}`,
           }}
         >
-          <Typography
-            variant="h4"
+          <Box
+            aria-hidden
             sx={{
-              fontFamily: FONT_FAMILY,
-              fontWeight: 700,
-              fontSize: { xs: '1.5rem', md: '2rem' },
-              color: '#fff',
-              mb: 2,
+              position: 'absolute',
+              inset: 0,
+              background: `radial-gradient(70% 120% at 50% 0%, ${accents.blue.soft} 0%, transparent 60%)`,
             }}
-          >
-            Ready to transform your classroom?
-          </Typography>
-          <Typography
-            sx={{
-              fontFamily: FONT_FAMILY,
-              color: 'rgba(255, 255, 255, 0.5)',
-              mb: 4,
-              fontSize: '1rem',
-            }}
-          >
-            Join thousands of educators already using Gurukul AI.
-          </Typography>
-          <Button
-            component={RouterLink}
-            to="/role-select"
-            variant="contained"
-            size="large"
-            sx={{
-              fontFamily: FONT_FAMILY,
-              fontWeight: 600,
-              px: 5,
-              py: 1.5,
-              borderRadius: '12px',
-              background: 'linear-gradient(135deg, #a78bfa, #60a5fa)',
-              color: '#fff',
-              textTransform: 'none',
-              fontSize: '1rem',
-              '&:hover': {
-                background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)',
-                transform: 'translateY(-2px)',
-                boxShadow: '0 8px 25px rgba(99, 102, 241, 0.3)',
-              },
-              transition: 'all 0.3s ease',
-            }}
-          >
-            Get Started Now
-          </Button>
+          />
+          <Box sx={{ position: 'relative' }}>
+            <Typography variant="h2" sx={{ color: ink.primary, mb: 2, fontSize: { xs: '1.9rem', md: '2.5rem' } }}>
+              Ready to bring the term into focus?
+            </Typography>
+            <Typography sx={{ color: ink.secondary, mb: 4, fontSize: '1.05rem', maxWidth: 520, mx: 'auto' }}>
+              Pick your role and pick up where the school day left off.
+            </Typography>
+            <Button
+              component={RouterLink}
+              to="/role-select"
+              variant="contained"
+              size="large"
+              endIcon={<ArrowForwardIcon />}
+              sx={{ px: 4, py: 1.5, fontSize: '1rem' }}
+            >
+              Get started
+            </Button>
+          </Box>
         </Box>
 
-        {/* Footer links */}
         <Stack
-          direction="row"
-          spacing={3}
-          justifyContent="center"
-          sx={{ mt: 6, mb: 3 }}
+          direction={{ xs: 'column', sm: 'row' }}
+          spacing={{ xs: 1.5, sm: 3 }}
+          justifyContent="space-between"
+          alignItems="center"
+          sx={{ mt: 6 }}
         >
-          {['About', 'Privacy', 'Terms'].map((link) => (
-            <Typography
-              key={link}
-              component="span"
-              sx={{
-                fontFamily: FONT_FAMILY,
-                color: 'rgba(255, 255, 255, 0.4)',
-                fontSize: '0.85rem',
-                cursor: 'pointer',
-                '&:hover': { color: 'rgba(255, 255, 255, 0.7)' },
-                transition: 'color 0.2s ease',
-              }}
-            >
-              {link}
-            </Typography>
-          ))}
+          <Typography sx={{ color: ink.tertiary, fontSize: '0.8rem' }}>
+            © 2026 Gurukul AI
+          </Typography>
+          <Stack direction="row" spacing={3}>
+            {['About', 'Privacy', 'Terms'].map(link => (
+              <Typography
+                key={link}
+                component="span"
+                sx={{
+                  color: ink.tertiary,
+                  fontSize: '0.82rem',
+                  cursor: 'pointer',
+                  transition: 'color 0.2s ease',
+                  '&:hover': { color: ink.secondary },
+                }}
+              >
+                {link}
+              </Typography>
+            ))}
+          </Stack>
         </Stack>
-
-        <Typography
-          sx={{
-            fontFamily: FONT_FAMILY,
-            color: 'rgba(255, 255, 255, 0.25)',
-            fontSize: '0.8rem',
-            textAlign: 'center',
-          }}
-        >
-          © 2026 Gurukul AI. All rights reserved.
-        </Typography>
       </Container>
     </Box>
   );
 }
 
 // ---------------------------------------------------------------------------
-// Main LandingPage Component
+// Page
 // ---------------------------------------------------------------------------
 
 export default function LandingPage() {
   return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        background: '#0a0a0f',
-        overflow: 'hidden',
-      }}
-    >
+    <Box sx={{ background: surfaces.base, overflow: 'hidden' }}>
       <HeroSection />
       <FeaturesSection />
       <RolesSection />
-      <FooterSection />
+      <ClosingSection />
     </Box>
   );
 }

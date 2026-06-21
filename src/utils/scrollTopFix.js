@@ -8,13 +8,13 @@ let fixApplied = false;
 export const useScrollTopFix = () => {
   useEffect(() => {
     if (fixApplied) return;
-    
+
     // Mark fix as applied
     fixApplied = true;
-    
+
     // AGGRESSIVE FIX: Patch the reflow function itself
     const originalReflow = window.reflow;
-    window.reflow = function(node) {
+    window.reflow = function (node) {
       if (!node || typeof node !== 'object') {
         return 0;
       }
@@ -31,7 +31,7 @@ export const useScrollTopFix = () => {
 
     // Patch Element.prototype.scrollTop with comprehensive protection
     const originalDescriptor = Object.getOwnPropertyDescriptor(Element.prototype, 'scrollTop');
-    
+
     if (originalDescriptor) {
       Object.defineProperty(Element.prototype, 'scrollTop', {
         get() {
@@ -57,17 +57,18 @@ export const useScrollTopFix = () => {
           }
         },
         configurable: true,
-        enumerable: true
+        enumerable: true,
       });
     }
 
     // Patch document.body and document.documentElement scrollTop access
     const patchScrollTop = (element, name) => {
       if (!element) return;
-      
-      const descriptor = Object.getOwnPropertyDescriptor(element, 'scrollTop') || 
-                        Object.getOwnPropertyDescriptor(Object.getPrototypeOf(element), 'scrollTop');
-      
+
+      const descriptor =
+        Object.getOwnPropertyDescriptor(element, 'scrollTop') ||
+        Object.getOwnPropertyDescriptor(Object.getPrototypeOf(element), 'scrollTop');
+
       if (descriptor) {
         Object.defineProperty(element, 'scrollTop', {
           get() {
@@ -87,7 +88,7 @@ export const useScrollTopFix = () => {
             }
           },
           configurable: true,
-          enumerable: true
+          enumerable: true,
         });
       }
     };
@@ -106,9 +107,9 @@ export const useScrollTopFix = () => {
           'Cannot read properties of null',
           'Cannot read properties of undefined',
           'reflow',
-          'Maximum update depth exceeded'
+          'Maximum update depth exceeded',
         ];
-        
+
         if (suppressedErrors.some(err => errorMessage.includes(err))) {
           console.warn('MUI transition error suppressed:', args[0]);
           return;
@@ -119,7 +120,7 @@ export const useScrollTopFix = () => {
 
     // Global error handler for uncaught exceptions
     const originalOnError = window.onerror;
-    window.onerror = function(message, source, lineno, colno, error) {
+    window.onerror = function (message, source, lineno, colno, error) {
       if (typeof message === 'string' && message.includes('scrollTop')) {
         console.warn('Global scrollTop error suppressed:', message);
         return true; // Prevent default error handling
@@ -129,7 +130,7 @@ export const useScrollTopFix = () => {
       }
       return false;
     };
-    
+
     // Cleanup function
     return () => {
       console.error = originalError;
@@ -147,7 +148,7 @@ export const SafeFade = forwardRef(({ children, in: inProp, timeout, style, ...p
       style={{
         opacity: inProp ? 1 : 0,
         transition: `opacity ${timeout || 300}ms ease-in-out`,
-        ...style
+        ...style,
       }}
       {...props}
     >
@@ -165,7 +166,7 @@ export const SafeGrow = forwardRef(({ children, in: inProp, timeout, style, ...p
         opacity: inProp ? 1 : 0,
         transition: `all ${timeout || 300}ms ease-in-out`,
         transformOrigin: 'center',
-        ...style
+        ...style,
       }}
       {...props}
     >
@@ -183,7 +184,7 @@ export const SafeZoom = forwardRef(({ children, in: inProp, timeout, style, ...p
         opacity: inProp ? 1 : 0,
         transition: `all ${timeout || 300}ms ease-in-out`,
         transformOrigin: 'center',
-        ...style
+        ...style,
       }}
       {...props}
     >
@@ -195,16 +196,17 @@ export const SafeZoom = forwardRef(({ children, in: inProp, timeout, style, ...p
 // General purpose transition wrapper
 export const SafeTransition = ({ children, ...props }) => {
   useScrollTopFix();
-  
+
   return (
-    <div style={{ 
-      transition: 'all 0.3s ease',
-      position: 'relative'
-    }}>
+    <div
+      style={{
+        transition: 'all 0.3s ease',
+        position: 'relative',
+      }}
+    >
       {children}
     </div>
   );
 };
 
 export default SafeTransition;
-

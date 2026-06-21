@@ -1,6 +1,6 @@
 /**
  * Application Constants
- * 
+ *
  * This file contains constants used throughout the application
  * including role names and application branding.
  */
@@ -19,18 +19,20 @@ export const ROLES = {
   FACULTY: 'faculty',
   PARENT: 'parent',
   ADMIN: 'admin',
-  
+
   // Display Names (used in UI)
   STUDENT_DISPLAY: 'Eklavya',
   FACULTY_DISPLAY: 'Dronacharya',
   PARENT_DISPLAY: 'Gandhari & Dhritarashtra',
   ADMIN_DISPLAY: 'Krishna',
-  
+
   // Role Descriptions
   STUDENT_DESC: 'Login as an Eklavya to access courses, take quizzes, and view your performance.',
-  FACULTY_DESC: 'Login as a Dronacharya to create quizzes, grade assignments, and track student progress.',
-  PARENT_DESC: 'Login as Gandhari & Dhritarashtra to monitor your child\'s academic performance and communicate with teachers.',
-  ADMIN_DESC: 'Login as Krishna to manage users, courses, and system settings.'
+  FACULTY_DESC:
+    'Login as a Dronacharya to create quizzes, grade assignments, and track student progress.',
+  PARENT_DESC:
+    "Login as Gandhari & Dhritarashtra to monitor your child's academic performance and communicate with teachers.",
+  ADMIN_DESC: 'Login as Krishna to manage users, courses, and system settings.',
 };
 
 // Dashboard paths
@@ -38,7 +40,7 @@ export const DASHBOARD_PATHS = {
   STUDENT: '/student-dashboard',
   FACULTY: '/faculty-dashboard',
   PARENT: '/parent-dashboard',
-  ADMIN: '/admin-dashboard'
+  ADMIN: '/admin-dashboard',
 };
 
 // Login paths
@@ -46,7 +48,7 @@ export const LOGIN_PATHS = {
   STUDENT: '/student-login',
   FACULTY: '/faculty-login',
   PARENT: '/parent-login',
-  ADMIN: '/admin-login'
+  ADMIN: '/admin-login',
 };
 
 // Theme constants
@@ -56,9 +58,9 @@ export const THEME_CONSTANTS = {
     STUDENT: '#4361ee', // Blue
     FACULTY: '#3a0ca3', // Deep Purple
     PARENT: '#f72585', // Pink
-    ADMIN: '#4cc9f0'  // Cyan
+    ADMIN: '#4cc9f0', // Cyan
   },
-  
+
   // Gradient backgrounds
   GRADIENTS: {
     PRIMARY: 'linear-gradient(135deg, #3a86ff 0%, #4361ee 100%)',
@@ -67,9 +69,6 @@ export const THEME_CONSTANTS = {
     FACULTY: 'linear-gradient(135deg, #3a0ca3 0%, #480ca8 100%)',
     PARENT: 'linear-gradient(135deg, #f72585 0%, #b5179e 100%)',
     ADMIN: 'linear-gradient(135deg, #4cc9f0 0%, #4895ef 100%)',
-    DARK: 'linear-gradient(135deg, #121212 0%, #2b2d42 100%)'
-  }
+    DARK: 'linear-gradient(135deg, #121212 0%, #2b2d42 100%)',
+  },
 };
-
-
-

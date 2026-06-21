@@ -7,57 +7,63 @@ import DOMPurify from 'dompurify';
  */
 export const validators = {
   // Email validation with comprehensive regex
-  email: (email) => {
-    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+  email: email => {
+    const emailRegex =
+      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
     return emailRegex.test(email) && email.length <= 254;
   },
 
   // Password strength validation
-  password: (password) => {
+  password: password => {
     const minLength = 8;
     const hasUpperCase = /[A-Z]/.test(password);
     const hasLowerCase = /[a-z]/.test(password);
     const hasNumbers = /\d/.test(password);
     const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-    
+
     return {
-      isValid: password.length >= minLength && hasUpperCase && hasLowerCase && hasNumbers && hasSpecialChar,
+      isValid:
+        password.length >= minLength &&
+        hasUpperCase &&
+        hasLowerCase &&
+        hasNumbers &&
+        hasSpecialChar,
       errors: {
         length: password.length < minLength,
         upperCase: !hasUpperCase,
         lowerCase: !hasLowerCase,
         numbers: !hasNumbers,
-        specialChar: !hasSpecialChar
-      }
+        specialChar: !hasSpecialChar,
+      },
     };
   },
 
   // Phone number validation (international format)
-  phone: (phone) => {
+  phone: phone => {
     const phoneRegex = /^\+?[1-9]\d{1,14}$/;
     return phoneRegex.test(phone.replace(/[\s\-()]/g, ''));
   },
 
   // Student ID validation
-  studentId: (id) => {
+  studentId: id => {
     const idRegex = /^[A-Za-z0-9]{6,20}$/;
     return idRegex.test(id);
   },
 
   // Name validation (allows letters, spaces, hyphens, apostrophes)
-  name: (name) => {
+  name: name => {
     const nameRegex = /^[a-zA-Z\s\-']{2,50}$/;
     return nameRegex.test(name.trim());
   },
 
   // Course code validation
-  courseCode: (code) => {
+  courseCode: code => {
     const codeRegex = /^[A-Za-z0-9-]{3,10}$/;
     return codeRegex.test(code);
   },
 
   // Grade validation (0-100 or A-F)
-  grade: (grade) => {
+  grade: grade => {
     if (typeof grade === 'number') {
       return grade >= 0 && grade <= 100;
     }
@@ -65,7 +71,7 @@ export const validators = {
       return /^[A-F][+-]?$/.test(grade.toUpperCase());
     }
     return false;
-  }
+  },
 };
 
 /**
@@ -73,10 +79,27 @@ export const validators = {
  */
 export const sanitizers = {
   // Enhanced HTML sanitization using DOMPurify
-  html: (input) => {
+  html: input => {
     if (typeof input !== 'string') return '';
     return DOMPurify.sanitize(input, {
-      ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'u', 'br', 'p', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
+      ALLOWED_TAGS: [
+        'b',
+        'i',
+        'em',
+        'strong',
+        'u',
+        'br',
+        'p',
+        'ul',
+        'ol',
+        'li',
+        'h1',
+        'h2',
+        'h3',
+        'h4',
+        'h5',
+        'h6',
+      ],
       ALLOWED_ATTR: ['class'],
       FORBID_SCRIPTS: true,
       FORBID_TAGS: ['script', 'object', 'embed', 'link', 'style', 'iframe'],
@@ -85,63 +108,105 @@ export const sanitizers = {
   },
 
   // Educational content sanitization (more permissive for quiz/assignment content)
-  educationalContent: (input) => {
+  educationalContent: input => {
     if (typeof input !== 'string') return '';
     return DOMPurify.sanitize(input, {
       ALLOWED_TAGS: [
-        'p', 'br', 'strong', 'em', 'b', 'i', 'u', 's', 'sub', 'sup',
-        'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-        'ul', 'ol', 'li', 'blockquote',
-        'table', 'thead', 'tbody', 'tr', 'th', 'td',
-        'img', 'a', 'code', 'pre'
+        'p',
+        'br',
+        'strong',
+        'em',
+        'b',
+        'i',
+        'u',
+        's',
+        'sub',
+        'sup',
+        'h1',
+        'h2',
+        'h3',
+        'h4',
+        'h5',
+        'h6',
+        'ul',
+        'ol',
+        'li',
+        'blockquote',
+        'table',
+        'thead',
+        'tbody',
+        'tr',
+        'th',
+        'td',
+        'img',
+        'a',
+        'code',
+        'pre',
       ],
       ALLOWED_ATTR: {
-        'img': ['src', 'alt', 'width', 'height'],
-        'a': ['href', 'target'],
-        'table': ['border', 'cellpadding', 'cellspacing'],
-        'th': ['align', 'valign'],
-        'td': ['align', 'valign'],
-        '*': ['class']
+        img: ['src', 'alt', 'width', 'height'],
+        a: ['href', 'target'],
+        table: ['border', 'cellpadding', 'cellspacing'],
+        th: ['align', 'valign'],
+        td: ['align', 'valign'],
+        '*': ['class'],
       },
-      ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp):|[^a-z]|[a-z+.-]+(?:[^a-z+.-:]|$))/i,
+      ALLOWED_URI_REGEXP:
+        /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp):|[^a-z]|[a-z+.-]+(?:[^a-z+.-:]|$))/i,
       FORBID_SCRIPTS: true,
-      FORBID_TAGS: ['script', 'object', 'embed', 'link', 'style', 'iframe', 'form', 'input', 'button'],
+      FORBID_TAGS: [
+        'script',
+        'object',
+        'embed',
+        'link',
+        'style',
+        'iframe',
+        'form',
+        'input',
+        'button',
+      ],
       FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover', 'onsubmit', 'onfocus', 'onblur'],
     });
   },
 
   // Plain text sanitization with DOMPurify
-  text: (input) => {
+  text: input => {
     if (typeof input !== 'string') return '';
-    return DOMPurify.sanitize(input, { 
-      ALLOWED_TAGS: [], 
-      ALLOWED_ATTR: [] 
-    }).trim().substring(0, 1000);
+    return DOMPurify.sanitize(input, {
+      ALLOWED_TAGS: [],
+      ALLOWED_ATTR: [],
+    })
+      .trim()
+      .substring(0, 1000);
   },
 
   // Email sanitization
-  email: (input) => {
+  email: input => {
     if (typeof input !== 'string') return '';
-    const sanitized = DOMPurify.sanitize(input.trim().toLowerCase(), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+    const sanitized = DOMPurify.sanitize(input.trim().toLowerCase(), {
+      ALLOWED_TAGS: [],
+      ALLOWED_ATTR: [],
+    });
     return validators.email(sanitized) ? sanitized : '';
   },
 
   // Phone number sanitization
-  phone: (input) => {
+  phone: input => {
     if (typeof input !== 'string') return '';
     return input.replace(/[^\d\s+()-]/g, '').trim();
   },
 
   // Name sanitization
-  name: (input) => {
+  name: input => {
     if (typeof input !== 'string') return '';
     const sanitized = DOMPurify.sanitize(input, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
     return sanitized.replace(/[^a-zA-Z\s'-]/g, '').trim();
   },
 
   // SQL injection prevention (enhanced)
-  sql: (input) => {
-    if (typeof input !== 'string') return '';    return DOMPurify.sanitize(input, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] })
+  sql: input => {
+    if (typeof input !== 'string') return '';
+    return DOMPurify.sanitize(input, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] })
       .replace(/['";\\]/g, '') // Remove SQL special characters
       .replace(/--/g, '') // Remove SQL comments
       .replace(/\/\*/g, '') // Remove SQL block comment start
@@ -151,7 +216,7 @@ export const sanitizers = {
   },
 
   // File name sanitization
-  fileName: (input) => {
+  fileName: input => {
     if (typeof input !== 'string') return '';
     return DOMPurify.sanitize(input, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] })
       .replace(/[^a-zA-Z0-9._-]/g, '') // Only allow safe characters
@@ -161,7 +226,7 @@ export const sanitizers = {
   },
 
   // URL sanitization (enhanced)
-  url: (input) => {
+  url: input => {
     if (typeof input !== 'string') return '';
     try {
       const sanitized = DOMPurify.sanitize(input.trim(), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
@@ -174,7 +239,7 @@ export const sanitizers = {
     } catch {
       return '';
     }
-  }
+  },
 };
 
 /**
@@ -189,7 +254,7 @@ export const csrfProtection = {
   },
 
   // Store CSRF token in session storage
-  storeToken: (token) => {
+  storeToken: token => {
     try {
       sessionStorage.setItem('csrf_token', token);
       return true;
@@ -210,7 +275,7 @@ export const csrfProtection = {
   },
 
   // Validate CSRF token
-  validateToken: (receivedToken) => {
+  validateToken: receivedToken => {
     const storedToken = csrfProtection.getToken();
     return storedToken && receivedToken && storedToken === receivedToken;
   },
@@ -220,7 +285,7 @@ export const csrfProtection = {
     if (token) {
       return {
         ...headers,
-        'X-CSRF-Token': token
+        'X-CSRF-Token': token,
       };
     }
     return headers;
@@ -231,7 +296,7 @@ export const csrfProtection = {
     const token = csrfProtection.generateToken();
     csrfProtection.storeToken(token);
     return token;
-  }
+  },
 };
 
 /**
@@ -245,24 +310,24 @@ export const rateLimiter = {
   isAllowed: (endpoint, maxRequests = 10, windowMs = 60000) => {
     const now = Date.now();
     const key = endpoint;
-    
+
     if (!rateLimiter.requestCounts.has(key)) {
       rateLimiter.requestCounts.set(key, []);
     }
-    
+
     const requests = rateLimiter.requestCounts.get(key);
-    
+
     // Remove old requests outside the time window
     const recentRequests = requests.filter(timestamp => now - timestamp < windowMs);
-    
+
     if (recentRequests.length >= maxRequests) {
       return false;
     }
-    
+
     // Add current request
     recentRequests.push(now);
     rateLimiter.requestCounts.set(key, recentRequests);
-    
+
     return true;
   },
 
@@ -270,25 +335,25 @@ export const rateLimiter = {
   getRemainingRequests: (endpoint, maxRequests = 10, windowMs = 60000) => {
     const now = Date.now();
     const key = endpoint;
-    
+
     if (!rateLimiter.requestCounts.has(key)) {
       return maxRequests;
     }
-    
+
     const requests = rateLimiter.requestCounts.get(key);
     const recentRequests = requests.filter(timestamp => now - timestamp < windowMs);
-    
+
     return Math.max(0, maxRequests - recentRequests.length);
   },
 
   // Clear rate limit data for an endpoint
-  clearEndpoint: (endpoint) => {
+  clearEndpoint: endpoint => {
     rateLimiter.requestCounts.delete(endpoint);
   },
   // Clear all rate limit data
   clearAll: () => {
     rateLimiter.requestCounts.clear();
-  }
+  },
 };
 
 /**
@@ -302,9 +367,9 @@ export const sessionSecurity = {
   isSessionValid: () => {
     const lastActivity = localStorage.getItem('lastActivity');
     if (!lastActivity) return false;
-    
+
     const now = Date.now();
-    return (now - parseInt(lastActivity)) < sessionSecurity.SESSION_TIMEOUT;
+    return now - parseInt(lastActivity) < sessionSecurity.SESSION_TIMEOUT;
   },
 
   // Update last activity timestamp
@@ -316,14 +381,14 @@ export const sessionSecurity = {
   clearSensitiveData: () => {
     // Clear session storage
     sessionStorage.clear();
-    
+
     // Clear specific localStorage items (keep user preferences)
     const keysToRemove = ['userToken', 'lastActivity', 'csrf_token', 'authData'];
     keysToRemove.forEach(key => localStorage.removeItem(key));
-    
+
     // Clear CSRF token
     csrfProtection.storeToken('');
-    
+
     // Clear rate limiter data
     rateLimiter.clearAll();
   },
@@ -335,10 +400,10 @@ export const sessionSecurity = {
   // Start session monitoring
   startMonitoring: () => {
     if (sessionSecurity._isMonitoring) return;
-    
+
     // Update activity on user interactions
     const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
-    
+
     const updateActivity = () => {
       sessionSecurity.updateActivity();
     };
@@ -365,26 +430,26 @@ export const sessionSecurity = {
   // Stop session monitoring
   stopMonitoring: () => {
     if (!sessionSecurity._isMonitoring) return;
-    
+
     // Remove event listeners
     sessionSecurity._eventListeners.forEach(({ event, handler }) => {
       document.removeEventListener(event, handler, { passive: true });
     });
     sessionSecurity._eventListeners = [];
-    
+
     // Clear interval
     if (sessionSecurity._intervalId) {
       clearInterval(sessionSecurity._intervalId);
       sessionSecurity._intervalId = null;
     }
-    
+
     sessionSecurity._isMonitoring = false;
   },
 
   // Initialize session monitoring (alias for backward compatibility)
   initializeSessionMonitoring: () => {
     sessionSecurity.startMonitoring();
-  }
+  },
 };
 
 /**
@@ -396,14 +461,14 @@ export const prepareFormData = (formData, validationRules = {}) => {
 
   for (const [key, value] of Object.entries(formData)) {
     const rule = validationRules[key];
-    
+
     if (rule) {
       // Validate
       if (rule.validator && !rule.validator(value)) {
         errors[key] = rule.message || `Invalid ${key}`;
         continue;
       }
-      
+
       // Sanitize
       if (rule.sanitizer) {
         sanitizedData[key] = rule.sanitizer(value);
@@ -419,7 +484,7 @@ export const prepareFormData = (formData, validationRules = {}) => {
   return {
     data: sanitizedData,
     errors,
-    isValid: Object.keys(errors).length === 0
+    isValid: Object.keys(errors).length === 0,
   };
 };
 
@@ -448,7 +513,7 @@ export const secureApiRequest = async (url, options = {}) => {
   const secureHeaders = {
     ...headers,
     'Content-Type': 'application/json',
-    'X-Requested-With': 'XMLHttpRequest'
+    'X-Requested-With': 'XMLHttpRequest',
   };
 
   // Sanitize request body if it exists
@@ -461,22 +526,22 @@ export const secureApiRequest = async (url, options = {}) => {
     ...options,
     body: sanitizedBody,
     headers: secureHeaders,
-    credentials: 'same-origin' // Ensure cookies are sent with same-origin requests
+    credentials: 'same-origin', // Ensure cookies are sent with same-origin requests
   };
 
   try {
     const response = await fetch(url, secureOptions);
-    
+
     // Handle CSRF token refresh
     const newToken = response.headers.get('X-CSRF-Token');
     if (newToken) {
       csrfProtection.storeToken(newToken);
     }
-    
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     return response;
   } catch (error) {
     console.error('Secure API request failed:', error);
@@ -487,7 +552,7 @@ export const secureApiRequest = async (url, options = {}) => {
 /**
  * Sanitize request body recursively
  */
-const sanitizeRequestBody = (body) => {
+const sanitizeRequestBody = body => {
   if (typeof body !== 'object' || body === null) {
     return body;
   }
@@ -502,7 +567,10 @@ const sanitizeRequestBody = (body) => {
         sanitized[key] = sanitizers.phone(value);
       } else if (key.toLowerCase().includes('name')) {
         sanitized[key] = sanitizers.name(value);
-      } else if (key.toLowerCase().includes('content') || key.toLowerCase().includes('description')) {
+      } else if (
+        key.toLowerCase().includes('content') ||
+        key.toLowerCase().includes('description')
+      ) {
         sanitized[key] = sanitizers.educationalContent(value);
       } else if (key.toLowerCase().includes('url') || key.toLowerCase().includes('link')) {
         sanitized[key] = sanitizers.url(value);
@@ -527,7 +595,7 @@ export const initializeSecurity = () => {
   csrfProtection.storeToken(token);
 
   // Set up global error handling for security violations
-  window.addEventListener('securitypolicyviolation', (e) => {
+  window.addEventListener('securitypolicyviolation', e => {
     console.error('Content Security Policy violation:', e);
     // Report to error monitoring service
   });
@@ -558,13 +626,13 @@ export const cspHelpers = {
   isAllowedDomain: (url, allowedDomains = []) => {
     try {
       const urlObj = new URL(url);
-      return allowedDomains.some(domain => 
-        urlObj.hostname === domain || urlObj.hostname.endsWith(`.${domain}`)
+      return allowedDomains.some(
+        domain => urlObj.hostname === domain || urlObj.hostname.endsWith(`.${domain}`)
       );
     } catch {
       return false;
     }
-  }
+  },
 };
 
 // Main security helpers object that combines all utilities
@@ -578,15 +646,14 @@ export const securityHelpers = {
   secureApiRequest,
   initializeSecurity: initializeSecurity,
   cspHelpers,
-  
+
   // Convenience methods for dashboard usage
   initializeSessionMonitoring: () => sessionSecurity.startMonitoring(),
   stopSessionMonitoring: () => sessionSecurity.stopMonitoring(),
   setupCSRFProtection: () => csrfProtection.initialize(),
   clearSensitiveData: () => sessionSecurity.clearSensitiveData(),
-  isSessionValid: () => sessionSecurity.isSessionValid()
+  isSessionValid: () => sessionSecurity.isSessionValid(),
 };
 
 // Export default for backward compatibility
 export default securityHelpers;
-

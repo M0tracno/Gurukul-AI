@@ -40,11 +40,11 @@ function renderTable(props?: Partial<React.ComponentProps<typeof DataTable<TestR
       <DataTable
         columns={columns}
         rows={rows}
-        getRowId={(row) => row.id}
+        getRowId={row => row.id}
         ariaLabel="Test users table"
         {...props}
       />
-    </ThemeProvider>,
+    </ThemeProvider>
   );
 }
 
@@ -207,7 +207,7 @@ describe('DataTable', () => {
       renderTable({ onRowClick: vi.fn() });
       const tableBody = screen.getByRole('table').querySelector('tbody')!;
       const clickableRows = within(tableBody).getAllByRole('button');
-      clickableRows.forEach((row) => {
+      clickableRows.forEach(row => {
         expect(row).toHaveAttribute('aria-label');
       });
     });
@@ -227,7 +227,7 @@ describe('DataTable', () => {
         {
           id: 'name',
           label: 'Name',
-          render: (value) => <strong data-testid="custom-cell">{String(value)}</strong>,
+          render: value => <strong data-testid="custom-cell">{String(value)}</strong>,
         },
       ];
       renderTable({ columns: customColumns });

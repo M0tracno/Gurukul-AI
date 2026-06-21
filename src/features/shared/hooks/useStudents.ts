@@ -9,12 +9,7 @@
  * Validates: Requirements 5.2, 5.7
  */
 
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  type UseQueryOptions,
-} from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, type UseQueryOptions } from '@tanstack/react-query';
 import { apiClient } from '../services/apiClient';
 import { queryKeys } from './queryKeys';
 import type { PaginationParams, PaginatedResponse } from '../types';
@@ -91,10 +86,7 @@ export function useStudents(
 }
 
 /** Fetch a single student by ID */
-export function useStudent(
-  id: string,
-  options?: Partial<UseQueryOptions<Student>>
-) {
+export function useStudent(id: string, options?: Partial<UseQueryOptions<Student>>) {
   return useQuery({
     queryKey: queryKeys.students.detail(id),
     queryFn: () => apiClient<Student>(`/api/v1/students/${id}`),
@@ -127,7 +119,7 @@ export function useUpdateStudent(id: string) {
   return useMutation({
     mutationFn: (data: UpdateStudentInput) =>
       apiClient<Student>(`/api/v1/students/${id}`, { method: 'PUT', body: data }),
-    onSuccess: (updatedStudent) => {
+    onSuccess: updatedStudent => {
       queryClient.invalidateQueries({ queryKey: queryKeys.students.lists() });
       queryClient.setQueryData(queryKeys.students.detail(id), updatedStudent);
     },
@@ -139,8 +131,7 @@ export function useDeleteStudent() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) =>
-      apiClient<void>(`/api/v1/students/${id}`, { method: 'DELETE' }),
+    mutationFn: (id: string) => apiClient<void>(`/api/v1/students/${id}`, { method: 'DELETE' }),
     onSuccess: (_data, id) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.students.lists() });
       queryClient.removeQueries({ queryKey: queryKeys.students.detail(id) });

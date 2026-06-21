@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { ZodSchema, ZodError } from 'zod';
 
-import type { ApiErrorResponse } from '../types/api.js';
+import { failure } from '../utils/envelope.js';
+import type { ErrorDetail } from '../utils/envelope.js';
 
 export interface ValidationSchemas {
   body?: ZodSchema;
@@ -12,11 +13,13 @@ export interface ValidationSchemas {
 /**
  * Express middleware factory that validates request body, query, and params
  * against provided Zod schemas. Rejects unknown fields with HTTP 400 and
- * returns a standardized error response.
+ * returns a standardized ErrorEnvelope with field-level `details[]`.
+ *
+ * Each detail entry is `{ field, reason }` per Requirement 2.4 and 22.5.
  */
 export function validateRequest(schemas: ValidationSchemas) {
   return (req: Request, res: Response, next: NextFunction): void => {
-    const errors: Array<{ field: string; value: unknown; reason: string }> = [];
+    const errors: ErrorDetail[] = [];
 
     const targets = [
       { key: 'body' as const, schema: schemas.body, data: req.body },
@@ -30,18 +33,20 @@ export function validateRequest(schemas: ValidationSchemas) {
       const result = schema.safeParse(data);
 
       if (!result.success) {
-        const zodErrors = flattenZodError(result.error, key, data);
+        const zodErrors = flattenZodError(result.error, key);
         errors.push(...zodErrors);
       }
     }
 
     if (errors.length > 0) {
-      const response: ApiErrorResponse = {
-        error: 'VALIDATION_ERROR',
-        message: `Request validation failed with ${errors.length} error(s)`,
-        details: errors,
-      };
-      res.status(400).json(response);
+      res
+        .status(400)
+        .json(
+          failure(
+            `Request validation failed with ${errors.length} error(s)`,
+            errors,
+          ),
+        );
       return;
     }
 
@@ -50,44 +55,23 @@ export function validateRequest(schemas: ValidationSchemas) {
 }
 
 /**
- * Converts a ZodError into an array of field-level detail entries.
- * Each entry includes the full field path, the rejected value, and
- * a human-readable reason for the failure.
+ * Converts a ZodError into an array of field-level `ErrorDetail` entries.
+ * Each entry carries the full dotted field path and a human-readable reason,
+ * matching the `{ field, reason }` shape required by Requirement 2.4 / 22.5.
  */
 function flattenZodError(
   zodError: ZodError,
   source: 'body' | 'query' | 'params',
-  data: unknown
-): Array<{ field: string; value: unknown; reason: string }> {
+): ErrorDetail[] {
   return zodError.issues.map((issue) => {
     const fieldPath =
       issue.path.length > 0
         ? `${source}.${issue.path.join('.')}`
         : source;
 
-    // Resolve the rejected value by traversing the path
-    const value = resolveValue(data, issue.path);
-
     return {
       field: fieldPath,
-      value,
       reason: issue.message,
     };
   });
-}
-
-/**
- * Traverses an object along the given path to extract the rejected value.
- */
-function resolveValue(data: unknown, path: (string | number)[]): unknown {
-  let current: unknown = data;
-  for (const segment of path) {
-    if (current === null || current === undefined) return undefined;
-    if (typeof current === 'object') {
-      current = (current as Record<string | number, unknown>)[segment];
-    } else {
-      return undefined;
-    }
-  }
-  return current;
 }

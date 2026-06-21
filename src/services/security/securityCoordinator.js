@@ -51,9 +51,8 @@ class SecurityCoordinator {
       // Log initialization event
       await this.logGlobalSecurityEvent('security_coordinator_initialized', {
         timestamp: new Date().toISOString(),
-        services: Array.from(this.services.keys())
+        services: Array.from(this.services.keys()),
       });
-
     } catch (error) {
       console.error('❌ Failed to initialize Security Coordinator:', error);
       throw error;
@@ -65,7 +64,7 @@ class SecurityCoordinator {
     this.globalSecurityPolicies.set('data_classification', {
       levels: ['public', 'internal', 'confidential', 'restricted', 'top_secret'],
       default_level: 'internal',
-      auto_classification: true
+      auto_classification: true,
     });
 
     this.globalSecurityPolicies.set('access_control', {
@@ -73,21 +72,21 @@ class SecurityCoordinator {
       principle: 'least_privilege',
       session_timeout: 30 * 60 * 1000, // 30 minutes
       max_failed_attempts: 5,
-      lockout_duration: 15 * 60 * 1000 // 15 minutes
+      lockout_duration: 15 * 60 * 1000, // 15 minutes
     });
 
     this.globalSecurityPolicies.set('encryption', {
       at_rest: 'AES-256',
       in_transit: 'TLS-1.3',
       key_rotation: 90 * 24 * 60 * 60 * 1000, // 90 days
-      algorithm_strength: 'strong'
+      algorithm_strength: 'strong',
     });
 
     this.globalSecurityPolicies.set('monitoring', {
       log_level: 'info',
       retention_period: 7 * 365 * 24 * 60 * 60 * 1000, // 7 years
       real_time_alerts: true,
-      automated_response: true
+      automated_response: true,
     });
 
     this.globalSecurityPolicies.set('incident_response', {
@@ -95,10 +94,10 @@ class SecurityCoordinator {
         critical: 15 * 60 * 1000, // 15 minutes
         high: 60 * 60 * 1000, // 1 hour
         medium: 4 * 60 * 60 * 1000, // 4 hours
-        low: 24 * 60 * 60 * 1000 // 24 hours
+        low: 24 * 60 * 60 * 1000, // 24 hours
       },
       escalation_matrix: ['security_team', 'management', 'board'],
-      communication_channels: ['email', 'sms', 'slack']
+      communication_channels: ['email', 'sms', 'slack'],
     });
   }
 
@@ -107,25 +106,25 @@ class SecurityCoordinator {
     this.emergencyContacts.set('security_team', {
       primary: 'security@eduplatform.com',
       phone: '+1-555-SECURITY',
-      escalation_time: 30 * 60 * 1000 // 30 minutes
+      escalation_time: 30 * 60 * 1000, // 30 minutes
     });
 
     this.emergencyContacts.set('management', {
       primary: 'management@eduplatform.com',
       phone: '+1-555-MGMT',
-      escalation_time: 60 * 60 * 1000 // 1 hour
+      escalation_time: 60 * 60 * 1000, // 1 hour
     });
 
     this.emergencyContacts.set('legal', {
       primary: 'legal@eduplatform.com',
       phone: '+1-555-LEGAL',
-      escalation_time: 2 * 60 * 60 * 1000 // 2 hours
+      escalation_time: 2 * 60 * 60 * 1000, // 2 hours
     });
 
     this.emergencyContacts.set('external_authorities', {
       cyber_crime: '+1-855-292-3937', // FBI IC3
       data_protection: '+1-202-326-2222', // FTC
-      escalation_time: 24 * 60 * 60 * 1000 // 24 hours
+      escalation_time: 24 * 60 * 60 * 1000, // 24 hours
     });
   }
 
@@ -137,7 +136,7 @@ class SecurityCoordinator {
       next_review: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
       requirements_met: 42,
       total_requirements: 43,
-      compliance_score: 97.7
+      compliance_score: 97.7,
     });
 
     this.complianceStatus.set('ferpa', {
@@ -146,7 +145,7 @@ class SecurityCoordinator {
       next_review: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
       requirements_met: 18,
       total_requirements: 18,
-      compliance_score: 100
+      compliance_score: 100,
     });
 
     this.complianceStatus.set('coppa', {
@@ -155,7 +154,7 @@ class SecurityCoordinator {
       next_review: new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toISOString(),
       requirements_met: 12,
       total_requirements: 12,
-      compliance_score: 100
+      compliance_score: 100,
     });
 
     this.complianceStatus.set('iso27001', {
@@ -164,7 +163,7 @@ class SecurityCoordinator {
       next_review: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
       requirements_met: 89,
       total_requirements: 114,
-      compliance_score: 78.1
+      compliance_score: 78.1,
     });
   }
 
@@ -198,7 +197,6 @@ class SecurityCoordinator {
 
       // Generate alerts if necessary
       await this.checkSecurityThresholds(securityScore);
-
     } catch (error) {
       console.error('Error during unified security check:', error);
       await this.logGlobalSecurityEvent('unified_check_error', { error: error.message });
@@ -210,14 +208,14 @@ class SecurityCoordinator {
     const authScore = authMetrics?.overallSecurityScore || 85;
     const privacyScore = privacyMetrics?.complianceScore || 90;
     const socScore = socMetrics?.securityHealthScore || 80;
-    
+
     // Weighted average: Auth 40%, Privacy 30%, SOC 30%
-    return Math.round((authScore * 0.4) + (privacyScore * 0.3) + (socScore * 0.3));
+    return Math.round(authScore * 0.4 + privacyScore * 0.3 + socScore * 0.3);
   }
 
   updateSecurityLevel(securityScore, socMetrics) {
     const threatLevel = securityOperationsService.calculateThreatLevel();
-    
+
     if (securityScore < 60 || threatLevel === 'critical') {
       this.securityLevel = 'high';
     } else if (securityScore < 80 || threatLevel === 'high') {
@@ -255,7 +253,7 @@ class SecurityCoordinator {
           type: 'coordinated_user_activity',
           severity: 'medium',
           userId: event.data.userId,
-          description: 'User showing suspicious pattern of failed auth and consent withdrawal'
+          description: 'User showing suspicious pattern of failed auth and consent withdrawal',
         });
       }
     });
@@ -266,19 +264,19 @@ class SecurityCoordinator {
     this.riskAssessment.set('authentication', {
       risk_level: this.assessAuthenticationRisk(),
       last_updated: new Date().toISOString(),
-      mitigations: ['mfa_enabled', 'session_monitoring', 'anomaly_detection']
+      mitigations: ['mfa_enabled', 'session_monitoring', 'anomaly_detection'],
     });
 
     this.riskAssessment.set('privacy', {
       risk_level: this.assessPrivacyRisk(),
       last_updated: new Date().toISOString(),
-      mitigations: ['data_encryption', 'consent_management', 'retention_policies']
+      mitigations: ['data_encryption', 'consent_management', 'retention_policies'],
     });
 
     this.riskAssessment.set('operational', {
       risk_level: this.assessOperationalRisk(),
       last_updated: new Date().toISOString(),
-      mitigations: ['incident_response', 'vulnerability_scanning', 'patch_management']
+      mitigations: ['incident_response', 'vulnerability_scanning', 'patch_management'],
     });
   }
 
@@ -290,7 +288,7 @@ class SecurityCoordinator {
   assessPrivacyRisk() {
     const metrics = privacyService.getPrivacyMetrics();
     const pendingRequests = metrics.pendingRequests || 0;
-    
+
     if (pendingRequests > 10) return 'high';
     if (pendingRequests > 3) return 'medium';
     return 'low';
@@ -299,7 +297,7 @@ class SecurityCoordinator {
   assessOperationalRisk() {
     const metrics = securityOperationsService.getSecurityMetrics();
     const activeIncidents = metrics.active_incidents || 0;
-    
+
     if (activeIncidents > 5) return 'high';
     if (activeIncidents > 2) return 'medium';
     return 'low';
@@ -321,7 +319,7 @@ class SecurityCoordinator {
         type: 'low_security_score',
         severity: 'medium',
         score: securityScore,
-        description: 'Overall security score has dropped below threshold'
+        description: 'Overall security score has dropped below threshold',
       });
     }
 
@@ -330,7 +328,7 @@ class SecurityCoordinator {
         type: 'elevated_security_level',
         severity: 'high',
         level: this.securityLevel,
-        description: 'Security level has been elevated to high'
+        description: 'Security level has been elevated to high',
       });
     }
   }
@@ -342,7 +340,7 @@ class SecurityCoordinator {
       ...alert,
       timestamp: new Date().toISOString(),
       source: 'security_coordinator',
-      acknowledged: false
+      acknowledged: false,
     };
 
     // Store alert
@@ -369,12 +367,12 @@ class SecurityCoordinator {
       initiated_at: new Date().toISOString(),
       status: 'active',
       contacts_notified: [],
-      actions: []
+      actions: [],
     };
 
     // Determine emergency contacts based on severity
     const contacts = this.getEmergencyContacts(alert.severity);
-    
+
     // Notify appropriate contacts
     for (const contactType of contacts) {
       await this.notifyEmergencyContact(contactType, alert, emergency);
@@ -385,7 +383,7 @@ class SecurityCoordinator {
 
     // Log emergency response
     await this.logGlobalSecurityEvent('emergency_response_initiated', emergency);
-    
+
     console.error('🚨 Emergency Response Initiated:', emergency);
     return emergency;
   }
@@ -408,11 +406,11 @@ class SecurityCoordinator {
     if (contact) {
       // TODO: Implement actual notification (email, SMS, etc.)
       console.log(`📧 Notifying ${contactType}:`, contact.primary);
-      
+
       emergency.contacts_notified.push({
         contact_type: contactType,
         contact_info: contact.primary,
-        notified_at: new Date().toISOString()
+        notified_at: new Date().toISOString(),
       });
     }
   }
@@ -434,7 +432,7 @@ class SecurityCoordinator {
     emergency.actions.push({
       action: 'automated_response_executed',
       timestamp: new Date().toISOString(),
-      details: `Executed automated response for ${alert.type}`
+      details: `Executed automated response for ${alert.type}`,
     });
   }
 
@@ -460,7 +458,7 @@ class SecurityCoordinator {
       data,
       timestamp: new Date().toISOString(),
       source: 'security_coordinator',
-      level: 'info'
+      level: 'info',
     };
 
     this.securityEvents.push(logEntry);
@@ -480,17 +478,17 @@ class SecurityCoordinator {
         security_level: this.securityLevel,
         initialization_status: this.isInitialized,
         services_status: this.getServicesStatus(),
-        last_check: new Date().toISOString()
+        last_check: new Date().toISOString(),
       },
       metrics: {
         auth: advancedAuthService.getSecurityMetrics(),
         privacy: privacyService.getPrivacyMetrics(),
-        operations: securityOperationsService.getSecurityMetrics()
+        operations: securityOperationsService.getSecurityMetrics(),
       },
       compliance: Object.fromEntries(this.complianceStatus),
       risk_assessment: Object.fromEntries(this.riskAssessment),
       recent_alerts: this.securityEvents.slice(-10),
-      global_policies: Object.fromEntries(this.globalSecurityPolicies)
+      global_policies: Object.fromEntries(this.globalSecurityPolicies),
     };
   }
 
@@ -498,7 +496,7 @@ class SecurityCoordinator {
     return {
       auth_service: this.services.has('auth') ? 'active' : 'inactive',
       privacy_service: this.services.has('privacy') ? 'active' : 'inactive',
-      operations_service: this.services.has('operations') ? 'active' : 'inactive'
+      operations_service: this.services.has('operations') ? 'active' : 'inactive',
     };
   }
 
@@ -510,7 +508,7 @@ class SecurityCoordinator {
       services_audited: [],
       findings: [],
       recommendations: [],
-      overall_score: 0
+      overall_score: 0,
     };
 
     // Audit each security service
@@ -540,7 +538,7 @@ class SecurityCoordinator {
       service: 'authentication',
       score: 85,
       findings: ['mfa_enabled', 'session_monitoring_active'],
-      issues: ['weak_password_policy']
+      issues: ['weak_password_policy'],
     };
   }
 
@@ -549,7 +547,7 @@ class SecurityCoordinator {
       service: 'privacy',
       score: 90,
       findings: ['gdpr_compliant', 'consent_tracking_active'],
-      issues: []
+      issues: [],
     };
   }
 
@@ -558,30 +556,30 @@ class SecurityCoordinator {
       service: 'operations',
       score: 80,
       findings: ['incident_response_ready', 'monitoring_active'],
-      issues: ['vulnerability_scan_needed']
+      issues: ['vulnerability_scan_needed'],
     };
   }
 
   async performComplianceCheck() {
     const findings = [];
-    
+
     for (const [framework, status] of this.complianceStatus) {
       if (status.compliance_score < 95) {
         findings.push({
           type: 'compliance_gap',
           framework,
           score: status.compliance_score,
-          severity: status.compliance_score < 80 ? 'high' : 'medium'
+          severity: status.compliance_score < 80 ? 'high' : 'medium',
         });
       }
     }
-    
+
     return findings;
   }
 
   generateSecurityRecommendations(findings) {
     const recommendations = [];
-    
+
     findings.forEach(finding => {
       switch (finding.type) {
         case 'compliance_gap':
@@ -594,7 +592,7 @@ class SecurityCoordinator {
           recommendations.push('Review security controls');
       }
     });
-    
+
     return recommendations;
   }
 
@@ -606,18 +604,18 @@ class SecurityCoordinator {
         name: eventName,
         data: eventData,
         timestamp: new Date().toISOString(),
-        source: 'security_coordinator'
+        source: 'security_coordinator',
       };
-      
+
       this.securityEvents.push(event);
       console.log(`📊 Analytics Event: ${eventName}`, eventData);
-      
+
       return event;
     } catch (error) {
       console.error('Error capturing analytics event:', error);
     }
   }
-  
+
   // Track event (alias for captureEvent)
   trackEvent(eventName, eventData) {
     return this.captureEvent(eventName, eventData);
@@ -628,7 +626,7 @@ class SecurityCoordinator {
     if (alert) {
       alert.acknowledged = true;
       alert.acknowledgedAt = new Date().toISOString();
-      
+
       await this.logGlobalSecurityEvent('alert_acknowledged', { alertId });
       return true;
     }
@@ -645,7 +643,7 @@ class SecurityCoordinator {
       framework,
       ...status,
       detailed_requirements: this.getDetailedRequirements(framework),
-      improvement_plan: this.getImprovementPlan(framework)
+      improvement_plan: this.getImprovementPlan(framework),
     };
   }
 
@@ -669,7 +667,7 @@ class SecurityCoordinator {
       sessionExpiring: false,
       clearanceLevel: 'medium',
       securityLevel: this.securityLevel,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -680,7 +678,7 @@ class SecurityCoordinator {
       lastActivity: new Date().toISOString(),
       deviceTrusted: true,
       ipAddress: 'unknown',
-      anomaliesDetected: 0
+      anomaliesDetected: 0,
     };
   }
 
@@ -690,7 +688,7 @@ class SecurityCoordinator {
       gdpr: this.complianceStatus.get('gdpr'),
       ferpa: this.complianceStatus.get('ferpa'),
       coppa: this.complianceStatus.get('coppa'),
-      overallCompliant: true
+      overallCompliant: true,
     };
   }
 
@@ -705,7 +703,7 @@ class SecurityCoordinator {
       incidentId,
       ...incidentData,
       status: 'open',
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     };
     await this.logGlobalSecurityEvent('incident_created', incident);
     return incident;
@@ -716,4 +714,3 @@ class SecurityCoordinator {
 const securityCoordinator = new SecurityCoordinator();
 
 export default securityCoordinator;
-

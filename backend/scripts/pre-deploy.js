@@ -1,146 +1,176 @@
 #!/usr/bin/env node
 
 /**
- * Pre-deployment script to validate production readiness
- * Run this before deploying to production to ensure everything is set up correctly
+ * Pre-deployment script to validate production readiness.
+ * Run this before deploying to production to ensure everything is set up correctly.
+ *
+ * Compatible with the modernized ESM/TypeScript backend architecture.
+ * Usage: node scripts/pre-deploy.js
  */
 
-const fs = require('fs');
-const path = require('path');
-const dotenv = require('dotenv');
-const { execSync } = require('child_process');
-const mongoose = require('mongoose');
-const config = require('../config/config');
-const { connectDB } = require('../config/mongodb');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { execSync } from 'child_process';
+import dotenv from 'dotenv';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const rootDir = path.resolve(__dirname, '..');
 
 // Load environment variables
-dotenv.config();
+dotenv.config({ path: path.join(rootDir, '.env') });
 
-console.log('\x1b[36m%s\x1b[0m', '🚀 Starting pre-deployment checks...');
+const log = {
+  info: (msg) => console.log(`\x1b[36m${msg}\x1b[0m`),
+  success: (msg) => console.log(`\x1b[32m✅ ${msg}\x1b[0m`),
+  warn: (msg) => console.warn(`\x1b[33m⚠️  ${msg}\x1b[0m`),
+  error: (msg) => console.error(`\x1b[31m❌ ${msg}\x1b[0m`),
+};
 
-// Check required environment variables
+let hasErrors = false;
+
+log.info('🚀 Starting pre-deployment checks...\n');
+
+// ─── 1. Check required environment variables ─────────────────────────────────
+
+log.info('📋 Checking environment variables...');
+
 const requiredEnvVars = [
   'JWT_SECRET',
-  'NODE_ENV',
-  'PORT'
+  'MONGODB_URI',
 ];
 
-// Add database-specific required variables
-if (config.db.type === 'mongodb') {
-  requiredEnvVars.push('MONGODB_URI');
-}
+const recommendedEnvVars = [
+  'NODE_ENV',
+  'PORT',
+  'FRONTEND_URL',
+  'REDIS_HOST',
+];
 
-const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
+const missingRequired = requiredEnvVars.filter((v) => !process.env[v]);
+const missingRecommended = recommendedEnvVars.filter((v) => !process.env[v]);
 
-if (missingVars.length > 0) {
-  console.error('\x1b[31m%s\x1b[0m', '❌ Missing required environment variables:', missingVars.join(', '));
-  console.log('Please check your .env file or deployment configuration.');
-  process.exit(1);
-}
-
-// Run tests
-console.log('\x1b[36m%s\x1b[0m', '🧪 Running tests...');
-try {
-  execSync('npm test', { stdio: 'inherit' });
-  console.log('\x1b[32m%s\x1b[0m', '✅ Tests passed');
-} catch (error) {
-  console.error('\x1b[31m%s\x1b[0m', '❌ Tests failed. Fix the issues before deploying.');
-  process.exit(1);
-}
-
-// Check for security vulnerabilities
-console.log('\x1b[36m%s\x1b[0m', '🔍 Checking for security vulnerabilities...');
-try {
-  execSync('npm audit --production', { stdio: 'inherit' });
-  console.log('\x1b[32m%s\x1b[0m', '✅ No critical vulnerabilities found');
-} catch (error) {
-  console.warn('\x1b[33m%s\x1b[0m', '⚠️ Security vulnerabilities detected. Consider addressing them.');
-  // Don't exit, just warn - this can be made stricter if needed
-}
-
-// Check database connection based on database type
-if (config.db.type === 'mongodb') {
-  console.log('\x1b[36m%s\x1b[0m', '🔍 Checking MongoDB connection...');
-  try {
-    // Test MongoDB connection
-    const testConnection = async () => {
-      try {
-        await connectDB();
-        console.log('\x1b[32m%s\x1b[0m', '✅ MongoDB connection successful');
-        await mongoose.disconnect();
-        return true;
-      } catch (error) {
-        console.error('\x1b[31m%s\x1b[0m', '❌ MongoDB connection failed:', error.message);
-        return false;
-      }
-    };
-    
-    if (!testConnection()) {
-      if (process.env.NODE_ENV === 'production') {
-        process.exit(1);
-      }
-    }
-  } catch (error) {
-    console.error('\x1b[31m%s\x1b[0m', '❌ MongoDB connection check failed');
-    if (process.env.NODE_ENV === 'production') {
-      process.exit(1);
-    }
-  }
+if (missingRequired.length > 0) {
+  log.error(`Missing REQUIRED environment variables: ${missingRequired.join(', ')}`);
+  hasErrors = true;
 } else {
-  // Check SQLite connection
-  console.log('\x1b[36m%s\x1b[0m', '🔍 Checking SQLite connection...');
-  
-  // Ensure database directory exists for production
-  if (process.env.NODE_ENV === 'production' && process.env.RENDER) {
-    const dbDir = '/opt/render/project/src/data';
-    try {
-      if (!fs.existsSync(dbDir)) {
-        console.log(`Creating database directory at ${dbDir}`);
-        fs.mkdirSync(dbDir, { recursive: true });
-      }
-    } catch (error) {
-      console.warn('\x1b[33m%s\x1b[0m', `⚠️ Unable to verify database directory at ${dbDir}. This might be expected in CI environment.`);
-    }
+  log.success('All required environment variables present');
+}
+
+if (missingRecommended.length > 0) {
+  log.warn(`Missing recommended variables (will use defaults): ${missingRecommended.join(', ')}`);
+}
+
+console.log('');
+
+// ─── 2. Verify TypeScript compilation ────────────────────────────────────────
+
+log.info('🔨 Checking TypeScript compilation...');
+
+try {
+  execSync('npm run build', { cwd: rootDir, stdio: 'pipe' });
+  log.success('TypeScript compilation passed (npm run build)');
+} catch (error) {
+  log.error('TypeScript compilation failed. Run `npm run build` to see errors.');
+  hasErrors = true;
+}
+
+console.log('');
+
+// ─── 3. Verify dist output exists ───────────────────────────────────────────
+
+log.info('📦 Checking build output...');
+
+const distDir = path.join(rootDir, 'dist', 'src');
+if (fs.existsSync(distDir) && fs.existsSync(path.join(distDir, 'server.js'))) {
+  log.success('Build output exists (dist/src/server.js)');
+} else {
+  log.error('Build output missing. Run `npm run build` first.');
+  hasErrors = true;
+}
+
+console.log('');
+
+// ─── 4. Run route map compliance check ──────────────────────────────────────
+
+log.info('🗺️  Checking route map compliance...');
+
+try {
+  execSync('npm run check:route-map', { cwd: rootDir, stdio: 'pipe' });
+  log.success('Route map compliance check passed (no duplicate routes)');
+} catch (error) {
+  log.warn('Route map check failed or has warnings. Run `npm run check:route-map` for details.');
+}
+
+console.log('');
+
+// ─── 5. Check for security vulnerabilities ──────────────────────────────────
+
+log.info('🔍 Checking for security vulnerabilities...');
+
+try {
+  execSync('npm audit --omit=dev --audit-level=critical', { cwd: rootDir, stdio: 'pipe' });
+  log.success('No critical security vulnerabilities found');
+} catch (error) {
+  log.warn('Security vulnerabilities detected. Run `npm audit` for details.');
+}
+
+console.log('');
+
+// ─── 6. Ensure required directories exist ───────────────────────────────────
+
+log.info('📁 Checking required directories...');
+
+const requiredDirs = [
+  path.join(rootDir, 'logs'),
+  path.join(rootDir, 'uploads'),
+  path.join(rootDir, 'uploads', 'profiles'),
+  path.join(rootDir, 'uploads', 'course-materials'),
+];
+
+for (const dir of requiredDirs) {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+    log.info(`  Created: ${path.relative(rootDir, dir)}/`);
   }
 }
 
-// Check build package for frontend
-if (fs.existsSync(path.join(__dirname, '..', '..', 'build'))) {
-  console.log('\x1b[32m%s\x1b[0m', '✅ Frontend build exists');
+log.success('Required directories verified');
+
+console.log('');
+
+// ─── 7. Check Docker readiness ──────────────────────────────────────────────
+
+log.info('🐳 Checking Docker readiness...');
+
+if (fs.existsSync(path.join(rootDir, 'Dockerfile'))) {
+  log.success('Backend Dockerfile present');
 } else {
-  console.warn('\x1b[33m%s\x1b[0m', '⚠️ Frontend build not found. This is OK if deploying backend only.');
+  log.warn('No Dockerfile found — manual deployment only');
 }
 
-// Check for logs directory
-const logDir = path.join(__dirname, '..', 'logs');
-if (!fs.existsSync(logDir)) {
-  console.log('Creating logs directory');
-  fs.mkdirSync(logDir, { recursive: true });
+console.log('');
+
+// ─── 8. Summary ─────────────────────────────────────────────────────────────
+
+console.log('─'.repeat(50));
+
+if (hasErrors) {
+  log.error('Pre-deployment checks FAILED. Fix the errors above before deploying.');
+  process.exit(1);
+} else {
+  log.success('Pre-deployment checks PASSED!');
+  log.info(`\n🚀 Ready to deploy in ${process.env.NODE_ENV || 'development'} mode`);
+
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('\n\x1b[33mHints for production:\x1b[0m');
+    console.log('  • Set NODE_ENV=production');
+    console.log('  • Configure MONGODB_URI for your production cluster');
+    console.log('  • Configure REDIS_HOST for BullMQ grading queue');
+    console.log('  • Set RECORDING_S3_BUCKET for PTM recordings');
+    console.log('  • Use `node dist/src/server.js` (not tsx) in production');
+  }
+
+  process.exit(0);
 }
-
-// Check uploads directory
-const uploadsDir = path.join(__dirname, '..', 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-  console.log('Creating uploads directory');
-  fs.mkdirSync(uploadsDir, { recursive: true });
-  
-  // Create subdirectories
-  fs.mkdirSync(path.join(uploadsDir, 'profiles'), { recursive: true });
-  fs.mkdirSync(path.join(uploadsDir, 'course-materials'), { recursive: true });
-}
-
-// Final success message
-console.log('\x1b[32m%s\x1b[0m', '✅ Pre-deployment checks completed successfully!');
-console.log('\x1b[36m%s\x1b[0m', `🚀 Ready to deploy in ${process.env.NODE_ENV} mode using ${config.db.type} database.`);
-
-// In non-production environments, show some hints
-if (process.env.NODE_ENV !== 'production') {
-  console.log('\x1b[33m%s\x1b[0m', '\nHints for production deployment:');
-  console.log('- Set NODE_ENV=production');
-  console.log('- Ensure all required environment variables are set');
-  console.log('- For MongoDB, check the connection string and credentials');
-  console.log('- Consider using a process manager like PM2 for production');
-}
-
-// Exit successfully
-process.exit(0);

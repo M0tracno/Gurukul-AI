@@ -3,12 +3,18 @@ import { z } from 'zod';
 
 import { studentController } from '../controllers/studentController.js';
 import { validateRequest } from '../middleware/validateRequest.js';
-
-// Placeholder auth/RBAC middleware — being built in parallel (Task 4.4, 4.5)
-// import { authenticate } from '../middleware/authMiddleware.js';
-// import { requireRoles } from '../middleware/rbacMiddleware.js';
+import { authMiddleware } from '../middleware/authMiddleware.js';
+import { adminOnly, requireRoles } from '../middleware/rbacMiddleware.js';
+import { adminManagementRateLimit } from '../middleware/rateLimiter.js';
 
 const router = Router();
+
+// Stricter, source-IP keyed rate limiting + failed-auth audit logging applied
+// ahead of authMiddleware for every admin-management endpoint (including the
+// password-reset routes). Counts only failed responses, so legitimate admin
+// traffic is never throttled while repeated 401/404 probes from one source are
+// cut off and logged for enumeration prevention (Requirements 1.6, 9.4).
+router.use(adminManagementRateLimit);
 
 // --- Validation Schemas ---
 
@@ -19,21 +25,56 @@ const paginationQuerySchema = z.object({
   sortOrder: z.enum(['asc', 'desc']).optional(),
 }).strict();
 
-const studentListQuerySchema = paginationQuerySchema.extend({
+// List query: pagination + student filters. `department` is accepted only so
+// the handler can detect and reject the conflicting grade+department
+// combination with HTTP 400 (Requirement 10.5). `limit` is bounded to 1..100
+// via the inherited `.int().positive().max(100)` (Requirements 10.7, 12.1).
+export const studentListQuerySchema = paginationQuerySchema.extend({
   grade: z.string().optional(),
+  department: z.string().optional(),
   active: z.enum(['true', 'false']).optional(),
   search: z.string().optional(),
-});
+}).strict();
 
 const idParamsSchema = z.object({
   id: z.string().min(1, 'ID is required'),
 }).strict();
 
-const createStudentBodySchema = z.object({
+/**
+ * Password-reset body (Requirements 9.1, 9.2). The admin selects the
+ * Credential_Delivery_Method; `admin_set` requires a password of at least 8
+ * characters, `temporary_password` and `setup_link` carry no password.
+ */
+const passwordResetBodySchema = z.discriminatedUnion('credentialDeliveryMethod', [
+  z.object({
+    credentialDeliveryMethod: z.literal('admin_set'),
+    password: z.string().min(8, 'Password must be at least 8 characters'),
+  }),
+  z.object({ credentialDeliveryMethod: z.literal('temporary_password') }),
+  z.object({ credentialDeliveryMethod: z.literal('setup_link') }),
+]);
+
+/**
+ * Credential-delivery discriminated union (Requirements 8.1, 4.6).
+ * `admin_set` requires an admin-supplied password of at least 8 characters;
+ * `temporary_password` and `setup_link` carry no password (the System
+ * generates the secret). Shared by student and faculty create/reset schemas.
+ */
+const credentialDeliverySchema = z.discriminatedUnion('credentialDeliveryMethod', [
+  z.object({
+    credentialDeliveryMethod: z.literal('admin_set'),
+    password: z.string().min(8, 'Password must be at least 8 characters'),
+  }),
+  z.object({ credentialDeliveryMethod: z.literal('temporary_password') }),
+  z.object({ credentialDeliveryMethod: z.literal('setup_link') }),
+]);
+
+// Profile fields for student creation; credential material is supplied via the
+// credentialDeliverySchema union and merged below.
+const createStudentProfileSchema = z.object({
   firstName: z.string().min(1, 'First name is required').trim(),
   lastName: z.string().min(1, 'Last name is required').trim(),
   email: z.string().email('Valid email is required').trim(),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
   studentId: z.string().min(1, 'Student ID is required').trim(),
   grade: z.string().min(1, 'Grade level is required'),
   dateOfBirth: z.string().datetime().optional(),
@@ -41,20 +82,26 @@ const createStudentBodySchema = z.object({
   parentEmail: z.string().email().optional(),
   parentPhone: z.string().optional(),
   address: z.string().optional(),
-}).strict();
+});
 
-const updateStudentBodySchema = z.object({
+// Creation body = profile fields ∧ credential-delivery union (Requirement 4.6).
+export const createStudentBodySchema = z.intersection(
+  createStudentProfileSchema,
+  credentialDeliverySchema,
+);
+
+// Update body excludes credential material and the immutable `studentId`;
+// password changes flow through the password-reset path (Requirement 6.5).
+export const updateStudentBodySchema = z.object({
   firstName: z.string().min(1).trim().optional(),
   lastName: z.string().min(1).trim().optional(),
   email: z.string().email().trim().optional(),
-  studentId: z.string().min(1).trim().optional(),
   grade: z.string().min(1).optional(),
   dateOfBirth: z.string().datetime().optional(),
   parentName: z.string().optional(),
   parentEmail: z.string().email().optional(),
   parentPhone: z.string().optional(),
   address: z.string().optional(),
-  active: z.boolean().optional(),
 }).strict();
 
 // --- Routes ---
@@ -152,8 +199,8 @@ const updateStudentBodySchema = z.object({
  */
 router.get(
   '/',
-  // authenticate,
-  // requireRoles(['admin', 'teacher']),
+  authMiddleware,
+  requireRoles('admin', 'teacher'),
   validateRequest({ query: studentListQuerySchema }),
   studentController.getAll,
 );
@@ -197,8 +244,8 @@ router.get(
  */
 router.get(
   '/:id',
-  // authenticate,
-  // requireRoles(['admin', 'teacher', 'student']),
+  authMiddleware,
+  requireRoles('admin', 'teacher'),
   validateRequest({ params: idParamsSchema }),
   studentController.getById,
 );
@@ -283,8 +330,8 @@ router.get(
  */
 router.post(
   '/',
-  // authenticate,
-  // requireRoles(['admin']),
+  authMiddleware,
+  adminOnly,
   validateRequest({ body: createStudentBodySchema }),
   studentController.create,
 );
@@ -355,8 +402,8 @@ router.post(
  */
 router.put(
   '/:id',
-  // authenticate,
-  // requireRoles(['admin']),
+  authMiddleware,
+  adminOnly,
   validateRequest({ params: idParamsSchema, body: updateStudentBodySchema }),
   studentController.update,
 );
@@ -396,10 +443,68 @@ router.put(
  */
 router.delete(
   '/:id',
-  // authenticate,
-  // requireRoles(['admin']),
+  authMiddleware,
+  adminOnly,
   validateRequest({ params: idParamsSchema }),
   studentController.remove,
+);
+
+/**
+ * @swagger
+ * /students/{id}/reactivate:
+ *   post:
+ *     summary: Reactivate a student
+ *     description: Reactivate a previously deactivated student account. Requires admin role.
+ *     tags: [Students]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Student reactivated successfully
+ *       404:
+ *         description: Student not found
+ */
+router.post(
+  '/:id/reactivate',
+  authMiddleware,
+  adminOnly,
+  validateRequest({ params: idParamsSchema }),
+  studentController.reactivate,
+);
+
+/**
+ * @swagger
+ * /students/{id}/password-reset:
+ *   post:
+ *     summary: Reset a student's password
+ *     description: Admin-initiated password reset using the selected credential delivery method. Requires admin role.
+ *     tags: [Students]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Password reset completed
+ *       404:
+ *         description: Student not found
+ */
+router.post(
+  '/:id/password-reset',
+  authMiddleware,
+  adminOnly,
+  validateRequest({ params: idParamsSchema, body: passwordResetBodySchema }),
+  studentController.passwordReset,
 );
 
 export default router;

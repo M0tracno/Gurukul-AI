@@ -19,7 +19,9 @@ describe('QueryErrorState', () => {
     render(<QueryErrorState onRetry={onRetry} />);
 
     expect(screen.getByText('Failed to load')).toBeInTheDocument();
-    expect(screen.getByText('Something went wrong while loading data. Please try again.')).toBeInTheDocument();
+    expect(
+      screen.getByText('Something went wrong while loading data. Please try again.')
+    ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /retry/i })).toBeInTheDocument();
   });
 
@@ -48,12 +50,7 @@ describe('QueryErrorState', () => {
 
   it('renders custom action when provided', () => {
     const onRetry = vi.fn();
-    render(
-      <QueryErrorState
-        onRetry={onRetry}
-        action={<button>Custom Action</button>}
-      />
-    );
+    render(<QueryErrorState onRetry={onRetry} action={<button>Custom Action</button>} />);
 
     expect(screen.getByText('Custom Action')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /retry/i })).not.toBeInTheDocument();

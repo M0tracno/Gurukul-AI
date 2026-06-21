@@ -116,7 +116,7 @@ export function DataTable<T extends Record<string, unknown>>({
       setSortDirection(newDirection);
       onSortChange?.(columnId, newDirection);
     },
-    [sortColumn, sortDirection, onSortChange],
+    [sortColumn, sortDirection, onSortChange]
   );
 
   const handleSortKeyDown = useCallback(
@@ -126,14 +126,14 @@ export function DataTable<T extends Record<string, unknown>>({
         handleSort(columnId);
       }
     },
-    [handleSort],
+    [handleSort]
   );
 
   const handleRowClick = useCallback(
     (row: T) => {
       onRowClick?.(row);
     },
-    [onRowClick],
+    [onRowClick]
   );
 
   const handleRowKeyDown = useCallback(
@@ -143,7 +143,7 @@ export function DataTable<T extends Record<string, unknown>>({
         onRowClick?.(row);
       }
     },
-    [onRowClick],
+    [onRowClick]
   );
 
   const effectiveTotal = totalCount ?? rows.length;
@@ -210,27 +210,24 @@ export function DataTable<T extends Record<string, unknown>>({
         >
           {ariaDescription && (
             <caption>
-              <Box
-                component="span"
-                id="table-description"
-                sx={visuallyHidden}
-              >
+              <Box component="span" id="table-description" sx={visuallyHidden}>
                 {ariaDescription}
               </Box>
             </caption>
           )}
           <TableHead>
             <TableRow>
-              {visibleColumns.map((column) => (
+              {visibleColumns.map(column => (
                 <TableCell
                   key={column.id}
                   align={column.align ?? 'left'}
                   sx={{
                     minWidth: column.minWidth,
                     fontWeight: 600,
-                    backgroundColor: theme.palette.mode === 'dark'
-                      ? theme.palette.grey[900]
-                      : theme.palette.grey[50],
+                    backgroundColor:
+                      theme.palette.mode === 'dark'
+                        ? theme.palette.grey[900]
+                        : theme.palette.grey[50],
                     borderBottom: `2px solid ${theme.palette.divider}`,
                     // High contrast for text (4.5:1+)
                     color: theme.palette.text.primary,
@@ -243,7 +240,7 @@ export function DataTable<T extends Record<string, unknown>>({
                       active={sortColumn === column.id}
                       direction={sortColumn === column.id ? sortDirection : 'asc'}
                       onClick={() => handleSort(column.id)}
-                      onKeyDown={(e) => handleSortKeyDown(e, column.id)}
+                      onKeyDown={e => handleSortKeyDown(e, column.id)}
                       sx={{
                         // Visible focus indicator
                         '&:focus-visible': {
@@ -272,27 +269,19 @@ export function DataTable<T extends Record<string, unknown>>({
           <TableBody>
             {rows.length === 0 ? (
               <TableRow>
-                <TableCell
-                  colSpan={visibleColumns.length}
-                  align="center"
-                  sx={{ py: 6 }}
-                >
-                  <Typography
-                    variant="body1"
-                    color="text.secondary"
-                    aria-live="polite"
-                  >
+                <TableCell colSpan={visibleColumns.length} align="center" sx={{ py: 6 }}>
+                  <Typography variant="body1" color="text.secondary" aria-live="polite">
                     {emptyMessage}
                   </Typography>
                 </TableCell>
               </TableRow>
             ) : (
-              rows.map((row) => (
+              rows.map(row => (
                 <TableRow
                   key={getRowId(row)}
                   hover
                   onClick={onRowClick ? () => handleRowClick(row) : undefined}
-                  onKeyDown={onRowClick ? (e) => handleRowKeyDown(e, row) : undefined}
+                  onKeyDown={onRowClick ? e => handleRowKeyDown(e, row) : undefined}
                   tabIndex={onRowClick ? 0 : undefined}
                   role={onRowClick ? 'button' : undefined}
                   aria-label={onRowClick ? `View details for row ${getRowId(row)}` : undefined}
@@ -313,11 +302,8 @@ export function DataTable<T extends Record<string, unknown>>({
                       : undefined,
                   }}
                 >
-                  {visibleColumns.map((column) => (
-                    <TableCell
-                      key={column.id}
-                      align={column.align ?? 'left'}
-                    >
+                  {visibleColumns.map(column => (
+                    <TableCell key={column.id} align={column.align ?? 'left'}>
                       {column.render
                         ? column.render(row[column.id], row)
                         : String(row[column.id] ?? '')}
@@ -337,9 +323,7 @@ export function DataTable<T extends Record<string, unknown>>({
           page={page}
           rowsPerPage={rowsPerPage}
           onPageChange={(_, newPage) => onPageChange?.(newPage)}
-          onRowsPerPageChange={(e) =>
-            onRowsPerPageChange?.(parseInt(e.target.value, 10))
-          }
+          onRowsPerPageChange={e => onRowsPerPageChange?.(parseInt(e.target.value, 10))}
           rowsPerPageOptions={rowsPerPageOptions}
           aria-label="Table pagination"
           sx={{

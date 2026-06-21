@@ -7,7 +7,6 @@ import privacyService from '../../services/security/privacyService';
  * Provides React hooks for privacy compliance and consent management
  */
 
-
 export const usePrivacy = () => {
   const { user } = useContext(AuthContext);
   const [consents, setConsents] = useState([]);
@@ -26,16 +25,16 @@ export const usePrivacy = () => {
 
   const loadPrivacyData = useCallback(async () => {
     if (!user) return;
-    
+
     setLoading(true);
     try {
       const [userConsents, categories, settings, compliance] = await Promise.all([
         privacyService.getUserConsents(user.uid),
         privacyService.getDataCategories(),
         privacyService.getPrivacySettings(user.uid),
-        privacyService.getComplianceStatus(user.uid)
+        privacyService.getComplianceStatus(user.uid),
       ]);
-      
+
       setConsents(userConsents);
       setDataCategories(categories);
       setPrivacySettings(settings);
@@ -47,139 +46,167 @@ export const usePrivacy = () => {
     }
   }, [user]);
 
-  const updateConsent = useCallback(async (categoryId, granted, purpose = null) => {
-    if (!user) return false;
-    
-    setLoading(true);
-    setError(null);
-    
-    try {
-      await privacyService.updateConsent(user.uid, categoryId, granted, purpose);
-      await loadPrivacyData();
-      return true;
-    } catch (err) {
-      setError(err.message);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [user, loadPrivacyData]);
+  const updateConsent = useCallback(
+    async (categoryId, granted, purpose = null) => {
+      if (!user) return false;
 
-  const bulkUpdateConsents = useCallback(async (consentUpdates) => {
-    if (!user) return false;
-    
-    setLoading(true);
-    setError(null);
-    
-    try {
-      await privacyService.bulkUpdateConsents(user.uid, consentUpdates);
-      await loadPrivacyData();
-      return true;
-    } catch (err) {
-      setError(err.message);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [user, loadPrivacyData]);
+      setLoading(true);
+      setError(null);
 
-  const requestDataExport = useCallback(async (format = 'json', categories = null) => {
-    if (!user) return null;
-    
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const exportResult = await privacyService.exportUserData(user.uid, format, categories);
-      return exportResult;
-    } catch (err) {
-      setError(err.message);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [user]);
-
-  const requestDataDeletion = useCallback(async (categories = null, retentionOverride = false) => {
-    if (!user) return false;
-    
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const result = await privacyService.deleteUserData(user.uid, categories, retentionOverride);
-      if (result.success) {
+      try {
+        await privacyService.updateConsent(user.uid, categoryId, granted, purpose);
         await loadPrivacyData();
+        return true;
+      } catch (err) {
+        setError(err.message);
+        throw err;
+      } finally {
+        setLoading(false);
       }
-      return result;
-    } catch (err) {
-      setError(err.message);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [user, loadPrivacyData]);
+    },
+    [user, loadPrivacyData]
+  );
 
-  const updatePrivacySettings = useCallback(async (newSettings) => {
-    if (!user) return false;
-    
-    setLoading(true);
-    setError(null);
-    
-    try {
-      await privacyService.updatePrivacySettings(user.uid, newSettings);
-      setPrivacySettings({ ...privacySettings, ...newSettings });
-      return true;
-    } catch (err) {
-      setError(err.message);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [user, privacySettings]);
+  const bulkUpdateConsents = useCallback(
+    async consentUpdates => {
+      if (!user) return false;
 
-  const getDataRetention = useCallback(async (categoryId) => {
-    if (!user) return null;
-    
-    try {
-      return await privacyService.getDataRetentionInfo(user.uid, categoryId);
-    } catch (err) {
-      setError(err.message);
-      throw err;
-    }
-  }, [user]);
+      setLoading(true);
+      setError(null);
 
-  const requestDataPortability = useCallback(async (targetSystem, categories = null) => {
-    if (!user) return null;
-    
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const result = await privacyService.initiateDataPortability(user.uid, targetSystem, categories);
-      return result;
-    } catch (err) {
-      setError(err.message);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [user]);
+      try {
+        await privacyService.bulkUpdateConsents(user.uid, consentUpdates);
+        await loadPrivacyData();
+        return true;
+      } catch (err) {
+        setError(err.message);
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [user, loadPrivacyData]
+  );
 
-  const getConsentHistory = useCallback(async (categoryId = null) => {
-    if (!user) return [];
-    
-    try {
-      return await privacyService.getConsentHistory(user.uid, categoryId);
-    } catch (err) {
-      setError(err.message);
-      throw err;
-    }
-  }, [user]);
+  const requestDataExport = useCallback(
+    async (format = 'json', categories = null) => {
+      if (!user) return null;
+
+      setLoading(true);
+      setError(null);
+
+      try {
+        const exportResult = await privacyService.exportUserData(user.uid, format, categories);
+        return exportResult;
+      } catch (err) {
+        setError(err.message);
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [user]
+  );
+
+  const requestDataDeletion = useCallback(
+    async (categories = null, retentionOverride = false) => {
+      if (!user) return false;
+
+      setLoading(true);
+      setError(null);
+
+      try {
+        const result = await privacyService.deleteUserData(user.uid, categories, retentionOverride);
+        if (result.success) {
+          await loadPrivacyData();
+        }
+        return result;
+      } catch (err) {
+        setError(err.message);
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [user, loadPrivacyData]
+  );
+
+  const updatePrivacySettings = useCallback(
+    async newSettings => {
+      if (!user) return false;
+
+      setLoading(true);
+      setError(null);
+
+      try {
+        await privacyService.updatePrivacySettings(user.uid, newSettings);
+        setPrivacySettings({ ...privacySettings, ...newSettings });
+        return true;
+      } catch (err) {
+        setError(err.message);
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [user, privacySettings]
+  );
+
+  const getDataRetention = useCallback(
+    async categoryId => {
+      if (!user) return null;
+
+      try {
+        return await privacyService.getDataRetentionInfo(user.uid, categoryId);
+      } catch (err) {
+        setError(err.message);
+        throw err;
+      }
+    },
+    [user]
+  );
+
+  const requestDataPortability = useCallback(
+    async (targetSystem, categories = null) => {
+      if (!user) return null;
+
+      setLoading(true);
+      setError(null);
+
+      try {
+        const result = await privacyService.initiateDataPortability(
+          user.uid,
+          targetSystem,
+          categories
+        );
+        return result;
+      } catch (err) {
+        setError(err.message);
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [user]
+  );
+
+  const getConsentHistory = useCallback(
+    async (categoryId = null) => {
+      if (!user) return [];
+
+      try {
+        return await privacyService.getConsentHistory(user.uid, categoryId);
+      } catch (err) {
+        setError(err.message);
+        throw err;
+      }
+    },
+    [user]
+  );
 
   const checkComplianceRequirements = useCallback(async () => {
     if (!user) return null;
-    
+
     try {
       return await privacyService.checkComplianceRequirements(user.uid);
     } catch (err) {
@@ -192,21 +219,27 @@ export const usePrivacy = () => {
     return consents.filter(consent => consent.granted && consent.isActive);
   }, [consents]);
 
-  const getConsentByCategory = useCallback((categoryId) => {
-    return consents.find(consent => consent.categoryId === categoryId);
-  }, [consents]);
+  const getConsentByCategory = useCallback(
+    categoryId => {
+      return consents.find(consent => consent.categoryId === categoryId);
+    },
+    [consents]
+  );
 
-  const isConsentRequired = useCallback((categoryId) => {
-    const category = dataCategories.find(cat => cat.id === categoryId);
-    return category?.requiresConsent || false;
-  }, [dataCategories]);
+  const isConsentRequired = useCallback(
+    categoryId => {
+      const category = dataCategories.find(cat => cat.id === categoryId);
+      return category?.requiresConsent || false;
+    },
+    [dataCategories]
+  );
 
   const getPrivacyScore = useCallback(() => {
     if (!complianceStatus) return 0;
-    
+
     const totalCategories = dataCategories.length;
     const compliantCategories = complianceStatus.compliantCategories?.length || 0;
-    
+
     return totalCategories > 0 ? Math.round((compliantCategories / totalCategories) * 100) : 0;
   }, [complianceStatus, dataCategories]);
 
@@ -235,9 +268,8 @@ export const usePrivacy = () => {
     needsConsentUpdate: complianceStatus?.needsUpdate || false,
     isGDPRCompliant: complianceStatus?.gdprCompliant || false,
     isFERPACompliant: complianceStatus?.ferpaCompliant || false,
-    isCOPPACompliant: complianceStatus?.coppaCompliant || false
+    isCOPPACompliant: complianceStatus?.coppaCompliant || false,
   };
 };
 
 export default usePrivacy;
-

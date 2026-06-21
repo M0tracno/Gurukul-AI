@@ -23,7 +23,7 @@ import {
   Tab,
   Tabs,
   TextField,
-  Typography
+  Typography,
 } from '@mui/material';
 import {
   AccountCircle,
@@ -44,42 +44,42 @@ import {
   Speed as SpeedIcon,
   Visibility as VisibilityIcon,
   VisibilityOff as VisibilityOffIcon,
-  VpnKey as VpnKeyIcon
+  VpnKey as VpnKeyIcon,
 } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 import makeStyles from '../../utils/makeStylesCompat';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   container: {
-    padding: theme.spacing(3)
+    padding: theme.spacing(3),
   },
   tabContent: {
-    padding: theme.spacing(3)
+    padding: theme.spacing(3),
   },
   section: {
-    marginBottom: theme.spacing(4)
+    marginBottom: theme.spacing(4),
   },
   sectionTitle: {
-    marginBottom: theme.spacing(2)
+    marginBottom: theme.spacing(2),
   },
   formControl: {
     marginBottom: theme.spacing(2),
-    minWidth: 200
+    minWidth: 200,
   },
   listItem: {
-    marginBottom: theme.spacing(1)
+    marginBottom: theme.spacing(1),
   },
   deviceListItem: {
     border: `1px solid ${theme.palette.divider}`,
     borderRadius: theme.shape.borderRadius,
-    marginBottom: theme.spacing(1)
+    marginBottom: theme.spacing(1),
   },
   actionButton: {
-    marginLeft: theme.spacing(1)
+    marginLeft: theme.spacing(1),
   },
   deviceIcon: {
-    fontSize: '2rem'
-  }
+    fontSize: '2rem',
+  },
 }));
 
 function SecuritySettings({ onSettingsUpdate = () => {} }) {
@@ -95,20 +95,44 @@ function SecuritySettings({ onSettingsUpdate = () => {} }) {
     sessionDuration: 60, // minutes
     passwordLastChanged: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
     devices: [
-      { id: 1, name: 'Chrome on Windows 10', lastActive: new Date(), isCurrent: true, type: 'browser', status: 'active', location: 'New York, US' },
-      { id: 2, name: 'iPhone 12', lastActive: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), isCurrent: false, type: 'mobile', status: 'active', location: 'Boston, US' },
-      { id: 3, name: 'Firefox on MacBook', lastActive: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000), isCurrent: false, type: 'browser', status: 'inactive', location: 'San Francisco, US' }
+      {
+        id: 1,
+        name: 'Chrome on Windows 10',
+        lastActive: new Date(),
+        isCurrent: true,
+        type: 'browser',
+        status: 'active',
+        location: 'New York, US',
+      },
+      {
+        id: 2,
+        name: 'iPhone 12',
+        lastActive: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+        isCurrent: false,
+        type: 'mobile',
+        status: 'active',
+        location: 'Boston, US',
+      },
+      {
+        id: 3,
+        name: 'Firefox on MacBook',
+        lastActive: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
+        isCurrent: false,
+        type: 'browser',
+        status: 'inactive',
+        location: 'San Francisco, US',
+      },
     ],
     privacySettings: {
       dataCollection: 'minimal',
       shareAnalytics: false,
-      cookiePreference: 'essential'
+      cookiePreference: 'essential',
     },
     advancedSettings: {
       ipWhitelist: '',
       autoLogout: true,
-      strictModeEnabled: false
-    }
+      strictModeEnabled: false,
+    },
   });
 
   const handleChange = (section, field, value) => {
@@ -116,8 +140,8 @@ function SecuritySettings({ onSettingsUpdate = () => {} }) {
       ...prev,
       [section]: {
         ...prev[section],
-        [field]: value
-      }
+        [field]: value,
+      },
     }));
 
     // Notify parent component
@@ -127,21 +151,19 @@ function SecuritySettings({ onSettingsUpdate = () => {} }) {
   const handleSwitchChange = (field, event) => {
     setSettings(prev => ({
       ...prev,
-      [field]: event.target.checked
+      [field]: event.target.checked,
     }));
 
     // Notify parent component
     onSettingsUpdate({ field, value: event.target.checked });
   };
 
-  const handleRevokeDevice = (deviceId) => {
+  const handleRevokeDevice = deviceId => {
     setSettings(prev => ({
       ...prev,
       devices: prev.devices.map(device =>
-        device.id === deviceId
-        ? { ...device, status: 'revoked' }
-        : device
-      )
+        device.id === deviceId ? { ...device, status: 'revoked' } : device
+      ),
     }));
 
     // Notify parent component
@@ -152,13 +174,13 @@ function SecuritySettings({ onSettingsUpdate = () => {} }) {
     setTabValue(newValue);
   };
 
-  const formatDate = (date) => {
+  const formatDate = date => {
     return new Date(date).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   };
 
@@ -192,7 +214,7 @@ function SecuritySettings({ onSettingsUpdate = () => {} }) {
                 control={
                   <Switch
                     checked={settings.mfaEnabled}
-                    onChange={(e) => handleSwitchChange('mfaEnabled', e)}
+                    onChange={e => handleSwitchChange('mfaEnabled', e)}
                     color="primary"
                   />
                 }
@@ -206,7 +228,7 @@ function SecuritySettings({ onSettingsUpdate = () => {} }) {
                   select
                   label="MFA Method"
                   value={settings.mfaType}
-                  onChange={(e) => setSettings({...settings, mfaType: e.target.value})}
+                  onChange={e => setSettings({ ...settings, mfaType: e.target.value })}
                   variant="outlined"
                   fullWidth
                 >
@@ -226,7 +248,7 @@ function SecuritySettings({ onSettingsUpdate = () => {} }) {
             </Typography>
 
             <Grid container spacing={3}>
-              <Grid size={{xs:12,md:6}}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <Typography variant="body2" gutterBottom>
                   Last password change: {formatDate(settings.passwordLastChanged)}
                 </Typography>
@@ -241,13 +263,15 @@ function SecuritySettings({ onSettingsUpdate = () => {} }) {
                 </Button>
               </Grid>
 
-              <Grid size={{xs:12,md:6}}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <FormControl variant="outlined" className={classes.formControl}>
                   <TextField
                     type="number"
                     label="Session Duration (minutes)"
                     value={settings.sessionDuration}
-                    onChange={(e) => setSettings({...settings, sessionDuration: parseInt(e.target.value)})}
+                    onChange={e =>
+                      setSettings({ ...settings, sessionDuration: parseInt(e.target.value) })
+                    }
                     variant="outlined"
                     InputProps={{ inputProps: { min: 5, max: 1440 } }}
                     fullWidth
@@ -267,18 +291,27 @@ function SecuritySettings({ onSettingsUpdate = () => {} }) {
           </Typography>
 
           <List>
-            {settings.devices.map((device) => (
+            {settings.devices.map(device => (
               <Paper key={device.id} className={classes.deviceListItem}>
                 <ListItem>
                   <ListItemIcon>
-                    {device.type === 'mobile' ? <PhoneIcon className={classes.deviceIcon} /> : <LaptopIcon className={classes.deviceIcon} />}
+                    {device.type === 'mobile' ? (
+                      <PhoneIcon className={classes.deviceIcon} />
+                    ) : (
+                      <LaptopIcon className={classes.deviceIcon} />
+                    )}
                   </ListItemIcon>
                   <ListItemText
                     primary={
                       <>
                         {device.name}
                         {device.isCurrent && (
-                          <Typography component="span" variant="body2" color="primary" style={{marginLeft: 8}}>
+                          <Typography
+                            component="span"
+                            variant="body2"
+                            color="primary"
+                            style={{ marginLeft: 8 }}
+                          >
                             (Current)
                           </Typography>
                         )}
@@ -297,7 +330,7 @@ function SecuritySettings({ onSettingsUpdate = () => {} }) {
                           component="span"
                           variant="body2"
                           color={device.status === 'active' ? 'primary' : 'textSecondary'}
-                          style={{marginLeft: 8}}
+                          style={{ marginLeft: 8 }}
                         >
                           Status: {device.status}
                         </Typography>
@@ -334,7 +367,7 @@ function SecuritySettings({ onSettingsUpdate = () => {} }) {
               control={
                 <Switch
                   checked={settings.emailNotifications}
-                  onChange={(e) => handleSwitchChange('emailNotifications', e)}
+                  onChange={e => handleSwitchChange('emailNotifications', e)}
                   color="primary"
                 />
               }
@@ -344,7 +377,7 @@ function SecuritySettings({ onSettingsUpdate = () => {} }) {
               control={
                 <Switch
                   checked={settings.smsNotifications}
-                  onChange={(e) => handleSwitchChange('smsNotifications', e)}
+                  onChange={e => handleSwitchChange('smsNotifications', e)}
                   color="primary"
                 />
               }
@@ -352,8 +385,9 @@ function SecuritySettings({ onSettingsUpdate = () => {} }) {
             />
           </FormGroup>
 
-          <Typography variant="body2" color="textSecondary" style={{marginTop: 16}}>
-            You'll be notified about suspicious login attempts, password changes, and security alerts.
+          <Typography variant="body2" color="textSecondary" style={{ marginTop: 16 }}>
+            You'll be notified about suspicious login attempts, password changes, and security
+            alerts.
           </Typography>
         </Box>
       )}
@@ -371,7 +405,7 @@ function SecuritySettings({ onSettingsUpdate = () => {} }) {
                 select
                 label="Data Collection"
                 value={settings.privacySettings.dataCollection}
-                onChange={(e) => handleChange('privacySettings', 'dataCollection', e.target.value)}
+                onChange={e => handleChange('privacySettings', 'dataCollection', e.target.value)}
                 variant="outlined"
                 helperText="Choose how much data we collect to improve your experience"
               >
@@ -386,7 +420,9 @@ function SecuritySettings({ onSettingsUpdate = () => {} }) {
                 control={
                   <Switch
                     checked={settings.privacySettings.shareAnalytics}
-                    onChange={(e) => handleChange('privacySettings', 'shareAnalytics', e.target.checked)}
+                    onChange={e =>
+                      handleChange('privacySettings', 'shareAnalytics', e.target.checked)
+                    }
                     color="primary"
                   />
                 }
@@ -394,12 +430,17 @@ function SecuritySettings({ onSettingsUpdate = () => {} }) {
               />
             </FormGroup>
 
-            <FormControl variant="outlined" className={classes.formControl} fullWidth style={{marginTop: 16}}>
+            <FormControl
+              variant="outlined"
+              className={classes.formControl}
+              fullWidth
+              style={{ marginTop: 16 }}
+            >
               <TextField
                 select
                 label="Cookie Preference"
                 value={settings.privacySettings.cookiePreference}
-                onChange={(e) => handleChange('privacySettings', 'cookiePreference', e.target.value)}
+                onChange={e => handleChange('privacySettings', 'cookiePreference', e.target.value)}
                 variant="outlined"
               >
                 <MenuItem value="essential">Essential Only</MenuItem>
@@ -410,11 +451,7 @@ function SecuritySettings({ onSettingsUpdate = () => {} }) {
           </Box>
 
           <Box mt={3}>
-            <Button
-              variant="outlined"
-              color="secondary"
-              startIcon={<DeleteIcon />}
-            >
+            <Button variant="outlined" color="secondary" startIcon={<DeleteIcon />}>
               Request Data Deletion
             </Button>
           </Box>
@@ -433,7 +470,7 @@ function SecuritySettings({ onSettingsUpdate = () => {} }) {
               <TextField
                 label="IP Whitelist (Comma Separated)"
                 value={settings.advancedSettings.ipWhitelist}
-                onChange={(e) => handleChange('advancedSettings', 'ipWhitelist', e.target.value)}
+                onChange={e => handleChange('advancedSettings', 'ipWhitelist', e.target.value)}
                 variant="outlined"
                 helperText="Only allow logins from these IP addresses (leave empty to allow all)"
               />
@@ -444,7 +481,7 @@ function SecuritySettings({ onSettingsUpdate = () => {} }) {
                 control={
                   <Switch
                     checked={settings.advancedSettings.autoLogout}
-                    onChange={(e) => handleChange('advancedSettings', 'autoLogout', e.target.checked)}
+                    onChange={e => handleChange('advancedSettings', 'autoLogout', e.target.checked)}
                     color="primary"
                   />
                 }
@@ -455,7 +492,9 @@ function SecuritySettings({ onSettingsUpdate = () => {} }) {
                 control={
                   <Switch
                     checked={settings.advancedSettings.strictModeEnabled}
-                    onChange={(e) => handleChange('advancedSettings', 'strictModeEnabled', e.target.checked)}
+                    onChange={e =>
+                      handleChange('advancedSettings', 'strictModeEnabled', e.target.checked)
+                    }
                     color="primary"
                   />
                 }
@@ -480,4 +519,4 @@ function SecuritySettings({ onSettingsUpdate = () => {} }) {
   );
 }
 
-export default SecuritySettings;
+export default SecuritySettings;

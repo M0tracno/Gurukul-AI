@@ -8,40 +8,54 @@ import SecuritySettings from './SecuritySettings';
 import IncidentResponseInterface from './IncidentResponseInterface';
 import { useAuth } from '../../auth/AuthContext';
 import makeStyles from '../../utils/makeStylesCompat';
-import { Alert, Box, Card, CardContent, Chip, Container, Dialog, DialogContent, DialogTitle, Fab, Grid, Paper, Typography } from '@mui/material';
+import {
+  Alert,
+  Box,
+  Card,
+  CardContent,
+  Chip,
+  Container,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Fab,
+  Grid,
+  Paper,
+  Typography,
+} from '@mui/material';
 import {
   Shield as SecurityIcon,
   Shield as ShieldIcon,
   Warning as WarningIcon,
   CheckCircle as CheckIcon,
-  Settings as SettingsIcon
+  Settings as SettingsIcon,
 } from '@mui/icons-material';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   container: {
     marginTop: theme.spacing(3),
-    marginBottom: theme.spacing(3)
+    marginBottom: theme.spacing(3),
   },
   paper: {
     padding: theme.spacing(3),
-    margin: theme.spacing(1)
+    margin: theme.spacing(1),
   },
   securityCard: {
     background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
     color: 'white',
-    marginBottom: theme.spacing(2)
+    marginBottom: theme.spacing(2),
   },
   statusChip: {
-    margin: theme.spacing(0.5)
+    margin: theme.spacing(0.5),
   },
   fab: {
     position: 'fixed',
     bottom: theme.spacing(3),
-    right: theme.spacing(3)
+    right: theme.spacing(3),
   },
   alert: {
-    marginBottom: theme.spacing(2)
-  }
+    marginBottom: theme.spacing(2),
+  },
 }));
 
 const SecurityIntegrationExample = () => {
@@ -73,7 +87,7 @@ const SecurityIntegrationExample = () => {
         type: 'warning',
         message: 'Your account security can be improved by enabling multi-factor authentication.',
         action: 'Enable MFA',
-        handler: () => setMfaDialogOpen(true)
+        handler: () => setMfaDialogOpen(true),
       });
     }
 
@@ -87,13 +101,21 @@ const SecurityIntegrationExample = () => {
     return {
       score: mockScore,
       status:
-        mockScore >= 80 ? 'excellent' :
-        mockScore >= 60 ? 'good' :
-        mockScore >= 40 ? 'fair' : 'poor',
+        mockScore >= 80
+          ? 'excellent'
+          : mockScore >= 60
+            ? 'good'
+            : mockScore >= 40
+              ? 'fair'
+              : 'poor',
       color:
-        mockScore >= 80 ? 'success' :
-        mockScore >= 60 ? 'primary' :
-        mockScore >= 40 ? 'warning' : 'error'
+        mockScore >= 80
+          ? 'success'
+          : mockScore >= 60
+            ? 'primary'
+            : mockScore >= 40
+              ? 'warning'
+              : 'error',
     };
   };
 
@@ -106,9 +128,7 @@ const SecurityIntegrationExample = () => {
           <Typography variant="h5" gutterBottom>
             Security Integration Example
           </Typography>
-          <Typography variant="body1">
-            Please log in to view security features.
-          </Typography>
+          <Typography variant="body1">Please log in to view security features.</Typography>
         </Paper>
       </Container>
     );
@@ -179,12 +199,7 @@ const SecurityIntegrationExample = () => {
               className={classes.alert}
               action={
                 alert.action && (
-                  <Chip
-                    size="small"
-                    label={alert.action}
-                    onClick={alert.handler}
-                    color="primary"
-                  />
+                  <Chip size="small" label={alert.action} onClick={alert.handler} color="primary" />
                 )
               }
             >
@@ -200,21 +215,12 @@ const SecurityIntegrationExample = () => {
       </Paper>
 
       {/* Floating Action Button for Security Settings */}
-      <Fab
-        color="primary"
-        className={classes.fab}
-        onClick={() => setSettingsDialogOpen(true)}
-      >
+      <Fab color="primary" className={classes.fab} onClick={() => setSettingsDialogOpen(true)}>
         <SecurityIcon />
       </Fab>
 
       {/* MFA Setup Dialog */}
-      <Dialog
-        open={mfaDialogOpen}
-        onClose={() => setMfaDialogOpen(false)}
-        maxWidth="md"
-        fullWidth
-      >
+      <Dialog open={mfaDialogOpen} onClose={() => setMfaDialogOpen(false)} maxWidth="md" fullWidth>
         <DialogTitle>Multi-Factor Authentication Setup</DialogTitle>
         <DialogContent>
           <MFASetupDialog
@@ -280,4 +286,4 @@ const SecurityIntegrationExample = () => {
   );
 };
 
-export default SecurityIntegrationExample;
+export default SecurityIntegrationExample;

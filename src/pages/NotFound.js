@@ -1,63 +1,70 @@
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import {  styled } from '@mui/material/styles';
-import {  Button, Typography, Container } from '@mui/material';
-import { Home as HomeIcon, Error as ErrorIcon } from '@mui/icons-material';
+import { Box, Button, Typography, Container, Stack } from '@mui/material';
+import { ArrowForward as ArrowForwardIcon } from '@mui/icons-material';
 
-const Root = styled('div')(({ theme }) => ({
-  minHeight: '100vh',
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
-  alignItems: 'center',
-  padding: theme.spacing(2),
-  background: '#f5f5f5',
-  textAlign: 'center'
-}));
-
-const IconStyled = styled(ErrorIcon)(({ theme }) => ({
-  fontSize: 80,
-  color: theme.palette.error.main,
-  marginBottom: theme.spacing(2)
-}));
-
-const TitleStyled = styled(Typography)(({ theme }) => ({
-  marginBottom: theme.spacing(1)
-}));
-
-const SubtitleStyled = styled(Typography)(({ theme }) => ({
-  marginBottom: theme.spacing(4),
-  color: theme.palette.text.secondary
-}));
-
-const ButtonStyled = styled(Button)(({ theme }) => ({
-  marginTop: theme.spacing(2)
-}));
+import CinematicBackground from '../components/common/CinematicBackground';
+import { accents, ink, fonts } from '../theme/cinematic';
 
 const NotFound = () => {
   return (
-    <Root>
-      <Container maxWidth="md">
-        <IconStyled />
-        <TitleStyled variant="h3" component="h1">
-          404: Page Not Found
-        </TitleStyled>
-        <SubtitleStyled variant="h6">
-          Sorry, we could not find the page you are looking for.
-        </SubtitleStyled>
-        <ButtonStyled
-          variant="contained"
-          color="primary"
-          size="large"
-          component={RouterLink}
-          to="/"
+    <CinematicBackground accent="blue">
+      <Container
+        maxWidth="sm"
+        sx={{
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          textAlign: 'center',
+          py: 8,
+        }}
+      >
+        <Typography
+          sx={{
+            fontFamily: fonts.display,
+            fontWeight: 800,
+            fontSize: { xs: '6rem', md: '9rem' },
+            lineHeight: 1,
+            letterSpacing: '-0.04em',
+            color: ink.primary,
+            // faint accent wash behind the numerals
+            background: `linear-gradient(180deg, ${ink.primary}, ${accents.blue.deep})`,
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            mb: 2,
+          }}
         >
-          Return to Home
-        </ButtonStyled>
+          404
+        </Typography>
+
+        <Typography variant="h4" sx={{ color: ink.primary, mb: 1.5 }}>
+          This page took the day off.
+        </Typography>
+        <Typography sx={{ color: ink.secondary, fontSize: '1.05rem', maxWidth: 420, mb: 5 }}>
+          The page you're after doesn't exist or has moved. Let's get you back on track.
+        </Typography>
+
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+          <Button
+            component={RouterLink}
+            to="/"
+            variant="contained"
+            size="large"
+            endIcon={<ArrowForwardIcon />}
+            sx={{ px: 3.5, py: 1.4 }}
+          >
+            Back to home
+          </Button>
+          <Button component={RouterLink} to="/role-select" variant="outlined" size="large" sx={{ px: 3.5, py: 1.4 }}>
+            Choose a portal
+          </Button>
+        </Stack>
       </Container>
-    </Root>
+    </CinematicBackground>
   );
 };
 
 export default NotFound;
-

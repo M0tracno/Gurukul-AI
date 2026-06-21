@@ -10,40 +10,39 @@
  * **Validates: Requirements 7.6**
  */
 
+import { jest, describe, it, expect } from '@jest/globals';
 import * as fc from 'fast-check';
-import { GradingService } from '../../src/services/gradingService.js';
 import type { GradingJobInput } from '../../src/services/gradingService.js';
-import { AppError } from '../../src/middleware/errorHandler.js';
+import type { AppError as AppErrorType } from '../../src/middleware/errorHandler.js';
 
 // --- Mock external dependencies (DB and queue) ---
 
-jest.mock('../../src/models/GradingJob.js', () => ({
-  __esModule: true,
+const mockGradingJobCreate = jest.fn<() => Promise<unknown>>().mockResolvedValue({
+  _id: { toString: () => 'mock-job-id' },
+  batchId: 'test-batch',
+  teacherId: 'teacher-1',
+  status: 'pending',
+  totalSubmissions: 1,
+  processedCount: 0,
+  successCount: 0,
+  failureCount: 0,
+  concurrency: 5,
+  submissions: [],
+});
+
+jest.unstable_mockModule('../../src/models/GradingJob.js', () => ({
   default: {
-    create: jest.fn().mockResolvedValue({
-      _id: { toString: () => 'mock-job-id' },
-      batchId: 'test-batch',
-      teacherId: 'teacher-1',
-      status: 'pending',
-      totalSubmissions: 1,
-      processedCount: 0,
-      successCount: 0,
-      failureCount: 0,
-      concurrency: 5,
-      submissions: [],
-    }),
+    create: mockGradingJobCreate,
   },
 }));
 
-jest.mock('../../src/jobs/gradingQueue.js', () => ({
-  __esModule: true,
+jest.unstable_mockModule('../../src/jobs/gradingQueue.js', () => ({
   gradingQueue: {
-    add: jest.fn().mockResolvedValue({}),
+    add: jest.fn<() => Promise<unknown>>().mockResolvedValue({}),
   },
 }));
 
-jest.mock('../../src/utils/logger.js', () => ({
-  __esModule: true,
+jest.unstable_mockModule('../../src/utils/logger.js', () => ({
   logger: {
     info: jest.fn(),
     warn: jest.fn(),
@@ -51,6 +50,9 @@ jest.mock('../../src/utils/logger.js', () => ({
     debug: jest.fn(),
   },
 }));
+
+const { GradingService } = await import('../../src/services/gradingService.js');
+const { AppError } = await import('../../src/middleware/errorHandler.js');
 
 // --- Constants matching the service ---
 
@@ -197,7 +199,7 @@ describe('Property 18: Grading File Validation', () => {
           throw new Error('Expected AppError to be thrown');
         } catch (err) {
           expect(err).toBeInstanceOf(AppError);
-          const appErr = err as AppError;
+          const appErr = err as AppErrorType;
           expect(appErr.statusCode).toBe(400);
           expect(appErr.message).toContain('failed validation');
           expect(appErr.details).toBeDefined();
@@ -229,7 +231,7 @@ describe('Property 18: Grading File Validation', () => {
           throw new Error('Expected AppError to be thrown');
         } catch (err) {
           expect(err).toBeInstanceOf(AppError);
-          const appErr = err as AppError;
+          const appErr = err as AppErrorType;
           expect(appErr.statusCode).toBe(400);
           expect(appErr.message).toContain('failed validation');
           expect(appErr.details).toBeDefined();
@@ -268,7 +270,7 @@ describe('Property 18: Grading File Validation', () => {
             throw new Error('Expected AppError to be thrown');
           } catch (err) {
             expect(err).toBeInstanceOf(AppError);
-            const appErr = err as AppError;
+            const appErr = err as AppErrorType;
             expect(appErr.statusCode).toBe(400);
             expect(appErr.message).toContain('failed validation');
           }
@@ -292,7 +294,7 @@ describe('Property 18: Grading File Validation', () => {
           throw new Error('Expected AppError to be thrown');
         } catch (err) {
           expect(err).toBeInstanceOf(AppError);
-          const appErr = err as AppError;
+          const appErr = err as AppErrorType;
           expect(appErr.statusCode).toBe(400);
           expect(appErr.details).toBeDefined();
 
@@ -350,14 +352,14 @@ describe('Property 18: Grading File Validation', () => {
             throw new Error('Expected AppError to be thrown');
           } catch (err) {
             expect(err).toBeInstanceOf(AppError);
-            const appErr = err as AppError;
+            const appErr = err as AppErrorType;
             expect(appErr.statusCode).toBe(400);
             expect(appErr.message).toContain('failed validation');
             expect(appErr.details).toBeDefined();
 
-            // Error should reference the invalid submission
+            // Error should reference the invalid submission's field
             const detail = appErr.details!.find((d) =>
-              d.value === invalidSub.submissionId,
+              d.field.includes(invalidSub.submissionId),
             );
             expect(detail).toBeDefined();
           }

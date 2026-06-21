@@ -13,16 +13,67 @@ class ParentService {
     this.baseUrl = env.API_URL;
   }
   /**
+   * Admin: fetch the paginated parents list from the Admin Parents API.
+   *
+   * Mirrors the faculty/student admin list fetches used by AdminService:
+   * it goes through the shared DatabaseService client (same base URL and
+   * Bearer auth header) and unwraps the standard success envelope
+   * `{ success, data, meta: { page, limit, total } }`.
+   *
+   * On a failure envelope, HTTP error, or network error this resolves to a
+   * friendly error result with an empty list and a generic message, never
+   * exposing internal error details (Req 13.6).
+   *
+   * @param {{ page?: number, limit?: number, search?: string }} [params]
+   * @returns {Promise<{ success: boolean, data: Array, meta?: object, error?: string }>}
+   */
+  async getAdminParents(params = {}) {
+    try {
+      const query = new URLSearchParams();
+      if (params.page != null) query.set('page', String(params.page));
+      if (params.limit != null) query.set('limit', String(params.limit));
+      if (params.search) query.set('search', params.search);
+      const qs = query.toString();
+      const endpoint = `/api/parents${qs ? `?${qs}` : ''}`;
+
+      const response = await this.databaseService.fetchWithAuth(endpoint);
+
+      // Unwrap the standard success envelope, tolerating a few shapes.
+      const data = Array.isArray(response)
+        ? response
+        : Array.isArray(response?.data)
+          ? response.data
+          : Array.isArray(response?.data?.items)
+            ? response.data.items
+            : [];
+
+      return {
+        success: true,
+        data,
+        meta: response?.meta || null,
+      };
+    } catch (error) {
+      // Log internally but surface a friendly, detail-free result to callers.
+      console.error('Error fetching admin parents list:', error);
+      return {
+        success: false,
+        error: 'Unable to load parents right now. Please try again.',
+        data: [],
+      };
+    }
+  }
+
+  /**
    * Get parent profile information
-   */  async getParentProfile() {
+   */ async getParentProfile() {
     try {
       const token = localStorage.getItem('authToken');
       const response = await fetch(`${this.baseUrl}/api/parents/profile`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       });
 
       if (!response.ok) {
@@ -36,10 +87,10 @@ class ParentService {
       return {
         success: true, // Changed to true to show demo data
         error: error.message,
-        data: { 
+        data: {
           id: 'PARENT001',
-          name: 'Sarah Johnson', 
-          firstName: 'Sarah', 
+          name: 'Sarah Johnson',
+          firstName: 'Sarah',
           lastName: 'Johnson',
           email: 'sarah.johnson@email.com',
           phoneNumber: '+1 (555) 123-4567',
@@ -52,17 +103,17 @@ class ParentService {
           notifications: {
             email: true,
             sms: true,
-            push: true
+            push: true,
           },
           preferences: {
             language: 'English',
             timezone: 'America/Chicago',
-            dashboard: 'comprehensive'
-          }
-        }
+            dashboard: 'comprehensive',
+          },
+        },
       };
     }
-  }/**
+  } /**
    * Get children information for parent
    */
   async getChildren() {
@@ -71,9 +122,9 @@ class ParentService {
       const response = await fetch(`${this.baseUrl}/api/parents/me/children`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       });
 
       if (!response.ok) {
@@ -93,7 +144,7 @@ class ParentService {
           subjects: ['Mathematics', 'Science', 'English', 'Computer Science'],
           avgGrade: 85,
           attendance: 92,
-          achievements: []
+          achievements: [],
         }));
         return { success: true, data: children };
       }
@@ -122,7 +173,7 @@ class ParentService {
             address: '123 Main Street, City',
             emergencyContact: '+1234567890',
             hobbies: ['Reading', 'Basketball', 'Music'],
-            achievements: ['Honor Roll Student', 'Science Fair Winner 2024']
+            achievements: ['Honor Roll Student', 'Science Fair Winner 2024'],
           },
           {
             id: 2,
@@ -141,9 +192,9 @@ class ParentService {
             address: '123 Main Street, City',
             emergencyContact: '+1234567890',
             hobbies: ['Soccer', 'Drawing', 'Video Games'],
-            achievements: ['Math Competition Finalist', 'Art Exhibition Participant']
-          }
-        ]
+            achievements: ['Math Competition Finalist', 'Art Exhibition Participant'],
+          },
+        ],
       };
     }
   }
@@ -156,9 +207,9 @@ class ParentService {
       const response = await fetch(`${this.baseUrl}/api/parents/dashboard-summary`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       });
 
       if (response.ok) {
@@ -170,7 +221,7 @@ class ParentService {
       const [childrenResponse, gradesResponse, attendanceResponse] = await Promise.all([
         this.getChildren(),
         this.getChildrenGrades(),
-        this.getChildrenAttendance()
+        this.getChildrenAttendance(),
       ]);
 
       const children = childrenResponse.data || [];
@@ -196,9 +247,17 @@ class ParentService {
           totalCourses: Math.max(totalCourses, 8),
           recentGrades: Math.max(recentGrades, 5),
           pendingMeetings,
-          avgAttendance: Math.max(children.reduce((sum, child) => sum + (child.attendance || 0), 0) / Math.max(totalChildren, 1), 94.5),
-          avgGrade: Math.max(children.reduce((sum, child) => sum + (child.avgGrade || 0), 0) / Math.max(totalChildren, 1), 87.3)
-        }
+          avgAttendance: Math.max(
+            children.reduce((sum, child) => sum + (child.attendance || 0), 0) /
+              Math.max(totalChildren, 1),
+            94.5
+          ),
+          avgGrade: Math.max(
+            children.reduce((sum, child) => sum + (child.avgGrade || 0), 0) /
+              Math.max(totalChildren, 1),
+            87.3
+          ),
+        },
       };
     } catch (error) {
       console.error('Error fetching dashboard summary:', error);
@@ -212,11 +271,11 @@ class ParentService {
           recentGrades: 5,
           pendingMeetings: 3,
           avgAttendance: 94.5,
-          avgGrade: 87.3
-        }
+          avgGrade: 87.3,
+        },
       };
     }
-  }  /**
+  } /**
    * Get grades for all children
    */
   async getChildrenGrades() {
@@ -225,9 +284,9 @@ class ParentService {
       const response = await fetch(`${this.baseUrl}/api/parents/grades`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       });
 
       if (!response.ok) {
@@ -251,7 +310,7 @@ class ParentService {
             date: new Date().toISOString(),
             teacher: 'Mrs. Smith',
             assignment: 'Algebra Test',
-            feedback: 'Excellent work! Shows strong understanding of algebraic concepts.'
+            feedback: 'Excellent work! Shows strong understanding of algebraic concepts.',
           },
           {
             id: 2,
@@ -262,7 +321,7 @@ class ParentService {
             date: new Date(Date.now() - 86400000).toISOString(),
             teacher: 'Mr. Johnson',
             assignment: 'Physics Lab Report',
-            feedback: 'Good understanding of concepts, detailed observations.'
+            feedback: 'Good understanding of concepts, detailed observations.',
           },
           {
             id: 3,
@@ -273,7 +332,7 @@ class ParentService {
             date: new Date(Date.now() - 172800000).toISOString(),
             teacher: 'Ms. Davis',
             assignment: 'Essay on Shakespeare',
-            feedback: 'Creative analysis, well-structured arguments.'
+            feedback: 'Creative analysis, well-structured arguments.',
           },
           {
             id: 4,
@@ -284,7 +343,7 @@ class ParentService {
             date: new Date(Date.now() - 259200000).toISOString(),
             teacher: 'Mrs. Smith',
             assignment: 'Geometry Quiz',
-            feedback: 'Good progress, practice more with complex problems.'
+            feedback: 'Good progress, practice more with complex problems.',
           },
           {
             id: 5,
@@ -295,9 +354,9 @@ class ParentService {
             date: new Date(Date.now() - 345600000).toISOString(),
             teacher: 'Mr. Brown',
             assignment: 'World War II Project',
-            feedback: 'Outstanding research and presentation skills.'
-          }
-        ]
+            feedback: 'Outstanding research and presentation skills.',
+          },
+        ],
       };
     }
   }
@@ -310,9 +369,9 @@ class ParentService {
       const response = await fetch(`${this.baseUrl}/api/parents/attendance`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       });
 
       if (!response.ok) {
@@ -326,22 +385,23 @@ class ParentService {
       // Return comprehensive demo data if API fails
       const today = new Date();
       const attendanceData = [];
-      
+
       // Generate attendance data for last 30 days for both children
       const children = ['Emma Johnson', 'Alex Johnson'];
-      
+
       for (let i = 0; i < 30; i++) {
         const date = new Date(today);
         date.setDate(date.getDate() - i);
-        
+
         // Skip weekends
         if (date.getDay() === 0 || date.getDay() === 6) continue;
-        
+
         children.forEach((child, childIndex) => {
-          const subjects = childIndex === 0 
-            ? ['Mathematics', 'Science', 'English Literature', 'History', 'Geography']
-            : ['Mathematics', 'Science', 'English', 'History', 'Art'];
-            
+          const subjects =
+            childIndex === 0
+              ? ['Mathematics', 'Science', 'English Literature', 'History', 'Geography']
+              : ['Mathematics', 'Science', 'English', 'History', 'Art'];
+
           subjects.forEach((subject, periodIndex) => {
             const isPresent = Math.random() > 0.05; // 95% attendance rate
             attendanceData.push({
@@ -351,15 +411,17 @@ class ParentService {
               status: isPresent ? 'present' : 'absent',
               subject: subject,
               period: periodIndex + 1,
-              reason: !isPresent ? ['Sick', 'Doctor Appointment', 'Family Emergency'][Math.floor(Math.random() * 3)] : null
+              reason: !isPresent
+                ? ['Sick', 'Doctor Appointment', 'Family Emergency'][Math.floor(Math.random() * 3)]
+                : null,
             });
           });
         });
       }
-      
+
       return {
         success: true,
-        data: attendanceData
+        data: attendanceData,
       };
     }
   }
@@ -372,9 +434,9 @@ class ParentService {
       const response = await fetch(`${this.baseUrl}/api/parents/assignments`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       });
 
       if (!response.ok) {
@@ -401,7 +463,7 @@ class ParentService {
             submissionStatus: 'not_submitted',
             priority: 'high',
             estimatedTime: '2 hours',
-            attachments: ['worksheet.pdf']
+            attachments: ['worksheet.pdf'],
           },
           {
             id: 2,
@@ -411,11 +473,12 @@ class ParentService {
             status: 'in_progress',
             studentName: 'Emma Johnson',
             teacher: 'Mr. Johnson',
-            description: 'Write a detailed report on the photosynthesis experiment conducted in class.',
+            description:
+              'Write a detailed report on the photosynthesis experiment conducted in class.',
             submissionStatus: 'draft_saved',
             priority: 'medium',
             estimatedTime: '3 hours',
-            progress: 60
+            progress: 60,
           },
           {
             id: 3,
@@ -428,7 +491,7 @@ class ParentService {
             description: 'Write a 1000-word essay analyzing the themes in Romeo and Juliet.',
             submissionStatus: 'not_started',
             priority: 'medium',
-            estimatedTime: '4 hours'
+            estimatedTime: '4 hours',
           },
           {
             id: 4,
@@ -441,7 +504,7 @@ class ParentService {
             description: 'Complete problems 1-30 from the fraction workbook.',
             submissionStatus: 'not_submitted',
             priority: 'high',
-            estimatedTime: '1.5 hours'
+            estimatedTime: '1.5 hours',
           },
           {
             id: 5,
@@ -451,10 +514,11 @@ class ParentService {
             status: 'assigned',
             studentName: 'Alex Johnson',
             teacher: 'Mr. Johnson',
-            description: 'Create a model or poster of the solar system with key facts about each planet.',
+            description:
+              'Create a model or poster of the solar system with key facts about each planet.',
             submissionStatus: 'not_started',
             priority: 'low',
-            estimatedTime: '5 hours'
+            estimatedTime: '5 hours',
           },
           {
             id: 6,
@@ -464,13 +528,13 @@ class ParentService {
             status: 'completed',
             studentName: 'Alex Johnson',
             teacher: 'Ms. Wilson',
-            description: 'Write a book report on Harry Potter and the Philosopher\'s Stone.',
+            description: "Write a book report on Harry Potter and the Philosopher's Stone.",
             submissionStatus: 'submitted',
             priority: 'medium',
             grade: 'A-',
-            submittedDate: new Date(Date.now() - 86400000).toISOString()
-          }
-        ]
+            submittedDate: new Date(Date.now() - 86400000).toISOString(),
+          },
+        ],
       };
     }
   }
@@ -483,9 +547,9 @@ class ParentService {
       const response = await fetch(`${this.baseUrl}/api/parents/feedback`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       });
 
       if (!response.ok) {
@@ -505,68 +569,74 @@ class ParentService {
             teacherName: 'Mrs. Smith',
             subject: 'Mathematics',
             studentName: 'Emma Johnson',
-            feedback: 'Emma is showing excellent progress in algebra and geometry. She actively participates in class discussions and helps other students understand complex concepts. Her problem-solving skills have improved significantly this semester.',
+            feedback:
+              'Emma is showing excellent progress in algebra and geometry. She actively participates in class discussions and helps other students understand complex concepts. Her problem-solving skills have improved significantly this semester.',
             date: new Date().toISOString(),
             type: 'positive',
             category: 'academic_performance',
-            rating: 5
+            rating: 5,
           },
           {
             id: 2,
             teacherName: 'Mr. Johnson',
             subject: 'Science',
             studentName: 'Emma Johnson',
-            feedback: 'Emma demonstrates strong analytical skills in laboratory work. Her recent experiment on plant growth was well-documented and showed scientific thinking. She would benefit from more practice with theoretical concepts.',
+            feedback:
+              'Emma demonstrates strong analytical skills in laboratory work. Her recent experiment on plant growth was well-documented and showed scientific thinking. She would benefit from more practice with theoretical concepts.',
             date: new Date(Date.now() - 86400000 * 3).toISOString(),
             type: 'constructive',
             category: 'lab_work',
-            rating: 4
+            rating: 4,
           },
           {
             id: 3,
             teacherName: 'Ms. Davis',
             subject: 'English Literature',
             studentName: 'Emma Johnson',
-            feedback: 'Emma has excellent reading comprehension and creative writing abilities. Her essay on modern literature showed deep understanding and original thinking. She should continue to build confidence in class presentations.',
+            feedback:
+              'Emma has excellent reading comprehension and creative writing abilities. Her essay on modern literature showed deep understanding and original thinking. She should continue to build confidence in class presentations.',
             date: new Date(Date.now() - 86400000 * 5).toISOString(),
             type: 'positive',
             category: 'creative_writing',
-            rating: 5
+            rating: 5,
           },
           {
             id: 4,
             teacherName: 'Mrs. Smith',
             subject: 'Mathematics',
             studentName: 'Alex Johnson',
-            feedback: 'Alex has made good progress with fractions and basic algebra. He is attentive during lessons but sometimes needs additional practice to fully grasp new concepts. Recommend extra practice at home.',
+            feedback:
+              'Alex has made good progress with fractions and basic algebra. He is attentive during lessons but sometimes needs additional practice to fully grasp new concepts. Recommend extra practice at home.',
             date: new Date(Date.now() - 86400000 * 2).toISOString(),
             type: 'constructive',
             category: 'academic_performance',
-            rating: 3
+            rating: 3,
           },
           {
             id: 5,
             teacherName: 'Mr. Brown',
             subject: 'History',
             studentName: 'Alex Johnson',
-            feedback: 'Alex shows genuine interest in historical events and asks thoughtful questions. His project on ancient civilizations was well-researched and creatively presented. Great enthusiasm for learning!',
+            feedback:
+              'Alex shows genuine interest in historical events and asks thoughtful questions. His project on ancient civilizations was well-researched and creatively presented. Great enthusiasm for learning!',
             date: new Date(Date.now() - 86400000 * 7).toISOString(),
             type: 'positive',
             category: 'project_work',
-            rating: 5
+            rating: 5,
           },
           {
             id: 6,
             teacherName: 'Ms. Wilson',
             subject: 'Art',
             studentName: 'Alex Johnson',
-            feedback: 'Alex has natural artistic talent and shows creativity in his work. His use of colors and composition in the recent landscape project was impressive. Encourage him to explore different mediums.',
+            feedback:
+              'Alex has natural artistic talent and shows creativity in his work. His use of colors and composition in the recent landscape project was impressive. Encourage him to explore different mediums.',
             date: new Date(Date.now() - 86400000 * 10).toISOString(),
             type: 'positive',
             category: 'creative_skills',
-            rating: 4
-          }
-        ]
+            rating: 4,
+          },
+        ],
       };
     }
   }
@@ -579,9 +649,9 @@ class ParentService {
       const response = await fetch(`${this.baseUrl}/api/parents/events`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       });
 
       if (!response.ok) {
@@ -601,26 +671,27 @@ class ParentService {
             title: 'Parent-Teacher Conference - Emma',
             date: new Date(Date.now() + 86400000 * 3).toISOString(),
             time: '10:00 AM - 10:30 AM',
-            description: 'Quarterly progress discussion with Emma\'s teachers',
+            description: "Quarterly progress discussion with Emma's teachers",
             type: 'meeting',
             location: 'Conference Room A',
             teacher: 'Mrs. Smith',
             subject: 'All Subjects',
             studentName: 'Emma Johnson',
             status: 'confirmed',
-            priority: 'high'
+            priority: 'high',
           },
           {
             id: 2,
             title: 'Science Fair Exhibition',
             date: new Date(Date.now() + 86400000 * 7).toISOString(),
             time: '2:00 PM - 5:00 PM',
-            description: 'Annual science exhibition - Emma is presenting her project on renewable energy',
+            description:
+              'Annual science exhibition - Emma is presenting her project on renewable energy',
             type: 'school_event',
             location: 'School Auditorium',
             studentName: 'Emma Johnson',
             status: 'upcoming',
-            priority: 'medium'
+            priority: 'medium',
           },
           {
             id: 3,
@@ -632,7 +703,7 @@ class ParentService {
             location: 'Main Hall',
             studentName: 'Emma Johnson',
             status: 'registered',
-            priority: 'medium'
+            priority: 'medium',
           },
           {
             id: 4,
@@ -646,19 +717,19 @@ class ParentService {
             subject: 'All Subjects',
             studentName: 'Alex Johnson',
             status: 'pending_confirmation',
-            priority: 'high'
+            priority: 'high',
           },
           {
             id: 5,
             title: 'Art Exhibition Opening',
             date: new Date(Date.now() + 86400000 * 12).toISOString(),
             time: '6:00 PM - 8:00 PM',
-            description: 'Student art exhibition featuring Alex\'s landscape paintings',
+            description: "Student art exhibition featuring Alex's landscape paintings",
             type: 'school_event',
             location: 'Art Gallery',
             studentName: 'Alex Johnson',
             status: 'upcoming',
-            priority: 'low'
+            priority: 'low',
           },
           {
             id: 6,
@@ -670,7 +741,7 @@ class ParentService {
             location: 'School Grounds',
             studentName: 'Both Children',
             status: 'upcoming',
-            priority: 'medium'
+            priority: 'medium',
           },
           {
             id: 7,
@@ -681,9 +752,9 @@ class ParentService {
             type: 'meeting',
             location: 'School Library',
             status: 'upcoming',
-            priority: 'low'
-          }
-        ]
+            priority: 'low',
+          },
+        ],
       };
     }
   }
@@ -696,10 +767,10 @@ class ParentService {
       const response = await fetch(`${this.baseUrl}/api/parents/meetings`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(meetingData)
+        body: JSON.stringify(meetingData),
       });
 
       if (!response.ok) {
@@ -712,7 +783,7 @@ class ParentService {
       console.error('Error scheduling meeting:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -726,10 +797,10 @@ class ParentService {
       const response = await fetch(`${this.baseUrl}/api/parents/messages`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(messageData)
+        body: JSON.stringify(messageData),
       });
 
       if (!response.ok) {
@@ -742,14 +813,10 @@ class ParentService {
       console.error('Error sending message:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
 }
 
 export default new ParentService();
-
-
-
-

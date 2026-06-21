@@ -23,14 +23,14 @@ import {
   Select,
   Snackbar,
   TextField,
-  Typography
+  Typography,
 } from '@mui/material';
 // Mock AI service - would be replaced with actual Gemini API integration
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   container: {
-    minHeight: '100vh',
-    background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+    minHeight: '100%',
+    background: 'transparent',
     paddingTop: theme.spacing(3),
     paddingBottom: theme.spacing(3),
   },
@@ -44,8 +44,8 @@ const useStyles = makeStyles((theme) => ({
     transition: 'all 0.3s ease',
     '&:hover': {
       transform: 'translateY(-2px)',
-      boxShadow: '0 35px 65px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.15)'
-    }
+      boxShadow: '0 35px 65px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.15)',
+    },
   },
   title: {
     background: 'linear-gradient(135deg, #3a86ff 0%, #8338ec 100%)',
@@ -77,16 +77,16 @@ const useStyles = makeStyles((theme) => ({
       '&:hover': {
         background: 'rgba(255, 255, 255, 1)',
         '& .MuiOutlinedInput-notchedOutline': {
-          borderColor: '#3a86ff'
-        }
+          borderColor: '#3a86ff',
+        },
       },
       '&.Mui-focused': {
         background: 'rgba(255, 255, 255, 1)',
         '& .MuiOutlinedInput-notchedOutline': {
           borderColor: '#3a86ff',
-          borderWidth: 2
-        }
-      }
+          borderWidth: 2,
+        },
+      },
     },
     '& .MuiInputLabel-root': {
       fontWeight: 500,
@@ -105,13 +105,13 @@ const useStyles = makeStyles((theme) => ({
     '&:hover': {
       background: 'linear-gradient(135deg, #2e75e6 0%, #7029d3 100%)',
       boxShadow: '0 15px 35px rgba(58, 134, 255, 0.4)',
-      transform: 'translateY(-2px)'
+      transform: 'translateY(-2px)',
     },
     '&:disabled': {
       background: 'linear-gradient(135deg, #bbb 0%, #999 100%)',
       boxShadow: 'none',
-      transform: 'none'
-    }
+      transform: 'none',
+    },
   },
   topicChips: {
     display: 'flex',
@@ -120,11 +120,13 @@ const useStyles = makeStyles((theme) => ({
     gap: theme.spacing(1),
     '& .MuiChip-root': {
       borderRadius: 20,
-      background: 'linear-gradient(135deg, rgba(58, 134, 255, 0.1) 0%, rgba(131, 56, 236, 0.1) 100%)',
+      background:
+        'linear-gradient(135deg, rgba(58, 134, 255, 0.1) 0%, rgba(131, 56, 236, 0.1) 100%)',
       border: '1px solid rgba(58, 134, 255, 0.2)',
       transition: 'all 0.3s ease',
       '&:hover': {
-        background: 'linear-gradient(135deg, rgba(58, 134, 255, 0.2) 0%, rgba(131, 56, 236, 0.2) 100%)',
+        background:
+          'linear-gradient(135deg, rgba(58, 134, 255, 0.2) 0%, rgba(131, 56, 236, 0.2) 100%)',
         transform: 'translateY(-1px)',
         boxShadow: '0 4px 12px rgba(58, 134, 255, 0.2)',
       },
@@ -251,9 +253,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 // Helper function to safely render math expressions
-const renderMathExpression = (text) => {
+const renderMathExpression = text => {
   if (!text) return '';
-    // Regular expression to match LaTeX expressions wrapped in \( ... \) or $ ... $ or [ ... \]
+  // Regular expression to match LaTeX expressions wrapped in \( ... \) or $ ... $ or [ ... \]
   const mathRegex = /(\\\(|\$|\\\[)(.*?)(\\\)|\$|\\\])/g;
 
   // Check if the text contains math expressions
@@ -274,16 +276,14 @@ const renderMathExpression = (text) => {
 
     // Add the text before the math expression
     if (match.index > lastIndex) {
-      parts.push(
-        <span key={`text-${lastIndex}`}>
-          {text.substring(lastIndex, match.index)}
-        </span>
-      );
+      parts.push(<span key={`text-${lastIndex}`}>{text.substring(lastIndex, match.index)}</span>);
     }
 
     // Add the math expression
     try {
-      const isBlock = openDelim === '\[' || (openDelim === '$' && closeDelim === '$' && mathExpression.includes('\\'));
+      const isBlock =
+        openDelim === '\[' ||
+        (openDelim === '$' && closeDelim === '$' && mathExpression.includes('\\'));
       parts.push(
         isBlock ? (
           <BlockMath key={`math-${match.index}`} math={mathExpression} />
@@ -330,8 +330,8 @@ function QuizCreation() {
     }
   };
 
-  const handleDeleteTopic = (topicToDelete) => {
-    setTopics(topics.filter((topic) => topic !== topicToDelete));
+  const handleDeleteTopic = topicToDelete => {
+    setTopics(topics.filter(topic => topic !== topicToDelete));
   };
 
   const handleGenerateQuiz = async () => {
@@ -360,12 +360,14 @@ function QuizCreation() {
         topics: topics,
         numQuestions: questionCount,
         questionType: quizType,
-        difficulty: difficultyLevel
+        difficulty: difficultyLevel,
       });
 
       setGeneratedQuiz(generatedQuizData);
       setSuccess(true);
-      announceToScreenReader(`Quiz generated successfully with ${generatedQuizData.questions.length} questions`);
+      announceToScreenReader(
+        `Quiz generated successfully with ${generatedQuizData.questions.length} questions`
+      );
     } catch (error) {
       console.error('Error generating quiz:', error);
       setError('Failed to generate quiz. Please try again.');
@@ -472,9 +474,14 @@ function QuizCreation() {
     <Container className={classes.container}>
       <Paper className={classes.paper}>
         <Typography variant="h4" className={classes.title}>
-          Create AI-Generated Quiz ✨
+          Create AI-Generated Quiz
         </Typography>
-        <Typography variant="body1" color="textSecondary" paragraph style={{ textAlign: 'center', marginBottom: '2rem' }}>
+        <Typography
+          variant="body1"
+          color="textSecondary"
+          paragraph
+          style={{ textAlign: 'center', marginBottom: '2rem' }}
+        >
           Leverage AI to automatically generate quizzes based on topics and preferences
         </Typography>
 
@@ -484,34 +491,34 @@ function QuizCreation() {
             Quiz Details
           </Typography>
           <Grid container spacing={3}>
-            <Grid size={{xs:12}}>
+            <Grid size={{ xs: 12 }}>
               <TextField
                 label="Quiz Title"
                 variant="outlined"
                 fullWidth
                 value={quizTitle}
-                onChange={(e) => setQuizTitle(e.target.value)}
+                onChange={e => setQuizTitle(e.target.value)}
                 required
                 className={classes.formControl}
                 {...generateAriaProps('textbox', 'Enter quiz title', {
                   'aria-labelledby': 'quiz-title-label',
                   'aria-describedby': 'quiz-title-help',
                   'aria-required': true,
-                  'aria-invalid': error && quizTitle.trim() === ''
+                  'aria-invalid': error && quizTitle.trim() === '',
                 })}
                 error={error && quizTitle.trim() === ''}
                 helperText={error && quizTitle.trim() === '' ? 'Quiz title is required' : ''}
               />
             </Grid>
 
-            <Grid size={{xs:12}}>
+            <Grid size={{ xs: 12 }}>
               <TextField
                 label="Add Topics"
                 variant="outlined"
                 fullWidth
                 value={topicInput}
-                onChange={(e) => setTopicInput(e.target.value)}
-                onKeyPress={(e) => {
+                onChange={e => setTopicInput(e.target.value)}
+                onKeyPress={e => {
                   if (e.key === 'Enter') {
                     e.preventDefault();
                     handleAddTopic();
@@ -521,7 +528,7 @@ function QuizCreation() {
                 className={classes.formControl}
                 {...generateAriaProps('textbox', 'Enter topic and press Enter to add', {
                   'aria-labelledby': 'topics-label',
-                  'aria-describedby': 'topics-help topics-chips'
+                  'aria-describedby': 'topics-help topics-chips',
                 })}
               />
               {topics.length > 0 && (
@@ -540,7 +547,7 @@ function QuizCreation() {
                       variant="outlined"
                       aria-label={`Topic: ${topic}. Press Delete to remove`}
                       tabIndex={0}
-                      onKeyDown={(e) => {
+                      onKeyDown={e => {
                         if (e.key === 'Delete' || e.key === 'Backspace') {
                           handleDeleteTopic(topic);
                         }
@@ -559,19 +566,19 @@ function QuizCreation() {
             Quiz Configuration
           </Typography>
           <Grid container spacing={3}>
-            <Grid size={{xs:12,sm:6}}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <FormControl variant="outlined" className={classes.formControl}>
                 <InputLabel
                   id="quiz-type-label"
                   {...generateAriaProps('label', 'Quiz Type selection', {
-                    'aria-required': true
+                    'aria-required': true,
                   })}
                 >
                   Quiz Type
                 </InputLabel>
                 <Select
                   value={quizType}
-                  onChange={(e) => setQuizType(e.target.value)}
+                  onChange={e => setQuizType(e.target.value)}
                   label="Quiz Type"
                   labelId="quiz-type-label"
                   aria-describedby="quiz-type-help"
@@ -586,19 +593,19 @@ function QuizCreation() {
               </FormControl>
             </Grid>
 
-            <Grid size={{xs:12,sm:6}}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <FormControl variant="outlined" className={classes.formControl}>
                 <InputLabel
                   id="difficulty-level-label"
                   {...generateAriaProps('label', 'Difficulty Level selection', {
-                    'aria-required': true
+                    'aria-required': true,
                   })}
                 >
                   Difficulty Level
                 </InputLabel>
                 <Select
                   value={difficultyLevel}
-                  onChange={(e) => setDifficultyLevel(e.target.value)}
+                  onChange={e => setDifficultyLevel(e.target.value)}
                   label="Difficulty Level"
                   labelId="difficulty-level-label"
                   aria-describedby="difficulty-help"
@@ -611,25 +618,25 @@ function QuizCreation() {
               </FormControl>
             </Grid>
 
-            <Grid size={{xs:12,sm:6}}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <FormControl variant="outlined" className={classes.formControl}>
                 <InputLabel
                   id="question-count-label"
                   {...generateAriaProps('label', 'Number of Questions selection', {
-                    'aria-required': true
+                    'aria-required': true,
                   })}
                 >
                   Number of Questions
                 </InputLabel>
                 <Select
                   value={questionCount}
-                  onChange={(e) => setQuestionCount(e.target.value)}
+                  onChange={e => setQuestionCount(e.target.value)}
                   label="Number of Questions"
                   labelId="question-count-label"
                   aria-describedby="question-count-help"
                   required
                 >
-                  {[5, 10, 15, 20, 25, 30].map((num) => (
+                  {[5, 10, 15, 20, 25, 30].map(num => (
                     <MenuItem key={num} value={num}>
                       {num}
                     </MenuItem>
@@ -638,31 +645,33 @@ function QuizCreation() {
               </FormControl>
             </Grid>
 
-            <Grid size={{xs:12,sm:6}}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <FormControl variant="outlined" className={classes.formControl}>
                 <InputLabel
                   id="time-limit-label"
                   {...generateAriaProps('label', 'Time Limit selection', {
-                    'aria-required': true
+                    'aria-required': true,
                   })}
                 >
                   Time Limit (minutes)
                 </InputLabel>
                 <Select
                   value={timeLimit}
-                  onChange={(e) => setTimeLimit(e.target.value)}
+                  onChange={e => setTimeLimit(e.target.value)}
                   label="Time Limit (minutes)"
                   labelId="time-limit-label"
                   aria-describedby="time-limit-help"
                   required
                 >
-                  {[15, 30, 45, 60, 90, 120].map((num) => (
+                  {[15, 30, 45, 60, 90, 120].map(num => (
                     <MenuItem key={num} value={num}>
                       {num}
                     </MenuItem>
                   ))}
                 </Select>
-                <FormHelperText id="time-limit-help">Time allowed for quiz completion</FormHelperText>
+                <FormHelperText id="time-limit-help">
+                  Time allowed for quiz completion
+                </FormHelperText>
               </FormControl>
             </Grid>
           </Grid>
@@ -671,7 +680,7 @@ function QuizCreation() {
         {/* Generate Quiz Button Section */}
         <div className={classes.formSection}>
           <Grid container spacing={3}>
-            <Grid size={{xs:12}}>
+            <Grid size={{ xs: 12 }}>
               <Button
                 variant="contained"
                 color="primary"
@@ -679,11 +688,15 @@ function QuizCreation() {
                 onClick={handleGenerateQuiz}
                 disabled={loading}
                 className={`${classes.submitButton} ${classes.aiButton}`}
-                {...generateAriaProps('button', loading ? 'Generating quiz, please wait' : 'Generate quiz with AI', {
-                  'aria-labelledby': 'generate-quiz-label',
-                  'aria-describedby': 'generate-quiz-status',
-                  'aria-disabled': loading
-                })}
+                {...generateAriaProps(
+                  'button',
+                  loading ? 'Generating quiz, please wait' : 'Generate quiz with AI',
+                  {
+                    'aria-labelledby': 'generate-quiz-label',
+                    'aria-describedby': 'generate-quiz-status',
+                    'aria-disabled': loading,
+                  }
+                )}
                 aria-label={loading ? 'Generating quiz, please wait' : 'Generate quiz with AI'}
               >
                 {loading ? (
@@ -692,10 +705,15 @@ function QuizCreation() {
                     <Typography className={classes.loadingText}>Generating AI Quiz...</Typography>
                   </div>
                 ) : (
-                  'GENERATE QUIZ WITH AI ✨'
+                  'Generate quiz with AI'
                 )}
               </Button>
-              <div id="generate-quiz-status" className={classes.srOnly} role="status" aria-live="polite">
+              <div
+                id="generate-quiz-status"
+                className={classes.srOnly}
+                role="status"
+                aria-live="polite"
+              >
                 {loading ? 'Quiz generation in progress' : ''}
               </div>
             </Grid>
@@ -725,7 +743,8 @@ function QuizCreation() {
                 style={{ textAlign: 'center' }}
                 aria-label={`Quiz contains ${generatedQuiz.questions.length} questions, ${difficultyLevel} difficulty level, ${timeLimit} minutes time limit`}
               >
-                {generatedQuiz.questions.length} questions · {difficultyLevel} difficulty · {timeLimit} minutes
+                {generatedQuiz.questions.length} questions · {difficultyLevel} difficulty ·{' '}
+                {timeLimit} minutes
               </Typography>
             </Box>
 
@@ -744,11 +763,7 @@ function QuizCreation() {
               ))}
             </div>
 
-            <div
-              className={classes.buttonGroup}
-              role="group"
-              aria-label="Quiz actions"
-            >
+            <div className={classes.buttonGroup} role="group" aria-label="Quiz actions">
               <Button
                 variant="contained"
                 color="primary"
@@ -756,7 +771,7 @@ function QuizCreation() {
                 startIcon={<CheckIcon />}
                 className={classes.actionButton}
                 {...generateAriaProps('button', 'Save generated quiz to database', {
-                  'aria-describedby': 'save-quiz-help'
+                  'aria-describedby': 'save-quiz-help',
                 })}
                 aria-label="Save generated quiz to database"
               >
@@ -774,21 +789,13 @@ function QuizCreation() {
         )}
 
         {/* Notifications */}
-        <Snackbar
-          open={!!error}
-          autoHideDuration={6000}
-          onClose={() => setError('')}
-        >
+        <Snackbar open={!!error} autoHideDuration={6000} onClose={() => setError('')}>
           <Alert onClose={() => setError('')} severity="error">
             {error}
           </Alert>
         </Snackbar>
 
-        <Snackbar
-          open={success}
-          autoHideDuration={6000}
-          onClose={() => setSuccess(false)}
-        >
+        <Snackbar open={success} autoHideDuration={6000} onClose={() => setSuccess(false)}>
           <Alert onClose={() => setSuccess(false)} severity="success">
             {generatedQuiz ? 'Quiz generated successfully!' : 'Quiz saved successfully!'}
           </Alert>
@@ -799,4 +806,3 @@ function QuizCreation() {
 }
 
 export default QuizCreation;
-

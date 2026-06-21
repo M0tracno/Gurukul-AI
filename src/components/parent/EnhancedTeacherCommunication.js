@@ -4,7 +4,33 @@ import makeStyles from '../../utils/makeStylesCompat';
 import { useAuth } from '../../contexts/AuthContext';
 import { useDatabase } from '../../contexts/DatabaseContext';
 import messagingService from '../../services/messagingService';
-import { Alert, Avatar, Badge, Box, Card, CardContent, Chip, CircularProgress, Container, Dialog, DialogContent, DialogTitle, FormControl, Grid, IconButton, InputLabel, ListItem, ListItemAvatar, ListItemTextItem, Paper, Select, Snackbar, TextField, Tooltip, Typography } from '@mui/material';
+import {
+  Alert,
+  Avatar,
+  Badge,
+  Box,
+  Card,
+  CardContent,
+  Chip,
+  CircularProgress,
+  Container,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  Grid,
+  IconButton,
+  InputLabel,
+  ListItem,
+  ListItemAvatar,
+  ListItemTextItem,
+  Paper,
+  Select,
+  Snackbar,
+  TextField,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import {
   Send as SendIcon,
   AttachFile as AttachFileIcon,
@@ -17,39 +43,39 @@ import {
   Close as CloseIcon,
   ExpandMore as ExpandMoreIcon,
   Refresh,
-  Message as MessageIcon
+  Message as MessageIcon,
 } from '@mui/icons-material';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(3),
     backgroundColor: theme.palette.background.default,
-    minHeight: '100vh'
+    minHeight: '100vh',
   },
   title: {
     marginBottom: theme.spacing(3),
     fontWeight: 600,
     background: 'linear-gradient(45deg, #3f51b5 30%, #2196f3 90%)',
     WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent'
+    WebkitTextFillColor: 'transparent',
   },
   mainContainer: {
     display: 'flex',
     gap: theme.spacing(2),
-    minHeight: '70vh'
+    minHeight: '70vh',
   },
   sidebar: {
     flex: '0 0 320px',
     display: 'flex',
     flexDirection: 'column',
-    gap: theme.spacing(2)
+    gap: theme.spacing(2),
   },
   sidebarCard: {
-    padding: theme.spacing(2)
+    padding: theme.spacing(2),
   },
   contactsList: {
     maxHeight: 400,
-    overflow: 'auto'
+    overflow: 'auto',
   },
   contactItem: {
     cursor: 'pointer',
@@ -58,26 +84,26 @@ const useStyles = makeStyles((theme) => ({
     transition: 'all 0.2s ease',
     '&:hover': {
       backgroundColor: theme.palette.action.hover,
-      transform: 'translateX(4px)'
-    }
+      transform: 'translateX(4px)',
+    },
   },
   activeContact: {
     backgroundColor: theme.palette.primary.light,
     color: theme.palette.primary.contrastText,
     '&:hover': {
-      backgroundColor: theme.palette.primary.main
-    }
+      backgroundColor: theme.palette.primary.main,
+    },
   },
   conversationArea: {
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
-    gap: theme.spacing(2)
+    gap: theme.spacing(2),
   },
   messageContainer: {
     display: 'flex',
     flexDirection: 'column',
-    height: '500px'
+    height: '500px',
   },
   messageHeader: {
     padding: theme.spacing(2),
@@ -85,13 +111,13 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.paper,
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   messagesList: {
     flex: 1,
     overflow: 'auto',
     padding: theme.spacing(1),
-    backgroundColor: theme.palette.grey[50]
+    backgroundColor: theme.palette.grey[50],
   },
   messageItem: {
     padding: theme.spacing(1.5),
@@ -99,42 +125,42 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: theme.spacing(1),
     maxWidth: '75%',
     boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-    animation: '$fadeInUp 0.3s ease'
+    animation: '$fadeInUp 0.3s ease',
   },
   sentMessage: {
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.contrastText,
     marginLeft: 'auto',
-    marginRight: 0
+    marginRight: 0,
   },
   receivedMessage: {
     backgroundColor: theme.palette.background.paper,
     marginRight: 'auto',
     marginLeft: 0,
-    border: `1px solid ${theme.palette.divider}`
+    border: `1px solid ${theme.palette.divider}`,
   },
   messageInputArea: {
     padding: theme.spacing(2),
     borderTop: `1px solid ${theme.palette.divider}`,
-    backgroundColor: theme.palette.background.paper
+    backgroundColor: theme.palette.background.paper,
   },
   messageInputContainer: {
     display: 'flex',
     gap: theme.spacing(1),
     alignItems: 'flex-end',
-    marginTop: theme.spacing(1)
+    marginTop: theme.spacing(1),
   },
   messageInput: {
-    flex: 1
+    flex: 1,
   },
   sendButton: {
     minWidth: 'auto',
     borderRadius: '50%',
     width: 48,
-    height: 48
+    height: 48,
   },
   templateDialog: {
-    minWidth: 500
+    minWidth: 500,
   },
   templateItem: {
     cursor: 'pointer',
@@ -145,74 +171,75 @@ const useStyles = makeStyles((theme) => ({
     transition: 'all 0.2s ease',
     '&:hover': {
       backgroundColor: theme.palette.action.hover,
-      borderColor: theme.palette.primary.main
-    }
+      borderColor: theme.palette.primary.main,
+    },
   },
   priorityChip: {
-    marginLeft: theme.spacing(1)
+    marginLeft: theme.spacing(1),
   },
   '@keyframes fadeInUp': {
     from: {
       opacity: 0,
-      transform: 'translateY(20px)'
+      transform: 'translateY(20px)',
     },
     to: {
       opacity: 1,
-      transform: 'translateY(0)'
-    }
+      transform: 'translateY(0)',
+    },
   },
   emptyState: {
     padding: theme.spacing(4),
     textAlign: 'center',
-    color: theme.palette.text.secondary
+    color: theme.palette.text.secondary,
   },
   loadingContainer: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: theme.spacing(4)
+    padding: theme.spacing(4),
   },
   analyticsCard: {
-    marginBottom: theme.spacing(2)
+    marginBottom: theme.spacing(2),
   },
   statItem: {
     textAlign: 'center',
-    padding: theme.spacing(1)
+    padding: theme.spacing(1),
   },
   messageTime: {
     fontSize: '0.75rem',
     opacity: 0.7,
-    marginTop: theme.spacing(0.5)
+    marginTop: theme.spacing(0.5),
   },
   typingIndicator: {
     fontStyle: 'italic',
     color: theme.palette.text.secondary,
     padding: theme.spacing(1),
-    opacity: 0.7
-  },  toolbar: {
+    opacity: 0.7,
+  },
+  toolbar: {
     display: 'flex',
     gap: theme.spacing(1),
     alignItems: 'center',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
   },
   attachmentPreview: {
     border: `1px solid ${theme.palette.divider}`,
     borderRadius: theme.spacing(1),
     padding: theme.spacing(2),
     backgroundColor: theme.palette.background.paper,
-    marginTop: theme.spacing(1)
+    marginTop: theme.spacing(1),
   },
   attachmentImage: {
     maxWidth: '200px',
     maxHeight: '200px',
     borderRadius: '4px',
-    objectFit: 'cover'
+    objectFit: 'cover',
   },
   attachmentIcon: {
-    color: theme.palette.text.secondary
+    color: theme.palette.text.secondary,
   },
   uploadProgress: {
-    marginTop: theme.spacing(1)
+    marginTop: theme.spacing(1),
   },
   messageAttachment: {
     backgroundColor: theme.palette.grey[100],
@@ -222,12 +249,12 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(1),
     display: 'flex',
     alignItems: 'center',
-    gap: theme.spacing(1)
+    gap: theme.spacing(1),
   },
   downloadButton: {
     padding: theme.spacing(0.5),
-    fontSize: '0.75rem'
-  }
+    fontSize: '0.75rem',
+  },
 }));
 
 function EnhancedTeacherCommunication() {
@@ -248,7 +275,7 @@ function EnhancedTeacherCommunication() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isConnected, setIsConnected] = useState(false);
-    // Enhanced features state
+  // Enhanced features state
   const [templates, setTemplates] = useState([]);
   const [templateDialogOpen, setTemplateDialogOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
@@ -280,13 +307,7 @@ function EnhancedTeacherCommunication() {
         }
 
         // Load data
-        await Promise.all([
-          loadContacts(),
-          loadStudents(),
-          loadTemplates(),
-          loadMessageStats()
-        ]);
-
+        await Promise.all([loadContacts(), loadStudents(), loadTemplates(), loadMessageStats()]);
       } catch (error) {
         console.error('Error initializing messaging:', error);
         setError('Failed to initialize messaging system');
@@ -323,7 +344,7 @@ function EnhancedTeacherCommunication() {
       // Mock data for now - would come from parent service
       setStudents([
         { id: 'student1', name: 'Emma Johnson', grade: 'Grade 10', class: '10A' },
-        { id: 'student2', name: 'Ethan Johnson', grade: 'Grade 8', class: '8B' }
+        { id: 'student2', name: 'Ethan Johnson', grade: 'Grade 8', class: '8B' },
       ]);
     } catch (error) {
       console.error('Error loading students:', error);
@@ -370,8 +391,8 @@ function EnhancedTeacherCommunication() {
         messagingService.joinConversation(conversationId);
 
         // Mark messages as read
-        const unreadMessages = result.data.filter(msg =>
-          !msg.isRead && msg.recipientId === currentUser?.uid
+        const unreadMessages = result.data.filter(
+          msg => !msg.isRead && msg.recipientId === currentUser?.uid
         );
 
         for (const message of unreadMessages) {
@@ -395,7 +416,7 @@ function EnhancedTeacherCommunication() {
   };
 
   // Handle contact selection
-  const handleContactSelect = (contact) => {
+  const handleContactSelect = contact => {
     setSelectedContact(contact);
     if (selectedStudent) {
       loadConversation(contact.id, selectedStudent);
@@ -403,14 +424,14 @@ function EnhancedTeacherCommunication() {
   };
 
   // Handle student selection
-  const handleStudentSelect = (studentId) => {
+  const handleStudentSelect = studentId => {
     setSelectedStudent(studentId);
     if (selectedContact) {
       loadConversation(selectedContact.id, studentId);
     }
   };
   // File attachment handlers
-  const handleFileSelect = (event) => {
+  const handleFileSelect = event => {
     const file = event.target.files[0];
     if (file) {
       const validation = messagingService.validateFile(file);
@@ -424,11 +445,11 @@ function EnhancedTeacherCommunication() {
       // Create preview for images
       if (file.type.startsWith('image/')) {
         const reader = new FileReader();
-        reader.onload = (e) => {
+        reader.onload = e => {
           setAttachmentPreview({
             type: 'image',
             url: e.target.result,
-            name: file.name
+            name: file.name,
           });
         };
         reader.readAsDataURL(file);
@@ -436,14 +457,14 @@ function EnhancedTeacherCommunication() {
         setAttachmentPreview({
           type: 'file',
           name: file.name,
-          size: file.size
+          size: file.size,
         });
       }
     }
   };
 
   const handleRemoveAttachment = () => {
-  const theme = useTheme();
+    const theme = useTheme();
     setSelectedFile(null);
     setAttachmentPreview(null);
     setUploadProgress(0);
@@ -461,7 +482,8 @@ function EnhancedTeacherCommunication() {
 
   // Send message (updated to handle file attachments)
   const handleSendMessage = async () => {
-    if ((!newMessage.trim() && !selectedFile) || !selectedContact || !selectedStudent || sending) return;
+    if ((!newMessage.trim() && !selectedFile) || !selectedContact || !selectedStudent || sending)
+      return;
 
     try {
       setSending(true);
@@ -475,15 +497,19 @@ function EnhancedTeacherCommunication() {
         subject: `Message about ${student?.name}`,
         content: newMessage.trim(),
         messageType,
-        priority
+        priority,
       };
 
       let result;
       if (selectedFile) {
         // Send message with attachment
-        result = await messagingService.sendMessageWithAttachment(messageData, selectedFile, (progress) => {
-          setUploadProgress(progress);
-        });
+        result = await messagingService.sendMessageWithAttachment(
+          messageData,
+          selectedFile,
+          progress => {
+            setUploadProgress(progress);
+          }
+        );
       } else {
         // Send regular message
         result = await messagingService.sendMessage(messageData);
@@ -512,7 +538,9 @@ function EnhancedTeacherCommunication() {
           isRead: false,
           messageType,
           priority,
-          attachments: selectedFile ? [{ originalName: selectedFile.name, size: selectedFile.size }] : undefined
+          attachments: selectedFile
+            ? [{ originalName: selectedFile.name, size: selectedFile.size }]
+            : undefined,
         };
 
         setMessages(prev => [...prev, tempMessage]);
@@ -530,7 +558,7 @@ function EnhancedTeacherCommunication() {
   };
 
   // Handle template selection
-  const handleTemplateSelect = (template) => {
+  const handleTemplateSelect = template => {
     const student = students.find(s => s.id === selectedStudent);
     const variables = {
       teacherName: selectedContact?.name || '{teacherName}',
@@ -547,7 +575,7 @@ function EnhancedTeacherCommunication() {
       incident_description: '{incident_description}',
       positive_achievement: '{positive_achievement}',
       assignment_type: '{assignment_type}',
-      due_date: '{due_date}'
+      due_date: '{due_date}',
     };
 
     const processedContent = messagingService.processTemplate(template.template, variables);
@@ -564,7 +592,7 @@ function EnhancedTeacherCommunication() {
   };
 
   // Format timestamp
-  const formatTime = (timestamp) => {
+  const formatTime = timestamp => {
     const date = new Date(timestamp);
     const now = new Date();
     const diffInHours = (now - date) / (1000 * 60 * 60);
@@ -574,18 +602,28 @@ function EnhancedTeacherCommunication() {
     } else if (diffInHours < 24 * 7) {
       return date.toLocaleDateString([], { weekday: 'short', hour: '2-digit', minute: '2-digit' });
     } else {
-      return date.toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+      return date.toLocaleDateString([], {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
     }
   };
 
   // Get priority color
-  const getPriorityColor = (priority) => {
+  const getPriorityColor = priority => {
     switch (priority) {
-      case 'urgent': return 'error';
-      case 'high': return 'warning';
-      case 'normal': return 'primary';
-      case 'low': return 'default';
-      default: return 'primary';
+      case 'urgent':
+        return 'error';
+      case 'high':
+        return 'warning';
+      case 'normal':
+        return 'primary';
+      case 'low':
+        return 'default';
+      default:
+        return 'primary';
     }
   };
 
@@ -614,28 +652,38 @@ function EnhancedTeacherCommunication() {
               <Typography variant="h6">Communication Overview (Last 30 Days)</Typography>
               <IconButton onClick={() => setAnalyticsOpen(!analyticsOpen)}>
                 <AnalyticsIcon />
-              </IconButton>            </Box>            <Grid container spacing={2}>
-              <Grid size={{xs:3}}>
+              </IconButton>{' '}
+            </Box>{' '}
+            <Grid container spacing={2}>
+              <Grid size={{ xs: 3 }}>
                 <div className={classes.statItem}>
-                  <Typography variant="h5" color="primary">{messageStats.totalMessages}</Typography>
+                  <Typography variant="h5" color="primary">
+                    {messageStats.totalMessages}
+                  </Typography>
                   <Typography variant="body2">Total Messages</Typography>
                 </div>
               </Grid>
-              <Grid size={{xs:3}}>
+              <Grid size={{ xs: 3 }}>
                 <div className={classes.statItem}>
-                  <Typography variant="h5" color="secondary">{messageStats.unreadMessages}</Typography>
+                  <Typography variant="h5" color="secondary">
+                    {messageStats.unreadMessages}
+                  </Typography>
                   <Typography variant="body2">Unread</Typography>
                 </div>
               </Grid>
-              <Grid size={{xs:3}}>
+              <Grid size={{ xs: 3 }}>
                 <div className={classes.statItem}>
-                  <Typography variant="h5" style={{ color: '#ff9800' }}>{messageStats.urgentMessages}</Typography>
+                  <Typography variant="h5" style={{ color: '#ff9800' }}>
+                    {messageStats.urgentMessages}
+                  </Typography>
                   <Typography variant="body2">Urgent</Typography>
                 </div>
               </Grid>
-              <Grid size={{xs:3}}>
+              <Grid size={{ xs: 3 }}>
                 <div className={classes.statItem}>
-                  <Typography variant="h5" style={{ color: '#4caf50' }}>{messageStats.sentMessages}</Typography>
+                  <Typography variant="h5" style={{ color: '#4caf50' }}>
+                    {messageStats.sentMessages}
+                  </Typography>
                   <Typography variant="body2">Sent</Typography>
                 </div>
               </Grid>
@@ -649,18 +697,20 @@ function EnhancedTeacherCommunication() {
         <div className={classes.sidebar}>
           {/* Student Selection */}
           <Card className={classes.sidebarCard}>
-            <Typography variant="h6" gutterBottom>Select Student</Typography>
+            <Typography variant="h6" gutterBottom>
+              Select Student
+            </Typography>
             <FormControl fullWidth variant="outlined">
               <InputLabel>Student</InputLabel>
               <Select
                 value={selectedStudent}
-                onChange={(e) => handleStudentSelect(e.target.value)}
+                onChange={e => handleStudentSelect(e.target.value)}
                 label="Student"
               >
                 <MenuItem value="">
                   <em>Select a student</em>
                 </MenuItem>
-                {students.map((student) => (
+                {students.map(student => (
                   <MenuItem key={student.id} value={student.id}>
                     {student.name} - {student.grade}
                   </MenuItem>
@@ -671,9 +721,11 @@ function EnhancedTeacherCommunication() {
 
           {/* Teachers List */}
           <Card className={classes.sidebarCard}>
-            <Typography variant="h6" gutterBottom>Teachers</Typography>
+            <Typography variant="h6" gutterBottom>
+              Teachers
+            </Typography>
             <div className={classes.contactsList}>
-              {contacts.map((contact) => (
+              {contacts.map(contact => (
                 <ListItem
                   key={contact.id}
                   className={`${classes.contactItem} ${
@@ -686,7 +738,9 @@ function EnhancedTeacherCommunication() {
                       <SchoolIcon />
                     </Avatar>
                   </ListItemAvatar>
-                  <ListItemText primaryTypographyProps={{ component: "div" }} primary={contact.name}
+                  <ListItemText
+                    primaryTypographyProps={{ component: 'div' }}
+                    primary={contact.name}
                     secondary={contact.department || 'Teacher'}
                   />
                 </ListItem>
@@ -742,7 +796,8 @@ function EnhancedTeacherCommunication() {
                       No messages yet. Start the conversation!
                     </Typography>
                   </div>
-                ) : (                  messages.map((message) => {
+                ) : (
+                  messages.map(message => {
                     const isFromParent = message.senderModel === 'Parent';
                     return (
                       <div
@@ -751,7 +806,12 @@ function EnhancedTeacherCommunication() {
                           isFromParent ? classes.sentMessage : classes.receivedMessage
                         }`}
                       >
-                        <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={1}>
+                        <Box
+                          display="flex"
+                          justifyContent="space-between"
+                          alignItems="flex-start"
+                          mb={1}
+                        >
                           <Typography variant="subtitle2">
                             {isFromParent ? 'You' : message.senderName}
                           </Typography>
@@ -797,7 +857,8 @@ function EnhancedTeacherCommunication() {
                                   <Typography variant="caption" color="text.secondary">
                                     {(attachment.size / 1024).toFixed(1)} KB
                                   </Typography>
-                                </Box>                                <IconButton
+                                </Box>{' '}
+                                <IconButton
                                   size="small"
                                   onClick={() => handleDownloadAttachment(message, index)}
                                   title="Download"
@@ -811,11 +872,7 @@ function EnhancedTeacherCommunication() {
 
                         {message.messageType && message.messageType !== 'general' && (
                           <Box mt={1}>
-                            <Chip
-                              label={message.messageType}
-                              size="small"
-                              variant="outlined"
-                            />
+                            <Chip label={message.messageType} size="small" variant="outlined" />
                           </Box>
                         )}
                       </div>
@@ -832,7 +889,7 @@ function EnhancedTeacherCommunication() {
                     <InputLabel>Type</InputLabel>
                     <Select
                       value={messageType}
-                      onChange={(e) => setMessageType(e.target.value)}
+                      onChange={e => setMessageType(e.target.value)}
                       label="Type"
                     >
                       <MenuItem value="general">General</MenuItem>
@@ -841,12 +898,11 @@ function EnhancedTeacherCommunication() {
                       <MenuItem value="attendance">Attendance</MenuItem>
                     </Select>
                   </FormControl>
-
                   <FormControl size="small" style={{ minWidth: 120 }}>
                     <InputLabel>Priority</InputLabel>
                     <Select
                       value={priority}
-                      onChange={(e) => setPriority(e.target.value)}
+                      onChange={e => setPriority(e.target.value)}
                       label="Priority"
                     >
                       <MenuItem value="low">Low</MenuItem>
@@ -855,7 +911,6 @@ function EnhancedTeacherCommunication() {
                       <MenuItem value="urgent">Urgent</MenuItem>
                     </Select>
                   </FormControl>
-
                   <Tooltip title="Use Template">
                     <IconButton
                       onClick={() => setTemplateDialogOpen(true)}
@@ -863,7 +918,8 @@ function EnhancedTeacherCommunication() {
                     >
                       <TemplateIcon />
                     </IconButton>
-                  </Tooltip>                  <Tooltip title="Attach File">
+                  </Tooltip>{' '}
+                  <Tooltip title="Attach File">
                     <span>
                       <input
                         accept="image/*,.pdf,.doc,.docx,.txt"
@@ -873,12 +929,16 @@ function EnhancedTeacherCommunication() {
                         onChange={handleFileSelect}
                       />
                       <label htmlFor="file-upload">
-                        <IconButton component="span" disabled={!selectedContact || !selectedStudent}>
+                        <IconButton
+                          component="span"
+                          disabled={!selectedContact || !selectedStudent}
+                        >
                           <AttachFileIcon />
                         </IconButton>
                       </label>
                     </span>
-                  </Tooltip>                </div>
+                  </Tooltip>{' '}
+                </div>
 
                 {/* Attachment Preview */}
                 {attachmentPreview && (
@@ -906,7 +966,7 @@ function EnhancedTeacherCommunication() {
                             maxWidth: '200px',
                             maxHeight: '200px',
                             borderRadius: '4px',
-                            objectFit: 'cover'
+                            objectFit: 'cover',
                           }}
                         />
                         <Typography variant="caption" display="block" mt={1}>
@@ -949,9 +1009,9 @@ function EnhancedTeacherCommunication() {
                     multiline
                     maxRows={4}
                     value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
+                    onChange={e => setNewMessage(e.target.value)}
                     placeholder="Type your message here..."
-                    onKeyPress={(e) => {
+                    onKeyPress={e => {
                       if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault();
                         handleSendMessage();
@@ -980,7 +1040,8 @@ function EnhancedTeacherCommunication() {
                 Select a student and teacher to start messaging
               </Typography>
               <Typography variant="body2" color="textSecondary">
-                Choose a student from the dropdown and then select a teacher to begin the conversation.
+                Choose a student from the dropdown and then select a teacher to begin the
+                conversation.
               </Typography>
             </Paper>
           )}
@@ -1005,8 +1066,8 @@ function EnhancedTeacherCommunication() {
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={2}>
-            {templates.map((template) => (
-              <Grid size={{xs:12,sm:6}} key={template.id}>
+            {templates.map(template => (
+              <Grid size={{ xs: 12, sm: 6 }} key={template.id}>
                 <div
                   className={classes.templateItem}
                   onClick={() => handleTemplateSelect(template)}
@@ -1015,13 +1076,13 @@ function EnhancedTeacherCommunication() {
                     <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
                       {template.title}
                     </Typography>
-                    <Chip
-                      label={template.category}
-                      size="small"
-                      color="primary"
-                    />
+                    <Chip label={template.category} size="small" color="primary" />
                   </Box>
-                  <Typography variant="body2" color="textSecondary" style={{ fontSize: '0.875rem' }}>
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    style={{ fontSize: '0.875rem' }}
+                  >
                     {template.template.substring(0, 150)}...
                   </Typography>
                 </div>
@@ -1032,21 +1093,13 @@ function EnhancedTeacherCommunication() {
       </Dialog>
 
       {/* Snackbar for notifications */}
-      <Snackbar
-        open={!!success}
-        autoHideDuration={6000}
-        onClose={() => setSuccess('')}
-      >
+      <Snackbar open={!!success} autoHideDuration={6000} onClose={() => setSuccess('')}>
         <Alert onClose={() => setSuccess('')} severity="success">
           {success}
         </Alert>
       </Snackbar>
 
-      <Snackbar
-        open={!!error}
-        autoHideDuration={6000}
-        onClose={() => setError('')}
-      >
+      <Snackbar open={!!error} autoHideDuration={6000} onClose={() => setError('')}>
         <Alert onClose={() => setError('')} severity="error">
           {error}
         </Alert>
@@ -1056,4 +1109,3 @@ function EnhancedTeacherCommunication() {
 }
 
 export default EnhancedTeacherCommunication;
-

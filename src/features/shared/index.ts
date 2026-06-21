@@ -18,9 +18,14 @@ export * from './components/DataTable';
 export * from './components/FormFields';
 export * from './components/Buttons';
 export * from './components/ResponsiveContainer';
+export * from './components/EmptyState';
+export * from './components/Greeting';
 
 // Hooks
 export * from './hooks';
+
+// Utils
+export { computeGreeting, phraseForHour, type TimeOfDayPhrase } from './utils/greeting';
 
 // Services
 export { apiClient, ApiClientError } from './services/apiClient';

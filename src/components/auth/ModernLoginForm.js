@@ -12,24 +12,25 @@ import {
   Container,
   Link,
   Fade,
-  useTheme
+  useTheme,
 } from '@mui/material';
 import {
   Visibility,
   VisibilityOff,
   LoginRounded as LoginIcon,
-  ArrowBack as BackIcon
+  ArrowBack as BackIcon,
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import makeStyles from '../../utils/makeStylesCompat';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     minHeight: '100vh',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 20%, #f093fb 40%, #f5576c 60%, #4facfe 80%, #00f2fe 100%)',
+    background:
+      'linear-gradient(135deg, #667eea 0%, #764ba2 20%, #f093fb 40%, #f5576c 60%, #4facfe 80%, #00f2fe 100%)',
     backgroundSize: '400% 400%',
     animation: '$gradientShift 20s ease infinite',
     padding: theme.spacing(3),
@@ -175,22 +176,22 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ModernLoginForm = ({ 
-  title, 
-  subtitle, 
+const ModernLoginForm = ({
+  title,
+  subtitle,
   roleColor = '#667eea',
-  onSubmit, 
+  onSubmit,
   loading = false,
-  error = null
+  error = null,
 }) => {
   const classes = useStyles();
   const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const [formData, setFormData] = useState({
     email: '',
-    password: ''
+    password: '',
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
@@ -199,14 +200,14 @@ const ModernLoginForm = ({
     setIsVisible(true);
   }, []);
 
-  const handleChange = (field) => (event) => {
+  const handleChange = field => event => {
     setFormData(prev => ({
       ...prev,
-      [field]: event.target.value
+      [field]: event.target.value,
     }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = event => {
     event.preventDefault();
     if (onSubmit) {
       onSubmit(formData);
@@ -220,13 +221,9 @@ const ModernLoginForm = ({
   return (
     <Box className={classes.root}>
       <Box className={classes.backgroundOverlay} />
-      
+
       {/* Back button */}
-      <IconButton 
-        className={classes.backButton}
-        onClick={() => navigate('/')}
-        size="large"
-      >
+      <IconButton className={classes.backButton} onClick={() => navigate('/')} size="large">
         <BackIcon />
       </IconButton>
 
@@ -245,9 +242,9 @@ const ModernLoginForm = ({
 
               {error && (
                 <Fade in timeout={500}>
-                  <Alert 
-                    severity="error" 
-                    sx={{ 
+                  <Alert
+                    severity="error"
+                    sx={{
                       mb: 3,
                       backgroundColor: 'rgba(255, 255, 255, 0.1)',
                       color: 'rgba(255, 255, 255, 0.95)',
@@ -315,7 +312,7 @@ const ModernLoginForm = ({
                 <Link
                   href="#"
                   className={classes.footerLink}
-                  onClick={(e) => {
+                  onClick={e => {
                     e.preventDefault();
                     // Handle forgot password
                   }}

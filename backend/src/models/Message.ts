@@ -201,8 +201,11 @@ MessageSchema.index({ threadId: 1, createdAt: 1 });
 MessageSchema.index({ isRead: 1, recipientId: 1 });
 MessageSchema.index({ messageType: 1, priority: 1 });
 
-// Pre-save middleware to generate conversationId and threadId
-MessageSchema.pre('save', function () {
+// Pre-validate middleware to generate conversationId and threadId.
+// Must run on 'validate' (not 'save') because Mongoose runs document
+// validation BEFORE user 'save' hooks, so generating these required fields
+// in a 'save' hook fires too late and triggers a "required" ValidationError.
+MessageSchema.pre('validate', function () {
   // Generate conversationId if not exists
   if (!this.conversationId) {
     const parentId =
@@ -248,15 +251,24 @@ MessageSchema.statics.getUserConversations = function (
     isDeleted: false,
   };
 
+  // Aggregation `$match` does NOT auto-cast strings to ObjectId (unlike
+  // find/distinct), so callers passing a string userId (e.g. from
+  // req.user.userId) would otherwise match nothing. Cast once here, mirroring
+  // the cast already used for the unreadCount sub-expression below.
+  const userObjectId =
+    userId instanceof mongoose.Types.ObjectId
+      ? userId
+      : new mongoose.Types.ObjectId(userId);
+
   if (userType === 'parent') {
     query.$or = [
-      { senderId: userId, senderModel: 'Parent' },
-      { recipientId: userId, recipientModel: 'Parent' },
+      { senderId: userObjectId, senderModel: 'Parent' },
+      { recipientId: userObjectId, recipientModel: 'Parent' },
     ];
   } else if (userType === 'teacher') {
     query.$or = [
-      { senderId: userId, senderModel: 'Faculty' },
-      { recipientId: userId, recipientModel: 'Faculty' },
+      { senderId: userObjectId, senderModel: 'Faculty' },
+      { recipientId: userObjectId, recipientModel: 'Faculty' },
     ];
   }
 
@@ -275,7 +287,7 @@ MessageSchema.statics.getUserConversations = function (
                   {
                     $eq: [
                       '$recipientId',
-                      new mongoose.Types.ObjectId(userId as string),
+                      userObjectId,
                     ],
                   },
                   { $eq: ['$isRead', false] },

@@ -20,67 +20,65 @@ import {
   useTheme,
 } from '@mui/material';
 
-export interface TextFieldProps
-  extends Omit<MuiTextFieldProps, 'variant'> {
+export interface TextFieldProps extends Omit<MuiTextFieldProps, 'variant'> {
   /** Variant style — defaults to outlined for better accessibility */
   variant?: 'outlined' | 'filled' | 'standard';
 }
 
-export const TextField = forwardRef<HTMLDivElement, TextFieldProps>(
-  function TextField({ variant = 'outlined', sx, ...props }, ref) {
-    const theme = useTheme();
+export const TextField = forwardRef<HTMLDivElement, TextFieldProps>(function TextField(
+  { variant = 'outlined', sx, ...props },
+  ref
+) {
+  const theme = useTheme();
 
-    return (
-      <MuiTextField
-        ref={ref}
-        variant={variant}
-        fullWidth
-        aria-invalid={!!props.error}
-        aria-describedby={
-          props.helperText && props.id ? `${props.id}-helper-text` : undefined
-        }
-        sx={{
-          // Micro-animation for state transitions
-          '& .MuiOutlinedInput-root': {
-            transition: 'border-color 150ms ease-in-out, box-shadow 150ms ease-in-out',
-            '&:hover .MuiOutlinedInput-notchedOutline': {
-              borderColor: theme.palette.primary.main,
-            },
-            // Visible focus indicator
-            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-              borderWidth: '2px',
-              borderColor: theme.palette.primary.main,
-              boxShadow: `0 0 0 3px ${theme.palette.primary.main}33`,
-            },
-            // Error state
-            '&.Mui-error .MuiOutlinedInput-notchedOutline': {
-              borderColor: theme.palette.error.main,
-            },
-            '&.Mui-error.Mui-focused .MuiOutlinedInput-notchedOutline': {
-              boxShadow: `0 0 0 3px ${theme.palette.error.main}33`,
-            },
+  return (
+    <MuiTextField
+      ref={ref}
+      variant={variant}
+      fullWidth
+      aria-invalid={!!props.error}
+      aria-describedby={props.helperText && props.id ? `${props.id}-helper-text` : undefined}
+      sx={{
+        // Micro-animation for state transitions
+        '& .MuiOutlinedInput-root': {
+          transition: 'border-color 150ms ease-in-out, box-shadow 150ms ease-in-out',
+          '&:hover .MuiOutlinedInput-notchedOutline': {
+            borderColor: theme.palette.primary.main,
           },
-          // Ensure label contrast
-          '& .MuiInputLabel-root': {
-            color: theme.palette.text.secondary,
-            '&.Mui-focused': {
-              color: theme.palette.primary.main,
-            },
-            '&.Mui-error': {
-              color: theme.palette.error.main,
-            },
+          // Visible focus indicator
+          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+            borderWidth: '2px',
+            borderColor: theme.palette.primary.main,
+            boxShadow: `0 0 0 3px ${theme.palette.primary.main}33`,
           },
-          // Helper text contrast
-          '& .MuiFormHelperText-root': {
-            color: theme.palette.text.secondary,
-            '&.Mui-error': {
-              color: theme.palette.error.main,
-            },
+          // Error state
+          '&.Mui-error .MuiOutlinedInput-notchedOutline': {
+            borderColor: theme.palette.error.main,
           },
-          ...sx,
-        }}
-        {...props}
-      />
-    );
-  },
-);
+          '&.Mui-error.Mui-focused .MuiOutlinedInput-notchedOutline': {
+            boxShadow: `0 0 0 3px ${theme.palette.error.main}33`,
+          },
+        },
+        // Ensure label contrast
+        '& .MuiInputLabel-root': {
+          color: theme.palette.text.secondary,
+          '&.Mui-focused': {
+            color: theme.palette.primary.main,
+          },
+          '&.Mui-error': {
+            color: theme.palette.error.main,
+          },
+        },
+        // Helper text contrast
+        '& .MuiFormHelperText-root': {
+          color: theme.palette.text.secondary,
+          '&.Mui-error': {
+            color: theme.palette.error.main,
+          },
+        },
+        ...sx,
+      }}
+      {...props}
+    />
+  );
+});

@@ -1,4 +1,5 @@
 import DatabaseService from './databaseService';
+import ParentService from './parentService';
 
 /**
  * AdminService - Handles all admin-related API operations
@@ -18,14 +19,14 @@ class AdminService {
       const response = await this.databaseService.fetchWithAuth(`/api/admin/${adminId}/profile`);
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error fetching admin profile:', error);
       return {
         success: false,
         error: error.message,
-        data: null
+        data: null,
       };
     }
   }
@@ -38,7 +39,7 @@ class AdminService {
       const response = await this.databaseService.fetchWithAuth('/api/admin/dashboard/summary');
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error fetching dashboard summary:', error);
@@ -53,8 +54,8 @@ class AdminService {
           courses: 0,
           quizzes: 0,
           activeUsers: 0,
-          systemLoad: 0
-        }
+          systemLoad: 0,
+        },
       };
     }
   }
@@ -67,7 +68,7 @@ class AdminService {
       const response = await this.databaseService.fetchWithAuth('/api/admin/metrics/realtime');
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error fetching real-time metrics:', error);
@@ -79,8 +80,8 @@ class AdminService {
           onlineStudents: 0,
           onlineFaculty: 0,
           systemLoad: 0,
-          lastUpdated: new Date().toLocaleTimeString()
-        }
+          lastUpdated: new Date().toLocaleTimeString(),
+        },
       };
     }
   }
@@ -93,7 +94,7 @@ class AdminService {
       const response = await this.databaseService.fetchWithAuth('/api/admin/system/health');
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error fetching system health:', error);
@@ -105,27 +106,90 @@ class AdminService {
           apiServices: { status: 'Unknown', responseTime: 'N/A' },
           authServer: { status: 'Unknown', responseTime: 'N/A' },
           storage: { status: 'Unknown', responseTime: 'N/A' },
-          mailService: { status: 'Unknown', responseTime: 'N/A' }
-        }
+          mailService: { status: 'Unknown', responseTime: 'N/A' },
+        },
       };
     }
   }
   /**
    * User Management APIs
+   *
+   * The backend exposes admin list endpoints for faculty, students, and
+   * parents: GET /api/faculty, GET /api/students, and GET /api/parents, each
+   * returning the standard envelope `{ success, data: [...], meta }`. Faculty
+   * and students are fetched directly through the shared DatabaseService
+   * client; parents go through ParentService.getAdminParents (which uses the
+   * same client/auth pattern and unwraps the envelope). Each sub-fetch is
+   * handled defensively so a failure in one does not drop the others, and any
+   * partial failure surfaces a friendly, detail-free error to the caller
+   * (Req 13.4, 13.6).
    */
   async getUsers() {
+    // Normalize a raw account record into a common user shape tagged with role.
+    const normalize = (record, role) => ({
+      ...record,
+      id: record._id || record.id,
+      role,
+      firstName: record.firstName,
+      lastName: record.lastName,
+      email: record.email,
+      active: record.active !== undefined ? record.active : true,
+      // Role-specific identifiers (only the relevant one is present).
+      ...(role === 'faculty' && { employeeId: record.employeeId }),
+      ...(role === 'student' && { studentId: record.studentId }),
+      ...(role === 'parent' && { parentId: record.parentId || record._id || record.id }),
+    });
+
+    // Pull the array payload out of the envelope, tolerating a few shapes.
+    const extractList = response => {
+      if (Array.isArray(response)) return response;
+      if (Array.isArray(response?.data)) return response.data;
+      if (Array.isArray(response?.items)) return response.items;
+      if (Array.isArray(response?.data?.items)) return response.data.items;
+      return [];
+    };
+
+    const fetchRole = async (endpoint, role) => {
+      try {
+        const response = await this.databaseService.fetchWithAuth(endpoint);
+        return { records: extractList(response).map(record => normalize(record, role)), ok: true };
+      } catch (error) {
+        console.error(`Error fetching ${role} users:`, error);
+        return { records: [], ok: false };
+      }
+    };
+
+    // Parents are fetched via ParentService so the admin parents wiring lives
+    // alongside the other parent API calls; map its result into the same shape.
+    const fetchParents = async () => {
+      const result = await ParentService.getAdminParents();
+      const records = result.success && Array.isArray(result.data) ? result.data : [];
+      return { records: records.map(record => normalize(record, 'parent')), ok: result.success };
+    };
+
     try {
-      const response = await this.databaseService.fetchWithAuth('/api/admin/auth/users');
+      const [faculty, students, parents] = await Promise.all([
+        fetchRole('/api/faculty', 'faculty'),
+        fetchRole('/api/students', 'student'),
+        fetchParents(),
+      ]);
+
+      const anyFailed = !faculty.ok || !students.ok || !parents.ok;
+
       return {
         success: true,
-        data: response.users || response
+        data: [...students.records, ...faculty.records, ...parents.records],
+        // Friendly, detail-free message when one or more lists failed to load.
+        ...(anyFailed && {
+          error: 'Some user records could not be loaded. Please refresh to try again.',
+        }),
       };
     } catch (error) {
       console.error('Error fetching users:', error);
       return {
         success: false,
         error: error.message,
-        data: []
+        data: [],
       };
     }
   }
@@ -139,17 +203,17 @@ class AdminService {
     try {
       const response = await this.databaseService.fetchWithAuth('/api/admin/auth/create-user', {
         method: 'POST',
-        body: JSON.stringify(userData)
+        body: JSON.stringify(userData),
       });
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error creating user:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -158,17 +222,17 @@ class AdminService {
     try {
       const response = await this.databaseService.fetchWithAuth(`/api/admin/auth/users/${userId}`, {
         method: 'PUT',
-        body: JSON.stringify(userData)
+        body: JSON.stringify(userData),
       });
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error updating user:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -176,17 +240,17 @@ class AdminService {
   async deleteUser(userId) {
     try {
       const response = await this.databaseService.fetchWithAuth(`/api/admin/auth/users/${userId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       });
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error deleting user:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -201,14 +265,14 @@ class AdminService {
       const coursesData = response.courses || response || [];
       return {
         success: true,
-        data: Array.isArray(coursesData) ? coursesData : []
+        data: Array.isArray(coursesData) ? coursesData : [],
       };
     } catch (error) {
       console.error('Error fetching courses:', error);
       return {
         success: false,
         error: error.message,
-        data: []  // Always return an empty array for data when there's an error
+        data: [], // Always return an empty array for data when there's an error
       };
     }
   }
@@ -217,17 +281,17 @@ class AdminService {
     try {
       const response = await this.databaseService.fetchWithAuth('/api/admin/courses', {
         method: 'POST',
-        body: JSON.stringify(courseData)
+        body: JSON.stringify(courseData),
       });
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error creating course:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -236,17 +300,17 @@ class AdminService {
     try {
       const response = await this.databaseService.fetchWithAuth(`/api/admin/courses/${courseId}`, {
         method: 'PUT',
-        body: JSON.stringify(courseData)
+        body: JSON.stringify(courseData),
       });
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error updating course:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -254,17 +318,17 @@ class AdminService {
   async deleteCourse(courseId) {
     try {
       const response = await this.databaseService.fetchWithAuth(`/api/admin/courses/${courseId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       });
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error deleting course:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -274,10 +338,12 @@ class AdminService {
    */
   async getAnalyticsData(dateRange = 'last30days') {
     try {
-      const response = await this.databaseService.fetchWithAuth(`/api/admin/analytics?range=${dateRange}`);
+      const response = await this.databaseService.fetchWithAuth(
+        `/api/admin/analytics?range=${dateRange}`
+      );
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error fetching analytics data:', error);
@@ -293,7 +359,7 @@ class AdminService {
             activeUsers: 0,
             completionRate: 0,
             avgGrade: 0,
-            systemUptime: 0
+            systemUptime: 0,
           },
           userGrowth: [],
           coursePopularity: [],
@@ -302,10 +368,10 @@ class AdminService {
             avgAssignmentScore: 0,
             passRate: 0,
             dropoutRate: 0,
-            satisfactionScore: 0
+            satisfactionScore: 0,
           },
-          recentActivities: []
-        }
+          recentActivities: [],
+        },
       };
     }
   }
@@ -314,17 +380,17 @@ class AdminService {
     try {
       const response = await this.databaseService.fetchWithAuth(`/api/admin/reports/export`, {
         method: 'POST',
-        body: JSON.stringify({ reportType, format })
+        body: JSON.stringify({ reportType, format }),
       });
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error exporting report:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -337,7 +403,7 @@ class AdminService {
       const response = await this.databaseService.fetchWithAuth('/api/admin/database/stats');
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error fetching database stats:', error);
@@ -354,8 +420,8 @@ class AdminService {
           attendance: 0,
           marks: 0,
           lastBackup: null,
-          dbSize: '0 MB'
-        }
+          dbSize: '0 MB',
+        },
       };
     }
   }
@@ -364,17 +430,17 @@ class AdminService {
     try {
       const response = await this.databaseService.fetchWithAuth(`/api/admin/data/export`, {
         method: 'POST',
-        body: JSON.stringify({ dataType, format })
+        body: JSON.stringify({ dataType, format }),
       });
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error exporting data:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -389,17 +455,17 @@ class AdminService {
       const response = await this.databaseService.fetchWithAuth('/api/admin/data/import', {
         method: 'POST',
         body: formData,
-        headers: {} // Let fetch set the content-type for FormData
+        headers: {}, // Let fetch set the content-type for FormData
       });
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error importing data:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -407,17 +473,17 @@ class AdminService {
   async createBackup() {
     try {
       const response = await this.databaseService.fetchWithAuth('/api/admin/database/backup', {
-        method: 'POST'
+        method: 'POST',
       });
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error creating backup:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -430,17 +496,17 @@ class AdminService {
       const response = await this.databaseService.fetchWithAuth('/api/admin/database/restore', {
         method: 'POST',
         body: formData,
-        headers: {} // Let fetch set the content-type for FormData
+        headers: {}, // Let fetch set the content-type for FormData
       });
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error restoring backup:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -453,14 +519,14 @@ class AdminService {
       const response = await this.databaseService.fetchWithAuth('/api/admin/settings');
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error fetching system settings:', error);
       return {
         success: false,
         error: error.message,
-        data: {}
+        data: {},
       };
     }
   }
@@ -469,17 +535,17 @@ class AdminService {
     try {
       const response = await this.databaseService.fetchWithAuth('/api/admin/settings', {
         method: 'PUT',
-        body: JSON.stringify(settings)
+        body: JSON.stringify(settings),
       });
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error updating system settings:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -492,14 +558,14 @@ class AdminService {
       const response = await this.databaseService.fetchWithAuth('/api/admin/notifications');
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error fetching notifications:', error);
       return {
         success: false,
         error: error.message,
-        data: []
+        data: [],
       };
     }
   }
@@ -508,17 +574,17 @@ class AdminService {
     try {
       const response = await this.databaseService.fetchWithAuth('/api/admin/notifications', {
         method: 'POST',
-        body: JSON.stringify(notificationData)
+        body: JSON.stringify(notificationData),
       });
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error sending notification:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -528,34 +594,38 @@ class AdminService {
    */
   async getActivityLogs(limit = 100) {
     try {
-      const response = await this.databaseService.fetchWithAuth(`/api/admin/logs/activity?limit=${limit}`);
+      const response = await this.databaseService.fetchWithAuth(
+        `/api/admin/logs/activity?limit=${limit}`
+      );
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error fetching activity logs:', error);
       return {
         success: false,
         error: error.message,
-        data: []
+        data: [],
       };
     }
   }
 
   async getSecurityLogs(limit = 100) {
     try {
-      const response = await this.databaseService.fetchWithAuth(`/api/admin/logs/security?limit=${limit}`);
+      const response = await this.databaseService.fetchWithAuth(
+        `/api/admin/logs/security?limit=${limit}`
+      );
       return {
         success: true,
-        data: response
+        data: response,
       };
     } catch (error) {
       console.error('Error fetching security logs:', error);
       return {
         success: false,
         error: error.message,
-        data: []
+        data: [],
       };
     }
   }
@@ -563,7 +633,3 @@ class AdminService {
 
 const adminService = new AdminService();
 export default adminService;
-
-
-
-

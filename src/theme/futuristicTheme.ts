@@ -307,4 +307,4 @@ export const createFuturisticTheme = (mode: 'light' | 'dark' = 'dark'): Theme =>
   });
 };
 
-export default createFuturisticTheme;
+export default createFuturisticTheme;

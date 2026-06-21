@@ -6,44 +6,43 @@ import React, { useState, useEffect, useCallback } from 'react';
  * Part of the Educational Management System - AdminDashboard Enhancement Project
  */
 
-
-const ProductionMonitor = ({ 
+const ProductionMonitor = ({
   isProduction = process.env.NODE_ENV === 'production',
   refreshInterval = 30000,
-  enableNotifications = true 
+  enableNotifications = true,
 }) => {
   const [monitoringData, setMonitoringData] = useState({
     performance: {
       score: 0,
       metrics: {},
-      trend: []
+      trend: [],
     },
     security: {
       score: 0,
       threats: [],
-      lastScan: null
+      lastScan: null,
     },
     system: {
       uptime: 0,
       responseTime: 0,
       errorRate: 0,
-      activeUsers: 0
+      activeUsers: 0,
     },
-    alerts: []
+    alerts: [],
   });
   const [isConnected, setIsConnected] = useState(false);
   const [lastUpdate, setLastUpdate] = useState(null);
   // Update performance metrics from observer entries
-  const updatePerformanceMetrics = useCallback((entry) => {
+  const updatePerformanceMetrics = useCallback(entry => {
     setMonitoringData(prev => ({
       ...prev,
       performance: {
         ...prev.performance,
         metrics: {
           ...prev.performance.metrics,
-          [entry.name || entry.entryType]: entry.startTime || entry.value || entry.duration
-        }
-      }
+          [entry.name || entry.entryType]: entry.startTime || entry.value || entry.duration,
+        },
+      },
     }));
     setLastUpdate(new Date());
   }, []);
@@ -53,15 +52,21 @@ const ProductionMonitor = ({
     useEffect(() => {
       if (!isProduction) return;
 
-      const observer = new PerformanceObserver((list) => {
+      const observer = new PerformanceObserver(list => {
         const entries = list.getEntries();
         entries.forEach(entry => {
           updatePerformanceMetrics(entry);
         });
       });
 
-      observer.observe({ 
-        entryTypes: ['navigation', 'paint', 'largest-contentful-paint', 'first-input', 'layout-shift'] 
+      observer.observe({
+        entryTypes: [
+          'navigation',
+          'paint',
+          'largest-contentful-paint',
+          'first-input',
+          'layout-shift',
+        ],
       });
 
       return () => observer.disconnect();
@@ -72,30 +77,29 @@ const ProductionMonitor = ({
   const fetchMonitoringData = useCallback(async () => {
     try {
       setIsConnected(true);
-      
+
       // Fetch performance data
       const performanceData = await fetchPerformanceData();
-      
+
       // Fetch security data
       const securityData = await fetchSecurityData();
-      
+
       // Fetch system data
       const systemData = await fetchSystemData();
-      
+
       // Update state
       setMonitoringData(prev => ({
         performance: { ...prev.performance, ...performanceData },
         security: { ...prev.security, ...securityData },
         system: { ...prev.system, ...systemData },
-        alerts: [...prev.alerts, ...checkForAlerts(performanceData, securityData, systemData)]
+        alerts: [...prev.alerts, ...checkForAlerts(performanceData, securityData, systemData)],
       }));
-      
+
       setLastUpdate(new Date());
-      
     } catch (error) {
       console.error('Failed to fetch monitoring data:', error);
       setIsConnected(false);
-      
+
       if (enableNotifications) {
         createAlert('error', 'Monitoring connection lost', error.message);
       }
@@ -108,17 +112,21 @@ const ProductionMonitor = ({
     const navigation = performance.getEntriesByType('navigation')[0];
     const paint = performance.getEntriesByType('paint');
     const lcp = performance.getEntriesByType('largest-contentful-paint')[0];
-    
+
     const metrics = {
-      domContentLoaded: navigation?.domContentLoadedEventEnd - navigation?.domContentLoadedEventStart || 0,      loadComplete: navigation?.loadEventEnd - navigation?.loadEventStart || 0,
+      domContentLoaded:
+        navigation?.domContentLoadedEventEnd - navigation?.domContentLoadedEventStart || 0,
+      loadComplete: navigation?.loadEventEnd - navigation?.loadEventStart || 0,
       firstPaint: paint.find(p => p.name === 'first-paint')?.startTime || 0,
       firstContentfulPaint: paint.find(p => p.name === 'first-contentful-paint')?.startTime || 0,
       largestContentfulPaint: lcp?.startTime || 0,
-      memoryUsage: performance.memory ? {
-        used: performance.memory.usedJSHeapSize,
-        total: performance.memory.totalJSHeapSize,
-        limit: performance.memory.jsHeapSizeLimit
-      } : null
+      memoryUsage: performance.memory
+        ? {
+            used: performance.memory.usedJSHeapSize,
+            total: performance.memory.totalJSHeapSize,
+            limit: performance.memory.jsHeapSizeLimit,
+          }
+        : null,
     };
 
     // Calculate performance score
@@ -127,7 +135,7 @@ const ProductionMonitor = ({
     return {
       score,
       metrics,
-      trend: [...(monitoringData.performance.trend || []), { time: Date.now(), score }].slice(-20)
+      trend: [...(monitoringData.performance.trend || []), { time: Date.now(), score }].slice(-20),
     };
   };
 
@@ -136,51 +144,52 @@ const ProductionMonitor = ({
     try {
       // Check for common security indicators
       const threats = [];
-      
+
       // CSP violations check
       if (window.securityPolicyViolationCallback) {
         threats.push(...window.securityPolicyViolationCallback.getViolations());
       }
-      
+
       // XSS detection
       if (detectXSSAttempts()) {
         threats.push({
           type: 'xss',
           severity: 'high',
           description: 'Potential XSS attempt detected',
-          timestamp: Date.now()
+          timestamp: Date.now(),
         });
       }
-      
+
       // CSRF token validation
       if (!validateCSRFToken()) {
         threats.push({
           type: 'csrf',
           severity: 'medium',
           description: 'CSRF token validation failed',
-          timestamp: Date.now()
+          timestamp: Date.now(),
         });
       }
-      
+
       const score = calculateSecurityScore(threats);
-      
+
       return {
         score,
         threats: threats.slice(-10), // Keep last 10 threats
-        lastScan: Date.now()
+        lastScan: Date.now(),
       };
-      
     } catch (error) {
       console.error('Security monitoring error:', error);
       return {
         score: 50,
-        threats: [{
-          type: 'monitoring_error',
-          severity: 'low',
-          description: 'Security monitoring error',
-          timestamp: Date.now()
-        }],
-        lastScan: Date.now()
+        threats: [
+          {
+            type: 'monitoring_error',
+            severity: 'low',
+            description: 'Security monitoring error',
+            timestamp: Date.now(),
+          },
+        ],
+        lastScan: Date.now(),
       };
     }
   };
@@ -189,31 +198,30 @@ const ProductionMonitor = ({
   const fetchSystemData = async () => {
     try {
       const startTime = Date.now();
-      
+
       // Health check
       const healthResponse = await fetch('/api/health', {
         method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
       });
-      
+
       const responseTime = Date.now() - startTime;
       const healthData = await healthResponse.json();
-      
+
       return {
         uptime: healthData.uptime || 0,
         responseTime,
         errorRate: healthData.errorRate || 0,
         activeUsers: healthData.activeUsers || 0,
-        serverStatus: healthResponse.ok ? 'healthy' : 'unhealthy'
+        serverStatus: healthResponse.ok ? 'healthy' : 'unhealthy',
       };
-      
     } catch (error) {
       return {
         uptime: 0,
         responseTime: 9999,
         errorRate: 1,
         activeUsers: 0,
-        serverStatus: 'error'
+        serverStatus: 'error',
       };
     }
   };
@@ -222,7 +230,7 @@ const ProductionMonitor = ({
   const checkForAlerts = (performance, security, system) => {
     const alerts = [];
     const now = Date.now();
-    
+
     // Performance alerts
     if (performance.score < 70) {
       alerts.push({
@@ -230,10 +238,10 @@ const ProductionMonitor = ({
         type: 'performance',
         severity: performance.score < 50 ? 'critical' : 'warning',
         message: `Performance score is ${performance.score}/100`,
-        timestamp: now
+        timestamp: now,
       });
     }
-    
+
     // Security alerts
     if (security.score < 80) {
       alerts.push({
@@ -241,10 +249,10 @@ const ProductionMonitor = ({
         type: 'security',
         severity: security.score < 60 ? 'critical' : 'warning',
         message: `Security score is ${security.score}/100`,
-        timestamp: now
+        timestamp: now,
       });
     }
-    
+
     // System alerts
     if (system.responseTime > 3000) {
       alerts.push({
@@ -252,49 +260,49 @@ const ProductionMonitor = ({
         type: 'system',
         severity: 'warning',
         message: `High response time: ${system.responseTime}ms`,
-        timestamp: now
+        timestamp: now,
       });
     }
-    
+
     if (system.errorRate > 0.05) {
       alerts.push({
         id: `err-${now}`,
         type: 'system',
         severity: 'critical',
         message: `High error rate: ${(system.errorRate * 100).toFixed(2)}%`,
-        timestamp: now
+        timestamp: now,
       });
     }
-    
+
     return alerts;
   };
 
   // Utility functions
-  const calculatePerformanceScore = (metrics) => {
+  const calculatePerformanceScore = metrics => {
     const weights = {
       domContentLoaded: 0.2,
       firstContentfulPaint: 0.3,
       largestContentfulPaint: 0.3,
-      loadComplete: 0.2
+      loadComplete: 0.2,
     };
-    
+
     let score = 100;
-    
+
     // Deduct points based on timing thresholds
     if (metrics.domContentLoaded > 1500) score -= 10;
     if (metrics.firstContentfulPaint > 2000) score -= 20;
     if (metrics.largestContentfulPaint > 4000) score -= 30;
     if (metrics.loadComplete > 3000) score -= 15;
-    
+
     // Memory usage penalty
     if (metrics.memoryUsage?.used > 50 * 1024 * 1024) score -= 10; // 50MB threshold
-    
+
     return Math.max(0, Math.min(100, score));
   };
 
-  const calculateSecurityScore = (threats) => {
+  const calculateSecurityScore = threats => {
     let score = 100;
-    
+
     threats.forEach(threat => {
       switch (threat.severity) {
         case 'critical':
@@ -313,23 +321,17 @@ const ProductionMonitor = ({
           score -= 1;
       }
     });
-    
+
     return Math.max(0, Math.min(100, score));
   };
 
   const detectXSSAttempts = () => {
     // Simple XSS detection - look for script injection attempts
-    const suspiciousPatterns = [
-      /<script/i,
-      /javascript:/i,
-      /onerror=/i,
-      /onload=/i,
-      /eval\(/i
-    ];
-    
+    const suspiciousPatterns = [/<script/i, /javascript:/i, /onerror=/i, /onload=/i, /eval\(/i];
+
     const urlParams = new URLSearchParams(window.location.search);
     const allParams = Array.from(urlParams.values()).join(' ');
-    
+
     return suspiciousPatterns.some(pattern => pattern.test(allParams));
   };
 
@@ -342,32 +344,32 @@ const ProductionMonitor = ({
     if (enableNotifications && 'Notification' in window && Notification.permission === 'granted') {
       new Notification(`AdminDashboard ${type.toUpperCase()}`, {
         body: `${title}: ${message}`,
-        icon: '/favicon.ico'
+        icon: '/favicon.ico',
       });
     }
   };
 
-  const formatDuration = (ms) => {
+  const formatDuration = ms => {
     if (ms < 1000) return `${ms.toFixed(0)}ms`;
     if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`;
     return `${(ms / 60000).toFixed(1)}m`;
   };
 
-  const getScoreColor = (score) => {
+  const getScoreColor = score => {
     if (score >= 90) return '#28a745';
     if (score >= 70) return '#ffc107';
     if (score >= 50) return '#fd7e14';
     return '#dc3545';
   };
 
-  const getSeverityColor = (severity) => {
+  const getSeverityColor = severity => {
     const colors = {
       critical: '#dc3545',
       high: '#fd7e14',
       warning: '#ffc107',
       medium: '#17a2b8',
       low: '#28a745',
-      info: '#6c757d'
+      info: '#6c757d',
     };
     return colors[severity] || colors.info;
   };
@@ -380,7 +382,7 @@ const ProductionMonitor = ({
 
     fetchMonitoringData();
     const interval = setInterval(fetchMonitoringData, refreshInterval);
-    
+
     return () => clearInterval(interval);
   }, [fetchMonitoringData, refreshInterval, isProduction]);
 
@@ -410,9 +412,7 @@ const ProductionMonitor = ({
           <span className={`status-indicator ${isConnected ? 'connected' : 'disconnected'}`} />
           <span>{isConnected ? 'Connected' : 'Disconnected'}</span>
           {lastUpdate && (
-            <span className="last-update">
-              Updated: {lastUpdate.toLocaleTimeString()}
-            </span>
+            <span className="last-update">Updated: {lastUpdate.toLocaleTimeString()}</span>
           )}
         </div>
       </div>
@@ -422,7 +422,7 @@ const ProductionMonitor = ({
         <div className="monitor-card performance">
           <h4>⚡ Performance</h4>
           <div className="score-display">
-            <div 
+            <div
               className="score-circle"
               style={{ borderColor: getScoreColor(monitoringData.performance.score) }}
             >
@@ -453,10 +453,9 @@ const ProductionMonitor = ({
             <div className="metric">
               <span className="label">Memory</span>
               <span className="value">
-                {monitoringData.performance.metrics.memoryUsage ? 
-                  `${(monitoringData.performance.metrics.memoryUsage.used / 1024 / 1024).toFixed(1)}MB` : 
-                  'N/A'
-                }
+                {monitoringData.performance.metrics.memoryUsage
+                  ? `${(monitoringData.performance.metrics.memoryUsage.used / 1024 / 1024).toFixed(1)}MB`
+                  : 'N/A'}
               </span>
             </div>
           </div>
@@ -466,7 +465,7 @@ const ProductionMonitor = ({
         <div className="monitor-card security">
           <h4>🔒 Security</h4>
           <div className="score-display">
-            <div 
+            <div
               className="score-circle"
               style={{ borderColor: getScoreColor(monitoringData.security.score) }}
             >
@@ -481,7 +480,7 @@ const ProductionMonitor = ({
             ) : (
               monitoringData.security.threats.slice(0, 3).map((threat, index) => (
                 <div key={index} className="threat-item">
-                  <span 
+                  <span
                     className="threat-severity"
                     style={{ backgroundColor: getSeverityColor(threat.severity) }}
                   >
@@ -524,9 +523,9 @@ const ProductionMonitor = ({
             {monitoringData.alerts.length === 0 ? (
               <div className="no-alerts">✅ No active alerts</div>
             ) : (
-              monitoringData.alerts.slice(-5).map((alert) => (
+              monitoringData.alerts.slice(-5).map(alert => (
                 <div key={alert.id} className="alert-item">
-                  <span 
+                  <span
                     className="alert-severity"
                     style={{ backgroundColor: getSeverityColor(alert.severity) }}
                   >
@@ -575,4 +574,3 @@ const ProductionMonitor = ({
 };
 
 export default ProductionMonitor;
-

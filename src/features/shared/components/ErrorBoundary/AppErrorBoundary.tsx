@@ -29,8 +29,8 @@ function FullPageErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
         Something went wrong
       </h1>
       <p style={{ marginBottom: '1.5rem', color: '#555', maxWidth: '480px' }}>
-        An unexpected error occurred. Please try reloading the page. If the
-        problem persists, contact support.
+        An unexpected error occurred. Please try reloading the page. If the problem persists,
+        contact support.
       </p>
       <pre
         style={{

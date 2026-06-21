@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 
 import { AppError } from './errorHandler.js';
+import { failure } from '../utils/envelope.js';
 
 /**
  * Result of scanning request body for oversized string fields.
@@ -71,7 +72,6 @@ export function fieldSizeLimitMiddleware(maxFieldLength: number = 10000) {
           [
             {
               field: violation.field,
-              value: `[${violation.length} chars]`,
               reason: `Exceeds ${maxFieldLength} character limit`,
             },
           ],
@@ -102,16 +102,11 @@ export function payloadTooLargeHandler(
       [
         {
           field: 'body',
-          value: '[too large]',
           reason: 'Exceeds 10 MB size limit',
         },
       ],
     );
-    res.status(appError.statusCode).json({
-      error: appError.errorCode,
-      message: appError.message,
-      details: appError.details,
-    });
+    res.status(appError.statusCode).json(failure(appError.message, appError.details));
     return;
   }
   next(err);

@@ -31,7 +31,13 @@ export const typography = {
   caption: { fontSize: '0.75rem', fontWeight: 400, lineHeight: 1.4 },
 
   /** Overline — uppercase labels, categories */
-  overline: { fontSize: '0.625rem', fontWeight: 600, lineHeight: 1.6, letterSpacing: '0.08em', textTransform: 'uppercase' as const },
+  overline: {
+    fontSize: '0.625rem',
+    fontWeight: 600,
+    lineHeight: 1.6,
+    letterSpacing: '0.08em',
+    textTransform: 'uppercase' as const,
+  },
 
   /** Font families */
   fontFamily: {

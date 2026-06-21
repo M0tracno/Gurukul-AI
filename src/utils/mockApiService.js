@@ -8,7 +8,6 @@ import axios from 'axios';
  * and returns realistic mock data to avoid errors in the UI.
  */
 
-
 // Store original axios methods
 const originalGet = axios.get;
 const originalPost = axios.post;
@@ -126,7 +125,7 @@ const mockDataMap = {
 };
 
 // Override axios methods
-axios.get = async function(url, config) {
+axios.get = async function (url, config) {
   try {
     // First try the original request
     return await originalGet(url, config);
@@ -138,23 +137,23 @@ axios.get = async function(url, config) {
         const regex = new RegExp(pattern);
         if (regex.test(url)) {
           console.log(`[Mock API] Providing mock data for ${url}`);
-          return { 
-            data: mockResponse.data, 
-            status: 200, 
+          return {
+            data: mockResponse.data,
+            status: 200,
             statusText: 'OK',
-            headers: {}, 
-            config 
+            headers: {},
+            config,
           };
         }
       }
     }
-    
+
     // Re-throw if we don't have mock data
     throw error;
   }
 };
 
-axios.post = async function(url, data, config) {
+axios.post = async function (url, data, config) {
   try {
     // First try the original request
     return await originalPost(url, data, config);
@@ -167,15 +166,15 @@ axios.post = async function(url, data, config) {
         status: 200,
         statusText: 'OK',
         headers: {},
-        config
+        config,
       };
     }
-    
+
     throw error;
   }
 };
 
-axios.put = async function(url, data, config) {
+axios.put = async function (url, data, config) {
   try {
     // First try the original request
     return await originalPut(url, data, config);
@@ -188,10 +187,10 @@ axios.put = async function(url, data, config) {
         status: 200,
         statusText: 'OK',
         headers: {},
-        config
+        config,
       };
     }
-    
+
     throw error;
   }
 };
@@ -199,4 +198,3 @@ axios.put = async function(url, data, config) {
 console.log('[Mock API Service] Initialized - Will intercept 404/500 API requests');
 
 export default axios;
-

@@ -12,8 +12,20 @@
  * **Validates: Requirements 2.4**
  */
 
+import { jest, describe, it, expect } from '@jest/globals';
 import * as fc from 'fast-check';
 import type { Request, Response, NextFunction } from 'express';
+
+// Mock logger to avoid import.meta.url issues in ts-jest
+jest.mock('../../src/utils/logger.js', () => ({
+  logger: {
+    warn: jest.fn(),
+    error: jest.fn(),
+    info: jest.fn(),
+    debug: jest.fn(),
+  },
+}));
+
 import { globalErrorHandler } from '../../src/middleware/errorHandler.js';
 
 /**
@@ -253,8 +265,8 @@ describe('Property 2: Unhandled Exception Information Hiding', () => {
         expect(res._status).toBe(500);
 
         // Must have the expected static envelope structure
-        const body = res._body as { error: string; message: string };
-        expect(body.error).toBe('INTERNAL_ERROR');
+        const body = res._body as { success: boolean; message: string };
+        expect(body.success).toBe(false);
         expect(body.message).toBe('An internal error occurred');
 
         // Must NOT contain any sensitive information
@@ -266,10 +278,10 @@ describe('Property 2: Unhandled Exception Information Hiding', () => {
   });
 
   /**
-   * Property: The 500 response body only contains exactly the 'error' and 'message' fields
+   * Property: The 500 response body only contains exactly the 'success' and 'message' fields
    * (no extra fields that could leak data).
    */
-  it('500 response body contains only error and message fields', () => {
+  it('500 response body contains only success and message fields', () => {
     fc.assert(
       fc.property(sensitiveExceptionArb, (error) => {
         const req = createMockRequest();
@@ -280,8 +292,8 @@ describe('Property 2: Unhandled Exception Information Hiding', () => {
         const body = res._body as Record<string, unknown>;
         const keys = Object.keys(body);
 
-        // Only 'error' and 'message' allowed — no details, stack, etc.
-        expect(keys).toEqual(['error', 'message']);
+        // Only 'success' and 'message' allowed — no details, stack, etc.
+        expect(keys).toEqual(['success', 'message']);
       }),
       { numRuns: 100 },
     );
@@ -299,11 +311,11 @@ describe('Property 2: Unhandled Exception Information Hiding', () => {
 
         globalErrorHandler(error, req, res, mockNext);
 
-        const body = res._body as { error: string; message: string };
+        const body = res._body as { success: boolean; message: string };
 
         // The response must always be exactly this — no dynamic content
         expect(body).toEqual({
-          error: 'INTERNAL_ERROR',
+          success: false,
           message: 'An internal error occurred',
         });
       }),

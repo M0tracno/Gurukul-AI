@@ -11,7 +11,7 @@ try {
     genAI = new GoogleGenerativeAI(API_KEY);
   }
 } catch (error) {
-  console.error("Error initializing Generative AI:", error);
+  console.error('Error initializing Generative AI:', error);
 }
 
 // Set the model to use
@@ -22,14 +22,14 @@ const safeApiCall = async (apiFunction, mockFunction, params) => {
   try {
     // If we're in development without API_KEY or genAI isn't initialized, use mock data
     if (process.env.NODE_ENV === 'development' && (!API_KEY || !genAI)) {
-      console.log("Using mock data for development");
+      console.log('Using mock data for development');
       return mockFunction(params);
     }
-    
+
     return await apiFunction(params);
   } catch (error) {
-    console.error("API call failed:", error);
-    console.log("Falling back to mock data");
+    console.error('API call failed:', error);
+    console.log('Falling back to mock data');
     return mockFunction(params);
   }
 };
@@ -45,23 +45,23 @@ const safeApiCall = async (apiFunction, mockFunction, params) => {
  * @returns {Promise<Object>} Generated quiz with questions and answers
  */
 export async function generateQuizWithAI(quizParams) {
-  const apiCall = async (params) => {
+  const apiCall = async params => {
     const { subject, topic, numQuestions, difficulty, questionType } = params;
-    
+
     // Create a prompt for quiz generation
     const prompt = constructQuizPrompt(subject, topic, numQuestions, difficulty, questionType);
-    
-    if (!genAI) throw new Error("AI service not initialized");
-    
+
+    if (!genAI) throw new Error('AI service not initialized');
+
     const model = genAI.getGenerativeModel({ model: MODEL_NAME });
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = response.text();
-    
+
     // Parse the AI response into a structured quiz format
     return parseQuizResponse(text);
   };
-  
+
   return safeApiCall(apiCall, getMockQuizResponse, quizParams);
 }
 
@@ -76,23 +76,29 @@ export async function generateQuizWithAI(quizParams) {
  * @returns {Promise<Object>} Personalized feedback for the student
  */
 export async function generatePersonalizedFeedback(feedbackParams) {
-  const apiCall = async (params) => {
+  const apiCall = async params => {
     const { studentName, performance, questions, answers, correctAnswers } = params;
-    
+
     // Create a prompt for feedback generation
-    const prompt = constructFeedbackPrompt(studentName, performance, questions, answers, correctAnswers);
-    
-    if (!genAI) throw new Error("AI service not initialized");
-    
+    const prompt = constructFeedbackPrompt(
+      studentName,
+      performance,
+      questions,
+      answers,
+      correctAnswers
+    );
+
+    if (!genAI) throw new Error('AI service not initialized');
+
     const model = genAI.getGenerativeModel({ model: MODEL_NAME });
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = response.text();
-    
+
     // Parse the AI response into a structured feedback format
     return parseFeedbackResponse(text);
   };
-  
+
   return safeApiCall(apiCall, getMockFeedbackResponse, feedbackParams);
 }
 
@@ -105,23 +111,23 @@ export async function generatePersonalizedFeedback(feedbackParams) {
  * @returns {Promise<Object>} Grading results with score and feedback
  */
 export async function gradeAssignmentWithAI(gradingParams) {
-  const apiCall = async (params) => {
+  const apiCall = async params => {
     const { assignment, studentSubmission, rubric } = params;
-    
+
     // Create a prompt for grading
     const prompt = constructGradingPrompt(assignment, studentSubmission, rubric);
-    
-    if (!genAI) throw new Error("AI service not initialized");
-    
+
+    if (!genAI) throw new Error('AI service not initialized');
+
     const model = genAI.getGenerativeModel({ model: MODEL_NAME });
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = response.text();
-    
+
     // Parse the AI response into a structured grading format
     return parseGradingResponse(text);
   };
-  
+
   return safeApiCall(apiCall, getMockGradingResponse, gradingParams);
 }
 
@@ -134,24 +140,24 @@ export async function gradeAssignmentWithAI(gradingParams) {
  */
 export async function evaluateEssayWithVertexAI(prompt, studentResponse, rubric) {
   const params = { prompt, studentResponse, rubric };
-  
-  const apiCall = async (params) => {
+
+  const apiCall = async params => {
     const { prompt, studentResponse, rubric } = params;
-    
+
     // Create a prompt for essay evaluation
     const evaluationPrompt = constructEssayEvaluationPrompt(prompt, studentResponse, rubric);
-    
-    if (!genAI) throw new Error("AI service not initialized");
-    
+
+    if (!genAI) throw new Error('AI service not initialized');
+
     const model = genAI.getGenerativeModel({ model: MODEL_NAME });
     const result = await model.generateContent(evaluationPrompt);
     const response = await result.response;
     const text = response.text();
-    
+
     // Parse the AI response into a structured evaluation format
     return parseEssayEvaluation(text, rubric.maxPoints);
   };
-  
+
   return safeApiCall(apiCall, getMockEssayEvaluation, params);
 }
 
@@ -180,15 +186,16 @@ function constructQuizPrompt(subject, topic, numQuestions, difficulty, questionT
       questionFormat = `multiple choice questions with 4 options each`;
   }
 
-  const mathInstructions = subject.toLowerCase().includes('math') || 
-                          subject.toLowerCase().includes('calculus') || 
-                          subject.toLowerCase().includes('algebra') || 
-                          subject.toLowerCase().includes('physics') || 
-                          topic.toLowerCase().includes('math') || 
-                          topic.toLowerCase().includes('calculus') || 
-                          topic.toLowerCase().includes('physics') || 
-                          topic.toLowerCase().includes('equation') ?
-    `
+  const mathInstructions =
+    subject.toLowerCase().includes('math') ||
+    subject.toLowerCase().includes('calculus') ||
+    subject.toLowerCase().includes('algebra') ||
+    subject.toLowerCase().includes('physics') ||
+    topic.toLowerCase().includes('math') ||
+    topic.toLowerCase().includes('calculus') ||
+    topic.toLowerCase().includes('physics') ||
+    topic.toLowerCase().includes('equation')
+      ? `
     IMPORTANT MATH FORMATTING INSTRUCTIONS:
     1. Use proper LaTeX syntax for all mathematical expressions
     2. Enclose inline math expressions with $ symbols (e.g., $x^2 + 2x + 1$)
@@ -201,7 +208,8 @@ function constructQuizPrompt(subject, topic, numQuestions, difficulty, questionT
        - Square roots: \\sqrt{x}
        - Subscripts and superscripts: x_{i} and x^{2}
     5. Ensure all math expressions are properly formatted and complete
-    ` : '';
+    `
+      : '';
 
   return `
     Generate a ${difficulty} level quiz on ${subject} focusing on ${topic}.
@@ -209,11 +217,17 @@ function constructQuizPrompt(subject, topic, numQuestions, difficulty, questionT
     
     Each question should include:
     1. Clear, well-formulated question text
-    2. ${questionType === 'multiple_choice' ? 'Four distinct answer options (A, B, C, D)' : 
-        questionType === 'true_false' ? 'True or False options' : 
-        questionType === 'fill_blank' ? 'The exact answer to fill in the blank' :
-        questionType === 'short_answer' ? 'A sample correct answer' :
-        'Detailed grading criteria'}
+    2. ${
+      questionType === 'multiple_choice'
+        ? 'Four distinct answer options (A, B, C, D)'
+        : questionType === 'true_false'
+          ? 'True or False options'
+          : questionType === 'fill_blank'
+            ? 'The exact answer to fill in the blank'
+            : questionType === 'short_answer'
+              ? 'A sample correct answer'
+              : 'Detailed grading criteria'
+    }
     3. The correct answer
     4. A brief explanation or justification for the correct answer
     ${mathInstructions}
@@ -230,10 +244,13 @@ function constructQuizPrompt(subject, topic, numQuestions, difficulty, questionT
           "id": 1,
           "question": "Question text",
           "type": "${questionType}",
-          ${questionType === 'multiple_choice' ? 
-            `"options": ["Option A", "Option B", "Option C", "Option D"],` :
-            questionType === 'true_false' ? 
-            `"options": ["True", "False"],` : ''}
+          ${
+            questionType === 'multiple_choice'
+              ? `"options": ["Option A", "Option B", "Option C", "Option D"],`
+              : questionType === 'true_false'
+                ? `"options": ["True", "False"],`
+                : ''
+          }
           "correctAnswer": "The correct answer",
           "explanation": "Explanation for the answer"
         }
@@ -252,20 +269,22 @@ function constructQuizPrompt(subject, topic, numQuestions, difficulty, questionT
 function constructFeedbackPrompt(studentName, performance, questions, answers, correctAnswers) {
   // Calculate some basic statistics
   const numQuestions = questions.length;
-  const numCorrect = correctAnswers.filter((correct, index) => 
-    correct === answers[index]
-  ).length;
+  const numCorrect = correctAnswers.filter((correct, index) => correct === answers[index]).length;
   const score = Math.round((numCorrect / numQuestions) * 100);
-  
+
   return `
     Generate personalized feedback for ${studentName} who scored ${score}% (${numCorrect}/${numQuestions}) on a quiz.
     
     Here are the details:
-    ${questions.map((q, i) => `
-      Question ${i+1}: ${q}
+    ${questions
+      .map(
+        (q, i) => `
+      Question ${i + 1}: ${q}
       Student's answer: ${answers[i]}
       Correct answer: ${correctAnswers[i]}
-    `).join('\n')}
+    `
+      )
+      .join('\n')}
     
     Please provide:
     1. Overall assessment of the student's performance
@@ -296,9 +315,9 @@ function constructGradingPrompt(assignment, studentSubmission, rubric) {
     ${assignment.description}
     
     Grading Rubric:
-    ${Object.entries(rubric).map(([criterion, maxPoints]) => 
-      `${criterion}: ${maxPoints} points`
-    ).join('\n')}
+    ${Object.entries(rubric)
+      .map(([criterion, maxPoints]) => `${criterion}: ${maxPoints} points`)
+      .join('\n')}
     
     Student Submission:
     ${studentSubmission}
@@ -342,9 +361,9 @@ function constructEssayEvaluationPrompt(prompt, studentResponse, rubric) {
     ${studentResponse}
     
     GRADING RUBRIC:
-    ${rubric.criteria.map(criterion => 
-      `${criterion.name} (${criterion.weight}% of total score)`
-    ).join('\n')}
+    ${rubric.criteria
+      .map(criterion => `${criterion.name} (${criterion.weight}% of total score)`)
+      .join('\n')}
     
     Total points possible: ${rubric.maxPoints}
     
@@ -389,12 +408,12 @@ function parseQuizResponse(response) {
       if (jsonMatch) {
         return JSON.parse(jsonMatch[0]);
       }
-      
+
       // If no JSON found, try to parse questions manually
       return parseQuestionsFromText(response);
     } catch (parseError) {
-      console.error("Error parsing quiz response:", parseError);
-      throw new Error("Could not parse the AI-generated quiz. Please try again.");
+      console.error('Error parsing quiz response:', parseError);
+      throw new Error('Could not parse the AI-generated quiz. Please try again.');
     }
   }
 }
@@ -416,15 +435,15 @@ function parseFeedbackResponse(response) {
         console.error('Error parsing extracted JSON:', innerError);
       }
     }
-    
+
     // Fallback to a basic structure if parsing fails
     console.error('Error parsing feedback response:', error);
     return {
-      overallAssessment: "Overall assessment of performance",
-      strengths: ["Identified strengths"],
-      areasForImprovement: ["Areas that need improvement"],
-      suggestedResources: ["Suggested resources for improvement"],
-      encouragement: "Encouraging message for the student"
+      overallAssessment: 'Overall assessment of performance',
+      strengths: ['Identified strengths'],
+      areasForImprovement: ['Areas that need improvement'],
+      suggestedResources: ['Suggested resources for improvement'],
+      encouragement: 'Encouraging message for the student',
     };
   }
 }
@@ -446,15 +465,15 @@ function parseGradingResponse(response) {
         console.error('Error parsing extracted JSON:', innerError);
       }
     }
-    
+
     // Fallback to a basic structure if parsing fails
     console.error('Error parsing grading response:', error);
     return {
       scores: {},
       feedback: {},
-      overallFeedback: "Feedback on the submission",
+      overallFeedback: 'Feedback on the submission',
       totalScore: 0,
-      maxScore: 100
+      maxScore: 100,
     };
   }
 }
@@ -477,21 +496,16 @@ function parseEssayEvaluation(response, maxPoints) {
         console.error('Error parsing extracted JSON:', innerError);
       }
     }
-    
+
     // Fallback to a basic structure if parsing fails
     console.error('Error parsing essay evaluation:', error);
     return {
       criteriaEvaluations: [],
-      overallFeedback: "The essay demonstrates understanding of the topic with some areas for improvement.",
-      strengths: [
-        "Clear structure and organization",
-        "Good understanding of basic concepts"
-      ],
-      areasForImprovement: [
-        "Needs more detailed examples",
-        "Could improve clarity of arguments"
-      ],
-      suggestedPoints: Math.round(maxPoints * 0.75)
+      overallFeedback:
+        'The essay demonstrates understanding of the topic with some areas for improvement.',
+      strengths: ['Clear structure and organization', 'Good understanding of basic concepts'],
+      areasForImprovement: ['Needs more detailed examples', 'Could improve clarity of arguments'],
+      suggestedPoints: Math.round(maxPoints * 0.75),
     };
   }
 }
@@ -504,12 +518,12 @@ function parseQuestionsFromText(text) {
   const questionPatterns = [
     /Q(?:uestion)?\s*(\d+)[.:)]\s*(.*?)(?=Q(?:uestion)?\s*\d+[.:)]|$)/gis,
     /(\d+)[.:)]\s*(.*?)(?=\d+[.:)]|$)/gis,
-    /Question\s*(\d+)[.:)]\s*(.*?)(?=Question\s*\d+[.:)]|$)/gis
+    /Question\s*(\d+)[.:)]\s*(.*?)(?=Question\s*\d+[.:)]|$)/gis,
   ];
 
   let questions = [];
   let matches = [];
-  
+
   // Try each pattern until we find matches
   for (const pattern of questionPatterns) {
     const patternMatches = [...text.matchAll(pattern)];
@@ -526,13 +540,13 @@ function parseQuestionsFromText(text) {
     let optionsText = '';
     let answerText = '';
     let explanationText = '';
-    
+
     for (const line of lines) {
       const trimmedLine = line.trim();
-      
+
       // Skip empty lines
       if (!trimmedLine) continue;
-      
+
       // Check if this line starts a new question
       const questionMatch = trimmedLine.match(/^(\d+)[.:)]\s*(.+)$/);
       if (questionMatch) {
@@ -541,19 +555,25 @@ function parseQuestionsFromText(text) {
           questions.push({
             id: questions.length + 1,
             question: currentQuestion,
-            type: optionsText.includes('A)') || optionsText.includes('A.') ? 'multiple_choice' : 'short_answer',
+            type:
+              optionsText.includes('A)') || optionsText.includes('A.')
+                ? 'multiple_choice'
+                : 'short_answer',
             options: parseOptions(optionsText),
             correctAnswer: answerText || 'See explanation',
-            explanation: explanationText || 'No explanation provided'
+            explanation: explanationText || 'No explanation provided',
           });
         }
-        
+
         // Start a new question
         currentQuestion = questionMatch[2];
         optionsText = '';
         answerText = '';
         explanationText = '';
-      } else if (trimmedLine.match(/^[A-D][.:)]\s*.+/) || trimmedLine.match(/^Option\s*[A-D][.:)]\s*.+/)) {
+      } else if (
+        trimmedLine.match(/^[A-D][.:)]\s*.+/) ||
+        trimmedLine.match(/^Option\s*[A-D][.:)]\s*.+/)
+      ) {
         // This line is an option
         optionsText += trimmedLine + '\n';
       } else if (trimmedLine.match(/^Answer[.:\s]|^Correct answer[.:\s]/i)) {
@@ -574,56 +594,72 @@ function parseQuestionsFromText(text) {
         }
       }
     }
-    
+
     // Don't forget to add the last question
     if (currentQuestion) {
       questions.push({
         id: questions.length + 1,
         question: currentQuestion,
-        type: optionsText.includes('A)') || optionsText.includes('A.') ? 'multiple_choice' : 'short_answer',
+        type:
+          optionsText.includes('A)') || optionsText.includes('A.')
+            ? 'multiple_choice'
+            : 'short_answer',
         options: parseOptions(optionsText),
         correctAnswer: answerText || 'See explanation',
-        explanation: explanationText || 'No explanation provided'
+        explanation: explanationText || 'No explanation provided',
       });
     }
   } else {
     // Process matches from regex patterns
     questions = matches.map((match, index) => {
       const [, , questionText] = match;
-      
+
       // Try to extract options, answer, and explanation from the question text
       const { question, options, answer, explanation } = extractQuestionParts(questionText);
-      
+
       // Determine question type based on content
       let questionType = 'short_answer';
       if (options && options.length > 0) {
         questionType = 'multiple_choice';
-      } else if (question.toLowerCase().includes('fill in the blank') || question.includes('___') || question.includes('...')) {
+      } else if (
+        question.toLowerCase().includes('fill in the blank') ||
+        question.includes('___') ||
+        question.includes('...')
+      ) {
         questionType = 'fill_blank';
       } else if (answer && (answer.toLowerCase() === 'true' || answer.toLowerCase() === 'false')) {
         questionType = 'true_false';
-      } else if (question.length > 200 || question.toLowerCase().includes('essay') || question.toLowerCase().includes('discuss')) {
+      } else if (
+        question.length > 200 ||
+        question.toLowerCase().includes('essay') ||
+        question.toLowerCase().includes('discuss')
+      ) {
         questionType = 'long_answer';
       }
-      
+
       return {
         id: index + 1,
         question,
         type: questionType,
-        options: options.length > 0 ? options : (questionType === 'true_false' ? ['True', 'False'] : undefined),
+        options:
+          options.length > 0
+            ? options
+            : questionType === 'true_false'
+              ? ['True', 'False']
+              : undefined,
         correctAnswer: answer || 'See explanation',
-        explanation: explanation || 'No explanation provided'
+        explanation: explanation || 'No explanation provided',
       };
     });
   }
 
   return {
-    title: "Generated Quiz",
-    subject: "Subject",
-    topic: "Topic",
-    difficulty: "Medium",
-    questionType: questions.length > 0 ? questions[0].type : "multiple_choice",
-    questions
+    title: 'Generated Quiz',
+    subject: 'Subject',
+    topic: 'Topic',
+    difficulty: 'Medium',
+    questionType: questions.length > 0 ? questions[0].type : 'multiple_choice',
+    questions,
   };
 }
 
@@ -635,13 +671,13 @@ function extractQuestionParts(text) {
   let options = [];
   let answer = '';
   let explanation = '';
-  
+
   // Find options section using regex for common patterns
   const optionsMatch = question.match(/([A-D][.:)]\s*.+){2,}/s);
   if (optionsMatch) {
     const optionsText = optionsMatch[0];
     question = question.replace(optionsText, '').trim();
-    
+
     // Extract individual options
     const optionRegex = /([A-D])[.:)]\s*(.+?)(?=[A-D][.:)]|$)/gs;
     let optionMatch;
@@ -649,21 +685,21 @@ function extractQuestionParts(text) {
       options.push(optionMatch[2].trim());
     }
   }
-  
+
   // Find answer section
   const answerMatch = question.match(/(?:Answer|Correct Answer)[.:\s]\s*(.+?)(?=Explanation|$)/is);
   if (answerMatch) {
     answer = answerMatch[1].trim();
     question = question.replace(answerMatch[0], '').trim();
   }
-  
+
   // Find explanation section
   const explanationMatch = question.match(/Explanation[.:\s]\s*(.+)$/is);
   if (explanationMatch) {
     explanation = explanationMatch[1].trim();
     question = question.replace(explanationMatch[0], '').trim();
   }
-  
+
   return { question, options, answer, explanation };
 }
 
@@ -672,14 +708,14 @@ function extractQuestionParts(text) {
  */
 function parseOptions(optionsText) {
   if (!optionsText) return [];
-  
+
   const options = [];
   const optionLines = optionsText.split('\n');
-  
+
   for (const line of optionLines) {
     const trimmedLine = line.trim();
     if (!trimmedLine) continue;
-    
+
     const optionMatch = trimmedLine.match(/^(?:Option\s*)?([A-D])[.:)]\s*(.+)$/);
     if (optionMatch) {
       // Make sure we have the right number of options (A, B, C, D)
@@ -690,7 +726,7 @@ function parseOptions(optionsText) {
       options[optionIndex] = optionMatch[2].trim();
     }
   }
-  
+
   return options.filter(option => option !== '');
 }
 
@@ -699,29 +735,30 @@ function parseOptions(optionsText) {
  */
 function getMockQuizResponse(params) {
   const { subject, topic, numQuestions, questionType, difficulty } = params;
-  
+
   // Check if this is a math-related quiz
-  const isMathRelated = subject.toLowerCase().includes('math') || 
-                        subject.toLowerCase().includes('calculus') || 
-                        subject.toLowerCase().includes('algebra') || 
-                        subject.toLowerCase().includes('physics') || 
-                        topic.toLowerCase().includes('math') || 
-                        topic.toLowerCase().includes('calculus') || 
-                        topic.toLowerCase().includes('physics') || 
-                        topic.toLowerCase().includes('equation');
-  
+  const isMathRelated =
+    subject.toLowerCase().includes('math') ||
+    subject.toLowerCase().includes('calculus') ||
+    subject.toLowerCase().includes('algebra') ||
+    subject.toLowerCase().includes('physics') ||
+    topic.toLowerCase().includes('math') ||
+    topic.toLowerCase().includes('calculus') ||
+    topic.toLowerCase().includes('physics') ||
+    topic.toLowerCase().includes('equation');
+
   // Create a mock quiz based on the specified quiz type
   let questions = [];
-  
+
   for (let i = 0; i < numQuestions; i++) {
     let question = {
       id: i + 1,
       type: questionType,
-      explanation: isMathRelated ? 
-        `This is an explanation for question #${i + 1}. When $x$ approaches 0, the function behaves differently depending on the rate of change.` :
-        `This is an explanation for question #${i + 1}.`
+      explanation: isMathRelated
+        ? `This is an explanation for question #${i + 1}. When $x$ approaches 0, the function behaves differently depending on the rate of change.`
+        : `This is an explanation for question #${i + 1}.`,
     };
-    
+
     // Add question-type specific fields
     switch (questionType) {
       case 'multiple_choice':
@@ -732,22 +769,38 @@ function getMockQuizResponse(params) {
             `Consider the function $f(x) = \\frac{x^2 - 4}{x - 2}$. What is the value of $f(2)$?`,
             `What is the value of $\\tan(\\frac{\\pi}{2})$?`,
             `Solve the equation $2x^2 - 5x + 2 = 0$ for $x$.`,
-            `If $f'(x) = 3x^2 + 2x - 5$, what is $f(x)$?`
+            `If $f'(x) = 3x^2 + 2x - 5$, what is $f(x)$?`,
           ];
           question.question = mathQuestions[i % mathQuestions.length];
-          
+
           // Math-related options
           const optionSets = [
             ['$0$', '$1$', '$\\infty$', '$-\\infty$'],
             ['$0$', '$2$', '$4$', 'Undefined'],
             ['$0$', '$1$', '$\\infty$', 'Undefined'],
-            ['$x = 1$ and $x = 2$', '$x = \\frac{1}{2}$ and $x = 2$', '$x = \\frac{5 \\pm \\sqrt{17}}{4}$', '$x = \\frac{5 \\pm \\sqrt{9}}{4}$'],
-            ['$f(x) = x^3 + x^2 - 5x + C$', '$f(x) = \\frac{3x^3}{3} + \\frac{2x^2}{2} - 5x + C$', '$f(x) = x^3 + x^2 - 5x$', '$f(x) = 3x^3 + 2x^2 - 5x + C$']
+            [
+              '$x = 1$ and $x = 2$',
+              '$x = \\frac{1}{2}$ and $x = 2$',
+              '$x = \\frac{5 \\pm \\sqrt{17}}{4}$',
+              '$x = \\frac{5 \\pm \\sqrt{9}}{4}$',
+            ],
+            [
+              '$f(x) = x^3 + x^2 - 5x + C$',
+              '$f(x) = \\frac{3x^3}{3} + \\frac{2x^2}{2} - 5x + C$',
+              '$f(x) = x^3 + x^2 - 5x$',
+              '$f(x) = 3x^3 + 2x^2 - 5x + C$',
+            ],
           ];
           question.options = optionSets[i % optionSets.length];
-          
+
           // Correct answers
-          const correctAnswers = ['$\\infty$', 'Undefined', '$\\infty$', '$x = \\frac{5 \\pm \\sqrt{17}}{4}$', '$f(x) = x^3 + x^2 - 5x + C$'];
+          const correctAnswers = [
+            '$\\infty$',
+            'Undefined',
+            '$\\infty$',
+            '$x = \\frac{5 \\pm \\sqrt{17}}{4}$',
+            '$f(x) = x^3 + x^2 - 5x + C$',
+          ];
           question.correctAnswer = correctAnswers[i % correctAnswers.length];
         } else {
           question.question = `Sample ${subject} question #${i + 1} about ${topic}?`;
@@ -762,17 +815,11 @@ function getMockQuizResponse(params) {
             `The integral $\\int x^2 dx$ equals $________$.`,
             `The solution to the differential equation $\\frac{dy}{dx} = 2x$ is $y = ________ + C$.`,
             `The domain of the function $f(x) = \\ln(x-3)$ is $x ________$.`,
-            `If $\\lim_{x \\to 0} \\frac{\\sin(ax)}{x} = a$, then $\\lim_{x \\to 0} \\frac{\\sin(x)}{x} = ________$.`
+            `If $\\lim_{x \\to 0} \\frac{\\sin(ax)}{x} = a$, then $\\lim_{x \\to 0} \\frac{\\sin(x)}{x} = ________$.`,
           ];
           question.question = mathFillBlanks[i % mathFillBlanks.length];
-          
-          const mathFillAnswers = [
-            `$\\cos(x)$`,
-            `$\\frac{x^3}{3} + C$`,
-            `$x^2$`,
-            `$> 3$`,
-            `$1$`
-          ];
+
+          const mathFillAnswers = [`$\\cos(x)$`, `$\\frac{x^3}{3} + C$`, `$x^2$`, `$> 3$`, `$1$`];
           question.correctAnswer = mathFillAnswers[i % mathFillAnswers.length];
         } else {
           question.question = `In ${subject}, the concept of ${topic} involves ____________.`;
@@ -786,10 +833,10 @@ function getMockQuizResponse(params) {
             `For any function $f(x)$, $\\int f'(x) dx = f(x) + C$.`,
             `If $\\lim_{x \\to a} f(x) = L$ and $\\lim_{x \\to a} g(x) = M$, then $\\lim_{x \\to a} [f(x) \\cdot g(x)] = L \\cdot M$.`,
             `The function $f(x) = |x|$ is differentiable at $x = 0$.`,
-            `For any functions $f(x)$ and $g(x)$, $\\frac{d}{dx}[f(x) \\cdot g(x)] = f'(x) \\cdot g'(x)$.`
+            `For any functions $f(x)$ and $g(x)$, $\\frac{d}{dx}[f(x) \\cdot g(x)] = f'(x) \\cdot g'(x)$.`,
           ];
           question.question = mathTrueFalse[i % mathTrueFalse.length];
-          
+
           const tfAnswers = ['True', 'True', 'True', 'False', 'False'];
           question.correctAnswer = tfAnswers[i % tfAnswers.length];
         } else {
@@ -805,16 +852,16 @@ function getMockQuizResponse(params) {
             `Describe the relationship between the graphs of $f(x)$ and $f'(x)$.`,
             `Explain the difference between a local maximum and a global maximum.`,
             `What is the geometric interpretation of the definite integral $\\int_a^b f(x) dx$?`,
-            `Explain why $e^{i\\pi} + 1 = 0$ is considered a beautiful equation in mathematics.`
+            `Explain why $e^{i\\pi} + 1 = 0$ is considered a beautiful equation in mathematics.`,
           ];
           question.question = mathShortAnswers[i % mathShortAnswers.length];
-          
+
           const shortAnswers = [
             `Using the squeeze theorem and the fact that $\\sin(x) \\approx x$ for small values of $x$, we can show that the limit equals 1.`,
             `The derivative $f'(x)$ represents the slope of the tangent line to $f(x)$. When $f(x)$ increases, $f'(x)$ is positive; when $f(x)$ decreases, $f'(x)$ is negative.`,
             `A local maximum is a point where the function value is greater than its nearby points, while a global maximum is the largest value of the function over its entire domain.`,
             `The definite integral represents the area under the curve of $f(x)$ from $x=a$ to $x=b$.`,
-            `Euler's identity combines five fundamental constants (0, 1, $e$, $i$, and $\\pi$) and three basic operations (addition, multiplication, and exponentiation) in a single equation.`
+            `Euler's identity combines five fundamental constants (0, 1, $e$, $i$, and $\\pi$) and three basic operations (addition, multiplication, and exponentiation) in a single equation.`,
           ];
           question.correctAnswer = shortAnswers[i % shortAnswers.length];
         } else {
@@ -829,31 +876,33 @@ function getMockQuizResponse(params) {
             `Compare and contrast different techniques for solving differential equations. Discuss at least three methods and provide examples of when each would be most appropriate.`,
             `Explain the concept of mathematical proof. Discuss different types of proofs and provide an example of a proof by contradiction for an important mathematical theorem.`,
             `Discuss the relationship between mathematics and physics through the lens of differential equations. Provide at least two examples of physical phenomena that are modeled using differential equations.`,
-            `Explain the concept of mathematical modeling. Choose a real-world phenomenon and describe how you would develop a mathematical model to represent it.`
+            `Explain the concept of mathematical modeling. Choose a real-world phenomenon and describe how you would develop a mathematical model to represent it.`,
           ];
           question.question = mathLongAnswers[i % mathLongAnswers.length];
           question.correctAnswer = '';
-          question.explanation = 'Grading criteria: Mathematical accuracy (30%), Depth of analysis (30%), Historical context (20%), Clear communication of concepts (20%)';
+          question.explanation =
+            'Grading criteria: Mathematical accuracy (30%), Depth of analysis (30%), Historical context (20%), Clear communication of concepts (20%)';
         } else {
           question.question = `Write a detailed essay on ${topic} in the context of ${subject}. Discuss its importance, applications, and current developments.`;
           question.correctAnswer = '';
-          question.explanation = 'Grading criteria: Understanding of concept (30%), Organization (20%), Evidence/Examples (30%), Grammar/Clarity (20%)';
+          question.explanation =
+            'Grading criteria: Understanding of concept (30%), Organization (20%), Evidence/Examples (30%), Grammar/Clarity (20%)';
         }
         break;
       default:
         question.correctAnswer = 'Sample answer';
     }
-    
+
     questions.push(question);
   }
-  
+
   return {
     title: `${subject} Quiz: ${topic}`,
     subject: subject,
     topic: topic,
     difficulty: difficulty,
     questionType: questionType,
-    questions: questions
+    questions: questions,
   };
 }
 
@@ -863,22 +912,19 @@ function getMockQuizResponse(params) {
 function getMockFeedbackResponse(params) {
   const correctCount = params.answers.filter((a, i) => a === params.correctAnswers[i]).length;
   const score = Math.round((correctCount / params.questions.length) * 100);
-  
+
   return {
     overallAssessment: `${params.studentName} scored ${score}% on this assessment. This is a ${score >= 70 ? 'passing' : 'failing'} grade.`,
-    strengths: [
-      "Strong understanding of basic concepts",
-      "Good attempt at more complex problems"
-    ],
+    strengths: ['Strong understanding of basic concepts', 'Good attempt at more complex problems'],
     areasForImprovement: [
-      "Need to improve on conceptual understanding",
-      "Work on problem-solving techniques"
+      'Need to improve on conceptual understanding',
+      'Work on problem-solving techniques',
     ],
     suggestedResources: [
-      "Review chapter 3-4 in the textbook",
-      "Practice more problems on the topic"
+      'Review chapter 3-4 in the textbook',
+      'Practice more problems on the topic',
     ],
-    encouragement: `You're making good progress, ${params.studentName}! Keep working hard and you'll improve.`
+    encouragement: `You're making good progress, ${params.studentName}! Keep working hard and you'll improve.`,
   };
 }
 
@@ -890,21 +936,23 @@ function getMockGradingResponse(params) {
   const maxScore = rubricEntries.reduce((sum, [_, points]) => sum + points, 0);
   const mockScores = {};
   const mockFeedback = {};
-  
+
   rubricEntries.forEach(([criterion, maxPoints]) => {
     // Randomly assign between 70-100% of max points for demonstration
     mockScores[criterion] = Math.round((0.7 + Math.random() * 0.3) * maxPoints);
-    mockFeedback[criterion] = `Good work on this criterion. Here's some specific feedback for ${criterion}.`;
+    mockFeedback[criterion] =
+      `Good work on this criterion. Here's some specific feedback for ${criterion}.`;
   });
-  
+
   const totalScore = Object.values(mockScores).reduce((sum, score) => sum + score, 0);
-  
+
   return {
     scores: mockScores,
     feedback: mockFeedback,
-    overallFeedback: "This is a good submission overall. There are some areas for improvement, but you've demonstrated understanding of the core concepts.",
+    overallFeedback:
+      "This is a good submission overall. There are some areas for improvement, but you've demonstrated understanding of the core concepts.",
     totalScore: totalScore,
-    maxScore: maxScore
+    maxScore: maxScore,
   };
 }
 
@@ -915,60 +963,56 @@ function getMockEssayEvaluation(prompt, studentResponse, rubric) {
   // Calculate a mock score (70-90% range for demonstration)
   const scorePercentage = 70 + Math.floor(Math.random() * 20);
   const suggestedPoints = Math.round((scorePercentage / 100) * rubric.maxPoints);
-  
+
   // Create evaluations for each criterion
   const criteriaEvaluations = rubric.criteria.map(criterion => {
     // Slight variation in criterion scores
-    const criterionScore = Math.max(50, Math.min(100, 
-      scorePercentage + (Math.random() * 20 - 10)
-    ));
-    
+    const criterionScore = Math.max(50, Math.min(100, scorePercentage + (Math.random() * 20 - 10)));
+
     return {
       criterionName: criterion.name,
       score: Math.round(criterionScore),
-      feedback: `Good work on ${criterion.name.toLowerCase()}. Could improve by adding more detail and depth to your analysis.`
+      feedback: `Good work on ${criterion.name.toLowerCase()}. Could improve by adding more detail and depth to your analysis.`,
     };
   });
-  
+
   return {
     criteriaEvaluations,
-    overallFeedback: "The essay demonstrates a good understanding of the topic with clear organization. To improve, consider adding more specific examples and strengthening your analysis of key concepts.",
+    overallFeedback:
+      'The essay demonstrates a good understanding of the topic with clear organization. To improve, consider adding more specific examples and strengthening your analysis of key concepts.',
     strengths: [
-      "Clear organization and structure",
-      "Good understanding of core concepts",
-      "Effective use of academic language"
+      'Clear organization and structure',
+      'Good understanding of core concepts',
+      'Effective use of academic language',
     ],
     areasForImprovement: [
-      "Include more specific examples to support your arguments",
-      "Deepen analysis of key concepts",
-      "Strengthen conclusion to better tie together your main points"
+      'Include more specific examples to support your arguments',
+      'Deepen analysis of key concepts',
+      'Strengthen conclusion to better tie together your main points',
     ],
-    suggestedPoints
+    suggestedPoints,
   };
 }
 
 /**
- * Test function to generate and validate a quiz 
+ * Test function to generate and validate a quiz
  * This can be used during development to verify the quiz generation functionality
  */
 export async function testQuizGeneration(quizParams) {
   try {
     console.log('Generating test quiz with params:', quizParams);
-    
+
     // Generate a quiz
     const quiz = await generateQuizWithAI(quizParams);
-    
+
     // Validate the structure
     console.log('Quiz generated successfully:', quiz.title);
     console.log(`- ${quiz.questions.length} questions of type: ${quiz.questionType}`);
     console.log('- First question:', quiz.questions[0]);
-    
+
     return quiz;
   } catch (error) {
     console.error('Test quiz generation failed:', error);
     throw error;
   }
-} 
-
-
-
+}

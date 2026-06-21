@@ -82,10 +82,10 @@ function MessageComposer() {
 
   const { sendMessage } = useMessaging({
     onDeliveryConfirmation: (confirmation: DeliveryConfirmation) => {
-      setDeliveredMessages((prev) => [...prev, confirmation.messageId]);
+      setDeliveredMessages(prev => [...prev, confirmation.messageId]);
     },
     onDeliveryFailure: (failure: DeliveryFailure) => {
-      setFailedMessages((prev) => [...prev, failure.error]);
+      setFailedMessages(prev => [...prev, failure.error]);
     },
   });
 
@@ -100,7 +100,7 @@ function MessageComposer() {
     };
 
     sendMessage(payload);
-    setSentMessages((prev) => [...prev, messageText]);
+    setSentMessages(prev => [...prev, messageText]);
     setMessageText('');
   };
 
@@ -112,7 +112,7 @@ function MessageComposer() {
         id="message-input"
         type="text"
         value={messageText}
-        onChange={(e) => setMessageText(e.target.value)}
+        onChange={e => setMessageText(e.target.value)}
         placeholder="Type a message..."
       />
       <button onClick={handleSend} disabled={status !== 'connected'}>
@@ -174,7 +174,7 @@ function renderMessageComposer() {
     JSON.stringify({
       accessToken: mockAccessToken,
       refreshToken: 'refresh-token',
-    }),
+    })
   );
 
   return render(
@@ -186,7 +186,7 @@ function renderMessageComposer() {
           </SocketProvider>
         </AuthProvider>
       </MemoryRouter>
-    </QueryClientProvider>,
+    </QueryClientProvider>
   );
 }
 
@@ -216,9 +216,7 @@ describe('Message Sending Integration Flow', () => {
 
     // Wait for socket connection (mock fires 'connect' event)
     await waitFor(() => {
-      expect(screen.getByTestId('connection-status')).toHaveTextContent(
-        'Status: connected',
-      );
+      expect(screen.getByTestId('connection-status')).toHaveTextContent('Status: connected');
     });
 
     // Type and send a message
@@ -260,9 +258,7 @@ describe('Message Sending Integration Flow', () => {
     renderMessageComposer();
 
     await waitFor(() => {
-      expect(screen.getByTestId('connection-status')).toHaveTextContent(
-        'Status: connected',
-      );
+      expect(screen.getByTestId('connection-status')).toHaveTextContent('Status: connected');
     });
 
     // Send a message
@@ -304,9 +300,7 @@ describe('Message Sending Integration Flow', () => {
     renderMessageComposer();
 
     await waitFor(() => {
-      expect(screen.getByTestId('connection-status')).toHaveTextContent(
-        'Status: connected',
-      );
+      expect(screen.getByTestId('connection-status')).toHaveTextContent('Status: connected');
     });
 
     // Send a message
@@ -332,9 +326,7 @@ describe('Message Sending Integration Flow', () => {
     // Error alert should be visible
     const alertEl = screen.getByRole('alert');
     expect(alertEl).toBeInTheDocument();
-    expect(screen.getByTestId('failed-msg-0')).toHaveTextContent(
-      'PERSISTENCE_FAILED',
-    );
+    expect(screen.getByTestId('failed-msg-0')).toHaveTextContent('PERSISTENCE_FAILED');
   });
 
   it('disables send button when socket is disconnected', async () => {

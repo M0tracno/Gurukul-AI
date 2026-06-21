@@ -15,7 +15,6 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
  * React component tests for security UI components
  */
 
-
 // Test utilities and mocks
 
 // Components to test
@@ -28,10 +27,10 @@ const mockAuthContextValue = {
   currentUser: {
     uid: 'test-user-123',
     email: 'test@example.com',
-    displayName: 'Test User'
+    displayName: 'Test User',
   },
   userRole: 'faculty',
-  loading: false
+  loading: false,
 };
 
 // Mock security context value
@@ -41,22 +40,22 @@ const mockSecurityContextValue = {
     securityScore: 85,
     mfaEnabled: false,
     clearanceLevel: 'medium',
-    riskScore: 25
+    riskScore: 25,
   },
   deviceFingerprint: {
     fingerprint: 'mock-fingerprint-123',
-    confidence: 85
+    confidence: 85,
   },
   sessionSecurity: {
     isActive: true,
-    expiresAt: new Date(Date.now() + 3600000) // 1 hour from now
+    expiresAt: new Date(Date.now() + 3600000), // 1 hour from now
   },
   threatLevel: 'low',
   securityAlerts: [],
   complianceStatus: {
     isCompliant: true,
     gdprCompliant: true,
-    ferpaCompliant: true
+    ferpaCompliant: true,
   },
   isSecurityLoading: false,
   securityError: null,
@@ -71,7 +70,7 @@ const mockSecurityContextValue = {
   hasActiveAlerts: false,
   securityScore: 85,
   needsAttention: false,
-  isCompliant: true
+  isCompliant: true,
 };
 
 // Test wrapper component
@@ -79,9 +78,7 @@ const TestWrapper = ({ children, securityContext = mockSecurityContextValue }) =
   <BrowserRouter>
     <ThemeProvider theme={mockTheme}>
       <AuthContext.Provider value={mockAuthContextValue}>
-        <SecurityProvider value={securityContext}>
-          {children}
-        </SecurityProvider>
+        <SecurityProvider value={securityContext}>{children}</SecurityProvider>
       </AuthContext.Provider>
     </ThemeProvider>
   </BrowserRouter>
@@ -94,30 +91,30 @@ jest.mock('../src/services/security/securityCoordinator', () => ({
   getSessionSecurity: jest.fn(),
   getComplianceStatus: jest.fn(),
   logSecurityEvent: jest.fn(),
-  createIncident: jest.fn()
+  createIncident: jest.fn(),
 }));
 
 jest.mock('../src/utils/security', () => ({
   monitoring: {
     generateDeviceFingerprint: jest.fn(() => ({
       fingerprint: 'mock-fingerprint-123',
-      confidence: 85
-    }))
+      confidence: 85,
+    })),
   },
   validation: {
     validatePassword: jest.fn(() => ({
       isValid: true,
       score: 85,
-      strength: 'Strong'
+      strength: 'Strong',
     })),
     validateEmail: jest.fn(() => ({
-      isValid: true
-    }))
+      isValid: true,
+    })),
   },
   encryption: {
     encryptData: jest.fn(),
-    decryptData: jest.fn()
-  }
+    decryptData: jest.fn(),
+  },
 }));
 
 describe('SecurityDashboard Component', () => {
@@ -130,7 +127,7 @@ describe('SecurityDashboard Component', () => {
 
     // Check for main dashboard elements
     expect(screen.getByText(/Security Dashboard/i)).toBeInTheDocument();
-    
+
     // Wait for async content to load
     await waitFor(() => {
       expect(screen.getByText(/Security Score/i)).toBeInTheDocument();
@@ -168,7 +165,7 @@ describe('MFASetupDialog Component', () => {
   const mockProps = {
     open: true,
     onClose: jest.fn(),
-    onComplete: jest.fn()
+    onComplete: jest.fn(),
   };
 
   test('renders MFA setup dialog', () => {
@@ -338,10 +335,10 @@ describe('SecurityStatusMonitor Component', () => {
           type: 'warning',
           title: 'Test Alert',
           message: 'This is a test security alert',
-          priority: 'high'
-        }
+          priority: 'high',
+        },
       ],
-      hasActiveAlerts: true
+      hasActiveAlerts: true,
     };
 
     render(
@@ -359,7 +356,7 @@ describe('SecurityStatusMonitor Component', () => {
   test('displays critical threat alert', () => {
     const securityContextWithCriticalThreat = {
       ...mockSecurityContextValue,
-      threatLevel: 'critical'
+      threatLevel: 'critical',
     };
 
     render(
@@ -383,10 +380,10 @@ describe('SecurityStatusMonitor Component', () => {
           type: 'info',
           title: 'Dismissible Alert',
           message: 'This alert can be dismissed',
-          priority: 'low'
-        }
+          priority: 'low',
+        },
       ],
-      dismissAlert: mockDismissAlert
+      dismissAlert: mockDismissAlert,
     };
 
     render(
@@ -464,4 +461,3 @@ describe('Security Component Error Handling', () => {
     }).not.toThrow();
   });
 });
-

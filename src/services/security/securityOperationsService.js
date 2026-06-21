@@ -7,7 +7,6 @@ import validator from 'validator';
  * Provides comprehensive security monitoring, threat detection, and incident response capabilities
  */
 
-
 class SecurityOperationsService {
   constructor() {
     this.threatDetectors = new Map();
@@ -55,35 +54,35 @@ class SecurityOperationsService {
       threshold: 5,
       timeWindow: 5 * 60 * 1000, // 5 minutes
       severity: 'medium',
-      action: 'account_lock'
+      action: 'account_lock',
     });
 
     this.alertRules.set('privilege_escalation', {
       threshold: 1,
       timeWindow: 60 * 1000, // 1 minute
       severity: 'high',
-      action: 'immediate_block'
+      action: 'immediate_block',
     });
 
     this.alertRules.set('data_exfiltration', {
       threshold: 100, // MB
       timeWindow: 60 * 60 * 1000, // 1 hour
       severity: 'critical',
-      action: 'emergency_response'
+      action: 'emergency_response',
     });
 
     this.alertRules.set('malicious_content', {
       threshold: 1,
       timeWindow: 0,
       severity: 'high',
-      action: 'quarantine'
+      action: 'quarantine',
     });
 
     this.alertRules.set('unusual_access_pattern', {
       threshold: 3,
       timeWindow: 10 * 60 * 1000, // 10 minutes
       severity: 'medium',
-      action: 'enhanced_monitoring'
+      action: 'enhanced_monitoring',
     });
   }
 
@@ -93,7 +92,7 @@ class SecurityOperationsService {
       scanTypes: ['dependency', 'code', 'configuration', 'network'],
       schedule: 'daily',
       lastScan: null,
-      findings: new Map()
+      findings: new Map(),
     };
   }
 
@@ -132,7 +131,6 @@ class SecurityOperationsService {
 
       // Generate alerts if needed
       await this.processSecurityAlerts();
-
     } catch (error) {
       console.error('Error during security check:', error);
       await this.logSecurityEvent('monitoring_error', { error: error.message });
@@ -142,7 +140,7 @@ class SecurityOperationsService {
   async runThreatDetector(name, detector) {
     try {
       const threats = await detector.scan();
-      
+
       if (threats.length > 0) {
         await this.handleThreats(name, threats);
       }
@@ -150,7 +148,6 @@ class SecurityOperationsService {
       // Update detector metrics
       this.securityMetrics.set(`${name}_last_scan`, new Date().toISOString());
       this.securityMetrics.set(`${name}_threats_found`, threats.length);
-
     } catch (error) {
       console.error(`Error running ${name} detector:`, error);
     }
@@ -163,7 +160,7 @@ class SecurityOperationsService {
         severity: threat.severity,
         source: detectorName,
         details: threat,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
 
       await this.respondToIncident(incident);
@@ -187,17 +184,17 @@ class SecurityOperationsService {
         {
           action: 'incident_created',
           timestamp: new Date().toISOString(),
-          details: 'Security incident created'
-        }
-      ]
+          details: 'Security incident created',
+        },
+      ],
     };
 
     this.securityIncidents.set(incidentId, incident);
-    
+
     await this.logSecurityEvent('incident_created', {
       incidentId,
       type: incident.type,
-      severity: incident.severity
+      severity: incident.severity,
     });
 
     console.warn(`🚨 Security Incident Created: ${incident.type} (${incident.severity})`);
@@ -206,7 +203,7 @@ class SecurityOperationsService {
 
   async respondToIncident(incident) {
     const alertRule = this.getApplicableAlertRule(incident.type);
-    
+
     if (alertRule) {
       await this.executeIncidentResponse(incident, alertRule);
     }
@@ -221,11 +218,11 @@ class SecurityOperationsService {
   getApplicableAlertRule(incidentType) {
     // Map incident types to alert rules
     const typeMapping = {
-      'brute_force_attack': 'failed_login_attempts',
-      'privilege_escalation': 'privilege_escalation',
-      'data_breach': 'data_exfiltration',
-      'malware_detected': 'malicious_content',
-      'anomalous_behavior': 'unusual_access_pattern'
+      brute_force_attack: 'failed_login_attempts',
+      privilege_escalation: 'privilege_escalation',
+      data_breach: 'data_exfiltration',
+      malware_detected: 'malicious_content',
+      anomalous_behavior: 'unusual_access_pattern',
     };
 
     const ruleKey = typeMapping[incidentType];
@@ -255,15 +252,14 @@ class SecurityOperationsService {
       incident.timeline.push({
         action: `response_executed_${alertRule.action}`,
         timestamp: new Date().toISOString(),
-        details: `Executed ${alertRule.action} response`
+        details: `Executed ${alertRule.action} response`,
       });
-
     } catch (error) {
       console.error('Error executing incident response:', error);
       incident.timeline.push({
         action: 'response_failed',
         timestamp: new Date().toISOString(),
-        details: `Response execution failed: ${error.message}`
+        details: `Response execution failed: ${error.message}`,
       });
     }
   }
@@ -278,15 +274,15 @@ class SecurityOperationsService {
         systemLogs: await this.extractSystemLogs(incident),
         networkTraffic: await this.captureNetworkData(incident),
         userActivity: await this.getUserActivityData(incident),
-        systemState: await this.captureSystemState(incident)
+        systemState: await this.captureSystemState(incident),
       },
       chain_of_custody: [
         {
           action: 'evidence_collected',
           timestamp: new Date().toISOString(),
-          collector: 'automated_system'
-        }
-      ]
+          collector: 'automated_system',
+        },
+      ],
     };
 
     this.forensicData.set(evidenceId, forensicEvidence);
@@ -294,7 +290,7 @@ class SecurityOperationsService {
 
     await this.logSecurityEvent('forensic_evidence_collected', {
       incidentId: incident.incidentId,
-      evidenceId
+      evidenceId,
     });
   }
 
@@ -331,7 +327,7 @@ class SecurityOperationsService {
       severity: incident.severity,
       message: `Security incident detected: ${incident.type}`,
       timestamp: new Date().toISOString(),
-      channels: ['email', 'sms', 'dashboard']
+      channels: ['email', 'sms', 'dashboard'],
     };
 
     // TODO: Implement actual notification system
@@ -340,10 +336,11 @@ class SecurityOperationsService {
 
   updateSecurityMetrics() {
     const now = new Date().toISOString();
-    
+
     // Update basic metrics
     this.securityMetrics.set('last_update', now);
-    this.securityMetrics.set('active_incidents', 
+    this.securityMetrics.set(
+      'active_incidents',
       Array.from(this.securityIncidents.values()).filter(i => i.status === 'open').length
     );
     this.securityMetrics.set('total_incidents', this.securityIncidents.size);
@@ -357,13 +354,13 @@ class SecurityOperationsService {
       scanId,
       timestamp: new Date().toISOString(),
       type: 'automated',
-      findings: []
+      findings: [],
     };
 
     // Check for common vulnerabilities
-    scan.findings.push(...await this.checkDependencyVulnerabilities());
-    scan.findings.push(...await this.checkConfigurationVulnerabilities());
-    scan.findings.push(...await this.checkSecurityHeaders());
+    scan.findings.push(...(await this.checkDependencyVulnerabilities()));
+    scan.findings.push(...(await this.checkConfigurationVulnerabilities()));
+    scan.findings.push(...(await this.checkSecurityHeaders()));
 
     this.vulnerabilityScans.set(scanId, scan);
     this.vulnerabilityScanner.lastScan = scan.timestamp;
@@ -380,14 +377,14 @@ class SecurityOperationsService {
 
   async checkConfigurationVulnerabilities() {
     const findings = [];
-    
+
     // Check for insecure configurations
     if (!window.location.protocol.startsWith('https')) {
       findings.push({
         type: 'insecure_protocol',
         severity: 'high',
         description: 'Site not using HTTPS',
-        recommendation: 'Enable HTTPS'
+        recommendation: 'Enable HTTPS',
       });
     }
 
@@ -396,10 +393,10 @@ class SecurityOperationsService {
 
   async checkSecurityHeaders() {
     const findings = [];
-    
+
     // Check for missing security headers (simplified)
     // In a real implementation, this would check actual HTTP headers
-    
+
     return findings;
   }
 
@@ -411,7 +408,7 @@ class SecurityOperationsService {
           severity: finding.severity,
           source: 'vulnerability_scanner',
           details: finding,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
       }
     }
@@ -419,12 +416,11 @@ class SecurityOperationsService {
 
   async processSecurityAlerts() {
     // Process and correlate security alerts
-    const recentIncidents = Array.from(this.securityIncidents.values())
-      .filter(incident => {
-        const incidentTime = new Date(incident.timestamp);
-        const now = new Date();
-        return now - incidentTime < 60 * 60 * 1000; // Last hour
-      });
+    const recentIncidents = Array.from(this.securityIncidents.values()).filter(incident => {
+      const incidentTime = new Date(incident.timestamp);
+      const now = new Date();
+      return now - incidentTime < 60 * 60 * 1000; // Last hour
+    });
 
     // Look for patterns
     await this.detectAttackPatterns(recentIncidents);
@@ -449,9 +445,9 @@ class SecurityOperationsService {
           details: {
             pattern: key,
             incidents: group.map(i => i.incidentId),
-            count: group.length
+            count: group.length,
           },
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
       }
     }
@@ -461,8 +457,8 @@ class SecurityOperationsService {
     this.forensicsCapabilities = {
       logCapture: true,
       networkCapture: false, // Would require backend support
-      memoryCapture: false,  // Would require special permissions
-      diskCapture: false     // Would require backend support
+      memoryCapture: false, // Would require special permissions
+      diskCapture: false, // Would require backend support
     };
   }
 
@@ -471,7 +467,7 @@ class SecurityOperationsService {
     return {
       console_logs: [],
       error_logs: [],
-      access_logs: []
+      access_logs: [],
     };
   }
 
@@ -479,7 +475,7 @@ class SecurityOperationsService {
     // TODO: Capture network data (requires backend)
     return {
       requests: [],
-      responses: []
+      responses: [],
     };
   }
 
@@ -488,7 +484,7 @@ class SecurityOperationsService {
     return {
       actions: [],
       page_views: [],
-      interactions: []
+      interactions: [],
     };
   }
 
@@ -498,7 +494,7 @@ class SecurityOperationsService {
       url: window.location.href,
       userAgent: navigator.userAgent,
       cookiesEnabled: navigator.cookieEnabled,
-      onlineStatus: navigator.onLine
+      onlineStatus: navigator.onLine,
     };
   }
 
@@ -510,8 +506,8 @@ class SecurityOperationsService {
         daily: ['security_metrics'],
         weekly: ['vulnerability_summary'],
         monthly: ['incident_report', 'compliance_status'],
-        quarterly: ['risk_assessment']
-      }
+        quarterly: ['risk_assessment'],
+      },
     };
   }
 
@@ -524,15 +520,15 @@ class SecurityOperationsService {
       generatedAt: new Date().toISOString(),
       period: this.getReportingPeriod(reportType),
       data: await this.compileReportData(framework, reportType),
-      status: 'completed'
+      status: 'completed',
     };
 
     this.complianceReports.set(reportId, report);
-    
+
     await this.logSecurityEvent('compliance_report_generated', {
       reportId,
       framework,
-      reportType
+      reportType,
     });
 
     return report;
@@ -544,7 +540,7 @@ class SecurityOperationsService {
       daily: { start: new Date(now.setHours(0, 0, 0, 0)), end: new Date() },
       weekly: { start: new Date(now.setDate(now.getDate() - 7)), end: new Date() },
       monthly: { start: new Date(now.setMonth(now.getMonth() - 1)), end: new Date() },
-      quarterly: { start: new Date(now.setMonth(now.getMonth() - 3)), end: new Date() }
+      quarterly: { start: new Date(now.setMonth(now.getMonth() - 3)), end: new Date() },
     };
 
     return periods[reportType] || periods.daily;
@@ -555,7 +551,7 @@ class SecurityOperationsService {
       metrics: this.getSecurityMetrics(),
       incidents: this.getIncidentSummary(),
       vulnerabilities: this.getVulnerabilitySummary(),
-      compliance_status: this.getComplianceStatus(framework)
+      compliance_status: this.getComplianceStatus(framework),
     };
   }
 
@@ -572,14 +568,14 @@ class SecurityOperationsService {
         return acc;
       }, {}),
       open: incidents.filter(i => i.status === 'open').length,
-      resolved: incidents.filter(i => i.status === 'resolved').length
+      resolved: incidents.filter(i => i.status === 'resolved').length,
     };
   }
 
   getVulnerabilitySummary() {
     const scans = Array.from(this.vulnerabilityScans.values());
     const allFindings = scans.flatMap(scan => scan.findings);
-    
+
     return {
       total_scans: scans.length,
       total_findings: allFindings.length,
@@ -587,7 +583,7 @@ class SecurityOperationsService {
         acc[finding.severity] = (acc[finding.severity] || 0) + 1;
         return acc;
       }, {}),
-      last_scan: this.vulnerabilityScanner.lastScan
+      last_scan: this.vulnerabilityScanner.lastScan,
     };
   }
 
@@ -596,7 +592,7 @@ class SecurityOperationsService {
     return {
       status: 'compliant',
       score: 95,
-      last_assessment: new Date().toISOString()
+      last_assessment: new Date().toISOString(),
     };
   }
 
@@ -606,7 +602,7 @@ class SecurityOperationsService {
       event,
       data,
       timestamp: new Date().toISOString(),
-      source: 'security_operations_center'
+      source: 'security_operations_center',
     };
 
     // TODO: Send to centralized logging system
@@ -619,8 +615,9 @@ class SecurityOperationsService {
   }
 
   getActiveIncidents() {
-    return Array.from(this.securityIncidents.values())
-      .filter(incident => incident.status === 'open');
+    return Array.from(this.securityIncidents.values()).filter(
+      incident => incident.status === 'open'
+    );
   }
 
   getIncidentById(incidentId) {
@@ -639,12 +636,12 @@ class SecurityOperationsService {
     incident.timeline.push({
       action: 'incident_resolved',
       timestamp: new Date().toISOString(),
-      details: resolution
+      details: resolution,
     });
 
     await this.logSecurityEvent('incident_resolved', {
       incidentId,
-      resolution
+      resolution,
     });
 
     return incident;
@@ -656,11 +653,11 @@ class SecurityOperationsService {
         monitoring_status: this.isMonitoring,
         active_incidents: this.getActiveIncidents().length,
         total_incidents: this.securityIncidents.size,
-        last_vulnerability_scan: this.vulnerabilityScanner.lastScan
+        last_vulnerability_scan: this.vulnerabilityScanner.lastScan,
       },
       recent_incidents: this.getActiveIncidents().slice(0, 10),
       metrics: this.getSecurityMetrics(),
-      threat_level: this.calculateThreatLevel()
+      threat_level: this.calculateThreatLevel(),
     };
   }
 
@@ -730,4 +727,3 @@ class InjectionDetector {
 const securityOperationsService = new SecurityOperationsService();
 
 export default securityOperationsService;
-

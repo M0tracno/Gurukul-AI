@@ -130,7 +130,8 @@
   margin-top: 24px;
 }
 
-.btn-primary, .btn-secondary {
+.btn-primary,
+.btn-secondary {
   flex: 1;
   padding: 12px 24px;
   border-radius: 8px;
@@ -223,21 +224,22 @@
   .login-container {
     padding: 16px;
   }
-  
+
   .login-card {
     padding: 24px;
     margin: 0;
   }
-  
+
   .login-header h2 {
     font-size: 24px;
   }
-  
+
   .form-actions {
     flex-direction: column;
   }
-  
-  .btn-primary, .btn-secondary {
+
+  .btn-primary,
+  .btn-secondary {
     flex: none;
   }
 }
@@ -256,6 +258,10 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

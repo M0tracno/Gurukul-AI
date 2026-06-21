@@ -10,6 +10,7 @@
  * **Validates: Requirements 2.3**
  */
 
+import { jest, describe, it, expect } from '@jest/globals';
 import * as fc from 'fast-check';
 import { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
@@ -129,12 +130,12 @@ describe('Property 3: Request Validation Rejects Unknown Fields', () => {
           expect(next).not.toHaveBeenCalled();
           // Must respond with 400
           expect(res.status).toHaveBeenCalledWith(400);
-          // Response must contain the VALIDATION_ERROR structure
-          const jsonCall = (res.json as jest.Mock).mock.calls[0][0];
-          expect(jsonCall.error).toBe('VALIDATION_ERROR');
+          // Response must contain the ErrorEnvelope structure
+          const jsonCall = (res.json as jest.Mock).mock.calls[0][0] as Record<string, unknown>;
+          expect(jsonCall.success).toBe(false);
           expect(jsonCall.message).toBeDefined();
           expect(Array.isArray(jsonCall.details)).toBe(true);
-          expect(jsonCall.details.length).toBeGreaterThan(0);
+          expect((jsonCall.details as unknown[]).length).toBeGreaterThan(0);
         }
       ),
       { numRuns: 100 }
@@ -171,10 +172,10 @@ describe('Property 3: Request Validation Rejects Unknown Fields', () => {
           expect(next).not.toHaveBeenCalled();
           // Must respond with 400
           expect(res.status).toHaveBeenCalledWith(400);
-          const jsonCall = (res.json as jest.Mock).mock.calls[0][0];
-          expect(jsonCall.error).toBe('VALIDATION_ERROR');
+          const jsonCall = (res.json as jest.Mock).mock.calls[0][0] as Record<string, unknown>;
+          expect(jsonCall.success).toBe(false);
           expect(Array.isArray(jsonCall.details)).toBe(true);
-          expect(jsonCall.details.length).toBeGreaterThan(0);
+          expect((jsonCall.details as unknown[]).length).toBeGreaterThan(0);
         }
       ),
       { numRuns: 100 }
@@ -210,10 +211,10 @@ describe('Property 3: Request Validation Rejects Unknown Fields', () => {
           expect(next).not.toHaveBeenCalled();
           // Must respond with 400
           expect(res.status).toHaveBeenCalledWith(400);
-          const jsonCall = (res.json as jest.Mock).mock.calls[0][0];
-          expect(jsonCall.error).toBe('VALIDATION_ERROR');
+          const jsonCall = (res.json as jest.Mock).mock.calls[0][0] as Record<string, unknown>;
+          expect(jsonCall.success).toBe(false);
           expect(Array.isArray(jsonCall.details)).toBe(true);
-          expect(jsonCall.details.length).toBeGreaterThan(0);
+          expect((jsonCall.details as unknown[]).length).toBeGreaterThan(0);
         }
       ),
       { numRuns: 100 }

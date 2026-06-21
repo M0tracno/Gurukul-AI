@@ -15,58 +15,57 @@ export const Phase2ServicesProvider = ({ children }) => {
     notifications: null,
     ai: null,
     realtime: null,
-    analytics: null
+    analytics: null,
   });
-  
+
   const [isInitialized, setIsInitialized] = useState(false);
   const [initializationError, setInitializationError] = useState(null);
   const [connectionStatus, setConnectionStatus] = useState({
     notifications: 'disconnected',
     ai: 'disconnected',
     realtime: 'disconnected',
-    analytics: 'disconnected'
+    analytics: 'disconnected',
   });
 
   // Initialize all Phase 2 services
   const initializeServices = useCallback(async () => {
     try {
       console.log('Initializing Phase 2 services...');
-      
+
       // Initialize Smart Notification Service
       const notificationService = new SmartNotificationService();
       await notificationService.initialize();
-      
+
       // Initialize Enhanced AI Service
       const aiService = new EnhancedAIService();
       await aiService.initialize();
-      
+
       // Initialize Realtime Service
       const realtimeService = new RealtimeService();
       await realtimeService.initialize();
-      
+
       // Initialize Advanced Analytics Service
       const analyticsService = new AdvancedAnalyticsService();
       await analyticsService.initialize();
-      
+
       // Update services state
       setServices({
         notifications: notificationService,
         ai: aiService,
         realtime: realtimeService,
-        analytics: analyticsService
+        analytics: analyticsService,
       });
-      
+
       // Update connection status
       setConnectionStatus({
         notifications: 'connected',
         ai: 'connected',
         realtime: realtimeService.isConnected() ? 'connected' : 'connecting',
-        analytics: 'connected'
+        analytics: 'connected',
       });
-      
+
       setIsInitialized(true);
       console.log('Phase 2 services initialized successfully');
-      
     } catch (error) {
       console.error('Failed to initialize Phase 2 services:', error);
       setInitializationError(error);
@@ -76,7 +75,7 @@ export const Phase2ServicesProvider = ({ children }) => {
   // Cleanup services
   const cleanupServices = useCallback(() => {
     console.log('Cleaning up Phase 2 services...');
-    
+
     Object.values(services).forEach(service => {
       if (service && typeof service.cleanup === 'function') {
         try {
@@ -86,28 +85,28 @@ export const Phase2ServicesProvider = ({ children }) => {
         }
       }
     });
-    
+
     setServices({
       notifications: null,
       ai: null,
       realtime: null,
-      analytics: null
+      analytics: null,
     });
-    
+
     setConnectionStatus({
       notifications: 'disconnected',
       ai: 'disconnected',
       realtime: 'disconnected',
-      analytics: 'disconnected'
+      analytics: 'disconnected',
     });
-    
+
     setIsInitialized(false);
   }, [services]);
 
   // Initialize services on mount
   useEffect(() => {
     initializeServices();
-    
+
     return () => {
       cleanupServices();
     };
@@ -116,15 +115,15 @@ export const Phase2ServicesProvider = ({ children }) => {
   // Monitor realtime connection status
   useEffect(() => {
     if (services.realtime) {
-      const handleConnectionChange = (status) => {
+      const handleConnectionChange = status => {
         setConnectionStatus(prev => ({
           ...prev,
-          realtime: status
+          realtime: status,
         }));
       };
 
       services.realtime.on('connectionStatusChanged', handleConnectionChange);
-      
+
       return () => {
         services.realtime.off('connectionStatusChanged', handleConnectionChange);
       };
@@ -132,13 +131,19 @@ export const Phase2ServicesProvider = ({ children }) => {
   }, [services.realtime]);
 
   // Service helper methods
-  const getService = useCallback((serviceName) => {
-    return services[serviceName];
-  }, [services]);
+  const getService = useCallback(
+    serviceName => {
+      return services[serviceName];
+    },
+    [services]
+  );
 
-  const isServiceReady = useCallback((serviceName) => {
-    return services[serviceName] !== null && connectionStatus[serviceName] === 'connected';
-  }, [services, connectionStatus]);
+  const isServiceReady = useCallback(
+    serviceName => {
+      return services[serviceName] !== null && connectionStatus[serviceName] === 'connected';
+    },
+    [services, connectionStatus]
+  );
 
   const getAllServices = useCallback(() => {
     return services;
@@ -173,17 +178,16 @@ export const Phase2ServicesProvider = ({ children }) => {
 
       // Setup cross-service event handling
       if (services.ai && services.notifications) {
-        services.ai.on('insightGenerated', (insight) => {
+        services.ai.on('insightGenerated', insight => {
           services.notifications.createNotification({
             type: 'ai_insight',
             title: 'New AI Insight Available',
             content: insight.summary,
             priority: 'medium',
-            metadata: { insight }
+            metadata: { insight },
           });
         });
       }
-
     } catch (error) {
       console.error('Error integrating services:', error);
     }
@@ -202,96 +206,96 @@ export const Phase2ServicesProvider = ({ children }) => {
     services,
     getService,
     getAllServices,
-    
+
     // Status
     isInitialized,
     initializationError,
     connectionStatus,
     getConnectionStatus,
     isServiceReady,
-    
+
     // Control methods
     initializeServices,
     cleanupServices,
-    integrateServices
+    integrateServices,
   };
 
   return (
-    <Phase2ServicesContext.Provider value={contextValue}>
-      {children}
-    </Phase2ServicesContext.Provider>
+    <Phase2ServicesContext.Provider value={contextValue}>{children}</Phase2ServicesContext.Provider>
   );
 };
 
 // Hook to use Phase 2 services
 export const usePhase2Services = () => {
   const context = useContext(Phase2ServicesContext);
-  
+
   if (!context) {
     throw new Error('usePhase2Services must be used within a Phase2ServicesProvider');
   }
-  
+
   return context;
 };
 
 // Individual service hooks for convenience
 export const useSmartNotifications = () => {
   const { getService, isServiceReady } = usePhase2Services();
-  
+
   return {
     service: getService('notifications'),
-    isReady: isServiceReady('notifications')
+    isReady: isServiceReady('notifications'),
   };
 };
 
 export const useEnhancedAI = () => {
   const { getService, isServiceReady } = usePhase2Services();
-  
+
   return {
     service: getService('ai'),
-    isReady: isServiceReady('ai')
+    isReady: isServiceReady('ai'),
   };
 };
 
 export const useRealtimeService = () => {
   const { getService, isServiceReady } = usePhase2Services();
-  
+
   return {
     service: getService('realtime'),
-    isReady: isServiceReady('realtime')
+    isReady: isServiceReady('realtime'),
   };
 };
 
 export const useAdvancedAnalytics = () => {
   const { getService, isServiceReady } = usePhase2Services();
-  
+
   return {
     service: getService('analytics'),
-    isReady: isServiceReady('analytics')
+    isReady: isServiceReady('analytics'),
   };
 };
 
 // Service status component for debugging
 export const Phase2ServicesStatus = () => {
   const { connectionStatus, isInitialized, initializationError } = usePhase2Services();
-  
+
   if (process.env.NODE_ENV !== 'development') {
     return null;
   }
-  
+
   return (
-    <div style={{ 
-      position: 'fixed', 
-      top: 10, 
-      left: 10, 
-      zIndex: 9999, 
-      background: 'rgba(0,0,0,0.8)', 
-      color: 'white', 
-      padding: '10px', 
-      borderRadius: '5px',
-      fontSize: '12px',
-      fontFamily: 'monospace'
-    }}>
+    <div
+      style={{
+        position: 'fixed',
+        top: 10,
+        left: 10,
+        zIndex: 9999,
+        background: 'rgba(0,0,0,0.8)',
+        color: 'white',
+        padding: '10px',
+        borderRadius: '5px',
+        fontSize: '12px',
+        fontFamily: 'monospace',
+      }}
+    >
       <div>Phase 2 Services Status:</div>
       <div>Initialized: {isInitialized ? '✅' : '❌'}</div>
       {initializationError && (
@@ -299,7 +303,8 @@ export const Phase2ServicesStatus = () => {
       )}
       {Object.entries(connectionStatus).map(([service, status]) => (
         <div key={service}>
-          {service}: {status === 'connected' ? '🟢' : status === 'connecting' ? '🟡' : '🔴'} {status}
+          {service}: {status === 'connected' ? '🟢' : status === 'connecting' ? '🟡' : '🔴'}{' '}
+          {status}
         </div>
       ))}
     </div>
@@ -307,4 +312,3 @@ export const Phase2ServicesStatus = () => {
 };
 
 export default Phase2ServicesProvider;
-

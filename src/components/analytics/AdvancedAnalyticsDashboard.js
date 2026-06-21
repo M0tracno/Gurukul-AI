@@ -1,12 +1,72 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import AdvancedAnalyticsService from '../../services/AdvancedAnalyticsService';
-import { Alert, Avatar, Box, Button, Card, CardContent, Chip, CircularProgress, Divider, FormControl, Grid, InputLabel, LinearProgress, List, ListItem, ListItemAvatar, ListItemText, MenuItem, Paper, Select, Tab, Table,
+import {
+  Alert,
+  Avatar,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  CircularProgress,
+  Divider,
+  FormControl,
+  Grid,
+  InputLabel,
+  LinearProgress,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  MenuItem,
+  Paper,
+  Select,
+  Tab,
+  Table,
   TableBody,
   TableCell,
-  TableContainer, TableHead, TableRow, Tabs, Tooltip, Typography } from '@mui/material';
-import { Analytics, Assessment, Assignment, Download, People, Psychology, Refresh, Timeline, TrendingDown, TrendingUp } from '@mui/icons-material';
-import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
+  TableContainer,
+  TableHead,
+  TableRow,
+  Tabs,
+  Tooltip,
+  Typography,
+} from '@mui/material';
+import {
+  Analytics,
+  Assessment,
+  Assignment,
+  Download,
+  People,
+  Psychology,
+  Refresh,
+  Timeline,
+  TrendingDown,
+  TrendingUp,
+} from '@mui/icons-material';
+import {
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip as RechartsTooltip,
+  Legend,
+  ResponsiveContainer,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  Radar,
+} from 'recharts';
 const AdvancedAnalyticsDashboard = ({ userId, role = 'admin' }) => {
   const [tabValue, setTabValue] = useState(0);
   const [timeRange, setTimeRange] = useState('30d');
@@ -15,12 +75,12 @@ const AdvancedAnalyticsDashboard = ({ userId, role = 'admin' }) => {
     overview: null,
     performance: null,
     engagement: null,
-    realtime: null
+    realtime: null,
   });
   const [filters, setFilters] = useState({
     subject: 'all',
     grade: 'all',
-    class: 'all'
+    class: 'all',
   });
 
   const colors = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#00ff00', '#ff00ff'];
@@ -37,7 +97,7 @@ const AdvancedAnalyticsDashboard = ({ userId, role = 'admin' }) => {
         AdvancedAnalyticsService.getPerformanceAnalytics(timeRange, filters),
         AdvancedAnalyticsService.getEngagementMetrics(timeRange, filters),
         AdvancedAnalyticsService.getPredictiveInsights(timeRange, filters),
-        AdvancedAnalyticsService.getRealTimeMetrics()
+        AdvancedAnalyticsService.getRealTimeMetrics(),
       ]);
 
       setData({
@@ -45,7 +105,7 @@ const AdvancedAnalyticsDashboard = ({ userId, role = 'admin' }) => {
         performance,
         engagement,
         predictions,
-        realtime
+        realtime,
       });
     } catch (error) {
       console.error('Error loading analytics data:', error);
@@ -58,14 +118,14 @@ const AdvancedAnalyticsDashboard = ({ userId, role = 'admin' }) => {
     setTabValue(newValue);
   };
 
-  const handleTimeRangeChange = (event) => {
+  const handleTimeRangeChange = event => {
     setTimeRange(event.target.value);
   };
 
   const handleFilterChange = (filterType, value) => {
     setFilters(prev => ({
       ...prev,
-      [filterType]: value
+      [filterType]: value,
     }));
   };
 
@@ -108,12 +168,13 @@ const AdvancedAnalyticsDashboard = ({ userId, role = 'admin' }) => {
                   ) : (
                     <TrendingDown color="error" fontSize="small" />
                   )}
-                  <Typography 
-                    variant="body2" 
+                  <Typography
+                    variant="body2"
                     color={change >= 0 ? 'success.main' : 'error.main'}
                     sx={{ ml: 0.5 }}
                   >
-                    {change >= 0 ? '+' : ''}{change}%
+                    {change >= 0 ? '+' : ''}
+                    {change}%
                   </Typography>
                 </Box>
               )}
@@ -130,7 +191,7 @@ const AdvancedAnalyticsDashboard = ({ userId, role = 'admin' }) => {
   const OverviewTab = () => (
     <Grid container spacing={3}>
       {/* Key Metrics */}
-      <Grid size={{xs:12,sm:6,md:3}}>
+      <Grid size={{ xs: 12, sm: 6, md: 3 }}>
         <MetricCard
           title="Total Students"
           value={data.overview?.totalStudents || 1247}
@@ -138,7 +199,8 @@ const AdvancedAnalyticsDashboard = ({ userId, role = 'admin' }) => {
           icon={People}
           color="primary"
         />
-      </Grid>      <Grid size={{xs:12,sm:6,md:3}}>
+      </Grid>{' '}
+      <Grid size={{ xs: 12, sm: 6, md: 3 }}>
         <MetricCard
           title="Active Courses"
           value={data.overview?.activeCourses || 48}
@@ -147,7 +209,7 @@ const AdvancedAnalyticsDashboard = ({ userId, role = 'admin' }) => {
           color="secondary"
         />
       </Grid>
-      <Grid size={{xs:12,sm:6,md:3}}>
+      <Grid size={{ xs: 12, sm: 6, md: 3 }}>
         <MetricCard
           title="Completion Rate"
           value={`${data.overview?.completionRate || 87}%`}
@@ -156,7 +218,7 @@ const AdvancedAnalyticsDashboard = ({ userId, role = 'admin' }) => {
           color="success"
         />
       </Grid>
-      <Grid size={{xs:12,sm:6,md:3}}>
+      <Grid size={{ xs: 12, sm: 6, md: 3 }}>
         <MetricCard
           title="Avg. Performance"
           value={`${data.overview?.avgPerformance || 82}%`}
@@ -165,9 +227,8 @@ const AdvancedAnalyticsDashboard = ({ userId, role = 'admin' }) => {
           color="warning"
         />
       </Grid>
-
       {/* Charts */}
-      <Grid size={{xs:12,md:8}}>
+      <Grid size={{ xs: 12, md: 8 }}>
         <Card>
           <CardContent>
             <Typography variant="h6" gutterBottom>
@@ -188,8 +249,7 @@ const AdvancedAnalyticsDashboard = ({ userId, role = 'admin' }) => {
           </CardContent>
         </Card>
       </Grid>
-
-      <Grid size={{xs:12,md:4}}>
+      <Grid size={{ xs: 12, md: 4 }}>
         <Card>
           <CardContent>
             <Typography variant="h6" gutterBottom>
@@ -217,9 +277,8 @@ const AdvancedAnalyticsDashboard = ({ userId, role = 'admin' }) => {
           </CardContent>
         </Card>
       </Grid>
-
       {/* Recent Activity */}
-      <Grid size={{xs:12}}>
+      <Grid size={{ xs: 12 }}>
         <Card>
           <CardContent>
             <Typography variant="h6" gutterBottom>
@@ -236,10 +295,7 @@ const AdvancedAnalyticsDashboard = ({ userId, role = 'admin' }) => {
                         {activity.type === 'login' && <People />}
                       </Avatar>
                     </ListItemAvatar>
-                    <ListItemText
-                      primary={activity.description}
-                      secondary={activity.timestamp}
-                    />
+                    <ListItemText primary={activity.description} secondary={activity.timestamp} />
                     <Chip
                       label={activity.type}
                       size="small"
@@ -259,7 +315,7 @@ const AdvancedAnalyticsDashboard = ({ userId, role = 'admin' }) => {
   const PerformanceTab = () => (
     <Grid container spacing={3}>
       {/* Performance Metrics */}
-      <Grid size={{xs:12,md:8}}>
+      <Grid size={{ xs: 12, md: 8 }}>
         <Card>
           <CardContent>
             <Typography variant="h6" gutterBottom>
@@ -283,7 +339,7 @@ const AdvancedAnalyticsDashboard = ({ userId, role = 'admin' }) => {
         </Card>
       </Grid>
 
-      <Grid size={{xs:12,md:4}}>
+      <Grid size={{ xs: 12, md: 4 }}>
         <Card>
           <CardContent>
             <Typography variant="h6" gutterBottom>
@@ -297,10 +353,7 @@ const AdvancedAnalyticsDashboard = ({ userId, role = 'admin' }) => {
                       {index + 1}
                     </Avatar>
                   </ListItemAvatar>
-                  <ListItemText
-                    primary={student.name}
-                    secondary={`${student.score}% avg`}
-                  />
+                  <ListItemText primary={student.name} secondary={`${student.score}% avg`} />
                 </ListItem>
               ))}
             </List>
@@ -309,7 +362,7 @@ const AdvancedAnalyticsDashboard = ({ userId, role = 'admin' }) => {
       </Grid>
 
       {/* Performance by Subject */}
-      <Grid size={{xs:12}}>
+      <Grid size={{ xs: 12 }}>
         <Card>
           <CardContent>
             <Typography variant="h6" gutterBottom>
@@ -331,7 +384,7 @@ const AdvancedAnalyticsDashboard = ({ userId, role = 'admin' }) => {
       </Grid>
 
       {/* Detailed Performance Table */}
-      <Grid size={{xs:12}}>
+      <Grid size={{ xs: 12 }}>
         <Card>
           <CardContent>
             <Typography variant="h6" gutterBottom>
@@ -340,11 +393,13 @@ const AdvancedAnalyticsDashboard = ({ userId, role = 'admin' }) => {
             <TableContainer>
               <Table>
                 <TableHead>
-                  <TableRow><TableCell>Subject</TableCell>
+                  <TableRow>
+                    <TableCell>Subject</TableCell>
                     <TableCell align="right">Avg Score</TableCell>
                     <TableCell align="right">Completion Rate</TableCell>
                     <TableCell align="right">Pass Rate</TableCell>
-                    <TableCell align="right">Trend</TableCell></TableRow>
+                    <TableCell align="right">Trend</TableCell>
+                  </TableRow>
                 </TableHead>
                 <TableBody>
                   {(data.performance?.detailedAnalysis || []).map((row, index) => (
@@ -370,7 +425,8 @@ const AdvancedAnalyticsDashboard = ({ userId, role = 'admin' }) => {
                         ) : (
                           <TrendingDown color="error" />
                         )}
-                      </TableCell></TableRow>
+                      </TableCell>
+                    </TableRow>
                   ))}
                 </TableBody>
               </Table>
@@ -384,7 +440,7 @@ const AdvancedAnalyticsDashboard = ({ userId, role = 'admin' }) => {
   const EngagementTab = () => (
     <Grid container spacing={3}>
       {/* Engagement Metrics */}
-      <Grid size={{xs:12,md:6}}>
+      <Grid size={{ xs: 12, md: 6 }}>
         <Card>
           <CardContent>
             <Typography variant="h6" gutterBottom>
@@ -404,7 +460,7 @@ const AdvancedAnalyticsDashboard = ({ userId, role = 'admin' }) => {
         </Card>
       </Grid>
 
-      <Grid size={{xs:12,md:6}}>
+      <Grid size={{ xs: 12, md: 6 }}>
         <Card>
           <CardContent>
             <Typography variant="h6" gutterBottom>
@@ -424,7 +480,7 @@ const AdvancedAnalyticsDashboard = ({ userId, role = 'admin' }) => {
       </Grid>
 
       {/* Feature Usage */}
-      <Grid size={{xs:12,md:6}}>
+      <Grid size={{ xs: 12, md: 6 }}>
         <Card>
           <CardContent>
             <Typography variant="h6" gutterBottom>
@@ -454,7 +510,7 @@ const AdvancedAnalyticsDashboard = ({ userId, role = 'admin' }) => {
       </Grid>
 
       {/* Engagement Score */}
-      <Grid size={{xs:12,md:6}}>
+      <Grid size={{ xs: 12, md: 6 }}>
         <Card>
           <CardContent>
             <Typography variant="h6" gutterBottom>
@@ -484,14 +540,15 @@ const AdvancedAnalyticsDashboard = ({ userId, role = 'admin' }) => {
   const PredictionsTab = () => (
     <Grid container spacing={3}>
       {/* Risk Alerts */}
-      <Grid size={{xs:12}}>
+      <Grid size={{ xs: 12 }}>
         <Alert severity="warning" sx={{ mb: 2 }}>
-          {data.predictions?.riskAlerts || 'Found 12 students at risk of dropping out based on current trends.'}
+          {data.predictions?.riskAlerts ||
+            'Found 12 students at risk of dropping out based on current trends.'}
         </Alert>
       </Grid>
 
       {/* Prediction Charts */}
-      <Grid size={{xs:12,md:8}}>
+      <Grid size={{ xs: 12, md: 8 }}>
         <Card>
           <CardContent>
             <Typography variant="h6" gutterBottom>
@@ -505,18 +562,18 @@ const AdvancedAnalyticsDashboard = ({ userId, role = 'admin' }) => {
                 <Tooltip />
                 <Legend />
                 <Line type="monotone" dataKey="actual" stroke="#8884d8" strokeWidth={2} />
-                <Line 
-                  type="monotone" 
-                  dataKey="predicted" 
-                  stroke="#82ca9d" 
-                  strokeWidth={2} 
+                <Line
+                  type="monotone"
+                  dataKey="predicted"
+                  stroke="#82ca9d"
+                  strokeWidth={2}
                   strokeDasharray="5 5"
                 />
-                <Line 
-                  type="monotone" 
-                  dataKey="confidence" 
-                  stroke="#ffc658" 
-                  strokeWidth={1} 
+                <Line
+                  type="monotone"
+                  dataKey="confidence"
+                  stroke="#ffc658"
+                  strokeWidth={1}
                   strokeDasharray="2 2"
                 />
               </LineChart>
@@ -526,7 +583,7 @@ const AdvancedAnalyticsDashboard = ({ userId, role = 'admin' }) => {
       </Grid>
 
       {/* At-Risk Students */}
-      <Grid size={{xs:12,md:4}}>
+      <Grid size={{ xs: 12, md: 4 }}>
         <Card>
           <CardContent>
             <Typography variant="h6" gutterBottom>
@@ -571,7 +628,7 @@ const AdvancedAnalyticsDashboard = ({ userId, role = 'admin' }) => {
         <Typography variant="h4" component="h1">
           Advanced Analytics Dashboard
         </Typography>
-        
+
         <Box display="flex" gap={2}>
           <FormControl size="small" sx={{ minWidth: 120 }}>
             <InputLabel>Time Range</InputLabel>
@@ -582,20 +639,12 @@ const AdvancedAnalyticsDashboard = ({ userId, role = 'admin' }) => {
               <MenuItem value="1y">1 Year</MenuItem>
             </Select>
           </FormControl>
-          
-          <Button
-            startIcon={<Download />}
-            onClick={exportData}
-            variant="outlined"
-          >
+
+          <Button startIcon={<Download />} onClick={exportData} variant="outlined">
             Export
           </Button>
-          
-          <Button
-            startIcon={<Refresh />}
-            onClick={loadAnalyticsData}
-            variant="contained"
-          >
+
+          <Button startIcon={<Refresh />} onClick={loadAnalyticsData} variant="contained">
             Refresh
           </Button>
         </Box>
@@ -629,4 +678,3 @@ const AdvancedAnalyticsDashboard = ({ userId, role = 'admin' }) => {
 };
 
 export default AdvancedAnalyticsDashboard;
-

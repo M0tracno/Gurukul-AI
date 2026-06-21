@@ -2,11 +2,9 @@ import { Router } from 'express';
 import { z } from 'zod';
 
 import { courseController } from '../controllers/courseController.js';
+import { authMiddleware } from '../middleware/authMiddleware.js';
+import { adminOnly, requireRoles } from '../middleware/rbacMiddleware.js';
 import { validateRequest } from '../middleware/validateRequest.js';
-
-// Placeholder auth/RBAC middleware — being built in parallel (Task 4.4, 4.5)
-// import { authenticate } from '../middleware/authMiddleware.js';
-// import { requireRoles } from '../middleware/rbacMiddleware.js';
 
 const router = Router();
 
@@ -132,7 +130,8 @@ const updateCourseBodySchema = z.object({
  */
 router.get(
   '/',
-  // authenticate,
+  authMiddleware,
+  requireRoles('admin', 'teacher'),
   validateRequest({ query: courseListQuerySchema }),
   courseController.getAll,
 );
@@ -170,7 +169,8 @@ router.get(
  */
 router.get(
   '/:id',
-  // authenticate,
+  authMiddleware,
+  requireRoles('admin', 'teacher'),
   validateRequest({ params: idParamsSchema }),
   courseController.getById,
 );
@@ -257,8 +257,8 @@ router.get(
  */
 router.post(
   '/',
-  // authenticate,
-  // requireRoles(['admin', 'teacher']),
+  authMiddleware,
+  adminOnly,
   validateRequest({ body: createCourseBodySchema }),
   courseController.create,
 );
@@ -326,8 +326,8 @@ router.post(
  */
 router.put(
   '/:id',
-  // authenticate,
-  // requireRoles(['admin', 'teacher']),
+  authMiddleware,
+  adminOnly,
   validateRequest({ params: idParamsSchema, body: updateCourseBodySchema }),
   courseController.update,
 );
@@ -355,8 +355,8 @@ router.put(
  */
 router.delete(
   '/:id',
-  // authenticate,
-  // requireRoles(['admin']),
+  authMiddleware,
+  adminOnly,
   validateRequest({ params: idParamsSchema }),
   courseController.remove,
 );

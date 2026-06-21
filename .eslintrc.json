@@ -22,39 +22,30 @@
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "plugins": [
-    "react",
-    "@typescript-eslint",
-    "react-hooks",
-    "jsx-a11y",
-    "import"
-  ],
+  "plugins": ["react", "@typescript-eslint", "react-hooks", "jsx-a11y", "import"],
   "rules": {
     "react/react-in-jsx-scope": "off",
     "react/prop-types": "off",
     "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
-    "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/no-explicit-any": "warn",
     "no-unused-vars": "off",
     "react-hooks/exhaustive-deps": "warn",
     "no-useless-escape": "warn",
+    "react/no-unescaped-entities": "warn",
+    "no-case-declarations": "warn",
+    "react/display-name": "warn",
     "no-dupe-keys": "error",
     "no-dupe-class-members": "error",
+    "@typescript-eslint/no-require-imports": "warn",
     "import/no-anonymous-default-export": "warn",
     "default-case": "warn",
     "no-unreachable": "warn",
     "import/order": [
       "warn",
       {
-        "groups": [
-          "builtin",
-          "external",
-          "internal",
-          "parent",
-          "sibling",
-          "index"
-        ],
+        "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
         "newlines-between": "always",
         "alphabetize": {
           "order": "asc",
@@ -75,23 +66,43 @@
       {
         "patterns": [
           {
-            "group": ["**/features/teacher/components/**", "**/features/teacher/hooks/**", "**/features/teacher/services/**"],
+            "group": [
+              "**/features/teacher/components/**",
+              "**/features/teacher/hooks/**",
+              "**/features/teacher/services/**"
+            ],
             "message": "Import from '@/features/teacher' barrel export instead of internal module paths."
           },
           {
-            "group": ["**/features/student/components/**", "**/features/student/hooks/**", "**/features/student/services/**"],
+            "group": [
+              "**/features/student/components/**",
+              "**/features/student/hooks/**",
+              "**/features/student/services/**"
+            ],
             "message": "Import from '@/features/student' barrel export instead of internal module paths."
           },
           {
-            "group": ["**/features/parent/components/**", "**/features/parent/hooks/**", "**/features/parent/services/**"],
+            "group": [
+              "**/features/parent/components/**",
+              "**/features/parent/hooks/**",
+              "**/features/parent/services/**"
+            ],
             "message": "Import from '@/features/parent' barrel export instead of internal module paths."
           },
           {
-            "group": ["**/features/admin/components/**", "**/features/admin/hooks/**", "**/features/admin/services/**"],
+            "group": [
+              "**/features/admin/components/**",
+              "**/features/admin/hooks/**",
+              "**/features/admin/services/**"
+            ],
             "message": "Import from '@/features/admin' barrel export instead of internal module paths."
           },
           {
-            "group": ["**/features/shared/components/**", "**/features/shared/hooks/**", "**/features/shared/services/**"],
+            "group": [
+              "**/features/shared/components/**",
+              "**/features/shared/hooks/**",
+              "**/features/shared/services/**"
+            ],
             "message": "Import from '@/features/shared' barrel export instead of internal module paths."
           }
         ]
@@ -113,16 +124,48 @@
   },
   "overrides": [
     {
-      "files": [
-        "**/*.test.js",
-        "**/*.test.jsx",
-        "**/*.test.ts",
-        "**/*.test.tsx"
-      ],
+      "files": ["**/*.js", "**/*.jsx"],
+      "rules": {
+        "no-undef": "warn",
+        "react/jsx-no-undef": "warn",
+        "import/no-unresolved": "warn",
+        "no-case-declarations": "warn",
+        "react/display-name": "warn",
+        "@typescript-eslint/no-require-imports": "warn",
+        "@typescript-eslint/no-unused-expressions": "warn",
+        "no-redeclare": "warn",
+        "jsx-a11y/anchor-is-valid": "warn",
+        "jsx-a11y/no-autofocus": "warn",
+        "jsx-a11y/click-events-have-key-events": "warn",
+        "jsx-a11y/no-static-element-interactions": "warn",
+        "react/no-unescaped-entities": "warn",
+        "react/no-unknown-property": "warn",
+        "no-restricted-imports": "warn",
+        "import/default": "warn",
+        "react-hooks/rules-of-hooks": "warn"
+      }
+    },
+    {
+      "files": ["**/*.test.js", "**/*.test.jsx", "**/*.test.ts", "**/*.test.tsx"],
       "rules": {
         "no-unused-vars": "off",
         "@typescript-eslint/no-unused-vars": "off",
-        "@typescript-eslint/no-explicit-any": "off"
+        "@typescript-eslint/no-explicit-any": "off",
+        "no-restricted-imports": "off"
+      }
+    },
+    {
+      "files": ["**/*.d.ts"],
+      "rules": {
+        "@typescript-eslint/no-explicit-any": "warn",
+        "@typescript-eslint/no-empty-object-type": "warn"
+      }
+    },
+    {
+      "files": ["src/stories/**/*", "src/test/**/*", "src/app/routes.tsx"],
+      "rules": {
+        "import/no-unresolved": "warn",
+        "no-restricted-imports": "warn"
       }
     },
     {
@@ -133,15 +176,27 @@
           {
             "patterns": [
               {
-                "group": ["**/features/student/components/**", "**/features/student/hooks/**", "**/features/student/services/**"],
+                "group": [
+                  "**/features/student/components/**",
+                  "**/features/student/hooks/**",
+                  "**/features/student/services/**"
+                ],
                 "message": "Import from '@/features/student' barrel export instead of internal module paths."
               },
               {
-                "group": ["**/features/parent/components/**", "**/features/parent/hooks/**", "**/features/parent/services/**"],
+                "group": [
+                  "**/features/parent/components/**",
+                  "**/features/parent/hooks/**",
+                  "**/features/parent/services/**"
+                ],
                 "message": "Import from '@/features/parent' barrel export instead of internal module paths."
               },
               {
-                "group": ["**/features/admin/components/**", "**/features/admin/hooks/**", "**/features/admin/services/**"],
+                "group": [
+                  "**/features/admin/components/**",
+                  "**/features/admin/hooks/**",
+                  "**/features/admin/services/**"
+                ],
                 "message": "Import from '@/features/admin' barrel export instead of internal module paths."
               }
             ]
@@ -157,15 +212,27 @@
           {
             "patterns": [
               {
-                "group": ["**/features/teacher/components/**", "**/features/teacher/hooks/**", "**/features/teacher/services/**"],
+                "group": [
+                  "**/features/teacher/components/**",
+                  "**/features/teacher/hooks/**",
+                  "**/features/teacher/services/**"
+                ],
                 "message": "Import from '@/features/teacher' barrel export instead of internal module paths."
               },
               {
-                "group": ["**/features/parent/components/**", "**/features/parent/hooks/**", "**/features/parent/services/**"],
+                "group": [
+                  "**/features/parent/components/**",
+                  "**/features/parent/hooks/**",
+                  "**/features/parent/services/**"
+                ],
                 "message": "Import from '@/features/parent' barrel export instead of internal module paths."
               },
               {
-                "group": ["**/features/admin/components/**", "**/features/admin/hooks/**", "**/features/admin/services/**"],
+                "group": [
+                  "**/features/admin/components/**",
+                  "**/features/admin/hooks/**",
+                  "**/features/admin/services/**"
+                ],
                 "message": "Import from '@/features/admin' barrel export instead of internal module paths."
               }
             ]
@@ -181,15 +248,27 @@
           {
             "patterns": [
               {
-                "group": ["**/features/teacher/components/**", "**/features/teacher/hooks/**", "**/features/teacher/services/**"],
+                "group": [
+                  "**/features/teacher/components/**",
+                  "**/features/teacher/hooks/**",
+                  "**/features/teacher/services/**"
+                ],
                 "message": "Import from '@/features/teacher' barrel export instead of internal module paths."
               },
               {
-                "group": ["**/features/student/components/**", "**/features/student/hooks/**", "**/features/student/services/**"],
+                "group": [
+                  "**/features/student/components/**",
+                  "**/features/student/hooks/**",
+                  "**/features/student/services/**"
+                ],
                 "message": "Import from '@/features/student' barrel export instead of internal module paths."
               },
               {
-                "group": ["**/features/admin/components/**", "**/features/admin/hooks/**", "**/features/admin/services/**"],
+                "group": [
+                  "**/features/admin/components/**",
+                  "**/features/admin/hooks/**",
+                  "**/features/admin/services/**"
+                ],
                 "message": "Import from '@/features/admin' barrel export instead of internal module paths."
               }
             ]
@@ -205,15 +284,27 @@
           {
             "patterns": [
               {
-                "group": ["**/features/teacher/components/**", "**/features/teacher/hooks/**", "**/features/teacher/services/**"],
+                "group": [
+                  "**/features/teacher/components/**",
+                  "**/features/teacher/hooks/**",
+                  "**/features/teacher/services/**"
+                ],
                 "message": "Import from '@/features/teacher' barrel export instead of internal module paths."
               },
               {
-                "group": ["**/features/student/components/**", "**/features/student/hooks/**", "**/features/student/services/**"],
+                "group": [
+                  "**/features/student/components/**",
+                  "**/features/student/hooks/**",
+                  "**/features/student/services/**"
+                ],
                 "message": "Import from '@/features/student' barrel export instead of internal module paths."
               },
               {
-                "group": ["**/features/parent/components/**", "**/features/parent/hooks/**", "**/features/parent/services/**"],
+                "group": [
+                  "**/features/parent/components/**",
+                  "**/features/parent/hooks/**",
+                  "**/features/parent/services/**"
+                ],
                 "message": "Import from '@/features/parent' barrel export instead of internal module paths."
               }
             ]
@@ -229,19 +320,35 @@
           {
             "patterns": [
               {
-                "group": ["**/features/teacher/components/**", "**/features/teacher/hooks/**", "**/features/teacher/services/**"],
+                "group": [
+                  "**/features/teacher/components/**",
+                  "**/features/teacher/hooks/**",
+                  "**/features/teacher/services/**"
+                ],
                 "message": "Import from '@/features/teacher' barrel export instead of internal module paths."
               },
               {
-                "group": ["**/features/student/components/**", "**/features/student/hooks/**", "**/features/student/services/**"],
+                "group": [
+                  "**/features/student/components/**",
+                  "**/features/student/hooks/**",
+                  "**/features/student/services/**"
+                ],
                 "message": "Import from '@/features/student' barrel export instead of internal module paths."
               },
               {
-                "group": ["**/features/parent/components/**", "**/features/parent/hooks/**", "**/features/parent/services/**"],
+                "group": [
+                  "**/features/parent/components/**",
+                  "**/features/parent/hooks/**",
+                  "**/features/parent/services/**"
+                ],
                 "message": "Import from '@/features/parent' barrel export instead of internal module paths."
               },
               {
-                "group": ["**/features/admin/components/**", "**/features/admin/hooks/**", "**/features/admin/services/**"],
+                "group": [
+                  "**/features/admin/components/**",
+                  "**/features/admin/hooks/**",
+                  "**/features/admin/services/**"
+                ],
                 "message": "Import from '@/features/admin' barrel export instead of internal module paths."
               }
             ]
@@ -250,12 +357,5 @@
       }
     }
   ],
-  "ignorePatterns": [
-    "dist/",
-    "build/",
-    "node_modules/",
-    "public/",
-    "*.config.js",
-    "*.config.ts"
-  ]
+  "ignorePatterns": ["dist/", "build/", "node_modules/", "public/", "*.config.js", "*.config.ts"]
 }

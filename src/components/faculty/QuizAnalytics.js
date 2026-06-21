@@ -1,25 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Assessment as AssessmentIcon, 
-  CheckCircle as CheckCircleIcon, 
-  GetApp as ExportIcon, 
-  People as PeopleIcon, 
-  School as SchoolIcon, 
-  Timer as TimerIcon, 
-  TrendingDown as TrendingDownIcon, 
-  TrendingUp as TrendingUpIcon, 
+import {
+  Assessment as AssessmentIcon,
+  CheckCircle as CheckCircleIcon,
+  GetApp as ExportIcon,
+  People as PeopleIcon,
+  School as SchoolIcon,
+  Timer as TimerIcon,
+  TrendingDown as TrendingDownIcon,
+  TrendingUp as TrendingUpIcon,
   Visibility as ViewIcon,
   BarChart as ChartIcon,
   Analytics as AnalyticsIcon,
   Refresh as RefreshIcon,
-  Close as CloseIcon
+  Close as CloseIcon,
 } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 import makeStyles from '../../utils/makeStylesCompat';
 import { Bar, Line, Doughnut } from 'react-chartjs-2';
-import { useParams } from 'react-router-dom';
 import facultyService from '../../services/facultyService';
-import EnhancedFacultyService from '../../services/enhancedFacultyService';
 import {
   Alert,
   Avatar,
@@ -55,7 +53,7 @@ import {
   TableHead,
   TableRow,
   Tooltip,
-  Typography
+  Typography,
 } from '@mui/material';
 import {
   Chart as ChartJS,
@@ -67,7 +65,7 @@ import {
   ArcElement,
   Title,
   Tooltip as ChartTooltip,
-  Legend
+  Legend,
 } from 'chart.js';
 
 ChartJS.register(
@@ -82,12 +80,12 @@ ChartJS.register(
   ArcElement
 );
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
-    minHeight: '100vh',
-    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    padding: theme.spacing(3)
+    minHeight: '100%',
+    background: 'transparent',
+    padding: theme.spacing(3),
   },
   paper: {
     padding: theme.spacing(4),
@@ -96,11 +94,11 @@ const useStyles = makeStyles((theme) => ({
     background: 'rgba(255, 255, 255, 0.95)',
     backdropFilter: 'blur(20px)',
     border: '1px solid rgba(255, 255, 255, 0.2)',
-    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
   },
   title: {
     fontWeight: 700,
-    background: 'linear-gradient(45deg, #667eea, #764ba2)',
+    background: 'linear-gradient(45deg, #E3A648, #B97E26)',
     backgroundClip: 'text',
     WebkitBackgroundClip: 'text',
     WebkitTextFillColor: 'transparent',
@@ -108,52 +106,53 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
     display: 'flex',
     alignItems: 'center',
-    gap: theme.spacing(2)
+    gap: theme.spacing(2),
   },
   subtitle: {
     color: '#7f8c8d',
     fontSize: '1.25rem',
-    marginBottom: theme.spacing(1)
+    marginBottom: theme.spacing(1),
   },
   description: {
     color: '#95a5a6',
     fontSize: '1rem',
-    marginBottom: theme.spacing(3)
+    marginBottom: theme.spacing(3),
   },
   statsContainer: {
-    marginBottom: theme.spacing(4)
+    marginBottom: theme.spacing(4),
   },
   statCard: {
     height: '100%',
-    background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)',
+    background:
+      'linear-gradient(135deg, rgba(227, 166, 72, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)',
     borderRadius: 16,
-    border: '1px solid rgba(102, 126, 234, 0.2)',
+    border: '1px solid rgba(227, 166, 72, 0.2)',
     transition: 'all 0.3s ease',
     '&:hover': {
       transform: 'translateY(-4px)',
-      boxShadow: '0 12px 40px rgba(102, 126, 234, 0.2)'
-    }
+      boxShadow: '0 12px 40px rgba(227, 166, 72, 0.2)',
+    },
   },
   statIcon: {
     fontSize: '3rem',
-    color: '#667eea',
-    marginBottom: theme.spacing(1)
+    color: '#E3A648',
+    marginBottom: theme.spacing(1),
   },
   statValue: {
     fontSize: '2rem',
     fontWeight: 700,
-    color: '#2c3e50'
+    color: '#2c3e50',
   },
   statLabel: {
     fontSize: '0.875rem',
     color: '#7f8c8d',
     textTransform: 'uppercase',
-    letterSpacing: '0.5px'
+    letterSpacing: '0.5px',
   },
   statSubtitle: {
     fontSize: '0.875rem',
     color: '#95a5a6',
-    marginTop: theme.spacing(0.5)
+    marginTop: theme.spacing(0.5),
   },
   chartCard: {
     height: '100%',
@@ -165,8 +164,8 @@ const useStyles = makeStyles((theme) => ({
     transition: 'all 0.3s ease',
     '&:hover': {
       transform: 'translateY(-2px)',
-      boxShadow: '0 12px 40px rgba(0, 0, 0, 0.15)'
-    }
+      boxShadow: '0 12px 40px rgba(0, 0, 0, 0.15)',
+    },
   },
   chartTitle: {
     fontWeight: 600,
@@ -174,7 +173,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
     display: 'flex',
     alignItems: 'center',
-    gap: theme.spacing(1)
+    gap: theme.spacing(1),
   },
   formControl: {
     minWidth: 200,
@@ -184,18 +183,18 @@ const useStyles = makeStyles((theme) => ({
       background: 'rgba(255, 255, 255, 0.9)',
       backdropFilter: 'blur(10px)',
       '& fieldset': {
-        borderColor: 'rgba(102, 126, 234, 0.3)'
+        borderColor: 'rgba(227, 166, 72, 0.3)',
       },
       '&:hover fieldset': {
-        borderColor: 'rgba(102, 126, 234, 0.6)'
+        borderColor: 'rgba(227, 166, 72, 0.6)',
       },
       '&.Mui-focused fieldset': {
-        borderColor: '#667eea'
-      }
-    }
+        borderColor: '#E3A648',
+      },
+    },
   },
   primaryButton: {
-    background: 'linear-gradient(45deg, #667eea, #764ba2)',
+    background: 'linear-gradient(45deg, #E3A648, #B97E26)',
     color: 'white',
     borderRadius: 12,
     textTransform: 'none',
@@ -204,118 +203,115 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(1),
     transition: 'all 0.3s ease',
     '&:hover': {
-      background: 'linear-gradient(45deg, #5a6fd8, #6a4190)',
+      background: 'linear-gradient(45deg, #C68F32, #8C5D17)',
       transform: 'translateY(-2px)',
-      boxShadow: '0 8px 25px rgba(102, 126, 234, 0.3)'
+      boxShadow: '0 8px 25px rgba(227, 166, 72, 0.3)',
     },
     '&:disabled': {
       opacity: 0.6,
-      transform: 'none'
-    }
+      transform: 'none',
+    },
   },
   secondaryButton: {
     borderRadius: 12,
     textTransform: 'none',
     fontWeight: 600,
     padding: theme.spacing(1.5, 3),
-    border: '2px solid #667eea',
-    color: '#667eea',
+    border: '2px solid #E3A648',
+    color: '#E3A648',
     transition: 'all 0.3s ease',
     '&:hover': {
-      background: 'rgba(102, 126, 234, 0.1)',
+      background: 'rgba(227, 166, 72, 0.1)',
       transform: 'translateY(-2px)',
-      boxShadow: '0 8px 25px rgba(102, 126, 234, 0.2)'
-    }
+      boxShadow: '0 8px 25px rgba(227, 166, 72, 0.2)',
+    },
   },
   refreshButton: {
     borderRadius: '50%',
     minWidth: 48,
     width: 48,
     height: 48,
-    background: 'linear-gradient(45deg, #667eea, #764ba2)',
+    background: 'linear-gradient(45deg, #E3A648, #B97E26)',
     color: 'white',
     '&:hover': {
-      background: 'linear-gradient(45deg, #5a6fd8, #6a4190)',
-      transform: 'rotate(180deg) scale(1.1)'
-    }
+      background: 'linear-gradient(45deg, #C68F32, #8C5D17)',
+      transform: 'rotate(180deg) scale(1.1)',
+    },
   },
   tableContainer: {
     borderRadius: 15,
     background: 'rgba(255, 255, 255, 0.9)',
     backdropFilter: 'blur(10px)',
     border: '1px solid rgba(255, 255, 255, 0.3)',
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   headerRow: {
-    background: 'linear-gradient(135deg, #667eea, #764ba2)',
+    background: 'linear-gradient(135deg, #E3A648, #B97E26)',
     '& .MuiTableCell-head': {
       color: 'white',
       fontWeight: 700,
-      fontSize: '1rem'
-    }
+      fontSize: '1rem',
+    },
   },
   modernTable: {
     '& .MuiTableCell-root': {
       borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
-      padding: theme.spacing(2)
+      padding: theme.spacing(2),
     },
     '& .MuiTableRow-root': {
       transition: 'all 0.3s ease',
       '&:hover': {
-        backgroundColor: 'rgba(102, 126, 234, 0.05)',
+        backgroundColor: 'rgba(227, 166, 72, 0.05)',
         transform: 'translateY(-1px)',
-        boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
-      }
-    }
+        boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)',
+      },
+    },
   },
   trendIndicator: {
     display: 'flex',
     alignItems: 'center',
     marginTop: theme.spacing(1),
-    gap: theme.spacing(0.5)
+    gap: theme.spacing(0.5),
   },
   trendUp: {
-    color: '#4caf50'
+    color: '#4caf50',
   },
   trendDown: {
-    color: '#f44336'
+    color: '#f44336',
   },
   modernDialog: {
     '& .MuiDialog-paper': {
       borderRadius: 20,
       background: 'rgba(255, 255, 255, 0.95)',
       backdropFilter: 'blur(20px)',
-      border: '1px solid rgba(255, 255, 255, 0.2)'
-    }
+      border: '1px solid rgba(255, 255, 255, 0.2)',
+    },
   },
   noDataContainer: {
     textAlign: 'center',
     padding: theme.spacing(6),
     '& .MuiTypography-root': {
       color: theme.palette.text.secondary,
-      fontWeight: 500
-    }
+      fontWeight: 500,
+    },
   },
   emptyStateIcon: {
     fontSize: '4rem',
     color: theme.palette.text.secondary,
-    marginBottom: theme.spacing(2)
+    marginBottom: theme.spacing(2),
   },
   loadingContainer: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    minHeight: '400px'
-  }
+    minHeight: '400px',
+  },
 }));
 
 const QuizAnalytics = () => {
-  const theme = useTheme();  const classes = useStyles();
-  const { quizId } = useParams();
-  
-  // Enhanced Faculty Service instance (use the exported singleton)
-  const enhancedFacultyService = EnhancedFacultyService;
-  
+  const theme = useTheme();
+  const classes = useStyles();
+
   // State
   const [quiz, setQuiz] = useState(null);
   const [analytics, setAnalytics] = useState({});
@@ -329,132 +325,135 @@ const QuizAnalytics = () => {
     totalAttempts: 0,
     averageScore: 0,
     completionRate: 0,
-    averageTimeSpent: '0m'
+    averageTimeSpent: '0m',
   });
 
   useEffect(() => {
     loadQuizAnalytics();
-  }, [quizId, timeRange]);
+  }, [timeRange]);
 
   const loadQuizAnalytics = async () => {
     try {
       setLoading(true);
-      
-      // Try original service first, then fallback to enhanced service
-      let quizResponse, analyticsResponse, attemptsResponse;
-      
-      try {
-        [quizResponse, analyticsResponse, attemptsResponse] = await Promise.all([
-          facultyService.getQuiz(quizId),
-          facultyService.getQuizAnalytics(quizId, timeRange),
-          facultyService.getQuizAttempts(quizId)
-        ]);
-      } catch (error) {
-        console.log('Falling back to enhanced service for quiz analytics');
-        
-        // Fallback to enhanced service with mock data
-        const mockQuizData = await enhancedFacultyService.getQuizAnalytics(quizId || 'quiz-1');
-        if (mockQuizData.success) {
-          quizResponse = { data: mockQuizData.data.quiz };
-          analyticsResponse = { data: mockQuizData.data.analytics };
-          attemptsResponse = { data: mockQuizData.data.attempts };
-        }
-      }
 
-      if (quizResponse?.data) {
-        setQuiz(quizResponse.data);
-        setAnalytics(analyticsResponse?.data || {});
-        setAttempts(attemptsResponse?.data || []);
+      // Call the faculty-scoped quiz analytics API (not per-quiz, but all faculty's quizzes)
+      const analyticsResponse = await facultyService.getQuizAnalytics(null, timeRange);
+
+      if (analyticsResponse?.success && analyticsResponse?.data) {
+        const apiData = analyticsResponse.data;
+        
+        // Map the backend QuizAnalytics shape to the UI expectations
+        const mappedAnalytics = {
+          totalAttempts: apiData.totalAttempts || 0,
+          averageScore: apiData.averageScorePercent || 0,
+          completionRate: apiData.completionRatePercent || 0,
+          passRate: apiData.passRatePercent || 0,
+          averageTimeSpent: '0m', // Not provided by backend, would need additional calculation
+          maxTimeSpent: '0m', // Not provided by backend
+          
+          // Map scoreDistribution from backend format (e.g., {"0-20": 2, "21-40": 5, ...})
+          scoreDistribution: [
+            apiData.scoreDistribution?.['0-20'] || 0,
+            apiData.scoreDistribution?.['21-40'] || 0,
+            apiData.scoreDistribution?.['41-60'] || 0,
+            apiData.scoreDistribution?.['61-80'] || 0,
+            apiData.scoreDistribution?.['81-100'] || 0,
+          ],
+          
+          // Map completionStatus from backend format (e.g., {queued: 0, processing: 1, completed: 39, failed: 0})
+          completedAttempts: apiData.completionStatus?.completed || 0,
+          inProgressAttempts: (apiData.completionStatus?.processing || 0) + (apiData.completionStatus?.queued || 0),
+          notAttemptedCount: 0, // Not directly provided by backend
+          
+          // Attempts trend (mock for now, backend doesn't provide historical trend data)
+          attemptsTrend: {
+            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+            data: [0, 0, 0, apiData.totalAttempts || 0], // All attempts shown in current period
+            change: 0,
+          },
+          
+          // Question analysis from perAssessment data
+          questionAnalysis: [], // Not directly provided in aggregated format
+          
+          scoreTrend: { change: 0 }, // Not provided by backend
+        };
+        
+        setAnalytics(mappedAnalytics);
+        
+        // Set a generic quiz for the header (since this is faculty-wide analytics)
+        setQuiz({
+          id: 'faculty-all',
+          title: 'All Assessments',
+          subject: 'All Subjects',
+          questions: [],
+          duration: 0,
+          passingScore: 40, // Default pass threshold
+        });
         
         // Update dashboard stats
-        const stats = analyticsResponse?.data || {};
         setDashboardStats({
-          totalAttempts: stats.totalAttempts || 0,
-          averageScore: stats.averageScore || 0,
-          completionRate: stats.completionRate || 0,
-          averageTimeSpent: stats.averageTimeSpent || '0m'
+          totalAttempts: mappedAnalytics.totalAttempts,
+          averageScore: mappedAnalytics.averageScore,
+          completionRate: mappedAnalytics.completionRate,
+          averageTimeSpent: mappedAnalytics.averageTimeSpent,
         });
+        
+        // For per-assessment details, we could display them in a table
+        // Currently setting attempts to empty as we don't have individual submission details
+        setAttempts([]);
+        
       } else {
-        // Use completely mock data if everything fails
-        await loadMockData();
+        throw new Error('Invalid response from analytics API');
       }
     } catch (error) {
       console.error('Error loading quiz analytics:', error);
-      await loadMockData();
+      
+      // Show friendly error message
       setSnackbar({
         open: true,
-        message: 'Error loading quiz data. Using sample data.',
-        severity: 'warning'
+        message: 'Unable to load quiz analytics. Please try again later.',
+        severity: 'error',
       });
+      
+      // Set empty/zero state for graceful degradation
+      setAnalytics({
+        totalAttempts: 0,
+        averageScore: 0,
+        completionRate: 0,
+        passRate: 0,
+        averageTimeSpent: '0m',
+        maxTimeSpent: '0m',
+        scoreDistribution: [0, 0, 0, 0, 0],
+        completedAttempts: 0,
+        inProgressAttempts: 0,
+        notAttemptedCount: 0,
+        attemptsTrend: { labels: [], data: [], change: 0 },
+        questionAnalysis: [],
+        scoreTrend: { change: 0 },
+      });
+      
+      setQuiz({
+        id: 'faculty-all',
+        title: 'All Assessments',
+        subject: 'No Data',
+        questions: [],
+        duration: 0,
+        passingScore: 40,
+      });
+      
+      setDashboardStats({
+        totalAttempts: 0,
+        averageScore: 0,
+        completionRate: 0,
+        averageTimeSpent: '0m',
+      });
+      
+      setAttempts([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const loadMockData = async () => {
-    const mockQuiz = {
-      id: quizId || 'quiz-1',
-      title: 'Data Structures & Algorithms Quiz',
-      subject: 'Computer Science',
-      questions: Array.from({ length: 10 }, (_, i) => ({ id: i + 1, question: `Question ${i + 1}` })),
-      duration: 60,
-      passingScore: 60
-    };
-
-    const mockAnalytics = {
-      totalAttempts: 45,
-      averageScore: 78,
-      completionRate: 87,
-      averageTimeSpent: '42m',
-      passRate: 82,
-      maxTimeSpent: '60m',
-      scoreDistribution: [2, 5, 8, 15, 15],
-      attemptsTrend: {
-        labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-        data: [8, 12, 15, 10],
-        change: 15
-      },
-      questionAnalysis: mockQuiz.questions.map((q, i) => ({
-        questionNumber: i + 1,
-        correctPercentage: Math.floor(Math.random() * 40) + 60
-      })),
-      completedAttempts: 39,
-      inProgressAttempts: 4,
-      notAttemptedCount: 2,
-      scoreTrend: { change: 8 }
-    };
-
-    const mockAttempts = Array.from({ length: 15 }, (_, i) => ({
-      id: `attempt-${i + 1}`,
-      studentId: `S${2024000 + i + 1}`,
-      studentName: [
-        'Alex Johnson', 'Emma Wilson', 'Michael Brown', 'Sophia Davis', 'Daniel Miller',
-        'Olivia Martinez', 'James Anderson', 'Isabella Garcia', 'William Rodriguez', 'Ava Lopez',
-        'Benjamin Lee', 'Mia Gonzalez', 'Jacob Harris', 'Charlotte Clark', 'Ethan Lewis'
-      ][i],
-      score: Math.floor(Math.random() * 40) + 60,
-      status: ['completed', 'completed', 'in-progress'][Math.floor(Math.random() * 3)],
-      startTime: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
-      endTime: new Date(Date.now() - Math.random() * 6 * 24 * 60 * 60 * 1000).toISOString(),
-      submittedAt: new Date(Date.now() - Math.random() * 5 * 24 * 60 * 60 * 1000).toISOString(),
-      answers: mockQuiz.questions.map((q, qi) => ({
-        question: `Question ${qi + 1}: What is the time complexity of binary search?`,
-        studentAnswer: ['O(log n)', 'O(n)', 'O(n log n)', 'O(1)'][Math.floor(Math.random() * 4)],
-        correctAnswer: 'O(log n)',
-        isCorrect: Math.random() > 0.3
-      }))
-    }));
-
-    setQuiz(mockQuiz);
-    setAnalytics(mockAnalytics);
-    setAttempts(mockAttempts);
-    setDashboardStats({
-      totalAttempts: mockAnalytics.totalAttempts,
-      averageScore: mockAnalytics.averageScore,
-      completionRate: mockAnalytics.completionRate,
-      averageTimeSpent: mockAnalytics.averageTimeSpent
-    });
-  };
   // Handle refresh data
   const handleRefreshData = async () => {
     setRefreshing(true);
@@ -463,14 +462,14 @@ const QuizAnalytics = () => {
       setSnackbar({
         open: true,
         message: 'Analytics data refreshed successfully',
-        severity: 'success'
+        severity: 'success',
       });
     } catch (error) {
       console.error('Error refreshing data:', error);
       setSnackbar({
         open: true,
         message: 'Error refreshing data',
-        severity: 'error'
+        severity: 'error',
       });
     } finally {
       setRefreshing(false);
@@ -479,18 +478,19 @@ const QuizAnalytics = () => {
 
   const exportResults = async () => {
     try {
-      await facultyService.exportQuizResults(quizId);
+      // Note: Export functionality would need a faculty-wide export endpoint
+      // For now, show a message that this feature is not yet implemented for faculty-wide analytics
       setSnackbar({
         open: true,
-        message: 'Quiz results exported successfully',
-        severity: 'success'
+        message: 'Export feature coming soon for faculty-wide analytics',
+        severity: 'info',
       });
     } catch (error) {
       console.error('Error exporting results:', error);
       setSnackbar({
         open: true,
-        message: 'Error exporting results. Feature will be available soon.',
-        severity: 'info'
+        message: 'Error exporting results. Please try again later.',
+        severity: 'error',
       });
     }
   };
@@ -500,7 +500,7 @@ const QuizAnalytics = () => {
     setSnackbar({ ...snackbar, open: false });
   };
 
-  const getScoreColor = (score) => {
+  const getScoreColor = score => {
     if (score >= 80) return 'success';
     if (score >= 60) return 'warning';
     return 'error';
@@ -513,7 +513,7 @@ const QuizAnalytics = () => {
   };
 
   // Simple date formatting function
-  const formatDate = (dateString) => {
+  const formatDate = dateString => {
     try {
       const date = new Date(dateString);
       return date.toLocaleDateString('en-US', {
@@ -521,7 +521,7 @@ const QuizAnalytics = () => {
         day: 'numeric',
         year: 'numeric',
         hour: '2-digit',
-        minute: '2-digit'
+        minute: '2-digit',
       });
     } catch (error) {
       return dateString;
@@ -540,18 +540,18 @@ const QuizAnalytics = () => {
           'rgba(255, 152, 0, 0.8)',
           'rgba(255, 193, 7, 0.8)',
           'rgba(139, 195, 74, 0.8)',
-          'rgba(76, 175, 80, 0.8)'
+          'rgba(76, 175, 80, 0.8)',
         ],
         borderColor: [
           'rgba(244, 67, 54, 1)',
           'rgba(255, 152, 0, 1)',
           'rgba(255, 193, 7, 1)',
           'rgba(139, 195, 74, 1)',
-          'rgba(76, 175, 80, 1)'
+          'rgba(76, 175, 80, 1)',
         ],
-        borderWidth: 1
-      }
-    ]
+        borderWidth: 1,
+      },
+    ],
   };
 
   const attemptsTrendData = {
@@ -563,9 +563,9 @@ const QuizAnalytics = () => {
         fill: false,
         borderColor: 'rgb(75, 192, 192)',
         backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        tension: 0.1
-      }
-    ]
+        tension: 0.1,
+      },
+    ],
   };
 
   const questionAnalysisData = {
@@ -576,9 +576,9 @@ const QuizAnalytics = () => {
         data: analytics.questionAnalysis?.map(q => q.correctPercentage) || [],
         backgroundColor: 'rgba(54, 162, 235, 0.8)',
         borderColor: 'rgba(54, 162, 235, 1)',
-        borderWidth: 1
-      }
-    ]
+        borderWidth: 1,
+      },
+    ],
   };
 
   const completionStatusData = {
@@ -588,22 +588,18 @@ const QuizAnalytics = () => {
         data: [
           analytics.completedAttempts || 0,
           analytics.inProgressAttempts || 0,
-          analytics.notAttemptedCount || 0
+          analytics.notAttemptedCount || 0,
         ],
         backgroundColor: [
           'rgba(76, 175, 80, 0.8)',
           'rgba(255, 193, 7, 0.8)',
-          'rgba(158, 158, 158, 0.8)'
+          'rgba(158, 158, 158, 0.8)',
         ],
-        borderColor: [
-          'rgba(76, 175, 80, 1)',
-          'rgba(255, 193, 7, 1)',
-          'rgba(158, 158, 158, 1)'
-        ],
-        borderWidth: 1
-      }
-    ]
-  };  // Enhanced StatCard component with modern styling
+        borderColor: ['rgba(76, 175, 80, 1)', 'rgba(255, 193, 7, 1)', 'rgba(158, 158, 158, 1)'],
+        borderWidth: 1,
+      },
+    ],
+  }; // Enhanced StatCard component with modern styling
   const StatCard = ({ title, value, subtitle, icon, color = 'primary', trend }) => (
     <Card className={classes.statCard}>
       <CardContent style={{ textAlign: 'center' }}>
@@ -626,8 +622,8 @@ const QuizAnalytics = () => {
             ) : (
               <TrendingDownIcon className={classes.trendDown} />
             )}
-            <Typography 
-              variant="caption" 
+            <Typography
+              variant="caption"
               className={trend > 0 ? classes.trendUp : classes.trendDown}
             >
               {Math.abs(trend)}% from last quiz
@@ -636,11 +632,12 @@ const QuizAnalytics = () => {
         )}
       </CardContent>
     </Card>
-  );  if (loading) {
+  );
+  if (loading) {
     return (
       <div className={classes.root}>
         <div className={classes.loadingContainer}>
-          <CircularProgress size={60} style={{ color: '#667eea' }} />
+          <CircularProgress size={60} style={{ color: '#E3A648' }} />
         </div>
       </div>
     );
@@ -660,7 +657,8 @@ const QuizAnalytics = () => {
               {quiz?.title || 'Loading Quiz...'}
             </Typography>
             <Typography variant="body2" className={classes.description}>
-              {quiz?.subject} • {quiz?.questions?.length || 0} questions • {quiz?.duration || 0} minutes
+              {quiz?.subject} • {quiz?.questions?.length || 0} questions • {quiz?.duration || 0}{' '}
+              minutes
             </Typography>
           </Box>
           <Box display="flex" alignItems="center">
@@ -668,7 +666,7 @@ const QuizAnalytics = () => {
               <InputLabel>Time Range</InputLabel>
               <Select
                 value={timeRange}
-                onChange={(e) => setTimeRange(e.target.value)}
+                onChange={e => setTimeRange(e.target.value)}
                 label="Time Range"
               >
                 <MenuItem value="all">All Time</MenuItem>
@@ -677,7 +675,7 @@ const QuizAnalytics = () => {
                 <MenuItem value="quarter">Last Quarter</MenuItem>
               </Select>
             </FormControl>
-            
+
             <Button
               variant="outlined"
               className={classes.secondaryButton}
@@ -687,9 +685,9 @@ const QuizAnalytics = () => {
             >
               Export Results
             </Button>
-            
+
             <Tooltip title="Refresh Data">
-              <IconButton 
+              <IconButton
                 className={classes.refreshButton}
                 onClick={handleRefreshData}
                 disabled={refreshing}
@@ -699,9 +697,10 @@ const QuizAnalytics = () => {
             </Tooltip>
           </Box>
         </Box>
-      </Paper>      {/* Summary Statistics */}
+      </Paper>{' '}
+      {/* Summary Statistics */}
       <Grid container spacing={3} className={classes.statsContainer}>
-        <Grid size={{xs:12,sm:6,md:3}}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <StatCard
             title="Total Attempts"
             value={analytics.totalAttempts || 0}
@@ -709,7 +708,7 @@ const QuizAnalytics = () => {
             trend={analytics.attemptsTrend?.change}
           />
         </Grid>
-        <Grid size={{xs:12,sm:6,md:3}}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <StatCard
             title="Average Score"
             value={`${analytics.averageScore || 0}%`}
@@ -718,7 +717,7 @@ const QuizAnalytics = () => {
             trend={analytics.scoreTrend?.change}
           />
         </Grid>
-        <Grid size={{xs:12,sm:6,md:3}}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <StatCard
             title="Completion Rate"
             value={`${analytics.completionRate || 0}%`}
@@ -726,7 +725,7 @@ const QuizAnalytics = () => {
             icon={<CheckCircleIcon />}
           />
         </Grid>
-        <Grid size={{xs:12,sm:6,md:3}}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <StatCard
             title="Avg Time Spent"
             value={analytics.averageTimeSpent || '0m'}
@@ -735,10 +734,9 @@ const QuizAnalytics = () => {
           />
         </Grid>
       </Grid>
-
       {/* Charts Row */}
       <Grid container spacing={3} style={{ marginBottom: 32 }}>
-        <Grid size={{xs:12,md:6}}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Card className={classes.chartCard}>
             <CardContent>
               <Typography variant="h6" className={classes.chartTitle}>
@@ -753,17 +751,17 @@ const QuizAnalytics = () => {
                     maintainAspectRatio: false,
                     plugins: {
                       legend: {
-                        display: false
-                      }
+                        display: false,
+                      },
                     },
                     scales: {
                       y: {
                         beginAtZero: true,
                         ticks: {
-                          stepSize: 1
-                        }
-                      }
-                    }
+                          stepSize: 1,
+                        },
+                      },
+                    },
                   }}
                 />
               </Box>
@@ -771,14 +769,21 @@ const QuizAnalytics = () => {
           </Card>
         </Grid>
 
-        <Grid size={{xs:12,md:6}}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Card className={classes.chartCard}>
             <CardContent>
               <Typography variant="h6" className={classes.chartTitle}>
                 <AssessmentIcon />
                 Completion Status
               </Typography>
-              <Box style={{ height: 300, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <Box
+                style={{
+                  height: 300,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
                 <Doughnut
                   data={completionStatusData}
                   options={{
@@ -786,18 +791,19 @@ const QuizAnalytics = () => {
                     maintainAspectRatio: false,
                     plugins: {
                       legend: {
-                        position: 'bottom'
-                      }
-                    }
+                        position: 'bottom',
+                      },
+                    },
                   }}
                 />
               </Box>
             </CardContent>
           </Card>
         </Grid>
-      </Grid>      {/* Question Analysis */}
+      </Grid>{' '}
+      {/* Question Analysis */}
       <Grid container spacing={3} style={{ marginBottom: 32 }}>
-        <Grid size={{xs:12}}>
+        <Grid size={{ xs: 12 }}>
           <Card className={classes.chartCard}>
             <CardContent>
               <Typography variant="h6" className={classes.chartTitle}>
@@ -812,20 +818,20 @@ const QuizAnalytics = () => {
                     maintainAspectRatio: false,
                     plugins: {
                       legend: {
-                        display: false
-                      }
+                        display: false,
+                      },
                     },
                     scales: {
                       y: {
                         beginAtZero: true,
                         max: 100,
                         ticks: {
-                          callback: function(value) {
+                          callback: function (value) {
                             return value + '%';
-                          }
-                        }
-                      }
-                    }
+                          },
+                        },
+                      },
+                    },
                   }}
                 />
               </Box>
@@ -833,10 +839,9 @@ const QuizAnalytics = () => {
           </Card>
         </Grid>
       </Grid>
-
       {/* Attempts Over Time */}
       <Grid container spacing={3} style={{ marginBottom: 32 }}>
-        <Grid size={{xs:12}}>
+        <Grid size={{ xs: 12 }}>
           <Card className={classes.chartCard}>
             <CardContent>
               <Typography variant="h6" className={classes.chartTitle}>
@@ -851,24 +856,25 @@ const QuizAnalytics = () => {
                     maintainAspectRatio: false,
                     plugins: {
                       legend: {
-                        display: false
-                      }
+                        display: false,
+                      },
                     },
                     scales: {
                       y: {
                         beginAtZero: true,
                         ticks: {
-                          stepSize: 1
-                        }
-                      }
-                    }
+                          stepSize: 1,
+                        },
+                      },
+                    },
                   }}
                 />
               </Box>
             </CardContent>
           </Card>
         </Grid>
-      </Grid>      {/* Student Results Table */}
+      </Grid>{' '}
+      {/* Student Results Table */}
       <Card className={classes.chartCard}>
         <CardContent>
           <Typography variant="h6" className={classes.chartTitle}>
@@ -879,31 +885,33 @@ const QuizAnalytics = () => {
             <TableContainer className={classes.tableContainer}>
               <Table className={classes.modernTable}>
                 <TableHead className={classes.headerRow}>
-                  <TableRow><TableCell>Student</TableCell>
+                  <TableRow>
+                    <TableCell>Student</TableCell>
                     <TableCell>Score</TableCell>
                     <TableCell>Status</TableCell>
                     <TableCell>Time Spent</TableCell>
                     <TableCell>Attempt Date</TableCell>
-                    <TableCell>Actions</TableCell></TableRow>
+                    <TableCell>Actions</TableCell>
+                  </TableRow>
                 </TableHead>
                 <TableBody>
-                  {attempts.map((attempt) => (
+                  {attempts.map(attempt => (
                     <TableRow key={attempt.id}>
                       <TableCell>
                         <Box display="flex" alignItems="center">
-                          <Box 
+                          <Box
                             style={{
                               width: 40,
                               height: 40,
                               borderRadius: '50%',
-                              background: 'linear-gradient(45deg, #667eea, #764ba2)',
+                              background: 'linear-gradient(45deg, #E3A648, #B97E26)',
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
                               color: 'white',
                               fontWeight: 600,
                               marginRight: 16,
-                              fontSize: '0.875rem'
+                              fontSize: '0.875rem',
                             }}
                           >
                             {attempt.studentName?.charAt(0) || 'S'}
@@ -927,9 +935,9 @@ const QuizAnalytics = () => {
                             label={attempt.score >= (quiz?.passingScore || 60) ? 'Pass' : 'Fail'}
                             color={getScoreColor(attempt.score)}
                             size="small"
-                            style={{ 
+                            style={{
                               fontWeight: 600,
-                              borderRadius: 12
+                              borderRadius: 12,
                             }}
                           />
                         </Box>
@@ -937,13 +945,18 @@ const QuizAnalytics = () => {
                       <TableCell>
                         <Chip
                           label={attempt.status}
-                          color={attempt.status === 'completed' ? 'success' :
-                                 attempt.status === 'in-progress' ? 'warning' : 'default'}
+                          color={
+                            attempt.status === 'completed'
+                              ? 'success'
+                              : attempt.status === 'in-progress'
+                                ? 'warning'
+                                : 'default'
+                          }
                           size="small"
-                          style={{ 
+                          style={{
                             fontWeight: 600,
                             borderRadius: 12,
-                            textTransform: 'capitalize'
+                            textTransform: 'capitalize',
                           }}
                         />
                       </TableCell>
@@ -951,7 +964,8 @@ const QuizAnalytics = () => {
                         <Typography variant="body2" style={{ fontWeight: 500 }}>
                           {getTimeSpent(attempt.startTime, attempt.endTime)}
                         </Typography>
-                      </TableCell>                      <TableCell>
+                      </TableCell>{' '}
+                      <TableCell>
                         <Typography variant="body2" style={{ fontWeight: 500 }}>
                           {formatDate(attempt.submittedAt)}
                         </Typography>
@@ -962,17 +976,18 @@ const QuizAnalytics = () => {
                             size="small"
                             onClick={() => setStudentDetailDialog({ open: true, student: attempt })}
                             style={{
-                              background: 'linear-gradient(45deg, #667eea, #764ba2)',
+                              background: 'linear-gradient(45deg, #E3A648, #B97E26)',
                               color: 'white',
                               '&:hover': {
-                                background: 'linear-gradient(45deg, #5a6fd8, #6a4190)'
-                              }
+                                background: 'linear-gradient(45deg, #C68F32, #8C5D17)',
+                              },
                             }}
                           >
                             <ViewIcon />
                           </IconButton>
                         </Tooltip>
-                      </TableCell></TableRow>
+                      </TableCell>
+                    </TableRow>
                   ))}
                 </TableBody>
               </Table>
@@ -980,16 +995,15 @@ const QuizAnalytics = () => {
           ) : (
             <Box className={classes.noDataContainer}>
               <AssessmentIcon className={classes.emptyStateIcon} />
-              <Typography variant="h6">
-                No quiz attempts found
-              </Typography>
+              <Typography variant="h6">No quiz attempts found</Typography>
               <Typography variant="body2" style={{ marginTop: 8 }}>
                 Students haven't attempted this quiz yet.
               </Typography>
             </Box>
           )}
         </CardContent>
-      </Card>      {/* Student Detail Dialog */}
+      </Card>{' '}
+      {/* Student Detail Dialog */}
       <Dialog
         open={studentDetailDialog.open}
         onClose={() => setStudentDetailDialog({ open: false, student: null })}
@@ -1006,7 +1020,7 @@ const QuizAnalytics = () => {
           {studentDetailDialog.student && (
             <Box>
               <Grid container spacing={2} style={{ marginBottom: 24 }}>
-                <Grid size={{xs:6}}>
+                <Grid size={{ xs: 6 }}>
                   <Typography variant="body2" color="textSecondary" style={{ fontWeight: 500 }}>
                     Score
                   </Typography>
@@ -1014,7 +1028,7 @@ const QuizAnalytics = () => {
                     {studentDetailDialog.student.score}%
                   </Typography>
                 </Grid>
-                <Grid size={{xs:6}}>
+                <Grid size={{ xs: 6 }}>
                   <Typography variant="body2" color="textSecondary" style={{ fontWeight: 500 }}>
                     Time Spent
                   </Typography>
@@ -1027,7 +1041,10 @@ const QuizAnalytics = () => {
                 </Grid>
               </Grid>
 
-              <Typography variant="h6" style={{ marginBottom: 16, fontWeight: 600, color: '#2c3e50' }}>
+              <Typography
+                variant="h6"
+                style={{ marginBottom: 16, fontWeight: 600, color: '#2c3e50' }}
+              >
                 Question-wise Performance
               </Typography>
               <List style={{ background: 'rgba(255, 255, 255, 0.5)', borderRadius: 12 }}>
@@ -1035,35 +1052,48 @@ const QuizAnalytics = () => {
                   <Box key={index}>
                     <ListItem style={{ borderRadius: 8 }}>
                       <ListItemAvatar>
-                        <Avatar style={{
-                          backgroundColor: answer.isCorrect ? '#4caf50' : '#f44336',
-                          width: 32,
-                          height: 32,
-                          fontWeight: 600
-                        }}>
+                        <Avatar
+                          style={{
+                            backgroundColor: answer.isCorrect ? '#4caf50' : '#f44336',
+                            width: 32,
+                            height: 32,
+                            fontWeight: 600,
+                          }}
+                        >
                           {index + 1}
                         </Avatar>
                       </ListItemAvatar>
-                      <ListItemText 
-                        primaryTypographyProps={{ component: "div" }} 
+                      <ListItemText
+                        primaryTypographyProps={{ component: 'div' }}
                         primary={
-                          <Typography variant="subtitle2" style={{ fontWeight: 600, marginBottom: 8 }}>
+                          <Typography
+                            variant="subtitle2"
+                            style={{ fontWeight: 600, marginBottom: 8 }}
+                          >
                             {answer.question}
                           </Typography>
                         }
                         secondary={
                           <Box>
-                            <Typography variant="body2" color="textSecondary" style={{ marginBottom: 4 }}>
+                            <Typography
+                              variant="body2"
+                              color="textSecondary"
+                              style={{ marginBottom: 4 }}
+                            >
                               <strong>Student Answer:</strong> {answer.studentAnswer}
                             </Typography>
-                            <Typography variant="body2" color="textSecondary" style={{ marginBottom: 4 }}>
+                            <Typography
+                              variant="body2"
+                              color="textSecondary"
+                              style={{ marginBottom: 4 }}
+                            >
                               <strong>Correct Answer:</strong> {answer.correctAnswer}
                             </Typography>
-                            <Typography 
-                              variant="body2" 
-                              style={{ 
+                            <Typography
+                              variant="body2"
+                              style={{
                                 color: answer.isCorrect ? '#4caf50' : '#f44336',
-                                fontWeight: 600
+                                fontWeight: 600,
                               }}
                             >
                               {answer.isCorrect ? '✓ Correct' : '✗ Incorrect'}
@@ -1090,7 +1120,6 @@ const QuizAnalytics = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
       {/* Snackbar for notifications */}
       <Snackbar
         open={snackbar.open}
@@ -1111,4 +1140,3 @@ const QuizAnalytics = () => {
 };
 
 export default QuizAnalytics;
-

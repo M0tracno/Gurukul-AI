@@ -19,7 +19,11 @@ export interface IFaculty extends Document {
   resetPasswordExpire?: Date;
   failedLoginAttempts: number;
   lockedUntil?: Date;
+  setupTokenHash?: string;
+  setupTokenExpiresAt?: Date;
+  setupTokenUsedAt?: Date;
   deletedAt?: Date;
+  isDemo: boolean;
   createdAt: Date;
 
   // Virtuals
@@ -106,9 +110,23 @@ const FacultySchema = new Schema<IFaculty>(
     lockedUntil: {
       type: Date,
     },
+    setupTokenHash: {
+      type: String,
+      select: false,
+    },
+    setupTokenExpiresAt: {
+      type: Date,
+    },
+    setupTokenUsedAt: {
+      type: Date,
+    },
     deletedAt: {
       type: Date,
       default: null,
+    },
+    isDemo: {
+      type: Boolean,
+      default: false,
     },
     createdAt: {
       type: Date,

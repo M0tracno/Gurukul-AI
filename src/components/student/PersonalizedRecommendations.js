@@ -4,14 +4,29 @@ import { useTheme } from '@mui/material/styles';
 import makeStyles from '../../utils/makeStylesCompat';
 import { getContentRecommendations } from '../../services/advancedAIService';
 
-import { Box, Button, Card, CardContent, CardMedia, Chip, CircularProgress, Grid, IconButton, Paper, Tooltip, Typography, toLocaleString } from '@mui/material';
-const useStyles = makeStyles((theme) => ({
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CardMedia,
+  Chip,
+  CircularProgress,
+  Grid,
+  IconButton,
+  Paper,
+  Tooltip,
+  Typography,
+  toLocaleString,
+} from '@mui/material';
+const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(3),
     borderRadius: 16,
     background: 'rgba(255, 255, 255, 0.9)',
     backdropFilter: 'blur(10px)',
-    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'},
+    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+  },
   title: {
     marginBottom: theme.spacing(1),
     fontWeight: 600,
@@ -25,16 +40,20 @@ const useStyles = makeStyles((theme) => ({
       width: 60,
       height: 4,
       background: theme.palette.primary.main,
-      borderRadius: 2}},
+      borderRadius: 2,
+    },
+  },
   subtitle: {
     color: theme.palette.text.secondary,
-    marginBottom: theme.spacing(3)},
+    marginBottom: theme.spacing(3),
+  },
   sectionTitle: {
     marginTop: theme.spacing(4),
     marginBottom: theme.spacing(2),
     fontWeight: 500,
     display: 'flex',
-    alignItems: 'center'},
+    alignItems: 'center',
+  },
   resourceCard: {
     height: '100%',
     display: 'flex',
@@ -44,46 +63,59 @@ const useStyles = makeStyles((theme) => ({
     overflow: 'hidden',
     '&:hover': {
       transform: 'translateY(-5px)',
-      boxShadow: '0 12px 20px rgba(0, 0, 0, 0.1)'}},
+      boxShadow: '0 12px 20px rgba(0, 0, 0, 0.1)',
+    },
+  },
   cardMedia: {
     height: 140,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     color: 'white',
-    position: 'relative'},
+    position: 'relative',
+  },
   videoMedia: {
-    background: 'linear-gradient(135deg, #3a86ff 0%, #4361ee 100%)'},
+    background: 'linear-gradient(135deg, #3a86ff 0%, #4361ee 100%)',
+  },
   readingMedia: {
-    background: 'linear-gradient(135deg, #8338ec 0%, #5e60ce 100%)'},
+    background: 'linear-gradient(135deg, #8338ec 0%, #5e60ce 100%)',
+  },
   audioMedia: {
-    background: 'linear-gradient(135deg, #ff006e 0%, #fb5607 100%)'},
+    background: 'linear-gradient(135deg, #ff006e 0%, #fb5607 100%)',
+  },
   interactiveMedia: {
-    background: 'linear-gradient(135deg, #06d6a0 0%, #1b9aaa 100%)'},
+    background: 'linear-gradient(135deg, #06d6a0 0%, #1b9aaa 100%)',
+  },
   mediaIcon: {
     fontSize: 60,
-    opacity: 0.8},
+    opacity: 0.8,
+  },
   cardContent: {
     flexGrow: 1,
-    padding: theme.spacing(2)},
+    padding: theme.spacing(2),
+  },
   resourceTitle: {
     fontWeight: 600,
-    marginBottom: theme.spacing(1)},
+    marginBottom: theme.spacing(1),
+  },
   resourceMeta: {
     display: 'flex',
     alignItems: 'center',
     color: theme.palette.text.secondary,
     fontSize: '0.875rem',
-    marginBottom: theme.spacing(1)},
+    marginBottom: theme.spacing(1),
+  },
   resourceReason: {
     fontSize: '0.875rem',
     color: theme.palette.text.secondary,
     marginTop: theme.spacing(1),
-    fontStyle: 'italic'},
+    fontStyle: 'italic',
+  },
   relevanceChip: {
     marginLeft: 'auto',
     height: 24,
-    fontWeight: 600},
+    fontWeight: 600,
+  },
   peerCard: {
     padding: theme.spacing(2),
     borderRadius: 12,
@@ -93,37 +125,47 @@ const useStyles = makeStyles((theme) => ({
     transition: 'all 0.3s ease',
     '&:hover': {
       background: 'rgba(255, 255, 255, 0.9)',
-      boxShadow: '0 8px 16px rgba(0, 0, 0, 0.1)'}},
+      boxShadow: '0 8px 16px rgba(0, 0, 0, 0.1)',
+    },
+  },
   peerHeader: {
     display: 'flex',
     alignItems: 'center',
-    marginBottom: theme.spacing(1)},
+    marginBottom: theme.spacing(1),
+  },
   peerIcon: {
     marginRight: theme.spacing(1),
-    color: theme.palette.primary.main},
+    color: theme.palette.primary.main,
+  },
   peerTitle: {
-    fontWeight: 600},
+    fontWeight: 600,
+  },
   peerMeta: {
     display: 'flex',
     alignItems: 'center',
     color: theme.palette.text.secondary,
     fontSize: '0.875rem',
-    marginTop: theme.spacing(1)},
+    marginTop: theme.spacing(1),
+  },
   peerMetaItem: {
     display: 'flex',
     alignItems: 'center',
-    marginRight: theme.spacing(2)},
+    marginRight: theme.spacing(2),
+  },
   peerMetaIcon: {
     fontSize: 16,
-    marginRight: theme.spacing(0.5)},
+    marginRight: theme.spacing(0.5),
+  },
   refreshButton: {
     marginLeft: theme.spacing(1),
-    color: theme.palette.primary.main},
+    color: theme.palette.primary.main,
+  },
   loadingContainer: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: theme.spacing(4)},
+    padding: theme.spacing(4),
+  },
   bookmarkButton: {
     position: 'absolute',
     top: 8,
@@ -131,7 +173,10 @@ const useStyles = makeStyles((theme) => ({
     color: 'white',
     background: 'rgba(0, 0, 0, 0.3)',
     '&:hover': {
-      background: 'rgba(0, 0, 0, 0.5)'}}}));
+      background: 'rgba(0, 0, 0, 0.5)',
+    },
+  },
+}));
 
 const PersonalizedRecommendations = ({ studentId, currentTopic }) => {
   const classes = useStyles();
@@ -150,7 +195,7 @@ const PersonalizedRecommendations = ({ studentId, currentTopic }) => {
   }, [studentId, currentTopic]);
 
   const handleRefresh = () => {
-  const theme = useTheme();
+    const theme = useTheme();
     setLoading(true);
     setTimeout(() => {
       const data = getContentRecommendations(studentId, currentTopic);
@@ -159,31 +204,41 @@ const PersonalizedRecommendations = ({ studentId, currentTopic }) => {
     }, 1200);
   };
 
-  const getMediaClass = (type) => {
+  const getMediaClass = type => {
     switch (type) {
-      case 'video': return classes.videoMedia;
-      case 'article': return classes.readingMedia;
-      case 'audio': return classes.audioMedia;
-      case 'interactive': return classes.interactiveMedia;
-      default: return classes.videoMedia;
+      case 'video':
+        return classes.videoMedia;
+      case 'article':
+        return classes.readingMedia;
+      case 'audio':
+        return classes.audioMedia;
+      case 'interactive':
+        return classes.interactiveMedia;
+      default:
+        return classes.videoMedia;
     }
   };
 
-  const getMediaIcon = (type) => {
+  const getMediaIcon = type => {
     switch (type) {
-      case 'video': return <VideoIcon className={classes.mediaIcon} />;
-      case 'article': return <ReadingIcon className={classes.mediaIcon} />;
-      case 'audio': return <AudioIcon className={classes.mediaIcon} />;
-      case 'interactive': return <InteractiveIcon className={classes.mediaIcon} />;
-      default: return <VideoIcon className={classes.mediaIcon} />;
+      case 'video':
+        return <VideoIcon className={classes.mediaIcon} />;
+      case 'article':
+        return <ReadingIcon className={classes.mediaIcon} />;
+      case 'audio':
+        return <AudioIcon className={classes.mediaIcon} />;
+      case 'interactive':
+        return <InteractiveIcon className={classes.mediaIcon} />;
+      default:
+        return <VideoIcon className={classes.mediaIcon} />;
     }
   };
 
-  const formatRelevanceScore = (score) => {
+  const formatRelevanceScore = score => {
     return `${Math.round(score * 100)}%`;
   };
 
-  const getRelevanceColor = (score) => {
+  const getRelevanceColor = score => {
     if (score >= 0.9) return '#06d6a0';
     if (score >= 0.8) return '#3a86ff';
     if (score >= 0.7) return '#ffbe0b';
@@ -231,13 +286,11 @@ const PersonalizedRecommendations = ({ studentId, currentTopic }) => {
       </Typography>
 
       <Grid container spacing={3}>
-        {recommendations?.recommendedResources.map((resource) => (
-          <Grid size={{xs:12,sm:6,md:4}} key={resource.id}>
+        {recommendations?.recommendedResources.map(resource => (
+          <Grid size={{ xs: 12, sm: 6, md: 4 }} key={resource.id}>
             <Card className={classes.resourceCard}>
               <CardActionArea>
-                <CardMedia
-                  className={`${classes.cardMedia} ${getMediaClass(resource.type)}`}
-                >
+                <CardMedia className={`${classes.cardMedia} ${getMediaClass(resource.type)}`}>
                   {getMediaIcon(resource.type)}
                   <Tooltip title="Bookmark for later">
                     <IconButton className={classes.bookmarkButton}>
@@ -253,20 +306,22 @@ const PersonalizedRecommendations = ({ studentId, currentTopic }) => {
 
                   <Box className={classes.resourceMeta}>
                     <Typography variant="body2">
-                      {resource.type.charAt(0).toUpperCase() + resource.type.slice(1)} • {resource.duration}
+                      {resource.type.charAt(0).toUpperCase() + resource.type.slice(1)} •{' '}
+                      {resource.duration}
                     </Typography>
 
                     <Chip
                       label={formatRelevanceScore(resource.relevanceScore)}
                       className={classes.relevanceChip}
                       size="small"
-                      style={{ backgroundColor: getRelevanceColor(resource.relevanceScore), color: 'white' }}
+                      style={{
+                        backgroundColor: getRelevanceColor(resource.relevanceScore),
+                        color: 'white',
+                      }}
                     />
                   </Box>
 
-                  <Typography className={classes.resourceReason}>
-                    "{resource.reason}"
-                  </Typography>
+                  <Typography className={classes.resourceReason}>"{resource.reason}"</Typography>
                 </CardContent>
               </CardActionArea>
             </Card>
@@ -281,10 +336,11 @@ const PersonalizedRecommendations = ({ studentId, currentTopic }) => {
       {recommendations?.peerLearningOpportunities.map((opportunity, index) => (
         <Paper key={index} className={classes.peerCard}>
           <Box className={classes.peerHeader}>
-            {opportunity.type === 'study group' ?
-              <GroupIcon className={classes.peerIcon} /> :
+            {opportunity.type === 'study group' ? (
+              <GroupIcon className={classes.peerIcon} />
+            ) : (
               <TutorIcon className={classes.peerIcon} />
-            }
+            )}
             <Typography variant="h6" className={classes.peerTitle}>
               {opportunity.topic}
             </Typography>
@@ -295,7 +351,7 @@ const PersonalizedRecommendations = ({ studentId, currentTopic }) => {
               size="small"
               style={{
                 backgroundColor: getRelevanceColor(opportunity.matchScore),
-                color: 'white'
+                color: 'white',
               }}
             />
           </Box>
@@ -304,18 +360,14 @@ const PersonalizedRecommendations = ({ studentId, currentTopic }) => {
             {opportunity.type === 'study group' && (
               <Box className={classes.peerMetaItem}>
                 <GroupIcon className={classes.peerMetaIcon} />
-                <Typography variant="body2">
-                  {opportunity.participants} participants
-                </Typography>
+                <Typography variant="body2">{opportunity.participants} participants</Typography>
               </Box>
             )}
 
             {opportunity.type === 'peer tutoring' && (
               <Box className={classes.peerMetaItem}>
                 <TutorIcon className={classes.peerMetaIcon} />
-                <Typography variant="body2">
-                  Tutor: {opportunity.tutor}
-                </Typography>
+                <Typography variant="body2">Tutor: {opportunity.tutor}</Typography>
               </Box>
             )}
 
@@ -328,19 +380,10 @@ const PersonalizedRecommendations = ({ studentId, currentTopic }) => {
           </Box>
 
           <Box display="flex" justifyContent="flex-end" mt={2}>
-            <Button
-              variant="outlined"
-              color="primary"
-              size="small"
-              style={{ marginRight: 8 }}
-            >
+            <Button variant="outlined" color="primary" size="small" style={{ marginRight: 8 }}>
               Learn More
             </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              size="small"
-            >
+            <Button variant="contained" color="primary" size="small">
               Join Now
             </Button>
           </Box>
@@ -351,4 +394,3 @@ const PersonalizedRecommendations = ({ studentId, currentTopic }) => {
 };
 
 export default PersonalizedRecommendations;
-

@@ -99,13 +99,7 @@ const darkColors = {
 
 // Enhanced typography with better font hierarchy
 const typography = {
-  fontFamily: [
-    '"Inter"',
-    '"Roboto"',
-    '"Helvetica Neue"',
-    'Arial',
-    'sans-serif',
-  ].join(','),
+  fontFamily: ['"Inter"', '"Roboto"', '"Helvetica Neue"', 'Arial', 'sans-serif'].join(','),
   h1: {
     fontSize: '2.5rem',
     fontWeight: 700,
@@ -154,7 +148,7 @@ const typography = {
 };
 
 // Enhanced spacing system
-const spacing = (factor) => `${0.5 * factor}rem`;
+const spacing = factor => `${0.5 * factor}rem`;
 
 // Custom shadows for better depth perception - Material-UI requires 25 shadow levels (0-24)
 const shadows = [
@@ -195,7 +189,7 @@ const shape = {
 // Create theme function
 export const createAdvancedTheme = (mode = 'light') => {
   const colors = mode === 'light' ? lightColors : darkColors;
-  
+
   return createTheme({
     palette: {
       mode,
@@ -205,7 +199,7 @@ export const createAdvancedTheme = (mode = 'light') => {
     spacing,
     shadows,
     shape,
-    
+
     // Custom component overrides
     components: {
       MuiCssBaseline: {
@@ -246,7 +240,7 @@ export const createAdvancedTheme = (mode = 'light') => {
           },
         },
       },
-      
+
       MuiButton: {
         styleOverrides: {
           root: {
@@ -268,7 +262,7 @@ export const createAdvancedTheme = (mode = 'light') => {
           },
         },
       },
-      
+
       MuiCard: {
         styleOverrides: {
           root: {
@@ -282,7 +276,7 @@ export const createAdvancedTheme = (mode = 'light') => {
           },
         },
       },
-      
+
       MuiPaper: {
         styleOverrides: {
           root: {
@@ -300,7 +294,7 @@ export const createAdvancedTheme = (mode = 'light') => {
           },
         },
       },
-      
+
       MuiTextField: {
         styleOverrides: {
           root: {
@@ -321,7 +315,7 @@ export const createAdvancedTheme = (mode = 'light') => {
           },
         },
       },
-      
+
       MuiChip: {
         styleOverrides: {
           root: {
@@ -330,7 +324,7 @@ export const createAdvancedTheme = (mode = 'light') => {
           },
         },
       },
-      
+
       MuiAppBar: {
         styleOverrides: {
           root: {
@@ -339,7 +333,7 @@ export const createAdvancedTheme = (mode = 'light') => {
           },
         },
       },
-      
+
       MuiDrawer: {
         styleOverrides: {
           paper: {
@@ -348,7 +342,7 @@ export const createAdvancedTheme = (mode = 'light') => {
           },
         },
       },
-      
+
       MuiListItem: {
         styleOverrides: {
           root: {
@@ -368,7 +362,7 @@ export const createAdvancedTheme = (mode = 'light') => {
           },
         },
       },
-      
+
       MuiTab: {
         styleOverrides: {
           root: {
@@ -378,7 +372,7 @@ export const createAdvancedTheme = (mode = 'light') => {
           },
         },
       },
-      
+
       MuiAlert: {
         styleOverrides: {
           root: {
@@ -387,7 +381,7 @@ export const createAdvancedTheme = (mode = 'light') => {
         },
       },
     },
-    
+
     // Custom breakpoints for better responsiveness
     breakpoints: {
       values: {
@@ -399,7 +393,7 @@ export const createAdvancedTheme = (mode = 'light') => {
         xxl: 1920,
       },
     },
-    
+
     // Custom z-index values
     zIndex: {
       drawer: 1200,
@@ -408,7 +402,7 @@ export const createAdvancedTheme = (mode = 'light') => {
       snackbar: 1500,
       tooltip: 1600,
     },
-    
+
     // Custom transitions
     transitions: {
       duration: {
@@ -432,4 +426,3 @@ export const createAdvancedTheme = (mode = 'light') => {
 
 // Export default theme
 export default createAdvancedTheme();
-

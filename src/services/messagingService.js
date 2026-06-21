@@ -8,7 +8,6 @@ import env from '../config/env';
  * Integrates with Socket.IO for real-time messaging
  */
 
-
 class MessagingService {
   constructor() {
     this.socket = null;
@@ -30,11 +29,11 @@ class MessagingService {
 
       this.socket = io(this.baseURL, {
         auth: {
-          token: authToken
+          token: authToken,
         },
         transports: ['websocket', 'polling'],
         upgrade: true,
-        rememberUpgrade: true
+        rememberUpgrade: true,
       });
 
       this.socket.on('connect', () => {
@@ -49,34 +48,33 @@ class MessagingService {
         this.notifyConnectionListeners('disconnected');
       });
 
-      this.socket.on('new_message', (message) => {
+      this.socket.on('new_message', message => {
         console.log('New message received:', message);
         this.notifyMessageListeners('new_message', message);
       });
 
-      this.socket.on('message_delivered', (data) => {
+      this.socket.on('message_delivered', data => {
         console.log('Message delivered:', data);
         this.notifyMessageListeners('message_delivered', data);
       });
 
-      this.socket.on('message_read', (data) => {
+      this.socket.on('message_read', data => {
         console.log('Message read:', data);
         this.notifyMessageListeners('message_read', data);
       });
 
-      this.socket.on('typing_start', (data) => {
+      this.socket.on('typing_start', data => {
         this.notifyMessageListeners('typing_start', data);
       });
 
-      this.socket.on('typing_stop', (data) => {
+      this.socket.on('typing_stop', data => {
         this.notifyMessageListeners('typing_stop', data);
       });
 
-      this.socket.on('connect_error', (error) => {
+      this.socket.on('connect_error', error => {
         console.error('Socket connection error:', error);
         this.notifyConnectionListeners('error', error);
       });
-
     } catch (error) {
       console.error('Error initializing socket:', error);
       throw error;
@@ -186,7 +184,7 @@ class MessagingService {
     const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
     return {
       'Content-Type': 'application/json',
-      'Authorization': token ? `Bearer ${token}` : ''
+      Authorization: token ? `Bearer ${token}` : '',
     };
   }
 
@@ -198,8 +196,8 @@ class MessagingService {
       ...options,
       headers: {
         ...this.getAuthHeaders(),
-        ...options.headers
-      }
+        ...options.headers,
+      },
     });
 
     if (!response.ok) {
@@ -212,23 +210,24 @@ class MessagingService {
 
   /**
    * Send a message
+   * POST /api/messages — returns the canonical success envelope { success, data }.
    */
   async sendMessage(messageData) {
     try {
-      const response = await this.makeAuthenticatedRequest(`${this.apiURL}/send`, {
+      const response = await this.makeAuthenticatedRequest(`${this.apiURL}`, {
         method: 'POST',
-        body: JSON.stringify(messageData)
+        body: JSON.stringify(messageData),
       });
 
       return {
         success: true,
-        data: response.data
+        data: response.data,
       };
     } catch (error) {
       console.error('Error sending message:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -242,7 +241,7 @@ class MessagingService {
         participantId,
         studentId,
         page: page.toString(),
-        limit: limit.toString()
+        limit: limit.toString(),
       });
 
       const response = await this.makeAuthenticatedRequest(
@@ -252,7 +251,7 @@ class MessagingService {
       return {
         success: true,
         data: response.data,
-        pagination: response.pagination
+        pagination: response.pagination,
       };
     } catch (error) {
       console.error('Error getting conversation:', error);
@@ -260,19 +259,20 @@ class MessagingService {
         success: false,
         error: error.message,
         data: [],
-        pagination: null
+        pagination: null,
       };
     }
   }
 
   /**
    * Get all conversations for current user
+   * GET /api/messages/conversations — returns { success, data: ConversationSummary[], meta }.
    */
   async getConversations(page = 1, limit = 20) {
     try {
       const queryParams = new URLSearchParams({
         page: page.toString(),
-        limit: limit.toString()
+        limit: limit.toString(),
       });
 
       const response = await this.makeAuthenticatedRequest(
@@ -282,7 +282,8 @@ class MessagingService {
       return {
         success: true,
         data: response.data,
-        pagination: response.pagination
+        meta: response.meta,
+        pagination: response.meta || response.pagination,
       };
     } catch (error) {
       console.error('Error getting conversations:', error);
@@ -290,7 +291,41 @@ class MessagingService {
         success: false,
         error: error.message,
         data: [],
-        pagination: null
+        meta: null,
+        pagination: null,
+      };
+    }
+  }
+
+  /**
+   * Get a single conversation thread by conversationId.
+   * GET /api/messages/conversations/:conversationId — returns
+   * { success, data: MessageDTO[], meta: { page, limit, total, conversationExists } }.
+   */
+  async getConversationThread(conversationId, page = 1, limit = 50) {
+    try {
+      const queryParams = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+      });
+
+      const response = await this.makeAuthenticatedRequest(
+        `${this.apiURL}/conversations/${encodeURIComponent(conversationId)}?${queryParams}`
+      );
+
+      return {
+        success: true,
+        data: response.data,
+        meta: response.meta,
+        conversationExists: response.meta ? response.meta.conversationExists : undefined,
+      };
+    } catch (error) {
+      console.error('Error getting conversation thread:', error);
+      return {
+        success: false,
+        error: error.message,
+        data: [],
+        meta: null,
       };
     }
   }
@@ -303,17 +338,15 @@ class MessagingService {
       const queryParams = new URLSearchParams({
         page: page.toString(),
         limit: limit.toString(),
-        unreadOnly: unreadOnly.toString()
+        unreadOnly: unreadOnly.toString(),
       });
 
-      const response = await this.makeAuthenticatedRequest(
-        `${this.apiURL}/inbox?${queryParams}`
-      );
+      const response = await this.makeAuthenticatedRequest(`${this.apiURL}/inbox?${queryParams}`);
 
       return {
         success: true,
         data: response.data,
-        pagination: response.pagination
+        pagination: response.pagination,
       };
     } catch (error) {
       console.error('Error getting inbox:', error);
@@ -321,30 +354,52 @@ class MessagingService {
         success: false,
         error: error.message,
         data: [],
-        pagination: null
+        pagination: null,
       };
     }
   }
 
   /**
    * Mark message as read
+   * PATCH /api/messages/:messageId/read
    */
   async markAsRead(messageId) {
     try {
-      const response = await this.makeAuthenticatedRequest(
-        `${this.apiURL}/${messageId}/read`,
-        { method: 'PUT' }
-      );
+      const response = await this.makeAuthenticatedRequest(`${this.apiURL}/${messageId}/read`, {
+        method: 'PATCH',
+      });
 
       return {
         success: true,
-        data: response.data
+        data: response.data,
       };
     } catch (error) {
       console.error('Error marking message as read:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
+      };
+    }
+  }
+
+  /**
+   * Delete a message (soft delete)
+   * DELETE /api/messages/:messageId
+   */
+  async deleteMessage(messageId) {
+    try {
+      await this.makeAuthenticatedRequest(`${this.apiURL}/${messageId}`, {
+        method: 'DELETE',
+      });
+
+      return {
+        success: true,
+      };
+    } catch (error) {
+      console.error('Error deleting message:', error);
+      return {
+        success: false,
+        error: error.message,
       };
     }
   }
@@ -355,20 +410,18 @@ class MessagingService {
   async getAvailableContacts(studentId = null) {
     try {
       const queryParams = studentId ? `?studentId=${studentId}` : '';
-      const response = await this.makeAuthenticatedRequest(
-        `${this.apiURL}/contacts${queryParams}`
-      );
+      const response = await this.makeAuthenticatedRequest(`${this.apiURL}/contacts${queryParams}`);
 
       return {
         success: true,
-        data: response.data
+        data: response.data,
       };
     } catch (error) {
       console.error('Error getting contacts:', error);
       return {
         success: false,
         error: error.message,
-        data: []
+        data: [],
       };
     }
   }
@@ -381,17 +434,15 @@ class MessagingService {
       const queryParams = new URLSearchParams({
         q: query,
         page: page.toString(),
-        limit: limit.toString()
+        limit: limit.toString(),
       });
 
-      const response = await this.makeAuthenticatedRequest(
-        `${this.apiURL}/search?${queryParams}`
-      );
+      const response = await this.makeAuthenticatedRequest(`${this.apiURL}/search?${queryParams}`);
 
       return {
         success: true,
         data: response.data,
-        pagination: response.pagination
+        pagination: response.pagination,
       };
     } catch (error) {
       console.error('Error searching messages:', error);
@@ -399,7 +450,7 @@ class MessagingService {
         success: false,
         error: error.message,
         data: [],
-        pagination: null
+        pagination: null,
       };
     }
   }
@@ -413,13 +464,13 @@ class MessagingService {
 
       return {
         success: true,
-        count: response.count
+        count: response.count,
       };
     } catch (error) {
       console.error('Error getting unread count:', error);
       return {
         success: false,
-        count: 0
+        count: 0,
       };
     }
   }
@@ -436,23 +487,21 @@ class MessagingService {
   async getMessageStats(timeframe = 30) {
     try {
       const queryParams = new URLSearchParams({
-        timeframe: timeframe.toString()
+        timeframe: timeframe.toString(),
       });
 
-      const response = await this.makeAuthenticatedRequest(
-        `${this.apiURL}/stats?${queryParams}`
-      );
+      const response = await this.makeAuthenticatedRequest(`${this.apiURL}/stats?${queryParams}`);
 
       return {
         success: true,
-        data: response.data
+        data: response.data,
       };
     } catch (error) {
       console.error('Error getting message stats:', error);
       return {
         success: false,
         error: error.message,
-        data: null
+        data: null,
       };
     }
   }
@@ -462,20 +511,18 @@ class MessagingService {
    */
   async getMessageTemplates() {
     try {
-      const response = await this.makeAuthenticatedRequest(
-        `${this.apiURL}/templates`
-      );
+      const response = await this.makeAuthenticatedRequest(`${this.apiURL}/templates`);
 
       return {
         success: true,
-        data: response.data
+        data: response.data,
       };
     } catch (error) {
       console.error('Error getting message templates:', error);
       return {
         success: false,
         error: error.message,
-        data: []
+        data: [],
       };
     }
   }
@@ -485,7 +532,7 @@ class MessagingService {
    */
   processTemplate(template, variables) {
     let processedTemplate = template;
-    
+
     Object.keys(variables).forEach(key => {
       const placeholder = `{${key}}`;
       processedTemplate = processedTemplate.replace(
@@ -493,7 +540,7 @@ class MessagingService {
         variables[key] || placeholder
       );
     });
-    
+
     return processedTemplate;
   }
 
@@ -507,31 +554,31 @@ class MessagingService {
       if (!templatesResult.success) {
         throw new Error('Failed to load message templates');
       }
-      
+
       // Find the template
       const template = templatesResult.data.find(t => t.id === templateId);
       if (!template) {
         throw new Error('Template not found');
       }
-      
+
       // Process template
       const processedContent = this.processTemplate(template.template, variables);
-      
+
       // Send message with processed content
       const finalMessageData = {
         ...messageData,
         content: processedContent,
         subject: messageData.subject || template.title,
         messageType: template.category,
-        templateUsed: templateId
+        templateUsed: templateId,
       };
-      
+
       return await this.sendMessage(finalMessageData);
     } catch (error) {
       console.error('Error sending message from template:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -542,7 +589,7 @@ class MessagingService {
     try {
       // First try to get existing conversation
       const existingConversation = await this.getConversation(participantId, studentId, 1, 1);
-      
+
       if (existingConversation.success && existingConversation.data.length > 0) {
         return existingConversation;
       }
@@ -551,7 +598,7 @@ class MessagingService {
       return {
         success: true,
         data: [],
-        pagination: { total: 0, page: 1, limit: 50, totalPages: 0 }
+        pagination: { total: 0, page: 1, limit: 50, totalPages: 0 },
       };
     } catch (error) {
       console.error('Error getting or creating conversation:', error);
@@ -559,7 +606,7 @@ class MessagingService {
         success: false,
         error: error.message,
         data: [],
-        pagination: null
+        pagination: null,
       };
     }
   }
@@ -579,7 +626,7 @@ class MessagingService {
       // Create FormData for file upload
       const formData = new FormData();
       formData.append('attachment', file);
-      
+
       // Add message data to FormData
       Object.keys(messageData).forEach(key => {
         if (messageData[key] !== undefined && messageData[key] !== null) {
@@ -590,7 +637,7 @@ class MessagingService {
       // Determine endpoint based on user role
       let endpoint = '/api/messages/send-with-attachment';
       const userRole = this.getUserRole();
-      
+
       if (userRole === 'parent') {
         endpoint = '/api/messages/parent/send-with-attachment';
       } else if (userRole === 'faculty' || userRole === 'admin') {
@@ -600,29 +647,29 @@ class MessagingService {
       const response = await axios.post(endpoint, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${this.getToken()}`
-        }
+          Authorization: `Bearer ${this.getToken()}`,
+        },
       });
 
       // Emit through socket if connected
       if (this.socket && this.isConnected) {
         this.socket.emit('send_message', {
           ...response.data.data,
-          tempId: messageData.tempId
+          tempId: messageData.tempId,
         });
       }
 
       return {
         success: true,
         data: response.data.data,
-        message: response.data.message || 'Message with attachment sent successfully'
+        message: response.data.message || 'Message with attachment sent successfully',
       };
     } catch (error) {
       console.error('Error sending message with attachment:', error);
       return {
         success: false,
         error: error.response?.data?.message || error.message,
-        data: null
+        data: null,
       };
     }
   }
@@ -639,22 +686,22 @@ class MessagingService {
         `/api/messages/${messageId}/attachments/${attachmentIndex}/download`,
         {
           headers: {
-            'Authorization': `Bearer ${this.getToken()}`
+            Authorization: `Bearer ${this.getToken()}`,
           },
-          responseType: 'blob'
+          responseType: 'blob',
         }
       );
 
       return {
         success: true,
         data: response.data,
-        fileName: this.getFileNameFromHeaders(response.headers)
+        fileName: this.getFileNameFromHeaders(response.headers),
       };
     } catch (error) {
       console.error('Error downloading attachment:', error);
       return {
         success: false,
-        error: error.response?.data?.message || error.message
+        error: error.response?.data?.message || error.message,
       };
     }
   }
@@ -690,7 +737,7 @@ class MessagingService {
         const payload = JSON.parse(atob(token.split('.')[1]));
         return payload.role;
       }
-      
+
       return 'parent'; // Default fallback
     } catch (error) {
       console.error('Error getting user role:', error);
@@ -706,27 +753,30 @@ class MessagingService {
   validateFile(file) {
     const maxSize = 10 * 1024 * 1024; // 10MB
     const allowedTypes = [
-      'image/jpeg', 'image/jpg', 'image/png', 'image/gif',
+      'image/jpeg',
+      'image/jpg',
+      'image/png',
+      'image/gif',
       'application/pdf',
       'application/msword',
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       'application/vnd.ms-powerpoint',
       'application/vnd.openxmlformats-officedocument.presentationml.presentation',
       'application/vnd.ms-excel',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     ];
 
     if (file.size > maxSize) {
       return {
         valid: false,
-        error: 'File size must be less than 10MB'
+        error: 'File size must be less than 10MB',
       };
     }
 
     if (!allowedTypes.includes(file.type)) {
       return {
         valid: false,
-        error: 'File type not supported. Please upload images or documents only.'
+        error: 'File type not supported. Please upload images or documents only.',
       };
     }
 
@@ -737,4 +787,3 @@ class MessagingService {
 // Create and export singleton instance
 const messagingService = new MessagingService();
 export default messagingService;
-

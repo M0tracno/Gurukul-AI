@@ -1,6 +1,6 @@
 /**
  * Database Schema Documentation
- * 
+ *
  * This file contains the schema definitions for all collections in the database.
  * It serves as documentation and is not used in the actual application.
  */
@@ -32,7 +32,7 @@ const facultySchema = {
   profilePictureUrl: 'string', // URL to profile picture (optional)
   bio: 'string', // Short biography (optional)
   createdAt: 'timestamp',
-  updatedAt: 'timestamp'
+  updatedAt: 'timestamp',
 };
 
 // Student schema (stored in students collection)
@@ -52,7 +52,7 @@ const studentSchema = {
   address: 'object', // Contains address details
   profilePictureUrl: 'string', // URL to profile picture (optional)
   createdAt: 'timestamp',
-  updatedAt: 'timestamp'
+  updatedAt: 'timestamp',
 };
 
 // Parent schema (stored in parents collection)
@@ -68,7 +68,7 @@ const parentSchema = {
   studentIds: 'array', // Array of student IDs (references to student collection)
   address: 'object', // Contains address details
   createdAt: 'timestamp',
-  updatedAt: 'timestamp'
+  updatedAt: 'timestamp',
 };
 
 // Course schema (stored in courses collection)
@@ -89,7 +89,7 @@ const courseSchema = {
   studentIds: 'array', // Array of enrolled student IDs
   materials: 'array', // Array of course material objects (optional)
   createdAt: 'timestamp',
-  updatedAt: 'timestamp'
+  updatedAt: 'timestamp',
 };
 
 // Enrollment schema (stored in enrollments collection)
@@ -100,7 +100,7 @@ const enrollmentSchema = {
   status: 'string', // e.g., 'active', 'dropped', 'completed'
   grade: 'string', // Final grade (once completed)
   createdAt: 'timestamp',
-  updatedAt: 'timestamp'
+  updatedAt: 'timestamp',
 };
 
 // Marks/Assessment schema (stored in marks collection)
@@ -114,7 +114,7 @@ const marksSchema = {
   weightage: 'number', // Percentage contribution to final grade (optional)
   studentMarks: 'map', // Map of studentId -> marks scored
   createdAt: 'timestamp',
-  updatedAt: 'timestamp'
+  updatedAt: 'timestamp',
 };
 
 // Notification schema (stored in notifications collection)
@@ -127,7 +127,7 @@ const notificationSchema = {
   type: 'string', // e.g., 'announcement', 'grade', 'message'
   relatedTo: 'object', // Contains references to related entities (courseId, etc.)
   read: 'boolean', // Whether notification has been read
-  createdAt: 'timestamp'
+  createdAt: 'timestamp',
 };
 
 // Attendance schema (stored in attendance collection)
@@ -137,7 +137,7 @@ const attendanceSchema = {
   studentRecords: 'map', // Map of studentId -> attendance status ('present', 'absent', 'late')
   facultyId: 'string', // Reference to faculty who recorded attendance
   createdAt: 'timestamp',
-  updatedAt: 'timestamp'
+  updatedAt: 'timestamp',
 };
 
 // Export all schemas
@@ -150,8 +150,5 @@ export default {
   enrollmentSchema,
   marksSchema,
   notificationSchema,
-  attendanceSchema
-}; 
-
-
-
+  attendanceSchema,
+};

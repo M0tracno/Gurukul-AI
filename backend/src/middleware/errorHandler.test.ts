@@ -1,5 +1,15 @@
-import { describe, it, expect, beforeEach } from '@jest/globals';
+import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import type { Request, Response, NextFunction } from 'express';
+
+// Mock the logger module to avoid import.meta.url issues in ts-jest
+jest.mock('../utils/logger.js', () => ({
+  logger: {
+    warn: jest.fn(),
+    error: jest.fn(),
+    info: jest.fn(),
+    debug: jest.fn(),
+  },
+}));
 
 import { AppError, globalErrorHandler, notFoundHandler } from './errorHandler.js';
 
@@ -44,7 +54,7 @@ describe('AppError', () => {
   });
 
   it('should create an error with details', () => {
-    const details = [{ field: 'email', value: 'bad', reason: 'Invalid format' }];
+    const details = [{ field: 'email', reason: 'Invalid format' }];
     const err = new AppError(400, 'VALIDATION_ERROR', 'Validation failed', details);
 
     expect(err.details).toEqual(details);
@@ -59,7 +69,7 @@ describe('AppError', () => {
     });
 
     it('badRequest includes details when provided', () => {
-      const details = [{ field: 'name', value: '', reason: 'Required' }];
+      const details = [{ field: 'name', reason: 'Required' }];
       const err = AppError.badRequest('Bad input', details);
       expect(err.details).toEqual(details);
     });
@@ -84,6 +94,20 @@ describe('AppError', () => {
       expect(err.errorCode).toBe('FORBIDDEN');
       expect(err.message).toBe('Insufficient permissions');
     });
+
+    it('conflict creates a 409 error', () => {
+      const err = AppError.conflict('Resource already exists');
+      expect(err.statusCode).toBe(409);
+      expect(err.errorCode).toBe('CONFLICT');
+      expect(err.message).toBe('Resource already exists');
+    });
+
+    it('internal creates a 500 error', () => {
+      const err = AppError.internal('Unexpected failure');
+      expect(err.statusCode).toBe(500);
+      expect(err.errorCode).toBe('INTERNAL_ERROR');
+      expect(err.message).toBe('Unexpected failure');
+    });
   });
 });
 
@@ -96,42 +120,60 @@ describe('globalErrorHandler', () => {
     res = createMockResponse();
   });
 
-  it('should return structured error for AppError instances', () => {
+  it('should return ErrorEnvelope for AppError instances', () => {
     const err = new AppError(409, 'CONFLICT', 'Resource already exists');
 
     globalErrorHandler(err, req, res, noopNext);
 
     expect(res._status).toBe(409);
     expect(res._body).toEqual({
-      error: 'CONFLICT',
+      success: false,
       message: 'Resource already exists',
     });
   });
 
-  it('should include details in response when AppError has details', () => {
-    const details = [{ field: 'email', value: 'x', reason: 'Invalid' }];
+  it('should include details in ErrorEnvelope when AppError has details', () => {
+    const details = [{ field: 'email', reason: 'Invalid' }];
     const err = new AppError(400, 'VALIDATION_ERROR', 'Failed', details);
 
     globalErrorHandler(err, req, res, noopNext);
 
     expect(res._status).toBe(400);
     expect(res._body).toEqual({
-      error: 'VALIDATION_ERROR',
+      success: false,
       message: 'Failed',
       details,
     });
   });
 
-  it('should return 500 with static message for unhandled errors', () => {
+  it('should return 500 ErrorEnvelope with static message for unhandled errors', () => {
     const err = new Error('Database connection failed at /var/db/mongo.sock');
 
     globalErrorHandler(err, req, res, noopNext);
 
     expect(res._status).toBe(500);
     expect(res._body).toEqual({
-      error: 'INTERNAL_ERROR',
+      success: false,
       message: 'An internal error occurred',
     });
+  });
+
+  it('should emit success:false for all AppError status codes', () => {
+    const cases = [
+      AppError.unauthorized('no token'),
+      AppError.forbidden('no access'),
+      AppError.badRequest('bad input'),
+      AppError.notFound('not here'),
+      AppError.conflict('duplicate'),
+      AppError.internal('crash'),
+    ];
+
+    for (const err of cases) {
+      const mockRes = createMockResponse();
+      globalErrorHandler(err, req, mockRes, noopNext);
+      expect((mockRes._body as Record<string, unknown>).success).toBe(false);
+      expect(mockRes._status).toBeGreaterThanOrEqual(400);
+    }
   });
 
   it('should NOT leak stack traces in 500 responses', () => {
@@ -172,14 +214,14 @@ describe('globalErrorHandler', () => {
       headers: { 'x-correlation-id': 'abc-123' },
     } as Partial<Request>);
 
-    const err = new AppError(400, 'BAD_REQUEST', 'Bad');
+    const err = AppError.badRequest('Bad');
     globalErrorHandler(err, req, res, noopNext);
 
     // Verify the response is correct — the correlation ID is logged
     // internally via the logger, and the response uses the correct status.
     expect(res._status).toBe(400);
     expect(res._body).toEqual({
-      error: 'BAD_REQUEST',
+      success: false,
       message: 'Bad',
     });
   });
@@ -191,7 +233,7 @@ describe('globalErrorHandler', () => {
       headers: {},
     } as unknown as Request;
 
-    const err = new AppError(404, 'NOT_FOUND', 'Not found');
+    const err = AppError.notFound('Not found');
     globalErrorHandler(err, reqWithCorrelation, res, noopNext);
 
     expect(res._status).toBe(404);
@@ -199,7 +241,7 @@ describe('globalErrorHandler', () => {
 });
 
 describe('notFoundHandler', () => {
-  it('should return 404 with error envelope for GET requests', () => {
+  it('should return 404 ErrorEnvelope for GET requests', () => {
     const req = createMockRequest({ method: 'GET', path: '/api/v1/unknown' });
     const res = createMockResponse();
 
@@ -207,12 +249,12 @@ describe('notFoundHandler', () => {
 
     expect(res._status).toBe(404);
     expect(res._body).toEqual({
-      error: 'NOT_FOUND',
+      success: false,
       message: 'The requested route GET /api/v1/unknown does not exist',
     });
   });
 
-  it('should return 404 with error envelope for POST requests', () => {
+  it('should return 404 ErrorEnvelope for POST requests', () => {
     const req = createMockRequest({ method: 'POST', path: '/api/v1/nonexistent' });
     const res = createMockResponse();
 
@@ -220,21 +262,20 @@ describe('notFoundHandler', () => {
 
     expect(res._status).toBe(404);
     expect(res._body).toEqual({
-      error: 'NOT_FOUND',
+      success: false,
       message: 'The requested route POST /api/v1/nonexistent does not exist',
     });
   });
 
-  it('should include both error and message fields', () => {
+  it('should include success:false and message fields', () => {
     const req = createMockRequest({ method: 'DELETE', path: '/foo' });
     const res = createMockResponse();
 
     notFoundHandler(req, res);
 
     const body = res._body as Record<string, unknown>;
-    expect(body).toHaveProperty('error');
+    expect(body.success).toBe(false);
     expect(body).toHaveProperty('message');
-    expect(typeof body.error).toBe('string');
     expect(typeof body.message).toBe('string');
   });
 });

@@ -77,7 +77,7 @@ describe('database config', () => {
 
       // minPoolSize should be 15, maxPoolSize should be at least 15
       expect(options.minPoolSize).toBe(15);
-      expect(options.maxPoolSize).toBeGreaterThanOrEqual(options.minPoolSize);
+      expect(options.maxPoolSize).toBeGreaterThanOrEqual(options.minPoolSize!);
     });
   });
 

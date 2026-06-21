@@ -62,16 +62,50 @@ export function getRedisOptions(): { url?: string; options: RedisConnectionOptio
 }
 
 /**
+ * Detect whether we are running inside the Jest test environment.
+ * True when NODE_ENV is 'test' or when Jest sets JEST_WORKER_ID.
+ */
+function isTestEnvironment(): boolean {
+  return process.env.NODE_ENV === 'test' || process.env.JEST_WORKER_ID !== undefined;
+}
+
+/**
+ * Test-only ioredis overrides.
+ *
+ * Importing the route graph eagerly constructs the BullMQ queue
+ * (see jobs/gradingQueue.ts), which would otherwise open a Redis
+ * connection that retries ECONNREFUSED forever when no Redis server
+ * is running — keeping the Node event loop alive and forcing tests to
+ * rely on `--forceExit`.
+ *
+ * Under test we therefore:
+ * - `lazyConnect: true`  → do not connect on instantiation (so merely
+ *   importing the queue never opens a socket)
+ * - `retryStrategy: () => null` and `maxRetriesPerRequest: 0` → if a
+ *   command ever does trigger a connect, fail fast instead of looping
+ * - `enableOfflineQueue: false` → reject commands immediately rather
+ *   than buffering them while (never) connecting
+ *
+ * Production behavior is unaffected.
+ */
+const TEST_CONNECTION_OVERRIDES = {
+  lazyConnect: true,
+  enableOfflineQueue: false,
+  retryStrategy: () => null,
+} as const;
+
+/**
  * Create a new Redis connection instance configured for BullMQ.
  *
  * @returns A new Redis connection instance.
  */
 export function createRedisConnection(): Redis {
   const { url, options } = getRedisOptions();
+  const testOverrides = isTestEnvironment() ? TEST_CONNECTION_OVERRIDES : {};
 
   if (url) {
-    return new Redis(url, { maxRetriesPerRequest: null, enableReadyCheck: false });
+    return new Redis(url, { maxRetriesPerRequest: null, enableReadyCheck: false, ...testOverrides });
   }
 
-  return new Redis(options);
+  return new Redis({ ...options, ...testOverrides });
 }

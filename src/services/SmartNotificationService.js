@@ -16,7 +16,10 @@ class EventEmitter {
   off(event, listener) {
     const listeners = this._listeners.get(event);
     if (listeners) {
-      this._listeners.set(event, listeners.filter(fn => fn !== listener));
+      this._listeners.set(
+        event,
+        listeners.filter(fn => fn !== listener)
+      );
     }
     return this;
   }
@@ -65,9 +68,9 @@ class SmartNotificationService extends EventEmitter {
       subjectFilters: ['assignments', 'grades', 'announcements'],
       frequency: 'immediate', // immediate, batched, digest
       smartGrouping: true,
-      adaptiveTiming: true
+      adaptiveTiming: true,
     };
-    
+
     this.userPreferences.set('default', preferences);
   }
 
@@ -77,27 +80,27 @@ class SmartNotificationService extends EventEmitter {
       urgency: 'high',
       timing: [24, 6, 1], // hours before due date
       escalation: true,
-      personalizeMessage: true
+      personalizeMessage: true,
     });
 
     this.contextualRules.set('grade_posted', {
       urgency: 'medium',
       timing: 'immediate',
       groupBySubject: true,
-      includeInsights: true
+      includeInsights: true,
     });
 
     this.contextualRules.set('class_reminder', {
       urgency: 'medium',
       timing: [30, 10], // minutes before class
       includeLocation: true,
-      includePreparation: true
+      includePreparation: true,
     });
 
     this.contextualRules.set('system_maintenance', {
       urgency: 'low',
       timing: [24, 2], // hours before maintenance
-      batchWithSimilar: true
+      batchWithSimilar: true,
     });
   }
 
@@ -130,28 +133,28 @@ class SmartNotificationService extends EventEmitter {
     this.deliveryChannels.set('push', {
       available: 'Notification' in window,
       send: this.sendPushNotification.bind(this),
-      maxLength: 150
+      maxLength: 150,
     });
 
     // In-app notification channel
     this.deliveryChannels.set('in-app', {
       available: true,
       send: this.sendInAppNotification.bind(this),
-      maxLength: 300
+      maxLength: 300,
     });
 
     // Email channel
     this.deliveryChannels.set('email', {
       available: true,
       send: this.sendEmailNotification.bind(this),
-      maxLength: 1000
+      maxLength: 1000,
     });
 
     // SMS channel
     this.deliveryChannels.set('sms', {
       available: true,
       send: this.sendSMSNotification.bind(this),
-      maxLength: 160
+      maxLength: 160,
     });
   }
 
@@ -160,27 +163,27 @@ class SmartNotificationService extends EventEmitter {
       id: this.generateNotificationId(),
       timestamp: new Date(),
       ...notificationData,
-      
+
       // Smart metadata
       context: await this.analyzeContext(notificationData),
       userSegment: await this.getUserSegment(notificationData.userId),
       relevanceScore: 0,
       priorityScore: 0,
       timingScore: 0,
-      
+
       // Processing status
       status: 'pending',
       attempts: 0,
       maxAttempts: 3,
-      
+
       // Analytics
       analytics: {
         created: new Date(),
         processed: null,
         delivered: null,
         opened: null,
-        clicked: null
-      }
+        clicked: null,
+      },
     };
 
     // Add to processing queue
@@ -194,15 +197,15 @@ class SmartNotificationService extends EventEmitter {
     if (this.notificationQueue.length === 0) return;
 
     const notification = this.notificationQueue.shift();
-    
+
     try {
       // Apply smart filtering
       const shouldSend = await this.applySmartFilters(notification);
-      
+
       if (shouldSend) {
         // Apply intelligent timing
         const optimalTiming = await this.calculateOptimalTiming(notification);
-        
+
         if (optimalTiming.sendNow) {
           await this.deliverNotification(notification);
         } else {
@@ -218,7 +221,7 @@ class SmartNotificationService extends EventEmitter {
       console.error('Error processing notification:', error);
       notification.status = 'failed';
       notification.attempts++;
-      
+
       if (notification.attempts < notification.maxAttempts) {
         // Retry later
         setTimeout(() => {
@@ -235,8 +238,8 @@ class SmartNotificationService extends EventEmitter {
   }
 
   async applySmartFilters(notification) {
-    const userPrefs = this.userPreferences.get(notification.userId) || 
-                     this.userPreferences.get('default');
+    const userPrefs =
+      this.userPreferences.get(notification.userId) || this.userPreferences.get('default');
     const userHistory = this.notificationHistory.get(notification.userId) || [];
     const userContext = await this.getUserContext(notification.userId);
 
@@ -253,61 +256,61 @@ class SmartNotificationService extends EventEmitter {
   }
 
   async calculateOptimalTiming(notification) {
-    const userPrefs = this.userPreferences.get(notification.userId) || 
-                     this.userPreferences.get('default');
-    
+    const userPrefs =
+      this.userPreferences.get(notification.userId) || this.userPreferences.get('default');
+
     const now = new Date();
-    
+
     // Check quiet hours
     if (this.isQuietHours(now, userPrefs.quietHours)) {
       const nextActiveTime = this.getNextActiveTime(userPrefs.quietHours);
       return {
         sendNow: false,
         scheduledTime: nextActiveTime,
-        reason: 'quiet_hours'
+        reason: 'quiet_hours',
       };
     }
 
     // Check user engagement patterns
     const engagementScore = await this.predictEngagement(notification, now);
-    
+
     if (engagementScore < 0.3 && notification.priority !== 'urgent') {
       const optimalTime = await this.findOptimalEngagementTime(notification.userId);
       return {
         sendNow: false,
         scheduledTime: optimalTime,
-        reason: 'engagement_optimization'
+        reason: 'engagement_optimization',
       };
     }
 
     return {
       sendNow: true,
-      reason: 'immediate_delivery'
+      reason: 'immediate_delivery',
     };
   }
 
   async deliverNotification(notification) {
-    const userPrefs = this.userPreferences.get(notification.userId) || 
-                     this.userPreferences.get('default');
-    
+    const userPrefs =
+      this.userPreferences.get(notification.userId) || this.userPreferences.get('default');
+
     // Select optimal delivery channels
     const channels = this.selectOptimalChannels(notification, userPrefs);
-    
+
     const deliveryResults = [];
-    
+
     for (const channel of channels) {
       try {
         const result = await this.deliveryChannels.get(channel).send(notification);
         deliveryResults.push({
           channel,
           success: true,
-          result
+          result,
         });
       } catch (error) {
         deliveryResults.push({
           channel,
           success: false,
-          error: error.message
+          error: error.message,
         });
       }
     }
@@ -328,8 +331,8 @@ class SmartNotificationService extends EventEmitter {
   }
 
   selectOptimalChannels(notification, userPrefs) {
-    const availableChannels = userPrefs.channels.filter(channel =>
-      this.deliveryChannels.get(channel)?.available
+    const availableChannels = userPrefs.channels.filter(
+      channel => this.deliveryChannels.get(channel)?.available
     );
 
     // Priority-based channel selection
@@ -354,11 +357,11 @@ class SmartNotificationService extends EventEmitter {
       tag: notification.tag || notification.id,
       data: notification.data || {},
       actions: notification.actions || [],
-      silent: notification.priority === 'low'
+      silent: notification.priority === 'low',
     };
 
     const pushNotification = new Notification(notification.title, options);
-    
+
     pushNotification.onclick = () => {
       this.handleNotificationClick(notification);
     };
@@ -370,9 +373,9 @@ class SmartNotificationService extends EventEmitter {
     // Send to notification context or event system
     this.emit('inAppNotification', {
       ...notification,
-      displayTime: this.calculateDisplayTime(notification)
+      displayTime: this.calculateDisplayTime(notification),
     });
-    
+
     return { delivered: true, channel: 'in-app' };
   }
 
@@ -382,7 +385,7 @@ class SmartNotificationService extends EventEmitter {
       to: notification.email || notification.userId,
       subject: notification.title,
       body: this.formatEmailBody(notification),
-      priority: notification.priority
+      priority: notification.priority,
     };
 
     // Mock email sending
@@ -395,7 +398,7 @@ class SmartNotificationService extends EventEmitter {
     const smsData = {
       to: notification.phone || notification.userId,
       message: this.truncateText(`${notification.title}: ${notification.message}`, 160),
-      priority: notification.priority
+      priority: notification.priority,
     };
 
     // Mock SMS sending
@@ -406,44 +409,43 @@ class SmartNotificationService extends EventEmitter {
   // Helper methods
   calculateRelevance(notification, userContext) {
     let score = 0.5; // Base relevance
-    
+
     // Subject relevance
     if (userContext.subjects.includes(notification.subject)) {
       score += 0.3;
     }
-    
+
     // Role relevance
     if (notification.targetRoles.includes(userContext.role)) {
       score += 0.2;
     }
-    
+
     // Timing relevance
     if (this.isRelevantTiming(notification, userContext)) {
       score += 0.1;
     }
-    
+
     return Math.min(score, 1.0);
   }
 
   countRecentSimilar(notification, userHistory) {
     const recentHours = 24;
     const cutoff = new Date(Date.now() - recentHours * 60 * 60 * 1000);
-    
-    return userHistory.filter(n => 
-      n.timestamp > cutoff && 
-      n.type === notification.type &&
-      n.subject === notification.subject
+
+    return userHistory.filter(
+      n =>
+        n.timestamp > cutoff && n.type === notification.type && n.subject === notification.subject
     ).length;
   }
 
   isOptimalTiming(notification, userPrefs) {
     const now = new Date();
-    
+
     // Check quiet hours
     if (this.isQuietHours(now, userPrefs.quietHours)) {
       return notification.priority === 'urgent';
     }
-    
+
     return true;
   }
 
@@ -451,10 +453,10 @@ class SmartNotificationService extends EventEmitter {
     const hour = time.getHours();
     const minute = time.getMinutes();
     const currentTime = hour * 100 + minute;
-    
+
     const start = this.parseTimeString(quietHours.start);
     const end = this.parseTimeString(quietHours.end);
-    
+
     if (start < end) {
       return currentTime >= start && currentTime <= end;
     } else {
@@ -486,9 +488,9 @@ class SmartNotificationService extends EventEmitter {
       urgent: 10000,
       high: 8000,
       medium: 6000,
-      low: 4000
+      low: 4000,
     };
-    
+
     return baseTimes[notification.priority] || baseTimes.medium;
   }
 
@@ -501,16 +503,16 @@ class SmartNotificationService extends EventEmitter {
     if (!this.notificationHistory.has(userId)) {
       this.notificationHistory.set(userId, []);
     }
-    
+
     const history = this.notificationHistory.get(userId);
     history.push({
       id: notification.id,
       type: notification.type,
       subject: notification.subject,
       timestamp: notification.timestamp,
-      delivered: notification.status === 'delivered'
+      delivered: notification.status === 'delivered',
     });
-    
+
     // Keep only last 100 notifications
     if (history.length > 100) {
       history.splice(0, history.length - 100);
@@ -523,18 +525,18 @@ class SmartNotificationService extends EventEmitter {
       id: notification.id,
       status: notification.status,
       deliveryTime: notification.analytics.delivered,
-      channels: notification.deliveryResults?.map(r => r.channel) || []
+      channels: notification.deliveryResults?.map(r => r.channel) || [],
     });
   }
 
   handleNotificationClick(notification) {
     notification.analytics.clicked = new Date();
     this.recordNotificationMetrics(notification);
-    
+
     if (notification.actionUrl) {
       window.open(notification.actionUrl, '_blank');
     }
-    
+
     this.emit('notificationClicked', notification);
   }
 
@@ -542,15 +544,29 @@ class SmartNotificationService extends EventEmitter {
   async predictEngagement(notification, time) {
     // Mock engagement prediction based on time and notification type
     const hour = time.getHours();
-    
+
     // Educational context engagement patterns
     const engagementByHour = {
-      6: 0.2, 7: 0.4, 8: 0.7, 9: 0.8, 10: 0.9,
-      11: 0.8, 12: 0.6, 13: 0.5, 14: 0.7, 15: 0.8,
-      16: 0.9, 17: 0.8, 18: 0.6, 19: 0.5, 20: 0.4,
-      21: 0.3, 22: 0.2, 23: 0.1
+      6: 0.2,
+      7: 0.4,
+      8: 0.7,
+      9: 0.8,
+      10: 0.9,
+      11: 0.8,
+      12: 0.6,
+      13: 0.5,
+      14: 0.7,
+      15: 0.8,
+      16: 0.9,
+      17: 0.8,
+      18: 0.6,
+      19: 0.5,
+      20: 0.4,
+      21: 0.3,
+      22: 0.2,
+      23: 0.1,
     };
-    
+
     return engagementByHour[hour] || 0.3;
   }
 
@@ -559,7 +575,7 @@ class SmartNotificationService extends EventEmitter {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     tomorrow.setHours(9, 0, 0, 0); // 9 AM next day
-    
+
     return tomorrow;
   }
 
@@ -570,7 +586,7 @@ class SmartNotificationService extends EventEmitter {
       subjects: ['Mathematics', 'Science', 'English'],
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       lastActive: new Date(),
-      engagementScore: 0.7
+      engagementScore: 0.7,
     };
   }
 
@@ -580,17 +596,17 @@ class SmartNotificationService extends EventEmitter {
       type: 'active_student',
       engagement: 'high',
       preference: 'immediate',
-      timezone: 'EST'
+      timezone: 'EST',
     };
   }
 
   async analyzeContext(notificationData) {
     return {
-      academic: notificationData.type?.includes('assignment') || 
-                notificationData.type?.includes('grade'),
+      academic:
+        notificationData.type?.includes('assignment') || notificationData.type?.includes('grade'),
       urgent: notificationData.priority === 'urgent',
       interactive: !!notificationData.actionUrl,
-      personal: notificationData.personal || false
+      personal: notificationData.personal || false,
     };
   }
 
@@ -608,7 +624,7 @@ class SmartNotificationService extends EventEmitter {
 
   cleanupOldData() {
     const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-    
+
     for (const [userId, history] of this.notificationHistory) {
       const filtered = history.filter(n => n.timestamp > oneWeekAgo);
       this.notificationHistory.set(userId, filtered);
@@ -619,21 +635,21 @@ class SmartNotificationService extends EventEmitter {
     const now = new Date();
     const tomorrow = new Date(now);
     tomorrow.setDate(tomorrow.getDate() + 1);
-    
+
     const [endHour, endMinute] = quietHours.end.split(':').map(Number);
     tomorrow.setHours(endHour, endMinute, 0, 0);
-    
+
     return tomorrow;
   }
 
   scheduleNotification(notification, scheduledTime) {
     const delay = scheduledTime.getTime() - Date.now();
-    
+
     setTimeout(() => {
       this.notificationQueue.push(notification);
       this.processNotificationQueue();
     }, delay);
-    
+
     notification.status = 'scheduled';
     notification.scheduledTime = scheduledTime;
   }
@@ -645,8 +661,8 @@ class SmartNotificationService extends EventEmitter {
 
   async updateUserPreferences(userId, preferences) {
     this.userPreferences.set(userId, {
-      ...this.userPreferences.get(userId) || this.userPreferences.get('default'),
-      ...preferences
+      ...(this.userPreferences.get(userId) || this.userPreferences.get('default')),
+      ...preferences,
     });
   }
 
@@ -657,32 +673,30 @@ class SmartNotificationService extends EventEmitter {
 
   async getNotificationStats(userId) {
     const history = this.notificationHistory.get(userId) || [];
-    const last24h = history.filter(n => 
-      n.timestamp > new Date(Date.now() - 24 * 60 * 60 * 1000)
-    );
-    
+    const last24h = history.filter(n => n.timestamp > new Date(Date.now() - 24 * 60 * 60 * 1000));
+
     return {
       total: history.length,
       last24h: last24h.length,
       delivered: history.filter(n => n.delivered).length,
-      deliveryRate: history.length > 0 ? 
-        history.filter(n => n.delivered).length / history.length : 0
+      deliveryRate:
+        history.length > 0 ? history.filter(n => n.delivered).length / history.length : 0,
     };
   }
 
-  isRelevantTiming(notification, userContext) {    // Check if the notification timing is relevant to user's schedule
+  isRelevantTiming(notification, userContext) {
+    // Check if the notification timing is relevant to user's schedule
     const now = new Date();
     const hour = now.getHours();
-    
+
     // Academic hours (8 AM - 6 PM)
     if (notification.context?.academic) {
       return hour >= 8 && hour <= 18;
     }
-    
+
     return true;
   }
 }
 
 const smartNotificationService = new SmartNotificationService();
 export default smartNotificationService;
-

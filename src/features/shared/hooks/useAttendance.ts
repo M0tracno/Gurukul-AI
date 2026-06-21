@@ -9,12 +9,7 @@
  * Validates: Requirements 5.2, 5.7
  */
 
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  type UseQueryOptions,
-} from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, type UseQueryOptions } from '@tanstack/react-query';
 import { apiClient } from '../services/apiClient';
 import { queryKeys } from './queryKeys';
 import type { PaginationParams, PaginatedResponse } from '../types';
@@ -129,7 +124,7 @@ export function useMarkAttendance() {
         queryKey: queryKeys.attendance.byCourse(variables.courseId),
       });
       // Invalidate each student's attendance cache
-      variables.records.forEach((record) => {
+      variables.records.forEach(record => {
         queryClient.invalidateQueries({
           queryKey: queryKeys.attendance.byStudent(record.studentId),
         });
@@ -143,8 +138,14 @@ export function useUpdateAttendance() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, ...data }: { id: string; status: AttendanceRecord['status']; remarks?: string }) =>
-      apiClient<AttendanceRecord>(`/api/v1/attendance/${id}`, { method: 'PUT', body: data }),
+    mutationFn: ({
+      id,
+      ...data
+    }: {
+      id: string;
+      status: AttendanceRecord['status'];
+      remarks?: string;
+    }) => apiClient<AttendanceRecord>(`/api/v1/attendance/${id}`, { method: 'PUT', body: data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.attendance.all });
     },

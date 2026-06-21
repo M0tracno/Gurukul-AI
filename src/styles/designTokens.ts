@@ -1,6 +1,6 @@
 /**
  * Design Tokens - Futuristic Theme System
- * 
+ *
  * This file defines the complete design token system for the futuristic UI upgrade.
  * All spacing, colors, typography, and effects are defined here for consistency.
  */
@@ -28,7 +28,7 @@ export const colors = {
     purple: '#8b5cf6',
     pink: '#ec4899',
   },
-  
+
   // Neutral grays with subtle blue tint
   neutral: {
     50: '#f8fafc',
@@ -43,7 +43,7 @@ export const colors = {
     900: '#0f172a',
     950: '#020617',
   },
-  
+
   // Semantic colors
   semantic: {
     success: '#10b981',
@@ -51,7 +51,7 @@ export const colors = {
     error: '#ef4444',
     info: '#3b82f6',
   },
-  
+
   // Glass surface colors
   glass: {
     light: 'rgba(255, 255, 255, 0.05)',
@@ -64,15 +64,15 @@ export const colors = {
 // Typography Scale
 export const typography = {
   fontSize: {
-    xs: '0.75rem',    // 12px
-    sm: '0.875rem',   // 14px
-    base: '1rem',     // 16px
-    lg: '1.125rem',   // 18px
-    xl: '1.25rem',    // 20px
-    '2xl': '1.5rem',  // 24px
+    xs: '0.75rem', // 12px
+    sm: '0.875rem', // 14px
+    base: '1rem', // 16px
+    lg: '1.125rem', // 18px
+    xl: '1.25rem', // 20px
+    '2xl': '1.5rem', // 24px
     '3xl': '1.875rem', // 30px
     '4xl': '2.25rem', // 36px
-    '5xl': '3rem',    // 48px
+    '5xl': '3rem', // 48px
     '6xl': '3.75rem', // 60px
   },
   fontWeight: {
@@ -103,13 +103,13 @@ export const typography = {
 // Border Radius Scale
 export const borderRadius = {
   none: '0',
-  sm: '0.125rem',   // 2px
-  base: '0.25rem',  // 4px
-  md: '0.375rem',   // 6px
-  lg: '0.5rem',     // 8px
-  xl: '0.75rem',    // 12px
-  '2xl': '1rem',    // 16px
-  '3xl': '1.5rem',  // 24px
+  sm: '0.125rem', // 2px
+  base: '0.25rem', // 4px
+  md: '0.375rem', // 6px
+  lg: '0.5rem', // 8px
+  xl: '0.75rem', // 12px
+  '2xl': '1rem', // 16px
+  '3xl': '1.5rem', // 24px
   full: '9999px',
 } as const;
 
@@ -123,7 +123,7 @@ export const shadows = {
   '2xl': '0 25px 50px -12px rgb(0 0 0 / 0.25)',
   inner: 'inset 0 2px 4px 0 rgb(0 0 0 / 0.05)',
   none: '0 0 #0000',
-  
+
   // Neon shadows for futuristic effect
   neon: {
     cyan: '0 0 20px rgba(0, 255, 136, 0.3), 0 0 40px rgba(0, 255, 136, 0.1)',
@@ -250,4 +250,4 @@ export const createCSSVariables = (_theme: 'light' | 'dark' = 'light') => ({
   '--duration-slow': animation.duration.slow,
   '--ease-in-out': animation.ease.inOut,
   '--ease-bounce': animation.ease.bounce,
-});
+});

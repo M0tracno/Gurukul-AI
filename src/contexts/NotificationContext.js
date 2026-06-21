@@ -11,9 +11,14 @@ import {
   List,
   ListItem,
   Snackbar,
-  Typography
+  Typography,
 } from '@mui/material';
-import { Assignment, Close as CloseIcon, Grade, Notifications as NotificationsIcon } from '@mui/icons-material';
+import {
+  Assignment,
+  Close as CloseIcon,
+  Grade,
+  Notifications as NotificationsIcon,
+} from '@mui/icons-material';
 import { io } from 'socket.io-client';
 import { useAuth } from '../auth/AuthContext';
 import { useLocation } from 'react-router-dom';
@@ -54,13 +59,13 @@ export const NotificationProvider = ({ children }) => {
       setSocket(socketConnection);
 
       // Listen for real-time notifications
-      socketConnection.on('notification', (notification) => {
+      socketConnection.on('notification', notification => {
         addNotification(notification);
         showSnackbar(notification.message, notification.type || 'info');
       });
 
       // Listen for system alerts
-      socketConnection.on('system_alert', (alert) => {
+      socketConnection.on('system_alert', alert => {
         addNotification({
           ...alert,
           type: 'warning',
@@ -86,7 +91,7 @@ export const NotificationProvider = ({ children }) => {
     try {
       const response = await fetch('/api/notifications', {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
         },
       });
 
@@ -102,7 +107,8 @@ export const NotificationProvider = ({ children }) => {
         {
           id: '1',
           title: 'Welcome to the Enhanced System!',
-          message: 'Experience the new features including dark mode, real-time updates, and advanced analytics.',
+          message:
+            'Experience the new features including dark mode, real-time updates, and advanced analytics.',
           type: 'success',
           timestamp: new Date().toISOString(),
           read: false,
@@ -132,7 +138,7 @@ export const NotificationProvider = ({ children }) => {
     }
   };
 
-  const addNotification = (notification) => {
+  const addNotification = notification => {
     const newNotification = {
       id: Date.now().toString(),
       timestamp: new Date().toISOString(),
@@ -153,20 +159,18 @@ export const NotificationProvider = ({ children }) => {
     }
   };
 
-  const markAsRead = async (notificationId) => {
+  const markAsRead = async notificationId => {
     try {
       await fetch(`/api/notifications/${notificationId}/read`, {
         method: 'PATCH',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
         },
       });
 
       setNotifications(prev =>
         prev.map(notification =>
-          notification.id === notificationId
-            ? { ...notification, read: true }
-            : notification
+          notification.id === notificationId ? { ...notification, read: true } : notification
         )
       );
 
@@ -176,9 +180,7 @@ export const NotificationProvider = ({ children }) => {
       // Still update UI even if API fails
       setNotifications(prev =>
         prev.map(notification =>
-          notification.id === notificationId
-            ? { ...notification, read: true }
-            : notification
+          notification.id === notificationId ? { ...notification, read: true } : notification
         )
       );
       setUnreadCount(prev => Math.max(0, prev - 1));
@@ -190,29 +192,25 @@ export const NotificationProvider = ({ children }) => {
       await fetch('/api/notifications/read-all', {
         method: 'PATCH',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
         },
       });
 
-      setNotifications(prev =>
-        prev.map(notification => ({ ...notification, read: true }))
-      );
+      setNotifications(prev => prev.map(notification => ({ ...notification, read: true })));
       setUnreadCount(0);
     } catch (error) {
       console.error('Error marking all notifications as read:', error);
-      setNotifications(prev =>
-        prev.map(notification => ({ ...notification, read: true }))
-      );
+      setNotifications(prev => prev.map(notification => ({ ...notification, read: true })));
       setUnreadCount(0);
     }
   };
 
-  const deleteNotification = async (notificationId) => {
+  const deleteNotification = async notificationId => {
     try {
       await fetch(`/api/notifications/${notificationId}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
         },
       });
 
@@ -235,17 +233,22 @@ export const NotificationProvider = ({ children }) => {
     setDrawerOpen(!drawerOpen);
   };
 
-  const getNotificationIcon = (type) => {
+  const getNotificationIcon = type => {
     switch (type) {
-      case 'success': return '✅';
-      case 'warning': return '⚠️';
-      case 'error': return '❌';
-      case 'info': return 'ℹ️';
-      default: return '📢';
+      case 'success':
+        return '✅';
+      case 'warning':
+        return '⚠️';
+      case 'error':
+        return '❌';
+      case 'info':
+        return 'ℹ️';
+      default:
+        return '📢';
     }
   };
 
-  const formatTimestamp = (timestamp) => {
+  const formatTimestamp = timestamp => {
     const now = new Date();
     const notificationTime = new Date(timestamp);
     const diffInMinutes = Math.floor((now - notificationTime) / (1000 * 60));
@@ -346,7 +349,10 @@ export const NotificationProvider = ({ children }) => {
                             {getNotificationIcon(notification.type)}
                           </Typography>
                           <Box>
-                            <Typography variant="subtitle2" fontWeight={notification.read ? 400 : 600}>
+                            <Typography
+                              variant="subtitle2"
+                              fontWeight={notification.read ? 400 : 600}
+                            >
                               {notification.title}
                             </Typography>
                             <Typography variant="body2" color="textSecondary">
@@ -359,7 +365,7 @@ export const NotificationProvider = ({ children }) => {
                         </Box>
                         <IconButton
                           size="small"
-                          onClick={(e) => {
+                          onClick={e => {
                             e.stopPropagation();
                             deleteNotification(notification.id);
                           }}
@@ -393,4 +399,3 @@ export const NotificationProvider = ({ children }) => {
 };
 
 export default NotificationProvider;
-

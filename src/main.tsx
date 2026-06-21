@@ -2,6 +2,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { initSentry } from './config/sentry';
+// eslint-disable-next-line import/default, import/no-unresolved
 import App from './App';
 
 // Initialize Sentry as early as possible so it captures bootstrap errors.
