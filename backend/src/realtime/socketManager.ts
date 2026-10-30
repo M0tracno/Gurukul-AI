@@ -4,6 +4,7 @@ import { authTokenService, type DecodedToken } from '../services/authTokenServic
 import { logger } from '../utils/logger.js';
 import type { UserRole } from '../types/common.js';
 import { setupTypingHandlers } from './typingHandler.js';
+import { setupMessageHandlers } from './messageHandler.js';
 import Message from '../models/Message.js';
 
 /**
@@ -240,6 +241,9 @@ export class SocketManager implements ISocketManager {
 
       // Set up typing indicator handlers with rate limiting
       setupTypingHandlers(authSocket, this.io);
+
+      // Persistence-first send_message handling (RBAC check, save, then deliver)
+      setupMessageHandlers(authSocket, this);
 
       // Handle message synchronization on reconnection
       // Client emits this event with the timestamp of its last received message

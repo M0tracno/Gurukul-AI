@@ -7,7 +7,6 @@ import morgan from 'morgan';
 import compression from 'compression';
 import http from 'http';
 import { Server as SocketIOServer } from 'socket.io';
-import jwt from 'jsonwebtoken';
 import rateLimit from 'express-rate-limit';
 import { securityHeadersMiddleware, httpsRedirectMiddleware } from './middleware/securityHeaders.js';
 
@@ -30,6 +29,8 @@ dotenv.config({
 
 // Import config and database
 import { connectDB } from './config/database.js';
+import { SocketManager } from './realtime/socketManager.js';
+import { createGradingWorker } from './jobs/gradingWorker.js';
 import { mountSwaggerDocs, swaggerUi, swaggerSpec } from './config/swagger.js';
 
 // Use the new structured Winston logger with daily rotation and 30-day retention
@@ -140,254 +141,14 @@ app.get('/api/health-check', (_req, res) => {
   res.status(200).json({ status: 'ok', message: 'API is running' });
 });
 
-// Reset seed passwords (fixes double-hashing from previous seed)
-app.get('/api/reset-seed-passwords', async (_req, res) => {
-  try {
-    const mongoose = await import('mongoose');
-    const FacultyModel = mongoose.default.models.Faculty;
-    const StudentModel = mongoose.default.models.Student;
-    const results: string[] = [];
-
-    // Update via findOne + save to trigger the pre-save hook correctly
-    // We need to set password as plain text so the hook hashes it once
-    const admin = await FacultyModel?.findOne({ email: 'admin@gurukul.edu' });
-    if (admin) {
-      admin.password = 'Admin@2024';
-      admin.markModified('password');
-      await admin.save();
-      results.push('✅ Admin password reset');
-    }
-
-    const teacher = await FacultyModel?.findOne({ email: 'teacher@gurukul.edu' });
-    if (teacher) {
-      teacher.password = 'Teacher@2024';
-      teacher.markModified('password');
-      await teacher.save();
-      results.push('✅ Teacher password reset');
-    }
-
-    const student = await StudentModel?.findOne({ email: 'student@gurukul.edu' });
-    if (student) {
-      student.password = 'Student@2024';
-      student.markModified('password');
-      await student.save();
-      results.push('✅ Student password reset');
-    }
-
-    res.json({ success: true, results });
-  } catch (e) {
-    res.status(500).json({ error: e instanceof Error ? e.message : String(e) });
-  }
-});
-app.get('/api/debug-users', async (_req, res) => {
-  try {
-    const bcrypt = await import('bcryptjs');
-    const mongoose = await import('mongoose');
-    const FacultyModel = mongoose.default.models.Faculty;
-    if (!FacultyModel) {
-      res.json({ error: 'Faculty model not registered' });
-      return;
-    }
-
-    const admin = await FacultyModel.findOne({ email: 'admin@gurukul.edu' }).select('+password');
-    if (!admin) {
-      const allFaculty = await FacultyModel.find({}).select('email role').lean();
-      res.json({ error: 'Admin not found in DB', allFaculty });
-      return;
-    }
-
-    const hasPassword = !!admin.password;
-    const passwordMatch = hasPassword ? await bcrypt.default.compare('Admin@2024', admin.password) : false;
-
-    res.json({
-      found: true,
-      email: admin.email,
-      role: admin.role,
-      hasPassword,
-      passwordLength: admin.password?.length,
-      passwordMatch,
-      id: admin._id.toString(),
-    });
-  } catch (e) {
-    res.status(500).json({ error: e instanceof Error ? e.message : String(e) });
-  }
-});
-
-// One-time seed endpoint — creates initial users, call via browser
-// GET /api/seed-initial — no auth required, idempotent (skips existing)
-app.get('/api/seed-initial', async (_req, res) => {
-  try {
-    const bcrypt = await import('bcryptjs');
-    const mongoose = await import('mongoose');
-
-    // Use already-registered models (from the compiled TS code)
-    const FacultyModel = mongoose.default.models.Faculty || mongoose.default.model('Faculty',
-      new mongoose.default.Schema({ firstName: String, lastName: String, email: { type: String, unique: true }, password: String, employeeId: String, department: String, role: { type: String, default: 'faculty' }, isActive: { type: Boolean, default: true } }, { timestamps: true, strict: false })
-    );
-
-    const StudentModel = mongoose.default.models.Student || mongoose.default.model('Student',
-      new mongoose.default.Schema({ firstName: String, lastName: String, email: { type: String, unique: true }, password: String, studentId: { type: String, unique: true }, grade: String, active: { type: Boolean, default: true }, parentPhone: String }, { timestamps: true, strict: false })
-    );
-
-    const ParentModel = mongoose.default.models.Parent || mongoose.default.model('Parent',
-      new mongoose.default.Schema({ parentId: String, firstName: String, lastName: String, phoneNumber: String, email: String, phone: String, studentIds: [{ type: mongoose.default.Schema.Types.ObjectId }], isActive: { type: Boolean, default: true }, isVerified: { type: Boolean, default: true }, relationToStudent: String }, { timestamps: true, strict: false })
-    );
-
-    const results: string[] = [];
-    const SALT = 12;
-
-    // Admin — store plain password, the model's pre-save hook will hash it
-    if (!(await FacultyModel.findOne({ email: 'admin@gurukul.edu' }))) {
-      await FacultyModel.create({ firstName: 'Krishna', lastName: 'Admin', email: 'admin@gurukul.edu', password: 'Admin@2024', employeeId: 'ADM001', department: 'Administration', role: 'admin', isActive: true });
-      results.push('✅ Admin created: admin@gurukul.edu / Admin@2024');
-    } else results.push('⏭️ Admin exists');
-
-    // Faculty
-    if (!(await FacultyModel.findOne({ email: 'teacher@gurukul.edu' }))) {
-      await FacultyModel.create({ firstName: 'Dronacharya', lastName: 'Singh', email: 'teacher@gurukul.edu', password: 'Teacher@2024', employeeId: 'FAC001', department: 'Computer Science', role: 'faculty', isActive: true });
-      results.push('✅ Faculty created: teacher@gurukul.edu / Teacher@2024');
-    } else results.push('⏭️ Faculty exists');
-
-    // Student
-    let studentDoc = await StudentModel.findOne({ email: 'student@gurukul.edu' });
-    if (!studentDoc) {
-      studentDoc = await StudentModel.create({ firstName: 'Arjun', lastName: 'Sharma', email: 'student@gurukul.edu', password: 'Student@2024', studentId: 'STU001', grade: '10', active: true, parentPhone: '9876543210' });
-      results.push('✅ Student created: student@gurukul.edu / Student@2024');
-    } else results.push('⏭️ Student exists');
-
-    // Parent
-    if (!(await ParentModel.findOne({ phoneNumber: '9876543210' }))) {
-      await ParentModel.create({ parentId: 'PAR001', firstName: 'Rajesh', lastName: 'Sharma', phoneNumber: '9876543210', email: 'parent@gurukul.edu', studentIds: [studentDoc._id], isActive: true, isVerified: true, relationToStudent: 'Father' });
-      results.push('✅ Parent created: phone 9876543210 / Student ID: STU001');
-    } else results.push('⏭️ Parent exists');
-
-    res.json({ success: true, results });
-  } catch (error) {
-    const msg = error instanceof Error ? error.message : String(error);
-    res.status(500).json({ success: false, error: msg });
-  }
-});
-
 logger.info('Using MongoDB database exclusively');
 
-// Socket.IO Real-time Messaging Setup
-interface ConnectedUser {
-  socketId: string;
-  userId: string;
-  role: string;
-  lastSeen: Date;
-}
-
-const connectedUsers = new Map<string, ConnectedUser>();
-
-// Socket.IO authentication middleware
-const authenticateSocket = (
-  socket: { handshake: { auth: { token?: string } }; user?: { id: string; role: string; firstName?: string; lastName?: string } },
-  next: (err?: Error) => void,
-) => {
-  const token = socket.handshake.auth.token;
-
-  if (!token) {
-    return next(new Error('Authentication token required'));
-  }
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
-      id: string;
-      role: string;
-      firstName?: string;
-      lastName?: string;
-    };
-    socket.user = decoded;
-    next();
-  } catch {
-    next(new Error('Invalid authentication token'));
-  }
-};
-
-io.use(authenticateSocket as Parameters<typeof io.use>[0]);
-
-io.on('connection', (socket) => {
-  const user = (socket as unknown as { user: { id: string; role: string; firstName?: string; lastName?: string } }).user;
-  logger.info(`User ${user.id} (${user.role}) connected via Socket.IO`);
-
-  // Store user connection
-  connectedUsers.set(user.id, {
-    socketId: socket.id,
-    userId: user.id,
-    role: user.role,
-    lastSeen: new Date(),
-  });
-
-  // Join user to their personal room for direct messaging
-  socket.join(`user_${user.id}`);
-
-  // Handle joining conversation rooms
-  socket.on('join_conversation', (conversationId: string) => {
-    socket.join(`conversation_${conversationId}`);
-    logger.info(`User ${user.id} joined conversation ${conversationId}`);
-  });
-
-  // Handle leaving conversation rooms
-  socket.on('leave_conversation', (conversationId: string) => {
-    socket.leave(`conversation_${conversationId}`);
-    logger.info(`User ${user.id} left conversation ${conversationId}`);
-  });
-
-  // Handle new message events
-  socket.on('send_message', async (messageData: { conversationId: string; receiverId: string; _id: string }) => {
-    try {
-      // Emit to conversation room
-      socket.to(`conversation_${messageData.conversationId}`).emit('new_message', messageData);
-
-      // Emit to receiver's personal room
-      socket.to(`user_${messageData.receiverId}`).emit('new_message', messageData);
-
-      // Send delivery confirmation to sender
-      socket.emit('message_delivered', { messageId: messageData._id });
-
-      logger.info(`Message sent from ${user.id} to conversation ${messageData.conversationId}`);
-    } catch (error) {
-      logger.error('Error handling send_message event:', { error: error instanceof Error ? error.message : String(error) });
-      socket.emit('message_error', { error: 'Failed to send message' });
-    }
-  });
-
-  // Handle typing indicators
-  socket.on('typing_start', (data: { conversationId: string }) => {
-    socket.to(`conversation_${data.conversationId}`).emit('user_typing', {
-      userId: user.id,
-      userName: `${user.firstName || ''} ${user.lastName || ''}`.trim(),
-      conversationId: data.conversationId,
-    });
-  });
-
-  socket.on('typing_stop', (data: { conversationId: string }) => {
-    socket.to(`conversation_${data.conversationId}`).emit('user_stopped_typing', {
-      userId: user.id,
-      conversationId: data.conversationId,
-    });
-  });
-
-  // Handle message read receipts
-  socket.on('message_read', (data: { messageId: string; conversationId: string }) => {
-    socket.to(`conversation_${data.conversationId}`).emit('message_read_by', {
-      messageId: data.messageId,
-      readBy: user.id,
-      readAt: new Date(),
-    });
-  });
-
-  // Handle disconnect
-  socket.on('disconnect', () => {
-    logger.info(`User ${user.id} (${user.role}) disconnected from Socket.IO`);
-    connectedUsers.delete(user.id);
-  });
-});
+// Socket.IO real-time messaging: JWT handshake auth, rooms, persistence-first delivery, missed-message sync
+const socketManager = new SocketManager(io);
 
 // Make io available to routes
 app.set('io', io);
-app.set('connectedUsers', connectedUsers);
+app.set('connectedUsers', socketManager.getConnectedUsers());
 
 // Apply routes — all new TypeScript routes
 app.use('/api/auth', authRoutes);
@@ -493,6 +254,10 @@ const startServer = async () => {
     await connectDB();
     logger.info('MongoDB connected successfully');
     console.log('MongoDB connected successfully');
+
+    // Consume AI grading jobs from the BullMQ queue; progress is pushed over Socket.IO
+    createGradingWorker({ io });
+    logger.info('Grading worker started');
 
     // Start listening
     server.listen(PORT, () => {
